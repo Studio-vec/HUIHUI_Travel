@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>여수 밤바다 로그 v2 - Romantic Night</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&display=swap');
+
+        :root {
+            --bg-sea: #0B132B; 
+            --wave-blue: #1C2541; 
+            --accent-pink: #FF006E; 
+            --moon-yellow: #FFD60A; 
+            --text-light: #EDF2F4;
+            --tag-food: #FFB703; --tag-cafe: #8ECAE6; --tag-view: #219EBC; --tag-party: #FB8500; --tag-shop: #9B5DE5;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, sans-serif;
+            background-color: var(--bg-sea);
+            color: var(--text-light);
+            margin: 0; padding: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 25px 25px;
+        }
+
+        .container { max-width: 480px; margin: 0 auto; padding: 20px; padding-bottom: 150px; }
+
+        .weather-info {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            background: rgba(28, 37, 65, 0.8); border-radius: 50px; padding: 6px 16px;
+            font-size: 0.8rem; font-weight: 700; color: var(--moon-yellow);
+            border: 1px solid rgba(255,214,10,0.2); margin-bottom: 15px; backdrop-filter: blur(5px);
+        }
+
+        .now-status {
+            background: linear-gradient(145deg, #1C2541, #0B132B);
+            border-radius: 30px; padding: 25px; margin-bottom: 25px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255,214,10, 0.1); text-align: center;
+        }
+        header h1 { font-family: 'Nanum Myeongjo', serif; font-size: 1.6rem; color: var(--moon-yellow); margin: 0; }
+        .date-input { border: none; background: rgba(255,255,255,0.1); border-radius: 10px; padding: 5px 12px; color: #fff; font-size: 0.75rem; margin-top: 12px; }
+
+        .day-header { font-size: 1.1rem; font-weight: 900; color: var(--accent-pink); margin: 35px 0 15px; display: flex; align-items: center; gap: 8px; }
+        .place-card {
+            background: rgba(255,255,255,0.04); border-radius: 25px; padding: 18px; margin-bottom: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1.5px solid transparent; transition: 0.3s;
+        }
+        .place-card.active { border-color: var(--accent-pink); background: rgba(255,255,255,0.08); transform: scale(1.02); }
+
+        .theme-tag { font-size: 0.65rem; padding: 4px 10px; border-radius: 50px; font-weight: 800; color: #000; white-space: nowrap; }
+
+        .photo-btn {
+            width: 70px; height: 70px; background: rgba(255,255,255,0.05);
+            border-radius: 35% 65% 60% 40% / 45% 40% 60% 55%; 
+            border: 1.5px dashed rgba(255,255,255,0.2); position: relative; overflow: hidden;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .photo-btn.has-img { border-style: solid; border-color: var(--moon-yellow); }
+        .photo-btn img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Art Mode */
+        .art-overlay { position: fixed; inset: 0; background: var(--bg-sea); z-index: 3000; display: flex; flex-direction: column; opacity: 0; visibility: hidden; transition: 0.5s; }
+        .art-overlay.show { opacity: 1; visibility: visible; }
+        .sea-piece { position: absolute; animation: floating 5s ease-in-out infinite; }
+        .sea-piece img { width: 110px; height: 110px; object-fit: cover; border-radius: 50%; border: 3px solid var(--moon-yellow); }
+
+        @keyframes floating { 0%, 100% { transform: translate(0,0) rotate(-5deg); } 50% { transform: translate(15px, -25px) rotate(5deg); } }
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 100px; background: linear-gradient(transparent, var(--bg-sea) 70%); display: flex; justify-content: center; align-items: center; gap: 15px; z-index: 1000; }
+        .nav-btn { background: var(--accent-pink); color: white; border: none; padding: 14px 28px; border-radius: 50px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 20px rgba(255, 0, 110, 0.3); }
+    </style>
+</head>
+<body>
+
+<div id="app" class="container">
+    <div class="weather-info">
+        <i class="fa-solid fa-moon"></i> <span>여수시 20°C</span>
+        <span style="opacity:0.3">|</span> <span>밤바다 감성 충만</span>
+    </div>
+
+    <div class="now-status">
+        <div style="font-size:0.7rem; font-weight:900; color:var(--moon-yellow); letter-spacing:2px;">YEOSU ROMANTIC LOG</div>
+        <header>
+            <h1>여수 밤바다 나들이</h1>
+            <input type="date" v-model="startDate" class="date-input">
+        </header>
+        <div v-if="currentPlace" style="font-size:1.1rem; font-weight:800; margin-top:10px;">
+            지금 여수는 <span style="color:var(--accent-pink)">{{ currentPlace.name }}</span>
+        </div>
+    </div>
+
+    <div v-for="(day, dIdx) in schedule" :key="dIdx">
+        <div class="day-header"><i class="fa-solid fa-star"></i> Day {{ dIdx + 1 }} <span style="font-size:0.8rem; opacity:0.4;">({{ getFormattedDate(dIdx) }})</span></div>
+        <div v-for="p in day.places" :key="p.id" class="place-card" :class="{ active: currentPlace?.id === p.id }">
+            <div style="flex:1; padding-right:12px;">
+                <span style="font-size:0.75rem; font-weight:700; color:rgba(255,255,255,0.4);">{{ p.time }}</span>
+                <div style="display:flex; align-items:center; gap:8px; margin:4px 0;">
+                    <span style="font-size:1.05rem; font-weight:800; color:#fff;">{{ p.name }}</span>
+                    <span class="theme-tag" :style="{backgroundColor: 'var(--tag-'+p.theme_id+')'}">{{ p.theme }}</span>
+                </div>
+                <div style="font-size:0.75rem; color:rgba(255,255,255,0.6); line-height:1.4;">{{ p.tip }}</div>
+            </div>
+            <div class="photo-btn" :class="{'has-img': p.photo}" @click="clickUpload(p.id)">
+                <img v-if="p.photo" :src="p.photo">
+                <i v-else class="fa-solid fa-camera" style="color:rgba(255,255,255,0.2); font-size:1.1rem;"></i>
+                <input type="file" :id="'file-'+p.id" hidden accept="image/*" @change="uploadPhoto($event, p.id)">
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-btn" @click="playArt" :disabled="allPhotos.length === 0"><i class="fa-solid fa-water"></i> 파도</button>
+        <button class="nav-btn" @click="showReport = true" style="background:var(--wave-blue)"><i class="fa-solid fa-grip"></i> 요약</button>
+    </div>
+
+    <div class="art-overlay" :class="{ show: isArtPlaying }">
+        <div style="flex:1; position:relative;">
+            <div v-for="(piece, idx) in collagePieces" :key="idx" class="sea-piece" :style="piece.style">
+                <img :src="piece.src">
+            </div>
+        </div>
+        <div style="padding: 30px; text-align:center;"><button class="nav-btn" @click="isArtPlaying = false" style="margin:0 auto;">로그로 돌아가기</button></div>
+    </div>
+
+    <div class="report-overlay" v-if="showReport" @click.self="showReport = false" style="position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:4000; display:flex; align-items:center; justify-content:center; padding:20px;">
+        <div id="report-content" style="background:var(--bg-sea); width:100%; max-width:340px; border-radius:30px; padding:30px; text-align:center; border:1.5px solid var(--accent-pink);">
+            <h2 style="font-family:'Nanum Myeongjo'; color:var(--moon-yellow); margin:0;">YEOSU MOMENT</h2>
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:20px 0;">
+                <div v-for="n in 9" :key="n" style="aspect-ratio:1; background:rgba(255,255,255,0.05); border-radius:12px; overflow:hidden;">
+                    <img v-if="allPhotos[n-1]" :src="allPhotos[n-1]" style="width:100%; height:100%; object-fit:cover;">
+                </div>
+            </div>
+            <button @click="saveImage" style="width:100%; background:var(--accent-pink); color:white; border:none; padding:15px; border-radius:15px; font-weight:800;">갤러리 저장</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const { createApp, ref, computed, onMounted, watch } = Vue;
+    createApp({
+        setup() {
+            const startDate = ref(dayjs().format('YYYY-MM-DD'));
+            const isArtPlaying = ref(false);
+            const showReport = ref(false);
+            const collagePieces = ref([]);
+
+            const schedule = ref([
+                { places: [
+                    { id: 'y1-1', time: '13:00', name: '청정게장촌', theme: '식사', theme_id: 'food', tip: '🦀 여수 첫 끼 임팩트 게장!', photo: null, h: 13 },
+                    { id: 'y1-2', time: '14:30', name: '낭반 게스트하우스', theme: '숙소', theme_id: 'party', tip: '🏠 체크인 및 파티 준비', photo: null, h: 14.5 },
+                    { id: 'y1-3', time: '15:20', name: '해상케이블카', theme: '체험', theme_id: 'view', tip: '🚠 바다 위 스릴 & 사진 스팟', photo: null, h: 15.3 },
+                    { id: 'y1-4', time: '16:10', name: '모이핀 스카이', theme: '카페', theme_id: 'cafe', tip: '☕ 오션뷰 카페 인생샷 (디저트)', photo: null, h: 16.1 },
+                    { id: 'y1-5', time: '18:00', name: '낭반 게하 파티', theme: '이벤트', theme_id: 'party', tip: '🥳 여행의 핵심! 설레는 교류', photo: null, h: 18 },
+                    { id: 'y1-6', time: '21:20', name: '낭만포차 거리', theme: '술상', theme_id: 'food', tip: '🐙 해산물 안주 & 밤바다 감성', photo: null, h: 21.3 }
+                ]},
+                { places: [
+                    { id: 'y2-1', time: '10:00', name: '녹테마레', theme: '전시', theme_id: 'view', tip: '🎨 SNS 핫플 미디어아트', photo: null, h: 10 },
+                    { id: 'y2-2', time: '12:00', name: '여수 시내 식당', theme: '식사', theme_id: 'food', tip: '🍲 갓김치찌개 로컬 맛 체험', photo: null, h: 12 },
+                    { id: 'y2-3', time: '13:20', name: '아쿠아플라넷', theme: '체험', theme_id: 'view', tip: '🦈 실내 힐링 데이트 코스', photo: null, h: 13.3 },
+                    { id: 'y2-4', time: '17:00', name: '이순신광장', theme: '쇼핑', theme_id: 'shop', tip: '🍓 딸기모찌, 약과, 머랭쿠키', photo: null, h: 17 },
+                    { id: 'y2-5', time: '20:00', name: '돌산대교', theme: '야경', theme_id: 'view', tip: '🌉 여수 대표 야경 포인트', photo: null, h: 20 },
+                    { id: 'y2-6', time: '21:00', name: '해양공원', theme: '산책', theme_id: 'view', tip: '🌙 밤 산책으로 감성 마무리', photo: null, h: 21 }
+                ]},
+                { places: [
+                    { id: 'y3-1', time: '09:30', name: '엑스포 브런치', theme: '카페', theme_id: 'cafe', tip: '🥗 여유 있는 여행의 시작', photo: null, h: 9.5 },
+                    { id: 'y3-2', time: '11:30', name: '마지막 로컬식', theme: '식사', theme_id: 'food', tip: '🍽️ 해산물/백반으로 든든하게', photo: null, h: 11.5 },
+                    { id: 'y3-3', time: '12:30', name: '이순신광장 쇼핑', theme: '쇼핑', theme_id: 'shop', tip: '🎁 마지막 기념품/디저트 구매', photo: null, h: 12.5 },
+                    { id: 'y3-4', time: '16:00', name: '여수 엑스포역', theme: '복귀', theme_id: 'view', tip: '🚄 KTX 서울 출발', photo: null, h: 16 }
+                ]}
+            ]);
+
+            const getFormattedDate = (offset) => dayjs(startDate.value).add(offset, 'day').format('MM.DD');
+            const flattenedSchedule = computed(() => schedule.value.flatMap(d => d.places));
+            const allPhotos = computed(() => flattenedSchedule.value.filter(p => p.photo).map(p => p.photo));
+            
+            const currentPlace = computed(() => {
+                const now = dayjs();
+                const all = schedule.value.flatMap((d, i) => d.places.map(p => ({...p, fullDate: dayjs(startDate.value).add(i, 'day').hour(Math.floor(p.h)).minute((p.h % 1) * 60)})));
+                return all.reverse().find(p => now.isAfter(p.fullDate)) || null;
+            });
+
+            const clickUpload = (id) => document.getElementById('file-'+id).click();
+            const uploadPhoto = (e, id) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (res) => {
+                    schedule.value.forEach(d => d.places.forEach(p => { if(p.id === id) p.photo = res.target.result; }));
+                    localStorage.setItem('trip_yeosu_v2', JSON.stringify(schedule.value));
+                };
+                reader.readAsDataURL(file);
+            };
+
+            const playArt = () => {
+                isArtPlaying.value = true;
+                collagePieces.value = [];
+                allPhotos.value.forEach((photo, i) => {
+                    setTimeout(() => {
+                        collagePieces.value.push({
+                            src: photo,
+                            style: { top: (Math.random() * 60 + 10) + '%', left: (Math.random() * 70) + '%', animationDelay: (i * 0.4) + 's' }
+                        });
+                    }, i * 300);
+                });
+            };
+
+            const saveImage = () => {
+                html2canvas(document.getElementById('report-content')).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = '여수낭만로그.png'; link.href = canvas.toDataURL(); link.click();
+                });
+            };
+
+            onMounted(() => {
+                const saved = localStorage.getItem('trip_yeosu_v2');
+                if (saved) schedule.value = JSON.parse(saved);
+            });
+
+            return { startDate, schedule, getFormattedDate, currentPlace, allPhotos, clickUpload, uploadPhoto, isArtPlaying, playArt, showReport, saveImage, collagePieces };
+        }
+    }).mount('#app');
+</script>
+</body>
+</html>
