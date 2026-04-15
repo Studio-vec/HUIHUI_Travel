@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>이천 쌀알 로그 v2 - Golden Harvest</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700;900&display=swap');
+
+        :root {
+            --bg-rice: #FDFBF7;
+            --rice-white: #FFFFFF;
+            --accent-gold: #A67C52;
+            --stem-green: #7B8E53;
+            --text-main: #4A443F;
+            --border-beige: #E9E4D4;
+            --tag-food: #E9EDC9; --tag-cafe: #FAEDCD; --tag-exp: #D4A373; --tag-view: #CCD5AE;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, sans-serif;
+            background-color: var(--bg-rice);
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            background-image: radial-gradient(var(--border-beige) 0.8px, transparent 0.8px);
+            background-size: 24px 24px;
+        }
+
+        .container { max-width: 480px; margin: 0 auto; padding: 20px; padding-bottom: 150px; }
+
+        /* Weather Widget */
+        .weather-info {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            background: white; border-radius: 50px; padding: 6px 16px;
+            font-size: 0.8rem; font-weight: 700; color: var(--accent-gold);
+            border: 1px solid var(--border-beige); margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+
+        /* Dashboard */
+        .now-status {
+            background-color: var(--rice-white);
+            border-radius: 30px; padding: 25px; margin-bottom: 25px;
+            box-shadow: 0 12px 30px rgba(166, 124, 82, 0.1);
+            border: 1px solid var(--border-beige); text-align: center;
+        }
+        header h1 { font-family: 'Noto Serif KR', serif; font-size: 1.7rem; color: var(--accent-gold); margin: 0; }
+        .date-input { border: none; background: #F3F1EB; border-radius: 10px; padding: 5px 12px; color: #888; font-size: 0.75rem; margin-top: 12px; }
+
+        /* Card Section */
+        .day-header { font-size: 1.1rem; font-weight: 900; color: var(--accent-gold); margin: 35px 0 15px; display: flex; align-items: center; gap: 8px; }
+        .place-card {
+            background: var(--rice-white); border-radius: 25px; padding: 18px; margin-bottom: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid transparent; transition: 0.3s;
+        }
+        .place-card.active { border: 1.5px solid var(--accent-gold); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(166,124,82,0.1); }
+
+        .theme-tag { 
+    font-size: 0.65rem; padding: 4px 10px; border-radius: 50px; font-weight: 700; white-space: nowrap; display: inline-block; flex-shrink: 0; }
+
+        .photo-btn {
+            width: 70px; height: 95px; background: #FFFEFA;
+            border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
+            border: 2px solid var(--border-beige); position: relative; overflow: hidden;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .photo-btn img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* --- 벼 흔들림 아트 섹션 --- */
+        .art-overlay { position: fixed; inset: 0; background: #FAF9F5; z-index: 3000; display: flex; flex-direction: column; opacity: 0; visibility: hidden; transition: 0.5s; overflow: hidden; }
+        .art-overlay.show { opacity: 1; visibility: visible; }
+        
+        .rice-stem {
+            position: absolute; bottom: 0; left: 50%; width: 6px; height: 75%;
+            background: linear-gradient(to top, var(--stem-green), #A3B18A);
+            border-radius: 10px 10px 0 0; transform-origin: bottom center;
+            animation: wind-sway 4s ease-in-out infinite;
+        }
+
+        .rice-ear {
+            position: absolute; transform-origin: top center;
+            animation: ear-sway 3s ease-in-out infinite;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .rice-ear img {
+            width: 90px; height: 120px; object-fit: cover;
+            border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
+            border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        @keyframes wind-sway { 0%, 100% { transform: translateX(-50%) rotate(-1deg); } 50% { transform: translateX(-50%) rotate(2deg); } }
+        @keyframes ear-sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(8deg); } }
+
+        /* Report Modal */
+        .report-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 4000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; visibility: hidden; transition: 0.3s; }
+        .report-overlay.show { opacity: 1; visibility: visible; }
+        #report-content { background: var(--bg-rice); width: 100%; max-width: 340px; border-radius: 30px; padding: 30px; text-align: center; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 20px 0; }
+        .grid-img { aspect-ratio: 1; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-beige); }
+
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 100px; background: linear-gradient(transparent, var(--bg-rice) 50%); display: flex; justify-content: center; align-items: center; gap: 15px; z-index: 1000; }
+        .nav-btn { background: var(--accent-gold); color: white; border: none; padding: 14px 28px; border-radius: 50px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 20px rgba(166, 124, 82, 0.3); }
+    </style>
+</head>
+<body>
+
+<div id="app" class="container">
+    <div class="weather-info" v-if="weather">
+        <i :class="weatherIcon"></i> <span>이천시 {{ weather.temp }}°C</span>
+        <span style="opacity:0.3">|</span> <span>{{ weather.desc }}</span>
+    </div>
+
+    <div class="now-status">
+        <div style="font-size:0.7rem; font-weight:900; color:var(--accent-gold); letter-spacing:2px;">ICHEON RICE LOG</div>
+        <header>
+            <h1>이천 쌀알 나들이</h1>
+            <input type="date" v-model="startDate" class="date-input">
+        </header>
+        <div v-if="currentPlace" style="font-size:1.2rem; font-weight:800; margin-top:10px;">
+            지금은 <span style="color:var(--accent-gold)">{{ currentPlace.name }}</span>
+        </div>
+    </div>
+
+    <div v-for="(day, dIdx) in schedule" :key="dIdx">
+        <div class="day-header"><i class="fa-solid fa-seedling"></i> Day {{ dIdx + 1 }} <span style="font-size:0.8rem; opacity:0.5;">({{ getFormattedDate(dIdx) }})</span></div>
+        <div v-for="p in day.places" :key="p.id" class="place-card" :class="{ active: currentPlace?.id === p.id }">
+            <div style="flex:1; padding-right:15px;">
+                <span style="font-size:0.75rem; font-weight:700; color:#BBB;">{{ p.time }}</span>
+                <div style="display:flex; align-items:center; gap:8px; margin:4px 0;">
+                    <input style="border:none; font-size:1.1rem; font-weight:800; width:100%; outline:none; background:transparent;" v-model="p.name">
+                    <span :class="['theme-tag', 'tag-' + p.theme]">{{ p.theme }}</span>
+                </div>
+                <input style="border:none; font-size:0.8rem; color:#999; width:100%; outline:none; background:transparent;" v-model="p.tip">
+            </div>
+            <div class="photo-btn" @click="clickUpload(p.id)">
+                <img v-if="p.photo" :src="p.photo">
+                <i v-else class="fa-solid fa-plus" style="color:#E9E4D4; font-size:1.2rem;"></i>
+                <input type="file" :id="'file-'+p.id" hidden accept="image/*" @change="uploadPhoto($event, p.id)">
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-btn" @click="playArt" :disabled="allPhotos.length === 0"><i class="fa-solid fa-wind"></i> 아트</button>
+        <button class="nav-btn" @click="showReport = true"><i class="fa-solid fa-table-cells"></i> 요약</button>
+    </div>
+
+    <div class="art-overlay" :class="{ show: isArtPlaying }">
+        <div style="flex:1; position:relative;" id="art-canvas">
+            <div class="rice-stem"></div>
+            <div v-for="(piece, idx) in collagePieces" :key="idx" class="rice-ear" :style="piece.style">
+                <div style="width:2px; height:30px; background:#A3B18A;"></div>
+                <img :src="piece.src">
+            </div>
+        </div>
+        <div style="padding: 30px; text-align:center; z-index:10;"><button class="nav-btn" @click="isArtPlaying = false" style="margin:0 auto; background:#4A443F;">로그로 돌아가기</button></div>
+    </div>
+
+    <div class="report-overlay" :class="{ show: showReport }" @click.self="showReport = false">
+        <div id="report-content">
+            <h2 style="font-family:'Noto Serif KR'; color:var(--accent-gold); margin:0;">ICHEON LOG</h2>
+            <div class="grid">
+                <div v-for="n in 9" :key="n" class="grid-img"><img v-if="allPhotos[n-1]" :src="allPhotos[n-1]" style="width:100%; height:100%; object-fit:cover;"></div>
+            </div>
+            <button @click="saveImage" style="width:100%; background:var(--accent-gold); color:white; border:none; padding:15px; border-radius:15px; font-weight:800; cursor:pointer;">갤러리 저장</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const { createApp, ref, computed, onMounted, watch } = Vue;
+    createApp({
+        setup() {
+            const startDate = ref(dayjs().format('YYYY-MM-DD'));
+            const isArtPlaying = ref(false);
+            const showReport = ref(false);
+            const collagePieces = ref([]);
+            const weather = ref(null);
+
+            const schedule = ref([
+                { places: [
+                    { id: '1-1', time: '13:30', name: '카쿠레가 이천점', theme: '식사', tip: '🍱 스테키동 맛집', photo: null, h: 13.5 },
+                    { id: '1-2', time: '15:00', name: '예스파크 산책', theme: '체험', tip: '🎨 도자기 인생샷', photo: null, h: 15 },
+                    { id: '1-3', time: '17:00', name: '이진상회', theme: '카페', tip: '🥐 쌀빵 먹기', photo: null, h: 17 },
+                    { id: '1-4', time: '19:00', name: '장작집', theme: '식사', tip: '🍗 누룽지 통닭', photo: null, h: 19 },
+                    { id: '1-5', time: '20:30', name: '별빛정원 우주', theme: '관광', tip: '✨ 야간 조명', photo: null, h: 20.5 }
+                ]},
+                { places: [
+                    { id: '2-1', time: '10:30', name: '나츠카페', theme: '카페', tip: '☕ 모닝 커피', photo: null, h: 10.5 },
+                    { id: '2-2', time: '12:00', name: '시립박물관', theme: '관광', tip: '🏺 역사 관람', photo: null, h: 12 },
+                    { id: '2-4', time: '15:30', name: '시몬스 테라스', theme: '체험', tip: '📸 포토존', photo: null, h: 15.5 },
+                    { id: '2-5', time: '18:30', name: '이천 쌀밥 정식', theme: '식사', tip: '🍚 피날레 한정식', photo: null, h: 18.5 }
+                ]},
+                { places: [
+                    { id: '3-1', time: '11:30', name: '테르메덴 스파', theme: '체험', tip: '🧖 힐링 스파', photo: null, h: 11.5 },
+                    { id: '3-2', time: '15:00', name: '남이천막국수', theme: '식사', tip: '🥢 개운한 메뉴', photo: null, h: 15 }
+                ]}
+            ]);
+
+            const getIcheonWeather = () => { weather.value = { temp: 18, desc: '맑음', icon: '01d' }; };
+            const weatherIcon = computed(() => weather.value?.icon === '01d' ? 'fa-solid fa-sun' : 'fa-solid fa-cloud');
+            const getFormattedDate = (offset) => dayjs(startDate.value).add(offset, 'day').format('MM.DD');
+            const flattenedSchedule = computed(() => schedule.value.flatMap(d => d.places));
+            const allPhotos = computed(() => flattenedSchedule.value.filter(p => p.photo).map(p => p.photo));
+            const currentPlace = computed(() => {
+                const now = dayjs();
+                const all = schedule.value.flatMap((d, i) => d.places.map(p => ({...p, fullDate: dayjs(startDate.value).add(i, 'day').hour(Math.floor(p.h)).minute((p.h % 1) * 60)})));
+                return all.reverse().find(p => now.isAfter(p.fullDate)) || null;
+            });
+
+            const clickUpload = (id) => document.getElementById('file-'+id).click();
+            const uploadPhoto = (e, id) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (res) => {
+                    schedule.value.forEach(d => d.places.forEach(p => { if(p.id === id) p.photo = res.target.result; }));
+                    localStorage.setItem('trip_icheon_final', JSON.stringify(schedule.value));
+                };
+                reader.readAsDataURL(file);
+            };
+
+            const playArt = () => {
+                isArtPlaying.value = true;
+                collagePieces.value = [];
+                allPhotos.value.forEach((photo, i) => {
+                    setTimeout(() => {
+                        const side = i % 2 === 0 ? -1 : 1;
+                        collagePieces.value.push({
+                            src: photo,
+                            style: { top: (15 + (i * 15)) + '%', left: `calc(50% + ${side * 70}px)`, animationDelay: (i * 0.2) + 's' }
+                        });
+                    }, i * 400);
+                });
+            };
+
+            const saveImage = () => {
+                html2canvas(document.getElementById('report-content')).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = '이천쌀알로그.png'; link.href = canvas.toDataURL(); link.click();
+                });
+            };
+
+            onMounted(() => {
+                getIcheonWeather();
+                const saved = localStorage.getItem('trip_icheon_final');
+                if (saved) schedule.value = JSON.parse(saved);
+                const savedDate = localStorage.getItem('trip_start_date_final');
+                if (savedDate) startDate.value = savedDate;
+            });
+            watch(startDate, (v) => localStorage.setItem('trip_start_date_final', v));
+
+            return { startDate, schedule, getFormattedDate, currentPlace, allPhotos, clickUpload, uploadPhoto, isArtPlaying, playArt, showReport, flattenedSchedule, saveImage, collagePieces, weather, weatherIcon };
+        }
+    }).mount('#app');
+</script>
+</body>
+</html>
