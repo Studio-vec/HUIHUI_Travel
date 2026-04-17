@@ -3,262 +3,432 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>이천 쌀알 로그 v2 - Golden Harvest</title>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <title>이천 쌀알 나들이 로그</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700;900&display=swap');
-
         :root {
-            --bg-rice: #FDFBF7;
-            --rice-white: #FFFFFF;
-            --accent-gold: #A67C52;
-            --stem-green: #7B8E53;
-            --text-main: #4A443F;
-            --border-beige: #E9E4D4;
-            --tag-food: #E9EDC9; --tag-cafe: #FAEDCD; --tag-exp: #D4A373; --tag-view: #CCD5AE;
+            --ink:   #1a1a1a;
+            --ink-2: #555;
+            --ink-3: #999;
+            --line:        rgba(0,0,0,0.09);
+            --line-strong: rgba(0,0,0,0.16);
+            --bg:      #faf9f7;
+            --surface: #ffffff;
         }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body {
-            font-family: 'Pretendard', -apple-system, sans-serif;
-            background-color: var(--bg-rice);
-            color: var(--text-main);
-            margin: 0; padding: 0;
-            background-image: radial-gradient(var(--border-beige) 0.8px, transparent 0.8px);
-            background-size: 24px 24px;
+            font-family: 'DM Sans', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            min-height: 100vh;
+        }
+        .container { max-width: 420px; margin: 0 auto; padding: 0 0 140px; }
+
+        /* Header */
+        .header { padding: 48px 24px 28px; border-bottom: 1px solid var(--line-strong); }
+        .header-eyebrow {
+            font-size: 10px; font-weight: 500;
+            letter-spacing: 0.16em; text-transform: uppercase;
+            color: var(--ink-3); margin-bottom: 10px;
+        }
+        .header-title {
+            font-family: 'DM Serif Display', Georgia, serif;
+            font-size: 28px; font-weight: 400;
+            color: var(--ink); line-height: 1.2; margin-bottom: 22px;
         }
 
-        .container { max-width: 480px; margin: 0 auto; padding: 20px; padding-bottom: 150px; }
-
-        /* Weather Widget */
-        .weather-info {
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            background: white; border-radius: 50px; padding: 6px 16px;
-            font-size: 0.8rem; font-weight: 700; color: var(--accent-gold);
-            border: 1px solid var(--border-beige); margin-bottom: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        /* Date row */
+        .header-dates { display: flex; align-items: flex-end; margin-bottom: 20px; }
+        .date-item { display: flex; flex-direction: column; gap: 5px; }
+        .date-label {
+            font-size: 9px; font-weight: 500;
+            letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3);
+        }
+        .header-date-input {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px; font-weight: 400; color: var(--ink-2);
+            border: none; background: transparent; cursor: pointer;
+            padding: 0 0 4px; outline: none;
+            border-bottom: 1px solid var(--line-strong); width: 128px;
+        }
+        .date-arrow { font-size: 11px; color: var(--ink-3); padding: 0 10px 5px; flex-shrink: 0; }
+        .date-static {
+            font-size: 14px; font-weight: 400; color: var(--ink-3);
+            padding-bottom: 4px; border-bottom: 1px solid var(--line);
         }
 
-        /* Dashboard */
-        .now-status {
-            background-color: var(--rice-white);
-            border-radius: 30px; padding: 25px; margin-bottom: 25px;
-            box-shadow: 0 12px 30px rgba(166, 124, 82, 0.1);
-            border: 1px solid var(--border-beige); text-align: center;
+        /* Now card */
+        .now-card {
+            background: var(--ink); border-radius: 6px;
+            padding: 18px 20px; display: flex; flex-direction: column; gap: 12px;
         }
-        header h1 { font-family: 'Noto Serif KR', serif; font-size: 1.7rem; color: var(--accent-gold); margin: 0; }
-        .date-input { border: none; background: #F3F1EB; border-radius: 10px; padding: 5px 12px; color: #888; font-size: 0.75rem; margin-top: 12px; }
-
-        /* Card Section */
-        .day-header { font-size: 1.1rem; font-weight: 900; color: var(--accent-gold); margin: 35px 0 15px; display: flex; align-items: center; gap: 8px; }
-        .place-card {
-            background: var(--rice-white); border-radius: 25px; padding: 18px; margin-bottom: 15px;
-            display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid transparent; transition: 0.3s;
+        .now-eyebrow {
+            display: flex; align-items: center; gap: 7px;
+            font-size: 10px; font-weight: 500;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: rgba(255,255,255,0.38);
         }
-        .place-card.active { border: 1.5px solid var(--accent-gold); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(166,124,82,0.1); }
-
-        .theme-tag { 
-    font-size: 0.65rem; padding: 4px 10px; border-radius: 50px; font-weight: 700; white-space: nowrap; display: inline-block; flex-shrink: 0; }
-
-        .photo-btn {
-            width: 70px; height: 95px; background: #FFFEFA;
-            border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
-            border: 2px solid var(--border-beige); position: relative; overflow: hidden;
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        .now-dot {
+            width: 5px; height: 5px; border-radius: 50%;
+            background: #fff; flex-shrink: 0;
+            animation: pulse 2s ease-in-out infinite;
         }
-        .photo-btn img { width: 100%; height: 100%; object-fit: cover; }
+        .now-name {
+            font-family: 'DM Serif Display', serif;
+            font-size: 24px; font-weight: 400; color: #fff; line-height: 1.15;
+        }
+        .now-chips { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 5px; }
+        .now-time { font-size: 11px; color: rgba(255,255,255,0.38); font-variant-numeric: tabular-nums; }
+        .now-chip {
+            font-size: 10px; font-weight: 500; padding: 2px 8px;
+            border-radius: 3px; letter-spacing: 0.04em;
+            background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6);
+        }
+        .now-divider { height: 1px; background: rgba(255,255,255,0.08); }
+        .now-rows { display: flex; flex-direction: column; gap: 9px; }
+        .now-row { display: flex; align-items: flex-start; gap: 9px; }
+        .now-icon {
+            width: 13px; height: 13px; flex-shrink: 0; margin-top: 2px;
+            fill: none; stroke: rgba(255,255,255,0.32);
+            stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round;
+        }
+        .now-row-text { font-size: 12px; color: rgba(255,255,255,0.5); line-height: 1.55; font-weight: 300; }
 
-        /* --- 벼 흔들림 아트 섹션 --- */
-        .art-overlay { position: fixed; inset: 0; background: #FAF9F5; z-index: 3000; display: flex; flex-direction: column; opacity: 0; visibility: hidden; transition: 0.5s; overflow: hidden; }
+        /* Day section */
+        .day-section { padding: 0 24px; }
+        .day-label {
+            display: flex; align-items: baseline; gap: 10px;
+            padding: 28px 0 14px; border-bottom: 1px solid var(--line);
+        }
+        .day-number {
+            font-family: 'DM Serif Display', serif;
+            font-size: 13px; font-weight: 400; color: var(--ink-3); letter-spacing: 0.05em;
+        }
+        .day-date { font-size: 11px; color: var(--ink-3); letter-spacing: 0.08em; }
+
+        /* Place row */
+        .place-row {
+            display: flex; align-items: flex-start; gap: 14px;
+            padding: 15px 0; border-bottom: 1px solid var(--line);
+            position: relative; transition: padding-left 0.2s;
+        }
+        .place-row.active { padding-left: 12px; }
+        .place-row.active::before {
+            content: ''; position: absolute;
+            left: 0; top: 0; bottom: 0; width: 2px;
+            background: var(--ink); border-radius: 1px;
+        }
+        .place-row.active .place-time { color: var(--ink); font-weight: 500; }
+        .place-time {
+            font-size: 11px; color: var(--ink-3); min-width: 38px;
+            padding-top: 3px; font-variant-numeric: tabular-nums;
+            letter-spacing: 0.03em; flex-shrink: 0;
+        }
+        .place-body { flex: 1; min-width: 0; }
+        .place-name-row {
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 4px; flex-wrap: wrap;
+        }
+        .place-name { font-size: 15px; font-weight: 500; color: var(--ink); line-height: 1.3; }
+        .place-tag {
+            font-size: 10px; font-weight: 500; padding: 2px 7px;
+            border-radius: 3px; white-space: nowrap; letter-spacing: 0.04em;
+        }
+        .place-tip { font-size: 12px; color: var(--ink-3); line-height: 1.5; font-weight: 300; }
+
+        /* Photo slot */
+        .photo-slot {
+            width: 50px; height: 50px; border-radius: 4px;
+            border: 1px solid var(--line-strong); overflow: hidden; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: border-color 0.2s; background: var(--surface);
+        }
+        .photo-slot:hover { border-color: var(--ink); }
+        .photo-slot.has-img { border-color: var(--ink); }
+        .photo-slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .photo-slot-icon { width: 15px; height: 15px; opacity: 0.18; }
+
+        /* Bottom nav */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: linear-gradient(transparent, var(--bg) 55%);
+            padding: 28px 24px 30px;
+            display: flex; gap: 10px; justify-content: center;
+        }
+        .nav-btn {
+            font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+            padding: 10px 22px; border-radius: 3px; cursor: pointer;
+            border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink);
+            letter-spacing: 0.03em; transition: background 0.15s, color 0.15s;
+        }
+        .nav-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+        .nav-btn:disabled { opacity: 0.28; cursor: not-allowed; }
+        .nav-btn.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+        .nav-btn.primary:hover { background: #333; }
+
+        /* Art overlay */
+        .art-overlay {
+            position: fixed; inset: 0; background: var(--bg);
+            z-index: 3000; opacity: 0; visibility: hidden;
+            transition: opacity 0.4s; overflow: hidden;
+        }
         .art-overlay.show { opacity: 1; visibility: visible; }
-        
-        .rice-stem {
-            position: absolute; bottom: 0; left: 50%; width: 6px; height: 75%;
-            background: linear-gradient(to top, var(--stem-green), #A3B18A);
-            border-radius: 10px 10px 0 0; transform-origin: bottom center;
-            animation: wind-sway 4s ease-in-out infinite;
+        .art-piece { position: absolute; animation: drift 6s ease-in-out infinite; }
+        .art-piece img {
+            width: 96px; height: 96px; object-fit: cover;
+            border-radius: 2px; border: 1px solid var(--line-strong);
         }
-
-        .rice-ear {
-            position: absolute; transform-origin: top center;
-            animation: ear-sway 3s ease-in-out infinite;
-            display: flex; flex-direction: column; align-items: center;
+        @keyframes drift {
+            0%, 100% { transform: translate(0,0) rotate(-2deg); }
+            50%       { transform: translate(8px,-18px) rotate(2deg); }
         }
-        .rice-ear img {
-            width: 90px; height: 120px; object-fit: cover;
-            border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
-            border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        .art-close { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); }
+
+        /* Modal */
+        .modal-bg {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            z-index: 4000; display: flex; align-items: center;
+            justify-content: center; padding: 24px;
         }
+        .report-card { background: var(--surface); width: 100%; max-width: 320px; border-radius: 4px; overflow: hidden; }
+        .report-header { padding: 22px 22px 14px; border-bottom: 1px solid var(--line); }
+        .report-title { font-family: 'DM Serif Display', serif; font-size: 20px; font-weight: 400; color: var(--ink); }
+        .report-sub { font-size: 11px; color: var(--ink-3); margin-top: 3px; letter-spacing: 0.05em; }
+        .photo-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; padding: 14px; }
+        .photo-grid-cell { aspect-ratio: 1; background: var(--bg); border-radius: 2px; overflow: hidden; border: 1px solid var(--line); }
+        .photo-grid-cell img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .report-footer { padding: 12px 22px 22px; display: flex; gap: 10px; }
 
-        @keyframes wind-sway { 0%, 100% { transform: translateX(-50%) rotate(-1deg); } 50% { transform: translateX(-50%) rotate(2deg); } }
-        @keyframes ear-sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(8deg); } }
+        /* Tag colors */
+        .tag-food    { background: #f5ebe0; color: #7a4f30; }
+        .tag-cafe    { background: #e8f2ef; color: #2e6b59; }
+        .tag-view    { background: #e8eef5; color: #2e4e70; }
+        .tag-exp     { background: #f0ece2; color: #5a4a28; }
+        .tag-spa     { background: #edf0f5; color: #34486a; }
 
-        /* Report Modal */
-        .report-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 4000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; visibility: hidden; transition: 0.3s; }
-        .report-overlay.show { opacity: 1; visibility: visible; }
-        #report-content { background: var(--bg-rice); width: 100%; max-width: 340px; border-radius: 30px; padding: 30px; text-align: center; }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 20px 0; }
-        .grid-img { aspect-ratio: 1; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-beige); }
-
-        /* Bottom Nav */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 100px; background: linear-gradient(transparent, var(--bg-rice) 50%); display: flex; justify-content: center; align-items: center; gap: 15px; z-index: 1000; }
-        .nav-btn { background: var(--accent-gold); color: white; border: none; padding: 14px 28px; border-radius: 50px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 20px rgba(166, 124, 82, 0.3); }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
     </style>
 </head>
 <body>
+<div id="app">
+    <div class="container">
 
-<div id="app" class="container">
-    <div class="weather-info" v-if="weather">
-        <i :class="weatherIcon"></i> <span>이천시 {{ weather.temp }}°C</span>
-        <span style="opacity:0.3">|</span> <span>{{ weather.desc }}</span>
-    </div>
+        <div class="header">
+            <div class="header-eyebrow">Travel Log · Icheon</div>
+            <h1 class="header-title">이천<br>쌀알 나들이</h1>
 
-    <div class="now-status">
-        <div style="font-size:0.7rem; font-weight:900; color:var(--accent-gold); letter-spacing:2px;">ICHEON RICE LOG</div>
-        <header>
-            <h1>이천 쌀알 나들이</h1>
-            <input type="date" v-model="startDate" class="date-input">
-        </header>
-        <div v-if="currentPlace" style="font-size:1.2rem; font-weight:800; margin-top:10px;">
-            지금은 <span style="color:var(--accent-gold)">{{ currentPlace.name }}</span>
-        </div>
-    </div>
-
-    <div v-for="(day, dIdx) in schedule" :key="dIdx">
-        <div class="day-header"><i class="fa-solid fa-seedling"></i> Day {{ dIdx + 1 }} <span style="font-size:0.8rem; opacity:0.5;">({{ getFormattedDate(dIdx) }})</span></div>
-        <div v-for="p in day.places" :key="p.id" class="place-card" :class="{ active: currentPlace?.id === p.id }">
-            <div style="flex:1; padding-right:15px;">
-                <span style="font-size:0.75rem; font-weight:700; color:#BBB;">{{ p.time }}</span>
-                <div style="display:flex; align-items:center; gap:8px; margin:4px 0;">
-                    <input style="border:none; font-size:1.1rem; font-weight:800; width:100%; outline:none; background:transparent;" v-model="p.name">
-                    <span :class="['theme-tag', 'tag-' + p.theme]">{{ p.theme }}</span>
+            <div class="header-dates">
+                <div class="date-item">
+                    <span class="date-label">출발</span>
+                    <input type="date" v-model="startDate" class="header-date-input">
                 </div>
-                <input style="border:none; font-size:0.8rem; color:#999; width:100%; outline:none; background:transparent;" v-model="p.tip">
+                <span class="date-arrow">→</span>
+                <div class="date-item">
+                    <span class="date-label">도착</span>
+                    <span class="date-static">{{ endDate }}</span>
+                </div>
             </div>
-            <div class="photo-btn" @click="clickUpload(p.id)">
-                <img v-if="p.photo" :src="p.photo">
-                <i v-else class="fa-solid fa-plus" style="color:#E9E4D4; font-size:1.2rem;"></i>
-                <input type="file" :id="'file-'+p.id" hidden accept="image/*" @change="uploadPhoto($event, p.id)">
+
+            <div v-if="currentPlace" class="now-card">
+                <div class="now-eyebrow"><span class="now-dot"></span>지금 여기</div>
+                <div>
+                    <div class="now-name">{{ currentPlace.name }}</div>
+                    <div class="now-chips">
+                        <span class="now-time">{{ currentPlace.time }}</span>
+                        <span class="now-chip">{{ currentPlace.theme }}</span>
+                    </div>
+                </div>
+                <div class="now-divider"></div>
+                <div class="now-rows">
+                    <div class="now-row">
+                        <svg class="now-icon" viewBox="0 0 24 24">
+                            <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        <span class="now-row-text">{{ currentPlace.name }}, 이천시</span>
+                    </div>
+                    <div class="now-row">
+                        <svg class="now-icon" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        <span class="now-row-text">{{ currentPlace.tip }}</span>
+                    </div>
+                    <div class="now-row">
+                        <svg class="now-icon" viewBox="0 0 24 24">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                        <span class="now-row-text">{{ currentPlace.enjoyTip }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div v-for="(day, dIdx) in schedule" :key="dIdx" class="day-section">
+            <div class="day-label">
+                <span class="day-number">Day {{ dIdx + 1 }}</span>
+                <span class="day-date">{{ getFormattedDate(dIdx) }}</span>
+            </div>
+            <div
+                v-for="p in day.places" :key="p.id"
+                class="place-row"
+                :class="{ active: currentPlace?.id === p.id }"
+            >
+                <span class="place-time">{{ p.time }}</span>
+                <div class="place-body">
+                    <div class="place-name-row">
+                        <span class="place-name">{{ p.name }}</span>
+                        <span class="place-tag" :class="'tag-' + p.theme_id">{{ p.theme }}</span>
+                    </div>
+                    <div class="place-tip">{{ p.tip }}</div>
+                </div>
+                <div class="photo-slot" :class="{ 'has-img': p.photo }" @click="clickUpload(p.id)">
+                    <img v-if="p.photo" :src="p.photo" alt="">
+                    <svg v-else class="photo-slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                    <input type="file" :id="'file-'+p.id" hidden accept="image/*" @change="uploadPhoto($event, p.id)">
+                </div>
             </div>
         </div>
     </div>
 
     <div class="bottom-nav">
-        <button class="nav-btn" @click="playArt" :disabled="allPhotos.length === 0"><i class="fa-solid fa-wind"></i> 아트</button>
-        <button class="nav-btn" @click="showReport = true"><i class="fa-solid fa-table-cells"></i> 요약</button>
+        <button class="nav-btn" @click="playArt" :disabled="allPhotos.length === 0">흘려보내기</button>
+        <button class="nav-btn primary" @click="showReport = true">요약 보기</button>
     </div>
 
     <div class="art-overlay" :class="{ show: isArtPlaying }">
-        <div style="flex:1; position:relative;" id="art-canvas">
-            <div class="rice-stem"></div>
-            <div v-for="(piece, idx) in collagePieces" :key="idx" class="rice-ear" :style="piece.style">
-                <div style="width:2px; height:30px; background:#A3B18A;"></div>
-                <img :src="piece.src">
-            </div>
+        <div v-for="(piece, idx) in collagePieces" :key="idx" class="art-piece" :style="piece.style">
+            <img :src="piece.src" alt="">
         </div>
-        <div style="padding: 30px; text-align:center; z-index:10;"><button class="nav-btn" @click="isArtPlaying = false" style="margin:0 auto; background:#4A443F;">로그로 돌아가기</button></div>
+        <div class="art-close">
+            <button class="nav-btn" @click="isArtPlaying = false">돌아가기</button>
+        </div>
     </div>
 
-    <div class="report-overlay" :class="{ show: showReport }" @click.self="showReport = false">
-        <div id="report-content">
-            <h2 style="font-family:'Noto Serif KR'; color:var(--accent-gold); margin:0;">ICHEON LOG</h2>
-            <div class="grid">
-                <div v-for="n in 9" :key="n" class="grid-img"><img v-if="allPhotos[n-1]" :src="allPhotos[n-1]" style="width:100%; height:100%; object-fit:cover;"></div>
+    <div class="modal-bg" v-if="showReport" @click.self="showReport = false">
+        <div id="report-content" class="report-card">
+            <div class="report-header">
+                <div class="report-title">Icheon Moment</div>
+                <div class="report-sub">{{ allPhotos.length }} photos · {{ getFormattedDate(0) }} – {{ getFormattedDate(2) }}</div>
             </div>
-            <button @click="saveImage" style="width:100%; background:var(--accent-gold); color:white; border:none; padding:15px; border-radius:15px; font-weight:800; cursor:pointer;">갤러리 저장</button>
+            <div class="photo-grid">
+                <div v-for="n in 9" :key="n" class="photo-grid-cell">
+                    <img v-if="allPhotos[n-1]" :src="allPhotos[n-1]" alt="">
+                </div>
+            </div>
+            <div class="report-footer">
+                <button class="nav-btn" style="flex:1" @click="showReport = false">닫기</button>
+                <button class="nav-btn primary" style="flex:1" @click="saveImage">저장</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    const { createApp, ref, computed, onMounted, watch } = Vue;
-    createApp({
-        setup() {
-            const startDate = ref(dayjs().format('YYYY-MM-DD'));
-            const isArtPlaying = ref(false);
-            const showReport = ref(false);
-            const collagePieces = ref([]);
-            const weather = ref(null);
+const { createApp, ref, computed, onMounted } = Vue;
+createApp({
+    setup() {
+        const startDate = ref(dayjs().format('YYYY-MM-DD'));
+        const isArtPlaying = ref(false);
+        const showReport = ref(false);
+        const collagePieces = ref([]);
 
-            const schedule = ref([
-                { places: [
-                    { id: '1-1', time: '13:30', name: '카쿠레가 이천점', theme: '식사', tip: '🍱 스테키동 맛집', photo: null, h: 13.5 },
-                    { id: '1-2', time: '15:00', name: '예스파크 산책', theme: '체험', tip: '🎨 도자기 인생샷', photo: null, h: 15 },
-                    { id: '1-3', time: '17:00', name: '이진상회', theme: '카페', tip: '🥐 쌀빵 먹기', photo: null, h: 17 },
-                    { id: '1-4', time: '19:00', name: '장작집', theme: '식사', tip: '🍗 누룽지 통닭', photo: null, h: 19 },
-                    { id: '1-5', time: '20:30', name: '별빛정원 우주', theme: '관광', tip: '✨ 야간 조명', photo: null, h: 20.5 }
-                ]},
-                { places: [
-                    { id: '2-1', time: '10:30', name: '나츠카페', theme: '카페', tip: '☕ 모닝 커피', photo: null, h: 10.5 },
-                    { id: '2-2', time: '12:00', name: '시립박물관', theme: '관광', tip: '🏺 역사 관람', photo: null, h: 12 },
-                    { id: '2-4', time: '15:30', name: '시몬스 테라스', theme: '체험', tip: '📸 포토존', photo: null, h: 15.5 },
-                    { id: '2-5', time: '18:30', name: '이천 쌀밥 정식', theme: '식사', tip: '🍚 피날레 한정식', photo: null, h: 18.5 }
-                ]},
-                { places: [
-                    { id: '3-1', time: '11:30', name: '테르메덴 스파', theme: '체험', tip: '🧖 힐링 스파', photo: null, h: 11.5 },
-                    { id: '3-2', time: '15:00', name: '남이천막국수', theme: '식사', tip: '🥢 개운한 메뉴', photo: null, h: 15 }
-                ]}
-            ]);
+        const DAY_LABELS = ['일','월','화','수','목','금','토'];
+        const endDate = computed(() => {
+            const d = dayjs(startDate.value).add(2, 'day');
+            return d.format('MM.DD') + ' (' + DAY_LABELS[d.day()] + ')';
+        });
 
-            const getIcheonWeather = () => { weather.value = { temp: 18, desc: '맑음', icon: '01d' }; };
-            const weatherIcon = computed(() => weather.value?.icon === '01d' ? 'fa-solid fa-sun' : 'fa-solid fa-cloud');
-            const getFormattedDate = (offset) => dayjs(startDate.value).add(offset, 'day').format('MM.DD');
-            const flattenedSchedule = computed(() => schedule.value.flatMap(d => d.places));
-            const allPhotos = computed(() => flattenedSchedule.value.filter(p => p.photo).map(p => p.photo));
-            const currentPlace = computed(() => {
-                const now = dayjs();
-                const all = schedule.value.flatMap((d, i) => d.places.map(p => ({...p, fullDate: dayjs(startDate.value).add(i, 'day').hour(Math.floor(p.h)).minute((p.h % 1) * 60)})));
-                return all.reverse().find(p => now.isAfter(p.fullDate)) || null;
+        const schedule = ref([
+            { places: [
+                { id:'i1-1', time:'13:30', name:'카쿠레가 이천점', theme:'식사', theme_id:'food', tip:'스테키동 맛집, 일본식 덮밥',          enjoyTip:'점심 피크 전 입장 추천. 스테키동 미디엄 레어로', photo:null, h:13.5 },
+                { id:'i1-2', time:'15:00', name:'예스파크',         theme:'체험', theme_id:'exp',  tip:'도자기 공방 밀집 예술마을',           enjoyTip:'공방 체험 예약하면 나만의 도자기 만들기 가능', photo:null, h:15 },
+                { id:'i1-3', time:'17:00', name:'이진상회',         theme:'카페', theme_id:'cafe', tip:'이천 쌀빵 전문 카페',                 enjoyTip:'쌀식빵·쌀크로플 구매 추천. 포장도 가능', photo:null, h:17 },
+                { id:'i1-4', time:'19:00', name:'장작집',           theme:'식사', theme_id:'food', tip:'누룽지 통닭 전문점',                  enjoyTip:'누룽지 통닭은 미리 예약 필수. 2인분부터 주문', photo:null, h:19 },
+                { id:'i1-5', time:'20:30', name:'별빛정원 우주',    theme:'관광', theme_id:'view', tip:'야간 조명 테마파크',                  enjoyTip:'입장 후 분수쇼 시간 먼저 확인. 삼각대 지참 추천', photo:null, h:20.5 }
+            ]},
+            { places: [
+                { id:'i2-1', time:'10:30', name:'나츠카페',         theme:'카페', theme_id:'cafe', tip:'이천 감성 모닝 카페',                 enjoyTip:'시즌 한정 음료 꼭 확인. 야외 테라스 자리 추천', photo:null, h:10.5 },
+                { id:'i2-2', time:'12:00', name:'이천시립박물관',   theme:'관광', theme_id:'view', tip:'도자기·이천 역사 전시',               enjoyTip:'2층 도자기 기획전 위주로 관람. 무료 입장', photo:null, h:12 },
+                { id:'i2-3', time:'15:30', name:'시몬스 테라스',    theme:'체험', theme_id:'exp',  tip:'침대 브랜드 복합문화공간·포토존',     enjoyTip:'그로서리 스토어에서 굿즈 구경 필수', photo:null, h:15.5 },
+                { id:'i2-4', time:'18:30', name:'이천 쌀밥 정식',  theme:'식사', theme_id:'food', tip:'이천쌀 한정식으로 여행 피날레',       enjoyTip:'돌솥밥 추가 주문 추천. 반찬 가짓수 확인', photo:null, h:18.5 }
+            ]},
+            { places: [
+                { id:'i3-1', time:'11:30', name:'테르메덴 스파',    theme:'체험', theme_id:'spa',  tip:'온천 테마 워터파크·스파',            enjoyTip:'평일 오전 입장이 가장 한산. 수영복 챙기기', photo:null, h:11.5 },
+                { id:'i3-2', time:'15:00', name:'남이천막국수',     theme:'식사', theme_id:'food', tip:'스파 후 개운한 막국수 한 그릇',       enjoyTip:'물막국수+수육 조합 추천. 겨자·식초 취향껏', photo:null, h:15 }
+            ]}
+        ]);
+
+        const getFormattedDate = (offset) => dayjs(startDate.value).add(offset, 'day').format('MM.DD');
+        const allPhotos = computed(() =>
+            schedule.value.flatMap(d => d.places).filter(p => p.photo).map(p => p.photo)
+        );
+        const currentPlace = computed(() => {
+            const now = dayjs();
+            const all = schedule.value.flatMap((d, i) => d.places.map(p => ({
+                ...p,
+                fullDate: dayjs(startDate.value).add(i, 'day').hour(Math.floor(p.h)).minute(Math.round((p.h % 1) * 60))
+            })));
+            return all.reverse().find(p => now.isAfter(p.fullDate)) || null;
+        });
+
+        const clickUpload = (id) => document.getElementById('file-' + id).click();
+        const uploadPhoto = (e, id) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (res) => {
+                schedule.value.forEach(d => d.places.forEach(p => {
+                    if (p.id === id) p.photo = res.target.result;
+                }));
+                localStorage.setItem('trip_icheon_v1', JSON.stringify(schedule.value));
+            };
+            reader.readAsDataURL(file);
+        };
+
+        const playArt = () => {
+            isArtPlaying.value = true;
+            collagePieces.value = [];
+            allPhotos.value.forEach((photo, i) => {
+                setTimeout(() => {
+                    collagePieces.value.push({
+                        src: photo,
+                        style: {
+                            top:  (Math.random() * 58 + 8) + '%',
+                            left: (Math.random() * 62 + 6) + '%',
+                            animationDelay:    (i * 0.5) + 's',
+                            animationDuration: (5 + Math.random() * 3) + 's'
+                        }
+                    });
+                }, i * 260);
             });
+        };
 
-            const clickUpload = (id) => document.getElementById('file-'+id).click();
-            const uploadPhoto = (e, id) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (res) => {
-                    schedule.value.forEach(d => d.places.forEach(p => { if(p.id === id) p.photo = res.target.result; }));
-                    localStorage.setItem('trip_icheon_final', JSON.stringify(schedule.value));
-                };
-                reader.readAsDataURL(file);
-            };
-
-            const playArt = () => {
-                isArtPlaying.value = true;
-                collagePieces.value = [];
-                allPhotos.value.forEach((photo, i) => {
-                    setTimeout(() => {
-                        const side = i % 2 === 0 ? -1 : 1;
-                        collagePieces.value.push({
-                            src: photo,
-                            style: { top: (15 + (i * 15)) + '%', left: `calc(50% + ${side * 70}px)`, animationDelay: (i * 0.2) + 's' }
-                        });
-                    }, i * 400);
-                });
-            };
-
-            const saveImage = () => {
-                html2canvas(document.getElementById('report-content')).then(canvas => {
-                    const link = document.createElement('a');
-                    link.download = '이천쌀알로그.png'; link.href = canvas.toDataURL(); link.click();
-                });
-            };
-
-            onMounted(() => {
-                getIcheonWeather();
-                const saved = localStorage.getItem('trip_icheon_final');
-                if (saved) schedule.value = JSON.parse(saved);
-                const savedDate = localStorage.getItem('trip_start_date_final');
-                if (savedDate) startDate.value = savedDate;
+        const saveImage = () => {
+            html2canvas(document.getElementById('report-content')).then(canvas => {
+                const link = document.createElement('a');
+                link.download = '이천로그.png';
+                link.href = canvas.toDataURL();
+                link.click();
             });
-            watch(startDate, (v) => localStorage.setItem('trip_start_date_final', v));
+        };
 
-            return { startDate, schedule, getFormattedDate, currentPlace, allPhotos, clickUpload, uploadPhoto, isArtPlaying, playArt, showReport, flattenedSchedule, saveImage, collagePieces, weather, weatherIcon };
-        }
-    }).mount('#app');
+        onMounted(() => {
+            const saved = localStorage.getItem('trip_icheon_v1');
+            if (saved) schedule.value = JSON.parse(saved);
+        });
+
+        return {
+            startDate, endDate, schedule, getFormattedDate,
+            currentPlace, allPhotos, clickUpload, uploadPhoto,
+            isArtPlaying, playArt, showReport, saveImage, collagePieces
+        };
+    }
+}).mount('#app');
 </script>
 </body>
 </html>
