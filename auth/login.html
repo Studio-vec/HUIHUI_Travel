@@ -1,1 +1,365 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>로그인 – HUIHUI TRIP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --purple:       #7A57CD;
+      --purple-mid:   #946EEE;
+      --purple-light: #C8B1FF;
+      --purple-pale:  #EDE5FF;
+      --cream:        #FFF8EB;
+      --green:        #8F9D68;
+      --text:         #2a1a4a;
+      --text-mid:     #5a3e8a;
+      --text-dim:     #9a8ab0;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
 
+    body {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Noto Sans KR', sans-serif;
+      background: linear-gradient(160deg, var(--cream) 0%, #e8dcff 50%, #c8b1ff 100%);
+      padding: 24px 16px;
+    }
+
+    /* ── 영수증 카드 ── */
+    .receipt {
+      width: min(299px, 92vw);
+      background: var(--cream);
+      padding: 0;
+      position: relative;
+      filter: drop-shadow(0 20px 40px rgba(122,87,205,0.22));
+    }
+
+    /* 위 톱니 */
+    .receipt-top {
+      width: 100%;
+      height: 14px;
+      background: var(--cream);
+      position: relative;
+    }
+    .receipt-top::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 14px;
+      background:
+        radial-gradient(circle at 50% -1px, transparent 7px, var(--cream) 7px)
+        -7px 0 / 14px 14px repeat-x;
+    }
+
+    /* 중간 본문 */
+    .receipt-body {
+      background: var(--cream);
+      padding: 10px 24px 20px;
+    }
+
+    /* 아래 톱니 */
+    .receipt-bottom {
+      width: 100%;
+      height: 14px;
+      background: var(--cream);
+      position: relative;
+    }
+    .receipt-bottom::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 14px;
+      background:
+        radial-gradient(circle at 50% calc(100% + 1px), transparent 7px, var(--cream) 7px)
+        -7px 0 / 14px 14px repeat-x;
+    }
+
+    /* 로고 영역 */
+    .logo-wrap {
+      display: flex; flex-direction: column;
+      align-items: center; padding: 20px 0 14px;
+    }
+    .logo-circle {
+      width: 68px; height: 68px; border-radius: 50%;
+      background: radial-gradient(circle at 38% 32%, #C8B1FF, #AB88FF 55%, #7A57CD);
+      box-shadow: 2px 4px 8px rgba(0,0,0,0.12), inset -2px -4px 8px rgba(80,0,200,0.25);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 10px;
+    }
+    .logo-circle span {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; font-weight: 900;
+      color: white; letter-spacing: 0.05em;
+    }
+    .receipt-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; font-weight: 900;
+      color: var(--purple); letter-spacing: -0.01em;
+    }
+    .receipt-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-size: 0.7rem;
+      color: var(--text-dim); letter-spacing: 0.15em; margin-top: 2px;
+    }
+
+    /* 구분선 */
+    .divider {
+      border: none;
+      border-top: 1.5px dashed var(--purple-light);
+      margin: 12px 0;
+    }
+    .divider-solid {
+      border: none;
+      border-top: 1px solid var(--purple-light);
+      margin: 12px 0;
+    }
+
+    /* 영수증 메타 행 */
+    .meta-row {
+      display: flex; justify-content: space-between;
+      align-items: baseline; margin-bottom: 4px;
+    }
+    .meta-label {
+      font-size: 0.62rem; font-weight: 600;
+      color: var(--green); letter-spacing: 0.12em;
+    }
+    .meta-value {
+      font-size: 0.68rem; color: var(--text-dim);
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    /* 인풋 라벨 */
+    .field-label {
+      font-size: 0.62rem; font-weight: 600;
+      color: var(--green); letter-spacing: 0.12em;
+      margin-bottom: 6px; display: block;
+    }
+
+    /* 인풋 박스 */
+    .field { margin-bottom: 12px; }
+    .input-box {
+      width: 100%; height: 42px;
+      background: white;
+      border: 1.5px solid var(--purple-light);
+      border-radius: 999px;
+      padding: 0 40px 0 16px;
+      font-size: 0.85rem;
+      font-family: 'Noto Sans KR', sans-serif;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      box-shadow: inset 0 1px 3px rgba(122,87,205,0.06);
+    }
+    .input-box:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(122,87,205,0.1);
+    }
+    .input-box::placeholder { color: var(--text-dim); font-size: 0.78rem; }
+
+    /* 비밀번호 래퍼 */
+    .pw-wrap { position: relative; }
+    .pw-toggle {
+      position: absolute; right: 14px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: var(--text-dim); font-size: 0.68rem;
+      font-family: 'Noto Sans KR', sans-serif;
+      padding: 4px; z-index: 1;
+    }
+    .pw-toggle:hover { color: var(--purple); }
+
+    /* 에러 */
+    .error-msg {
+      font-size: 0.68rem; color: #c04040;
+      text-align: center; min-height: 16px;
+      opacity: 0; transition: opacity 0.2s;
+      margin: 4px 0 6px;
+    }
+    .error-msg.show { opacity: 1; }
+
+    /* 체크인 버튼 */
+    .btn-checkin {
+      width: 100%; height: 46px;
+      background: var(--purple);
+      border: none; border-radius: 999px;
+      display: flex; align-items: center;
+      padding: 0 20px; cursor: pointer;
+      box-shadow: 0 4px 14px rgba(122,87,205,0.35);
+      transition: transform 0.15s, box-shadow 0.15s;
+      margin-top: 4px;
+    }
+    .btn-checkin:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(122,87,205,0.45); }
+    .btn-checkin:active { transform: translateY(0); }
+    .btn-checkin-label {
+      font-size: 0.72rem; font-weight: 700;
+      color: rgba(255,255,255,0.75); letter-spacing: 0.14em;
+      text-transform: uppercase; flex: 1;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+    .btn-checkin-arrow {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; color: white;
+    }
+
+    /* 하단 링크 */
+    .receipt-links {
+      display: flex; justify-content: center; gap: 14px;
+      margin-top: 14px;
+    }
+    .receipt-links a {
+      font-size: 0.68rem; color: var(--green);
+      text-decoration: none; letter-spacing: 0.04em;
+    }
+    .receipt-links a:hover { color: var(--purple); text-decoration: underline; }
+    .receipt-links span { color: var(--purple-light); }
+
+    /* 도장 */
+    .stamp {
+      position: absolute; bottom: 30px; right: 14px;
+      width: 44px; height: 44px;
+      border: 2px solid var(--purple);
+      border-radius: 50%; opacity: 0.15;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.42rem; font-weight: 700; color: var(--purple);
+      letter-spacing: 0.05em; transform: rotate(-15deg);
+      pointer-events: none;
+    }
+
+    /* 토스트 */
+    .toast {
+      position: fixed; top: 24px; left: 50%;
+      transform: translateX(-50%) translateY(-80px);
+      background: var(--purple); color: white;
+      border-radius: 999px; padding: 10px 24px;
+      font-size: 0.82rem; font-weight: 500;
+      box-shadow: 0 8px 24px rgba(122,87,205,0.3);
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      white-space: nowrap; z-index: 999;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<div class="receipt">
+  <!-- 위 톱니 -->
+  <div class="receipt-top"></div>
+
+  <!-- 본문 -->
+  <div class="receipt-body">
+
+    <!-- 로고 -->
+    <div class="logo-wrap">
+      <div class="logo-circle"><span>HH</span></div>
+      <div class="receipt-title">MASIL</div>
+      <div class="receipt-sub">HUIHUI TRAVEL LOG</div>
+    </div>
+
+    <hr class="divider-solid"/>
+
+    <!-- 메타 정보 -->
+    <div class="meta-row">
+      <span class="meta-label">GUEST ID</span>
+      <span class="meta-value">—</span>
+    </div>
+    <div class="meta-row">
+      <span class="meta-label">CHECK IN</span>
+      <span class="meta-value" id="dateValue">—</span>
+    </div>
+
+    <hr class="divider"/>
+
+    <!-- 아이디 -->
+    <div class="field">
+      <label class="field-label">ID</label>
+      <input class="input-box" type="text" id="uid"
+             placeholder="아이디를 입력하세요" autocomplete="username"/>
+    </div>
+
+    <!-- 비밀번호 -->
+    <div class="field">
+      <label class="field-label">PASSWORD</label>
+      <div class="pw-wrap">
+        <input class="input-box" type="password" id="pw"
+               placeholder="비밀번호를 입력하세요" autocomplete="current-password"/>
+        <button class="pw-toggle" onclick="togglePw()" type="button">보기</button>
+      </div>
+    </div>
+
+    <div class="error-msg" id="errMsg"></div>
+
+    <hr class="divider"/>
+
+    <!-- 체크인 버튼 -->
+    <button class="btn-checkin" onclick="doLogin()">
+      <span class="btn-checkin-label">CHECK IN</span>
+      <span class="btn-checkin-arrow">→</span>
+    </button>
+
+    <!-- 링크 -->
+    <div class="receipt-links">
+      <a href="find-account.html?mode=id">아이디 찾기</a>
+      <span>·</span>
+      <a href="find-account.html?mode=pw">비밀번호 찾기</a>
+    </div>
+
+  </div>
+
+  <!-- 아래 톱니 -->
+  <div class="receipt-bottom"></div>
+
+  <!-- 도장 -->
+  <div class="stamp">CHECKED</div>
+</div>
+
+<div class="toast" id="toast">✓ 체크인 완료! 어서오세요 🗝️</div>
+
+<script>
+  // 오늘 날짜
+  const t = new Date();
+  document.getElementById('dateValue').textContent =
+    t.getFullYear() + '.' +
+    String(t.getMonth()+1).padStart(2,'0') + '.' +
+    String(t.getDate()).padStart(2,'0');
+
+  // 기본 계정
+  if(!localStorage.getItem('huihui_accounts')) {
+    localStorage.setItem('huihui_accounts', JSON.stringify([
+      { id:'huihui', pw:'1234', q1:'좋아하는 색은?', a1:'보라', q2:'좋아하는 여행지는?', a2:'여수' }
+    ]));
+  }
+
+  function togglePw() {
+    const i = document.getElementById('pw');
+    const b = event.currentTarget;
+    i.type = i.type==='password' ? 'text' : 'password';
+    b.textContent = i.type==='password' ? '보기' : '숨기기';
+  }
+
+  function doLogin() {
+    const uid = document.getElementById('uid').value.trim();
+    const pw  = document.getElementById('pw').value;
+    const err = document.getElementById('errMsg');
+    if(!uid || !pw) {
+      err.textContent = '아이디와 비밀번호를 모두 입력해주세요.';
+      err.classList.add('show'); return;
+    }
+    const accounts = JSON.parse(localStorage.getItem('huihui_accounts')||'[]');
+    const found = accounts.find(a => a.id===uid && a.pw===pw);
+    if(found) {
+      err.classList.remove('show');
+      localStorage.setItem('huihui_current_user', uid);
+      document.getElementById('toast').classList.add('show');
+      setTimeout(() => window.location.href = '../index.html', 1400);
+    } else {
+      err.textContent = '아이디 또는 비밀번호가 맞지 않아요.';
+      err.classList.add('show');
+      document.getElementById('pw').value = '';
+    }
+  }
+  document.addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+</script>
+</body>
+</html>
