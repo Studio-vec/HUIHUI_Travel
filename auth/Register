@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>회원가입 – HUIHUI TRIP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --purple:       #7A57CD;
+      --purple-mid:   #946EEE;
+      --purple-light: #C8B1FF;
+      --purple-pale:  #EDE5FF;
+      --cream:        #FFF8EB;
+      --green:        #8F9D68;
+      --text:         #2a1a4a;
+      --text-mid:     #5a3e8a;
+      --text-dim:     #9a8ab0;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Noto Sans KR', sans-serif;
+      background: linear-gradient(160deg, var(--cream) 0%, #e8dcff 50%, #c8b1ff 100%);
+      padding: 40px 16px;
+    }
+
+    /* ── 영수증 카드 ── */
+    .receipt {
+      width: min(299px, 92vw);
+      background: var(--cream);
+      position: relative;
+      filter: drop-shadow(0 20px 40px rgba(122,87,205,0.22));
+    }
+
+    .receipt-top {
+      width: 100%; height: 14px; background: var(--cream);
+    }
+    .receipt-top::before {
+      content: '';
+      display: block; height: 14px;
+      background: radial-gradient(circle at 50% -1px, transparent 7px, var(--cream) 7px)
+        -7px 0 / 14px 14px repeat-x;
+    }
+    .receipt-body {
+      background: var(--cream);
+      padding: 10px 24px 22px;
+    }
+    .receipt-bottom {
+      width: 100%; height: 14px; background: var(--cream);
+    }
+    .receipt-bottom::after {
+      content: '';
+      display: block; height: 14px;
+      background: radial-gradient(circle at 50% calc(100% + 1px), transparent 7px, var(--cream) 7px)
+        -7px 0 / 14px 14px repeat-x;
+    }
+
+    /* 로고 */
+    .logo-wrap {
+      display: flex; flex-direction: column;
+      align-items: center; padding: 18px 0 12px;
+    }
+    .logo-circle {
+      width: 60px; height: 60px; border-radius: 50%;
+      background: radial-gradient(circle at 38% 32%, #C8B1FF, #AB88FF 55%, #7A57CD);
+      box-shadow: 2px 4px 8px rgba(0,0,0,0.12), inset -2px -4px 8px rgba(80,0,200,0.25);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 8px;
+    }
+    .logo-circle span {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.9rem; font-weight: 900; color: white; letter-spacing: 0.05em;
+    }
+    .receipt-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem; font-weight: 900;
+      color: var(--purple); letter-spacing: -0.01em;
+    }
+    .receipt-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-size: 0.68rem;
+      color: var(--text-dim); letter-spacing: 0.15em; margin-top: 2px;
+    }
+
+    /* 구분선 */
+    .divider      { border:none; border-top: 1.5px dashed var(--purple-light); margin: 10px 0; }
+    .divider-solid{ border:none; border-top: 1px solid var(--purple-light);    margin: 10px 0; }
+
+    /* 메타 행 */
+    .meta-row {
+      display: flex; justify-content: space-between;
+      align-items: baseline; margin-bottom: 3px;
+    }
+    .meta-label { font-size: 0.6rem; font-weight: 600; color: var(--green); letter-spacing: 0.12em; }
+    .meta-value { font-size: 0.66rem; color: var(--text-dim); font-family: 'Cormorant Garamond', serif; }
+
+    /* 인풋 */
+    .field { margin-bottom: 10px; }
+    .field-label {
+      font-size: 0.6rem; font-weight: 600;
+      color: var(--green); letter-spacing: 0.12em;
+      margin-bottom: 5px; display: block;
+    }
+    .input-box {
+      width: 100%; height: 40px;
+      background: white;
+      border: 1.5px solid var(--purple-light);
+      border-radius: 999px;
+      padding: 0 14px;
+      font-size: 0.83rem;
+      font-family: 'Noto Sans KR', sans-serif;
+      color: var(--text); outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      box-shadow: inset 0 1px 3px rgba(122,87,205,0.06);
+    }
+    .input-box:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(122,87,205,0.1);
+    }
+    .input-box::placeholder { color: var(--text-dim); font-size: 0.76rem; }
+    .input-box.error { border-color: #c04040; }
+    .input-box.ok    { border-color: var(--green); }
+
+    /* 셀렉트 */
+    select.input-box {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237A57CD' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 32px; cursor: pointer;
+    }
+
+    /* 인라인 힌트 */
+    .field-hint {
+      font-size: 0.62rem; margin-top: 4px; padding-left: 4px;
+      display: none;
+    }
+    .field-hint.show { display: block; }
+    .field-hint.err  { color: #c04040; }
+    .field-hint.suc  { color: var(--green); }
+
+    /* 에러 */
+    .error-msg {
+      font-size: 0.68rem; color: #c04040;
+      text-align: center; min-height: 16px;
+      opacity: 0; transition: opacity 0.2s; margin: 4px 0;
+    }
+    .error-msg.show { opacity: 1; }
+
+    /* 가입 버튼 */
+    .btn-register {
+      width: 100%; height: 46px;
+      background: var(--purple); border: none; border-radius: 999px;
+      display: flex; align-items: center; padding: 0 20px; cursor: pointer;
+      box-shadow: 0 4px 14px rgba(122,87,205,0.35);
+      transition: transform 0.15s, box-shadow 0.15s;
+      margin-top: 4px;
+    }
+    .btn-register:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(122,87,205,0.45); }
+    .btn-label  { font-size: 0.72rem; font-weight: 700; color: rgba(255,255,255,0.75); letter-spacing: 0.14em; flex: 1; font-family: 'Noto Sans KR', sans-serif; }
+    .btn-arrow  { font-family: 'Playfair Display', serif; font-size: 1rem; color: white; }
+
+    /* 하단 링크 */
+    .receipt-links { display: flex; justify-content: center; margin-top: 12px; }
+    .receipt-links a { font-size: 0.68rem; color: var(--green); text-decoration: none; }
+    .receipt-links a:hover { color: var(--purple); text-decoration: underline; }
+
+    /* 도장 */
+    .stamp {
+      position: absolute; bottom: 26px; right: 14px;
+      width: 42px; height: 42px;
+      border: 2px solid var(--purple); border-radius: 50%;
+      opacity: 0.15; display: flex; align-items: center; justify-content: center;
+      font-size: 0.4rem; font-weight: 700; color: var(--purple);
+      letter-spacing: 0.04em; transform: rotate(-15deg); pointer-events: none;
+    }
+
+    /* 토스트 */
+    .toast {
+      position: fixed; top: 24px; left: 50%;
+      transform: translateX(-50%) translateY(-80px);
+      background: var(--purple); color: white;
+      border-radius: 999px; padding: 10px 24px;
+      font-size: 0.82rem; font-weight: 500;
+      box-shadow: 0 8px 24px rgba(122,87,205,0.3);
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      white-space: nowrap; z-index: 999;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<div class="receipt">
+  <div class="receipt-top"></div>
+  <div class="receipt-body">
+
+    <!-- 로고 -->
+    <div class="logo-wrap">
+      <div class="logo-circle"><span>HH</span></div>
+      <div class="receipt-title">NEW GUEST</div>
+      <div class="receipt-sub">HUIHUI TRAVEL LOG</div>
+    </div>
+
+    <hr class="divider-solid"/>
+
+    <!-- 메타 -->
+    <div class="meta-row">
+      <span class="meta-label">REGISTRATION</span>
+      <span class="meta-value" id="dateValue">—</span>
+    </div>
+    <div class="meta-row">
+      <span class="meta-label">STATUS</span>
+      <span class="meta-value">NEW MEMBER</span>
+    </div>
+
+    <hr class="divider"/>
+
+    <!-- 아이디 -->
+    <div class="field">
+      <label class="field-label">ID</label>
+      <input class="input-box" type="text" id="uid"
+             placeholder="영문, 숫자 4-16자" oninput="checkId(this)"/>
+      <div class="field-hint" id="uid-hint"></div>
+    </div>
+
+    <!-- 비밀번호 -->
+    <div class="field">
+      <label class="field-label">PASSWORD</label>
+      <input class="input-box" type="password" id="pw"
+             placeholder="4자 이상" oninput="checkPw(this)"/>
+      <div class="field-hint" id="pw-hint"></div>
+    </div>
+
+    <!-- 비밀번호 확인 -->
+    <div class="field">
+      <label class="field-label">PASSWORD CONFIRM</label>
+      <input class="input-box" type="password" id="pw2"
+             placeholder="비밀번호를 다시 입력" oninput="checkPw2(this)"/>
+      <div class="field-hint" id="pw2-hint"></div>
+    </div>
+
+    <hr class="divider"/>
+
+    <!-- 보안 질문 1 -->
+    <div class="field">
+      <label class="field-label">SECURITY Q1</label>
+      <select class="input-box" id="q1" onchange="syncQ2()">
+        <option value="">질문을 선택하세요</option>
+        <option value="좋아하는 색은?">좋아하는 색은?</option>
+        <option value="좋아하는 여행지는?">좋아하는 여행지는?</option>
+        <option value="어릴 때 별명은?">어릴 때 별명은?</option>
+        <option value="첫 번째 반려동물 이름은?">첫 번째 반려동물 이름은?</option>
+        <option value="가장 기억에 남는 여행지는?">가장 기억에 남는 여행지는?</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="field-label">ANSWER 1</label>
+      <input class="input-box" type="text" id="a1" placeholder="답변을 입력하세요"/>
+    </div>
+
+    <!-- 보안 질문 2 -->
+    <div class="field">
+      <label class="field-label">SECURITY Q2</label>
+      <select class="input-box" id="q2">
+        <option value="">질문을 선택하세요</option>
+        <option value="좋아하는 색은?">좋아하는 색은?</option>
+        <option value="좋아하는 여행지는?">좋아하는 여행지는?</option>
+        <option value="어릴 때 별명은?">어릴 때 별명은?</option>
+        <option value="첫 번째 반려동물 이름은?">첫 번째 반려동물 이름은?</option>
+        <option value="가장 기억에 남는 여행지는?">가장 기억에 남는 여행지는?</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="field-label">ANSWER 2</label>
+      <input class="input-box" type="text" id="a2" placeholder="답변을 입력하세요"/>
+    </div>
+
+    <div class="error-msg" id="errMsg"></div>
+
+    <hr class="divider"/>
+
+    <!-- 가입 버튼 -->
+    <button class="btn-register" onclick="doRegister()">
+      <span class="btn-label">CHECK IN FOR GOOD</span>
+      <span class="btn-arrow">→</span>
+    </button>
+
+    <div class="receipt-links">
+      <a href="login.html">이미 계정이 있으신가요? 로그인 →</a>
+    </div>
+
+  </div>
+  <div class="receipt-bottom"></div>
+  <div class="stamp">NEW GUEST</div>
+</div>
+
+<div class="toast" id="toast">✓ 가입 완료! 어서오세요 🗝️</div>
+
+<script>
+  // 날짜
+  const t = new Date();
+  document.getElementById('dateValue').textContent =
+    t.getFullYear() + '.' + String(t.getMonth()+1).padStart(2,'0') + '.' + String(t.getDate()).padStart(2,'0');
+
+  function setHint(id, msg, type) {
+    const el = document.getElementById(id + '-hint');
+    if(!el) return;
+    el.textContent = msg;
+    el.className = 'field-hint show ' + type;
+  }
+  function clearHint(id) {
+    const el = document.getElementById(id + '-hint');
+    if(el) { el.className = 'field-hint'; el.textContent = ''; }
+  }
+
+  function checkId(el) {
+    const v = el.value.trim();
+    const accounts = JSON.parse(localStorage.getItem('huihui_accounts')||'[]');
+    if(!v) { el.className='input-box'; clearHint('uid'); return; }
+    if(!/^[a-zA-Z0-9]{4,16}$/.test(v)) {
+      el.className='input-box error';
+      setHint('uid','영문, 숫자 4-16자로 입력해주세요.','err'); return;
+    }
+    if(accounts.find(a=>a.id===v)) {
+      el.className='input-box error';
+      setHint('uid','이미 사용 중인 아이디예요.','err'); return;
+    }
+    el.className='input-box ok';
+    setHint('uid','사용 가능한 아이디예요.','suc');
+  }
+
+  function checkPw(el) {
+    const v = el.value;
+    if(!v) { el.className='input-box'; clearHint('pw'); return; }
+    if(v.length < 4) {
+      el.className='input-box error';
+      setHint('pw','4자 이상 입력해주세요.','err'); return;
+    }
+    el.className='input-box ok'; clearHint('pw');
+    checkPw2(document.getElementById('pw2'));
+  }
+
+  function checkPw2(el) {
+    const v  = el.value;
+    const pw = document.getElementById('pw').value;
+    if(!v) { el.className='input-box'; clearHint('pw2'); return; }
+    if(v !== pw) {
+      el.className='input-box error';
+      setHint('pw2','비밀번호가 일치하지 않아요.','err'); return;
+    }
+    el.className='input-box ok';
+    setHint('pw2','비밀번호가 일치해요.','suc');
+  }
+
+  // Q1 선택 시 Q2에서 동일 옵션 비활성화
+  function syncQ2() {
+    const v1 = document.getElementById('q1').value;
+    const q2 = document.getElementById('q2');
+    Array.from(q2.options).forEach(opt => {
+      opt.disabled = (opt.value && opt.value === v1);
+    });
+    if(q2.value === v1) q2.value = '';
+  }
+
+  function doRegister() {
+    const uid = document.getElementById('uid').value.trim();
+    const pw  = document.getElementById('pw').value;
+    const pw2 = document.getElementById('pw2').value;
+    const q1  = document.getElementById('q1').value;
+    const a1  = document.getElementById('a1').value.trim();
+    const q2  = document.getElementById('q2').value;
+    const a2  = document.getElementById('a2').value.trim();
+    const err = document.getElementById('errMsg');
+
+    if(!uid || !pw || !pw2 || !q1 || !a1 || !q2 || !a2) {
+      err.textContent = '모든 항목을 입력해주세요.'; err.classList.add('show'); return;
+    }
+    if(!/^[a-zA-Z0-9]{4,16}$/.test(uid)) {
+      err.textContent = '아이디는 영문, 숫자 4-16자로 입력해주세요.'; err.classList.add('show'); return;
+    }
+    if(pw.length < 4) {
+      err.textContent = '비밀번호는 4자 이상이어야 해요.'; err.classList.add('show'); return;
+    }
+    if(pw !== pw2) {
+      err.textContent = '비밀번호가 일치하지 않아요.'; err.classList.add('show'); return;
+    }
+    if(q1 === q2) {
+      err.textContent = '서로 다른 보안 질문을 선택해주세요.'; err.classList.add('show'); return;
+    }
+
+    const accounts = JSON.parse(localStorage.getItem('huihui_accounts')||'[]');
+    if(accounts.find(a=>a.id===uid)) {
+      err.textContent = '이미 사용 중인 아이디예요.'; err.classList.add('show'); return;
+    }
+
+    accounts.push({ id:uid, pw, q1, a1, q2, a2 });
+    localStorage.setItem('huihui_accounts', JSON.stringify(accounts));
+    localStorage.setItem('huihui_current_user', uid);
+
+    err.classList.remove('show');
+    document.getElementById('toast').classList.add('show');
+    setTimeout(() => window.location.href = '../index.html', 1500);
+  }
+
+  document.addEventListener('keydown', e => { if(e.key==='Enter') doRegister(); });
+</script>
+</body>
+</html>
