@@ -344,29 +344,30 @@ createApp({
         });
 
         const schedule = ref([
-            { places: [
-                { id:'y1-1', time:'13:00', name:'청정게장촌',        theme:'식사',   theme_id:'food',  tip:'여수 첫 끼, 임팩트 있는 게장',  enjoyTip:'간장·양념게장 세트 추천. 공깃밥 추가 필수', photo:null, h:13 },
-                { id:'y1-2', time:'14:30', name:'낭반 게스트하우스', theme:'숙소',   theme_id:'party', tip:'체크인 및 파티 준비',            enjoyTip:'짐 풀고 옷 갈아입기. 파티 소품 미리 세팅', photo:null, h:14.5 },
-                { id:'y1-3', time:'15:20', name:'해상케이블카',       theme:'체험',   theme_id:'view',  tip:'바다 위 스릴, 사진 명소',        enjoyTip:'크리스탈 캐빈 선택 시 발밑 오션뷰 가능', photo:null, h:15.3 },
-                { id:'y1-4', time:'16:10', name:'모이핀 스카이',      theme:'카페',   theme_id:'cafe',  tip:'오션뷰 카페, 인생샷 타임',       enjoyTip:'창가 자리 확보. 아이스 아메리카노+케이크', photo:null, h:16.1 },
-                { id:'y1-5', time:'18:00', name:'낭반 게하 파티',     theme:'이벤트', theme_id:'party', tip:'여행의 핵심, 설레는 교류',       enjoyTip:'준비한 미션 카드로 아이스브레이킹 시작', photo:null, h:18 },
-                { id:'y1-6', time:'21:20', name:'낭만포차 거리',      theme:'술상',   theme_id:'food',  tip:'해산물 안주와 밤바다 감성',      enjoyTip:'갑오징어·멍게 안주에 막걸리 조합 추천', photo:null, h:21.3 }
-            ]},
-            { places: [
-                { id:'y2-1', time:'10:00', name:'녹테마레',     theme:'전시', theme_id:'view',  tip:'SNS 핫플, 미디어아트 공간',    enjoyTip:'조명 바뀌는 타이밍에 맞춰 인증샷 촬영', photo:null, h:10 },
-                { id:'y2-2', time:'12:00', name:'시내 식당',    theme:'식사', theme_id:'food',  tip:'갓김치찌개, 로컬 맛 체험',     enjoyTip:'로컬 백반집 추천. 갓김치는 꼭 리필', photo:null, h:12 },
-                { id:'y2-3', time:'13:20', name:'아쿠아플라넷', theme:'체험', theme_id:'view',  tip:'실내 힐링 데이트 코스',        enjoyTip:'수중 터널 구역이 사진 명소', photo:null, h:13.3 },
-                { id:'y2-4', time:'17:00', name:'이순신광장',   theme:'쇼핑', theme_id:'shop',  tip:'딸기모찌, 약과, 머랭쿠키',     enjoyTip:'시장 골목 안쪽 노점 디저트가 더 맛있음', photo:null, h:17 },
-                { id:'y2-5', time:'20:00', name:'돌산대교',     theme:'야경', theme_id:'view',  tip:'여수 대표 야경 포인트',        enjoyTip:'돌산공원 전망대에서 전체 야경 감상 추천', photo:null, h:20 },
-                { id:'y2-6', time:'21:00', name:'해양공원',     theme:'산책', theme_id:'view',  tip:'밤 산책으로 감성 마무리',      enjoyTip:'오동도 방향 산책로. 야간 조명 켜진 코스', photo:null, h:21 }
-            ]},
-            { places: [
-                { id:'y3-1', time:'09:30', name:'엑스포 브런치',   theme:'카페', theme_id:'cafe', tip:'여유 있는 여행의 시작',       enjoyTip:'엑스포 해양공원 앞 카페. 오션뷰 브런치', photo:null, h:9.5 },
-                { id:'y3-2', time:'11:30', name:'마지막 로컬식',   theme:'식사', theme_id:'food', tip:'해산물 백반으로 든든하게',    enjoyTip:'갈치조림 또는 삼치구이 정식 추천', photo:null, h:11.5 },
-                { id:'y3-3', time:'12:30', name:'이순신광장 쇼핑', theme:'쇼핑', theme_id:'shop', tip:'마지막 기념품, 디저트 구매',  enjoyTip:'여수 갓김치·돌산갓 제품이 선물용으로 최고', photo:null, h:12.5 },
-                { id:'y3-4', time:'16:00', name:'여수 엑스포역',   theme:'복귀', theme_id:'view', tip:'KTX 서울 출발',              enjoyTip:'출발 30분 전 도착. 역내 여수 한정 스낵 구매', photo:null, h:16 }
-            ]}
-        ]);
+    { places: [
+        { id:'y1-1', time:'13:00', name:'PS 파스타',        theme:'식사',   theme_id:'food',  tip:'여수에서의 첫 끼',            enjoyTip:'추천 파스타와 시그니처 메뉴 확인', photo:null, h:13 },
+        { id:'y1-2', time:'14:30', name:'낭반 게스트하우스', theme:'숙소',   theme_id:'party', tip:'체크인 및 파티 준비',        enjoyTip:'짐 풀고 옷 갈아입기', photo:null, h:14.5 },
+        { id:'y1-3', time:'15:20', name:'해상케이블카',      theme:'체험',   theme_id:'view',  tip:'바다 위 스릴, 사진 명소',      enjoyTip:'크리스탈 캐빈 이용 추천', photo:null, h:15.3 },
+        { id:'y1-4', time:'16:10', name:'무슬목 해변',      theme:'산책',   theme_id:'view',  tip:'모이핀 근처 아름다운 해변',    enjoyTip:'해변 산책하며 인생샷 남기기', photo:null, h:16.1 },
+        { id:'y1-5', time:'17:00', name:'모이핀 스카이',    theme:'카페',   theme_id:'cafe',  tip:'오션뷰 카페, 인생샷 타임',      enjoyTip:'노을 시간대 창가 자리 확보', photo:null, h:17 },
+        { id:'y1-6', time:'18:00', name:'낭반 게하 파티',    theme:'이벤트', theme_id:'party', tip:'여행의 핵심, 설레는 교류',      enjoyTip:'새로운 사람들과 즐거운 대화', photo:null, h:18 },
+        { id:'y1-7', time:'21:20', name:'낭만포차 거리',    theme:'술상',   theme_id:'food',  tip:'해산물 안주와 밤바다 감성',    enjoyTip:'여수 밤바다 야경과 함께 한 잔', photo:null, h:21.3 }
+    ]},
+    { places: [
+        { id:'y2-1', time:'10:00', name:'녹테마레',        theme:'전시', theme_id:'view',  tip:'SNS 핫플, 미디어아트 공간',    enjoyTip:'조명 변화에 맞춰 사진 촬영', photo:null, h:10 },
+        { id:'y2-2', time:'12:00', name:'시내 식당',       theme:'식사', theme_id:'food',  tip:'갓김치찌개 로컬 맛 체험',      enjoyTip:'갓김치와 함께 든든한 백반', photo:null, h:12 },
+        { id:'y2-3', time:'13:20', name:'이순신광장',      theme:'쇼핑', theme_id:'shop',  tip:'디저트와 기념품 쇼핑',        enjoyTip:'딸기모찌 등 유명 간식 구매', photo:null, h:13.3 },
+        { id:'y2-4', time:'19:00', name:'진남옥',          theme:'식사', theme_id:'food',  tip:'여수 로컬 저녁 식사',          enjoyTip:'진남옥의 특색 있는 메뉴 맛보기', photo:null, h:19 },
+        { id:'y2-5', time:'20:00', name:'돌산대교',        theme:'야경', theme_id:'view',  tip:'여수 대표 야경 포인트',        enjoyTip:'돌산공원에서 전체 뷰 감상', photo:null, h:20 },
+        { id:'y2-6', time:'21:00', name:'해양공원',        theme:'산책', theme_id:'view',  tip:'밤 산책으로 감성 마무리',      enjoyTip:'조명 켜진 해안 산책로 걷기', photo:null, h:21 }
+    ]},
+    { places: [
+        { id:'y3-1', time:'09:00', name:'바지락돼지국밥',   theme:'식사', theme_id:'food',  tip:'든든한 아침 식사',            enjoyTip:'뜨끈한 국물로 아침 시작', photo:null, h:9 },
+        { id:'y3-2', time:'12:00', name:'미가칼국수',       theme:'식사', theme_id:'food',  tip:'여수 로컬 칼국수 맛집',        enjoyTip:'해물 베이스의 시원한 국물 추천', photo:null, h:12 },
+        { id:'y3-3', time:'13:00', name:'아쿠아플라넷',    theme:'체험', theme_id:'view',  tip:'여수 바다 생태계 관람',        enjoyTip:'수중 터널에서 마지막 사진', photo:null, h:13 },
+        { id:'y3-4', time:'16:00', name:'여수 엑스포역',    theme:'복귀', theme_id:'view',  tip:'KTX 서울 출발',              enjoyTip:'출발 30분 전 역 도착', photo:null, h:16 }
+    ]}
+]);
 
         const getFormattedDate = (offset) => dayjs(startDate.value).add(offset, 'day').format('MM.DD');
         const allPhotos = computed(() =>
