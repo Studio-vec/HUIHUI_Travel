@@ -114,13 +114,13 @@
       transition: transform 0.18s ease, filter 0.18s ease;
     }
     .key-card:hover { filter:brightness(1.05); }
-    .key-card.coming-soon { cursor:default; }
-    .key-card.coming-soon:hover { transform:none; filter:none; }
-    .key-card.reserved { cursor:default; }
-    .key-card.reserved:hover { transform:none; filter:none; }
-    .key-card.reserved .card-key-img { align-items: flex-end; overflow: visible; bottom: 2%; }
+    .key-card.coming-soon,
+    .key-card.reserved,
     .key-card.not-visited { cursor:default; }
+    .key-card.coming-soon:hover,
+    .key-card.reserved:hover,
     .key-card.not-visited:hover { transform:none; filter:none; }
+    .key-card.reserved .card-key-img { align-items: flex-end; overflow: visible; bottom: 2%; }
 
     .card-3d {
       position:relative; width:100%;
@@ -166,7 +166,6 @@
     }
     .card-key-img > * {
       transform-origin: center top;
-      animation: none;
     }
     .key-card:not(.coming-soon):not(.reserved):not(.not-visited):hover .card-key-img > * {
       animation: keySwing 1.2s ease-in-out infinite;
@@ -175,7 +174,7 @@
     /* ── BELL ── */
     .bell-wrapper {
       position: fixed;
-      /* 푸터 높이(19.34vw, 최대 76px) 기준으로 벨 위치 고정 */
+      /* 푸터 높이 기준 + 50px 여유로 벨 위치 고정 */
       bottom: clamp(78px, calc(12vw + 50px), 108px);
       right: clamp(12px, 3vw, 40px);
       z-index: 110;
@@ -243,7 +242,7 @@
 
     @media (min-width: 720px) {
       .header-svg-wrap { height: 200px; }
-      .bottom-svg { height: 76px; }
+      .bottom-svg { height: 126px; }
     }
   </style>
 </head>
@@ -356,24 +355,29 @@
     let TRIPS = [];
 
     /* ── LANGUAGE ── */
-    const langs = [
+    const LANGS = [
       {label:'한국어',code:'ko'},
       {label:'English',code:'en'},
       {label:'日本語',code:'ja'},
       {label:'中文',code:'zh'},
     ];
+    const CHECKOUT_LABELS = {
+      ko: (v,n) => `${v}/${n} 체크아웃 완료`,
+      en: (v,n) => `${v}/${n} checkouts complete`,
+      ja: (v,n) => `${v}/${n} チェックアウト完了`,
+      zh: (v,n) => `${v}/${n} 退房完成`,
+    };
     let langIdx = 0;
 
     function _checkoutText(code) {
       const v = TRIPS.filter((t, i) => _effectiveStatus(t, i) === 'visited').length;
       const n = TRIPS.length;
-      return ({ko:`${v}/${n} 체크아웃 완료`, en:`${v}/${n} checkouts complete`,
-               ja:`${v}/${n} チェックアウト完了`, zh:`${v}/${n} 退房完成`})[code];
+      return CHECKOUT_LABELS[code](v, n);
     }
     function cycleLang() {
-      langIdx = (langIdx+1) % langs.length;
-      document.getElementById('langLabel').textContent = langs[langIdx].label;
-      document.getElementById('checkoutStatus').textContent = _checkoutText(langs[langIdx].code);
+      langIdx = (langIdx+1) % LANGS.length;
+      document.getElementById('langLabel').textContent = LANGS[langIdx].label;
+      document.getElementById('checkoutStatus').textContent = _checkoutText(LANGS[langIdx].code);
     }
     function goTo(url) { window.location.href = url; }
     function ringBell() {
@@ -381,6 +385,9 @@
       top.classList.add('ringing');
       setTimeout(()=>top.classList.remove('ringing'), 500);
     }
+
+    /* ── UTILITIES ── */
+    function _fmtNo(no) { return String(no).padStart(2, '0'); }
 
     /* ── CARD SVG TEMPLATES ── */
     function _cardBgSVG(i) {
@@ -439,7 +446,7 @@
     }
 
     function _reservedSVG(no) {
-      const n = String(no).padStart(2,'0');
+      const n = _fmtNo(no);
       return `<svg style="width:74%;height:98%;transform:translateY(8%)" viewBox="0 0 276.91 392" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <defs>
     <linearGradient id="res_g52_${no}" x1="137.66" y1="0" x2="137.66" y2="375.57" gradientTransform="translate(276.88) rotate(-180) scale(1 -1) skewX(-5.61)" gradientUnits="userSpaceOnUse">
@@ -461,7 +468,7 @@
     }
 
     function _notVisitedSVG(no, tagline) {
-      const n  = String(no).padStart(2,'0');
+      const n  = _fmtNo(no);
       const tl = tagline || '';
       return `<svg style="width:64%;height:84%;transform:translateY(8%)" viewBox="0 0 208.06 357.17" xmlns="http://www.w3.org/2000/svg">
   <defs>
@@ -501,9 +508,11 @@
       return _placeholderKey;
     }
 
-    /* ── VISITED STATE (set by trip pages) ── */
+    /* ── STATE KEYS & CONSTANTS ── */
     const VISITED_KEY  = 'huihui_visited';
     const RESERVED_KEY = 'huihui_reserved';
+    const CACHE_TTL_MS = 5 * 60 * 1000;  /* sessionStorage 캐시 유효 시간: 5분 */
+    const HOLD_MS      = 600;             /* 롱프레스 인식 임계값 (ms) */
     function _getSet(key) {
       try { return new Set(JSON.parse(localStorage.getItem(key) || '[]')); }
       catch(e) { return new Set(); }
@@ -545,7 +554,6 @@
       const grid = document.getElementById('keyGrid');
       let timer = null;
       let activeCard = null;
-      const HOLD_MS = 600;
 
       function cancel() {
         clearTimeout(timer); timer = null;
@@ -556,7 +564,7 @@
         const card = e.target.closest('[data-trip-idx]');
         if (!card) return;
         const i = parseInt(card.dataset.tripIdx);
-        if (TRIPS[i].status === 'visited') return;
+        if (_effectiveStatus(TRIPS[i], i) === 'visited') return;
         e.preventDefault();
         activeCard = card;
         card.classList.add('pressing');
@@ -616,7 +624,7 @@
         const raw = sessionStorage.getItem('huihui_trips');
         if (raw) {
           const { ts, files } = JSON.parse(raw);
-          if (files && Date.now() - ts < 5 * 60 * 1000) {
+          if (files && Date.now() - ts < CACHE_TTL_MS) {
             TRIPS = _buildTrips(files);
             _renderGrid(); _attachLongPress(); return;
           }
