@@ -596,11 +596,6 @@
     function _renderCard(trip, i) {
       const s = _effectiveStatus(trip, i);
       const classes = 'key-card' + (s !== 'visited' ? ' ' + s : '');
-      const onclick = s === 'coming-soon'
-        ? `onclick="showComingSoonPopup()"`
-        : (s === 'visited' || s === 'not-visited') && trip.url
-          ? `onclick="goTo('${trip.url}')"`
-          : '';
       const isKo = LANGS[langIdx].code === 'ko';
       const label = s === 'coming-soon'
         ? (isKo ? '준비중' : 'Coming Soon')
@@ -610,7 +605,7 @@
       if (s === 'visited')          keyHTML = `<div class="card-key-img">${_visitedKeyHTML(trip)}</div>`;
       else if (s === 'reserved')    keyHTML = `<div class="card-key-img">${_reservedSVG(trip.no)}</div>`;
       else if (s === 'not-visited') keyHTML = `<div class="card-key-img">${_notVisitedSVG(trip.no, trip.tagline)}</div>`;
-      return `<div class="${classes}" ${onclick} data-trip-idx="${i}"><div class="card-3d">${_cardBgSVG(i)}<div class="${nameClass}">${_nameTagSVG(i)}<span>${label}</span></div>${keyHTML}</div></div>`;
+      return `<div class="${classes}" data-trip-idx="${i}"><div class="card-3d">${_cardBgSVG(i)}<div class="${nameClass}">${_nameTagSVG(i)}<span>${label}</span></div>${keyHTML}</div></div>`;
     }
 
     /* ── LONG-PRESS → RESERVED TOGGLE ── */
@@ -621,10 +616,16 @@
       _renderGrid();
     }
 
+    /* ── GRID EVENTS (click + long-press) — 한 번만 등록 ── */
+    let _gridEventsReady = false;
     function _attachLongPress() {
+      if (_gridEventsReady) return;
+      _gridEventsReady = true;
+
       const grid = document.getElementById('keyGrid');
       let timer = null;
       let activeCard = null;
+      let didLongPress = false;
 
       function cancel() {
         clearTimeout(timer); timer = null;
@@ -632,11 +633,12 @@
       }
 
       grid.addEventListener('pointerdown', e => {
+        didLongPress = false;
         const card = e.target.closest('[data-trip-idx]');
         if (!card) return;
         const i = parseInt(card.dataset.tripIdx);
         const st = _effectiveStatus(TRIPS[i], i);
-        if (st === 'visited' || st === 'coming-soon' || st === 'not-visited') return;
+        if (st !== 'reserved') return;
         e.preventDefault();
         activeCard = card;
         card.classList.add('pressing');
@@ -645,6 +647,7 @@
           card.classList.remove('pressing');
           activeCard = null;
           timer = null;
+          didLongPress = true;
           _toggleReserved(i);
         }, HOLD_MS);
       });
@@ -655,6 +658,20 @@
         if (!timer) return;
         const card = e.target.closest('[data-trip-idx]');
         if (!card || card !== activeCard) cancel();
+      });
+
+      grid.addEventListener('click', e => {
+        if (didLongPress) { didLongPress = false; return; }
+        const card = e.target.closest('[data-trip-idx]');
+        if (!card) return;
+        const i = parseInt(card.dataset.tripIdx);
+        const trip = TRIPS[i];
+        const st = _effectiveStatus(trip, i);
+        if ((st === 'visited' || st === 'not-visited') && trip.url) {
+          goTo(trip.url);
+        } else if (st === 'coming-soon') {
+          showComingSoonPopup();
+        }
       });
     }
 
