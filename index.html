@@ -341,7 +341,7 @@
     const TRIPS = [
       { name:'Yeosu',  status:'not-visited', url:'trips/yeosu.html',  no:1,  key:'assets/keys/yeosu-key.svg' },
       { name:'Icheon', status:'not-visited', url:'trips/icheon.html', no:2,  key:null },
-      { name:'',       status:'coming-soon', no:3  },
+      { name:'Paju',   status:'coming-soon', url:'trips/paju.html', no:3 },
       { name:'',       status:'coming-soon', no:4  },
       { name:'',       status:'coming-soon', no:5  },
       { name:'',       status:'coming-soon', no:6  },
@@ -436,36 +436,28 @@
 
     function _reservedSVG(no) {
       const n = String(no).padStart(2,'0');
-      return `<svg style="width:55%;height:75%" viewBox="0 0 70 148" fill="none" xmlns="http://www.w3.org/2000/svg">
-<ellipse cx="35" cy="12" rx="12" ry="8" fill="#E8D5A3" stroke="#C4A96E" stroke-width="2"/>
-<ellipse cx="35" cy="12" rx="7" ry="4" fill="none" stroke="#C4A96E" stroke-width="1.5"/>
-<path d="M8,22 Q8,8 35,8 Q62,8 62,22 L62,140 Q62,146 56,146 L14,146 Q8,146 8,140 Z" fill="url(#res_bg_${no})" stroke="#C4A96E" stroke-width="1.5"/>
-<text x="35" y="38" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="10" font-style="italic" fill="#8B6914">No.${n}</text>
-<circle cx="35" cy="72" r="12" fill="none" stroke="#C4A96E" stroke-width="1.5"/>
-<circle cx="35" cy="72" r="4" fill="#C4A96E"/>
-<rect x="32" y="75" width="6" height="10" rx="1" fill="#C4A96E"/>
-<text x="35" y="108" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="11" font-style="italic" fill="#8B6914">Reserved</text>
-<line x1="14" y1="116" x2="56" y2="116" stroke="#C4A96E" stroke-width="0.5" opacity="0.6"/>
-<defs><linearGradient id="res_bg_${no}" x1="35" y1="8" x2="35" y2="146" gradientUnits="userSpaceOnUse">
-<stop stop-color="#FFF8E7"/><stop offset="1" stop-color="#F5E6C8"/></linearGradient></defs>
+      return `<svg style="width:55%;height:80%" viewBox="0 0 276.91 392" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient id="res_g52_${no}" x1="137.66" y1="0" x2="137.66" y2="375.57" gradientTransform="translate(276.88) rotate(-180) scale(1 -1) skewX(-5.61)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffedce"/><stop offset="1" stop-color="#805ecd"/>
+    </linearGradient>
+    <linearGradient id="res_g9_${no}" x1="100" y1="0" x2="100" y2="392" gradientTransform="translate(38.49) skewX(-5.61)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#ffecca"/>
+    </linearGradient>
+    <linearGradient id="res_g18_${no}" x1="100.28" y1="86.91" x2="100.28" y2="255.43" gradientTransform="translate(38.49) skewX(-5.61)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fdf5ec"/><stop offset="1" stop-color="#7c59cd"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#res_g52_${no})" d="M238.41,0l38.49,375.57h-56.17c-2.38-23.19-23.93-41.99-48.13-41.99s-41.9,18.8-39.52,41.99h-56.17S38.41,0,38.41,0h200Z"/>
+  <path fill="url(#res_g9_${no})" d="M38.49,0L0,392h56.17c2.38-24.2,23.93-43.83,48.13-43.83s41.9,19.62,39.52,43.83h56.17L238.49,0H38.49Z"/>
+  <path fill="url(#res_g18_${no})" d="M160.82,120.83c1.84-18.73-11.85-33.91-30.58-33.91s-35.4,15.18-37.24,33.91c-1.38,14.08,6.01,26.15,17.72,31.28l-30.94,103.33h67.83l-10.65-103.33c12.72-5.13,22.48-17.2,23.87-31.28Z"/>
+  <text font-family="CoFo Raffine,Cormorant Garamond,serif" font-size="36.17" font-weight="500" transform="translate(44.17 311.65) skewX(-5.61)" fill="#3a2060">Reserved</text>
+  <text font-family="Lapture,Cormorant Garamond,serif" font-size="21.1" transform="translate(107.5 60.23) skewX(-5.61)" fill="#3a2060">No.${n}</text>
 </svg>`;
     }
 
-    function _notVisitedSVG(no, tagline) {
-      const n = String(no).padStart(2,'0');
-      const tl = tagline || '';
-      return `<svg style="width:60%;height:72%" viewBox="0 0 100 132" fill="none" xmlns="http://www.w3.org/2000/svg">
-<ellipse cx="50" cy="10" rx="10" ry="6" fill="#C8B1FF" stroke="#7A57CD" stroke-width="1.5"/>
-<ellipse cx="50" cy="10" rx="5" ry="3" fill="none" stroke="#7A57CD" stroke-width="1"/>
-<path d="M50,22 L90,68 L50,122 L10,68 Z" fill="url(#nv_bg_${no})" stroke="#7A57CD" stroke-width="1.5"/>
-<circle cx="50" cy="60" r="14" fill="#9B76E8" opacity="0.4"/>
-<circle cx="57" cy="56" r="12" fill="#C8B1FF" opacity="0.9"/>
-<text x="50" y="52" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="9" font-style="italic" fill="#5A3EA6">No.${n}</text>
-<text x="50" y="82" text-anchor="middle" font-family="Playfair Display,serif" font-size="28" font-weight="700" fill="#7A57CD" opacity="0.9">${no}</text>
-<text x="50" y="100" text-anchor="middle" font-family="Noto Sans KR,sans-serif" font-size="7" fill="#9B76E8">${tl}</text>
-<defs><linearGradient id="nv_bg_${no}" x1="50" y1="22" x2="50" y2="122" gradientUnits="userSpaceOnUse">
-<stop stop-color="#EDE5FF"/><stop offset="1" stop-color="#C8B1FF"/></linearGradient></defs>
-</svg>`;
+    function _notVisitedSVG() {
+      return `<img src="assets/not-visited.svg" style="width:65%;height:82%;object-fit:contain" alt="not visited"/>`;
     }
 
     var _placeholderKey = `<svg style="width:60%;height:70%" viewBox="0 0 80 200" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -510,7 +502,7 @@
       let keyHTML = '';
       if (s === 'visited')          keyHTML = `<div class="card-key-img">${_visitedKeyHTML(trip)}</div>`;
       else if (s === 'reserved')    keyHTML = `<div class="card-key-img">${_reservedSVG(trip.no)}</div>`;
-      else if (s === 'not-visited') keyHTML = `<div class="card-key-img">${_notVisitedSVG(trip.no, trip.tagline)}</div>`;
+      else if (s === 'not-visited') keyHTML = `<div class="card-key-img">${_notVisitedSVG()}</div>`;
       return `<div class="${classes}" ${onclick} data-trip-idx="${i}"><div class="card-3d">${_cardBgSVG(i)}<div class="${nameClass}">${_nameTagSVG(i)}<span>${label}</span></div>${keyHTML}</div></div>`;
     }
 

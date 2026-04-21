@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_레이어_1" data-name="레이어 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 276.91 392">
+  <defs>
+    <style>
+      .cls-1 {
+        letter-spacing: -.02em;
+      }
+
+      .cls-2 {
+        fill: url(#_무제_그라디언트_52);
+      }
+
+      .cls-3 {
+        letter-spacing: -.03em;
+      }
+
+      .cls-4 {
+        letter-spacing: -.02em;
+      }
+
+      .cls-5 {
+        letter-spacing: 0em;
+      }
+
+      .cls-6 {
+        letter-spacing: 0em;
+      }
+
+      .cls-7 {
+        fill: url(#_무제_그라디언트_18);
+      }
+
+      .cls-8 {
+        font-family: Lapture-Regular, Lapture;
+        font-size: 21.1px;
+      }
+
+      .cls-9 {
+        letter-spacing: .03em;
+      }
+
+      .cls-10 {
+        letter-spacing: 0em;
+      }
+
+      .cls-11 {
+        font-family: CoFoRaffine-Medium, 'CoFo Raffine';
+        font-size: 36.17px;
+        font-weight: 500;
+      }
+
+      .cls-12 {
+        letter-spacing: 0em;
+      }
+
+      .cls-13 {
+        letter-spacing: 0em;
+      }
+
+      .cls-14 {
+        fill: url(#_무제_그라디언트_9);
+      }
+
+      .cls-15 {
+        letter-spacing: -.02em;
+      }
+    </style>
+    <linearGradient id="_무제_그라디언트_52" data-name="무제 그라디언트 52" x1="137.66" y1="0" x2="137.66" y2="375.57" gradientTransform="translate(276.88) rotate(-180) scale(1 -1) skewX(-5.61)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffedce"/>
+      <stop offset="1" stop-color="#805ecd"/>
+    </linearGradient>
+    <linearGradient id="_무제_그라디언트_9" data-name="무제 그라디언트 9" x1="100" y1="0" x2="100" y2="392" gradientTransform="translate(38.49) skewX(-5.61)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="1" stop-color="#ffecca"/>
+    </linearGradient>
+    <linearGradient id="_무제_그라디언트_18" data-name="무제 그라디언트 18" x1="100.28" y1="86.91" x2="100.28" y2="255.43" gradientTransform="translate(38.49) skewX(-5.61)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fdf5ec"/>
+      <stop offset="1" stop-color="#7c59cd"/>
+    </linearGradient>
+  </defs>
+  <path class="cls-2" d="M238.41,0l38.49,375.57h-56.17c-2.38-23.19-23.93-41.99-48.13-41.99s-41.9,18.8-39.52,41.99h-56.17S38.41,0,38.41,0h200Z"/>
+  <path class="cls-14" d="M38.49,0L0,392h56.17c2.38-24.2,23.93-43.83,48.13-43.83s41.9,19.62,39.52,43.83h56.17L238.49,0H38.49Z"/>
+  <path class="cls-7" d="M160.82,120.83c1.84-18.73-11.85-33.91-30.58-33.91s-35.4,15.18-37.24,33.91c-1.38,14.08,6.01,26.15,17.72,31.28l-30.94,103.33h67.83l-10.65-103.33c12.72-5.13,22.48-17.2,23.87-31.28Z"/>
+  <text class="cls-11" transform="translate(44.17 311.65) skewX(-5.61)"><tspan class="cls-1" x="0" y="0">R</tspan><tspan class="cls-13" x="18.56" y="0">e</tspan><tspan class="cls-6" x="35.59" y="0">s</tspan><tspan class="cls-12" x="48.06" y="0">e</tspan><tspan class="cls-9" x="64.87" y="0">r</tspan><tspan class="cls-15" x="76.9" y="0">v</tspan><tspan class="cls-5" x="92.06" y="0">e</tspan><tspan x="109.03" y="0">d</tspan></text>
+  <text class="cls-8" transform="translate(107.5 60.23) skewX(-5.61)"><tspan class="cls-3" x="0" y="0">N</tspan><tspan class="cls-4" x="15.54" y="0">o</tspan><tspan class="cls-10" x="26.4" y="0">.</tspan><tspan x="31.6" y="0">23</tspan></text>
+</svg>
