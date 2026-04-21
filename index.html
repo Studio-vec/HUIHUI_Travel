@@ -116,6 +116,7 @@
     .key-card.coming-soon:hover { transform:none; filter:none; }
     .key-card.reserved { cursor:default; }
     .key-card.reserved:hover { transform:none; filter:none; }
+    .key-card.reserved .card-key-img { align-items: flex-end; }
     .key-card.not-visited { cursor:default; }
     .key-card.not-visited:hover { transform:none; filter:none; }
 
@@ -341,9 +342,10 @@
        trips/ 폴더에 HTML 파일만 올리면 카드가 자동으로 생성됩니다.
        순서 고정, 키 이미지 경로가 필요한 여행지만 여기에 추가하세요.   ── */
     const TRIP_CONFIG = {
-      'yeosu':  { no:1, key:'assets/keys/yeosu-key.svg' },
-      'icheon': { no:2 },
-      'paju':   { no:3 },
+      'yeosu':  { no:1, key:'assets/keys/yeosu-key.svg', tagline:'' },
+      'icheon': { no:2, tagline:'' },
+      'paju':   { no:3, tagline:'' },
+      // tagline 예시: 'busan': { no:4, tagline:'City of Sea' }
     };
 
     const GITHUB_TRIPS_API =
@@ -436,7 +438,7 @@
 
     function _reservedSVG(no) {
       const n = String(no).padStart(2,'0');
-      return `<svg style="width:55%;height:80%" viewBox="0 0 276.91 392" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      return `<svg style="width:70%;height:92%" viewBox="0 0 276.91 392" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <defs>
     <linearGradient id="res_g52_${no}" x1="137.66" y1="0" x2="137.66" y2="375.57" gradientTransform="translate(276.88) rotate(-180) scale(1 -1) skewX(-5.61)" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#ffedce"/><stop offset="1" stop-color="#805ecd"/>
@@ -456,8 +458,30 @@
 </svg>`;
     }
 
-    function _notVisitedSVG() {
-      return `<img src="assets/not-visited.svg" style="width:65%;height:82%;object-fit:contain" alt="not visited"/>`;
+    function _notVisitedSVG(no, tagline) {
+      const n  = String(no).padStart(2,'0');
+      const tl = tagline || '';
+      return `<svg style="width:64%;height:84%" viewBox="0 0 208.06 357.17" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="nv_sh_${no}" x="-5%" y="-5%" width="115%" height="115%" filterUnits="userSpaceOnUse">
+      <feOffset dx="7" dy="5"/>
+      <feGaussianBlur stdDeviation="0" result="blur"/>
+      <feFlood flood-color="#7645c4" flood-opacity="1"/>
+      <feComposite in2="blur" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <linearGradient id="nv_gr_${no}" x1="100.53" y1="0" x2="100.53" y2="352.17" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="1" stop-color="#805ecd"/>
+    </linearGradient>
+  </defs>
+  <g filter="url(#nv_sh_${no})">
+    <path fill="url(#nv_gr_${no})" d="M188.02,122.08l-51.22-99.91c-15.15-29.55-57.39-29.55-72.54,0L13.04,122.08c-17.38,33.91-17.38,74.11,0,108.02l51.22,99.91c15.15,29.55,57.39,29.55,72.54,0l51.22-99.91c17.38-33.91,17.38-74.11,0-108.02ZM100.53,47.87c-6.99,0-12.65-5.66-12.65-12.65s5.66-12.65,12.65-12.65,12.65,5.66,12.65,12.65-5.66,12.65-12.65,12.65Z"/>
+  </g>
+  <text x="101" y="115" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="20" font-style="italic" fill="rgba(90,62,166,0.65)">No.${n}</text>
+  <text x="101" y="205" text-anchor="middle" font-family="Playfair Display,serif" font-size="78" font-weight="700" fill="#7A57CD" opacity="0.82">${no}</text>
+  <text x="101" y="272" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="19" font-style="italic" fill="rgba(90,62,166,0.55)">${tl}</text>
+</svg>`;
     }
 
     var _placeholderKey = `<svg style="width:60%;height:70%" viewBox="0 0 80 200" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -503,7 +527,7 @@
       let keyHTML = '';
       if (s === 'visited')          keyHTML = `<div class="card-key-img">${_visitedKeyHTML(trip)}</div>`;
       else if (s === 'reserved')    keyHTML = `<div class="card-key-img">${_reservedSVG(trip.no)}</div>`;
-      else if (s === 'not-visited') keyHTML = `<div class="card-key-img">${_notVisitedSVG()}</div>`;
+      else if (s === 'not-visited') keyHTML = `<div class="card-key-img">${_notVisitedSVG(trip.no, trip.tagline)}</div>`;
       return `<div class="${classes}" ${onclick} data-trip-idx="${i}"><div class="card-3d">${_cardBgSVG(i)}<div class="${nameClass}">${_nameTagSVG(i)}<span>${label}</span></div>${keyHTML}</div></div>`;
     }
 
