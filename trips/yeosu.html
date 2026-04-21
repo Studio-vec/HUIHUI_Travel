@@ -168,6 +168,10 @@
         .nav-btn:disabled { opacity: 0.28; cursor: not-allowed; }
         .nav-btn.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
         .nav-btn.primary:hover { background: #333; }
+        .nav-btn.complete { background: #7A57CD; color: #fff; border-color: #7A57CD; }
+        .nav-btn.complete:hover { background: #6344b8; border-color: #6344b8; }
+        .nav-btn.done { background: #ede5ff; color: #5a3ea6; border-color: #c8b1ff; }
+        .nav-btn.done:hover { background: #d8c8f8; border-color: #a888e8; }
 
         /* Art overlay */
         .art-overlay {
@@ -296,8 +300,10 @@
     </div>
 
     <div class="bottom-nav">
-        <button class="nav-btn" @click="playArt" :disabled="allPhotos.length === 0">흘려보내기</button>
-        <button class="nav-btn primary" @click="showReport = true">요약 보기</button>
+        <button class="nav-btn" @click="playArt" :disabled="allPhotos.length === 0">모아보기</button>
+        <button :class="['nav-btn', isVisited ? 'done' : 'complete']" @click="toggleVisited">
+            {{ isVisited ? '완료됨 ✓' : '여행 완료' }}
+        </button>
     </div>
 
     <div class="art-overlay" :class="{ show: isArtPlaying }">
@@ -330,12 +336,29 @@
 
 <script>
 const { createApp, ref, computed, onMounted } = Vue;
+
+const TRIP_URL    = 'trips/yeosu.html';
+const VISITED_KEY = 'huihui_visited';
+function _getVisitedSet() {
+    try { return new Set(JSON.parse(localStorage.getItem(VISITED_KEY) || '[]')); }
+    catch(e) { return new Set(); }
+}
+
 createApp({
     setup() {
         const startDate = ref(dayjs().format('YYYY-MM-DD'));
         const isArtPlaying = ref(false);
         const showReport = ref(false);
         const collagePieces = ref([]);
+        const isVisited = ref(_getVisitedSet().has(TRIP_URL));
+
+        const toggleVisited = () => {
+            const s = _getVisitedSet();
+            if (s.has(TRIP_URL)) s.delete(TRIP_URL);
+            else s.add(TRIP_URL);
+            localStorage.setItem(VISITED_KEY, JSON.stringify([...s]));
+            isVisited.value = s.has(TRIP_URL);
+        };
 
         const DAY_LABELS = ['일','월','화','수','목','금','토'];
         const endDate = computed(() => {
@@ -431,7 +454,8 @@ createApp({
         return {
             startDate, endDate, schedule, getFormattedDate,
             currentPlace, allPhotos, clickUpload, uploadPhoto,
-            isArtPlaying, playArt, showReport, saveImage, collagePieces
+            isArtPlaying, playArt, showReport, saveImage, collagePieces,
+            isVisited, toggleVisited
         };
     }
 }).mount('#app');
