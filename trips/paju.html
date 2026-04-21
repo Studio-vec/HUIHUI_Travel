@@ -1,1 +1,464 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>파주 트렌디 라이프스타일 로그</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink:   #1a1a1a;
+            --ink-2: #555;
+            --ink-3: #999;
+            --line:        rgba(0,0,0,0.09);
+            --line-strong: rgba(0,0,0,0.16);
+            --bg:      #faf9f7;
+            --surface: #ffffff;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'DM Sans', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            min-height: 100vh;
+        }
+        .container { max-width: 420px; margin: 0 auto; padding: 0 0 140px; }
 
+        /* Header */
+        .header { padding: 48px 24px 28px; border-bottom: 1px solid var(--line-strong); }
+        .header-eyebrow {
+            font-size: 10px; font-weight: 500;
+            letter-spacing: 0.16em; text-transform: uppercase;
+            color: var(--ink-3); margin-bottom: 10px;
+        }
+        .header-title {
+            font-family: 'DM Serif Display', Georgia, serif;
+            font-size: 28px; font-weight: 400;
+            color: var(--ink); line-height: 1.2; margin-bottom: 22px;
+        }
+
+        /* Date row */
+        .header-dates { display: flex; align-items: flex-end; margin-bottom: 20px; }
+        .date-item { display: flex; flex-direction: column; gap: 5px; }
+        .date-label {
+            font-size: 9px; font-weight: 500;
+            letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3);
+        }
+        .header-date-input {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px; font-weight: 400; color: var(--ink-2);
+            border: none; background: transparent; cursor: pointer;
+            padding: 0 0 4px; outline: none;
+            border-bottom: 1px solid var(--line-strong); width: 128px;
+        }
+        .date-arrow { font-size: 11px; color: var(--ink-3); padding: 0 10px 5px; flex-shrink: 0; }
+        .date-static {
+            font-size: 14px; font-weight: 400; color: var(--ink-3);
+            padding-bottom: 4px; border-bottom: 1px solid var(--line);
+        }
+
+        /* Now card */
+        .now-card {
+            background: var(--ink); border-radius: 6px;
+            padding: 18px 20px; display: flex; flex-direction: column; gap: 12px;
+        }
+        .now-eyebrow {
+            display: flex; align-items: center; gap: 7px;
+            font-size: 10px; font-weight: 500;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: rgba(255,255,255,0.38);
+        }
+        .now-dot {
+            width: 5px; height: 5px; border-radius: 50%;
+            background: #fff; flex-shrink: 0;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        .now-name {
+            font-family: 'DM Serif Display', serif;
+            font-size: 24px; font-weight: 400; color: #fff; line-height: 1.15;
+        }
+        .now-chips { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 5px; }
+        .now-time { font-size: 11px; color: rgba(255,255,255,0.38); font-variant-numeric: tabular-nums; }
+        .now-chip {
+            font-size: 10px; font-weight: 500; padding: 2px 8px;
+            border-radius: 3px; letter-spacing: 0.04em;
+            background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6);
+        }
+        .now-divider { height: 1px; background: rgba(255,255,255,0.08); }
+        .now-rows { display: flex; flex-direction: column; gap: 9px; }
+        .now-row { display: flex; align-items: flex-start; gap: 9px; }
+        .now-icon {
+            width: 13px; height: 13px; flex-shrink: 0; margin-top: 2px;
+            fill: none; stroke: rgba(255,255,255,0.32);
+            stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round;
+        }
+        .now-row-text { font-size: 12px; color: rgba(255,255,255,0.5); line-height: 1.55; font-weight: 300; }
+
+        /* Day section */
+        .day-section { padding: 0 24px; }
+        .day-label {
+            display: flex; align-items: baseline; gap: 10px;
+            padding: 28px 0 14px; border-bottom: 1px solid var(--line);
+        }
+        .day-number {
+            font-family: 'DM Serif Display', serif;
+            font-size: 13px; font-weight: 400; color: var(--ink-3); letter-spacing: 0.05em;
+        }
+        .day-date { font-size: 11px; color: var(--ink-3); letter-spacing: 0.08em; }
+
+        /* Place row */
+        .place-row {
+            display: flex; align-items: flex-start; gap: 14px;
+            padding: 15px 0; border-bottom: 1px solid var(--line);
+            position: relative; transition: padding-left 0.2s;
+        }
+        .place-row.active { padding-left: 12px; }
+        .place-row.active::before {
+            content: ''; position: absolute;
+            left: 0; top: 0; bottom: 0; width: 2px;
+            background: var(--ink); border-radius: 1px;
+        }
+        .place-row.active .place-time { color: var(--ink); font-weight: 500; }
+        .place-time {
+            font-size: 11px; color: var(--ink-3); min-width: 38px;
+            padding-top: 3px; font-variant-numeric: tabular-nums;
+            letter-spacing: 0.03em; flex-shrink: 0;
+        }
+        .place-body { flex: 1; min-width: 0; }
+        .place-name-row {
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 4px; flex-wrap: wrap;
+        }
+        .place-name { font-size: 15px; font-weight: 500; color: var(--ink); line-height: 1.3; }
+        .place-tag {
+            font-size: 10px; font-weight: 500; padding: 2px 7px;
+            border-radius: 3px; white-space: nowrap; letter-spacing: 0.04em;
+        }
+        .place-tip { font-size: 12px; color: var(--ink-3); line-height: 1.5; font-weight: 300; }
+
+        /* Photo slot */
+        .photo-slot {
+            width: 50px; height: 50px; border-radius: 4px;
+            border: 1px solid var(--line-strong); overflow: hidden; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: border-color 0.2s; background: var(--surface);
+        }
+        .photo-slot:hover { border-color: var(--ink); }
+        .photo-slot.has-img { border-color: var(--ink); }
+        .photo-slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .photo-slot-icon { width: 15px; height: 15px; opacity: 0.18; }
+
+        /* Bottom nav */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: linear-gradient(transparent, var(--bg) 55%);
+            padding: 28px 24px 30px;
+            display: flex; gap: 10px; justify-content: center;
+        }
+        .nav-btn {
+            font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+            padding: 10px 22px; border-radius: 3px; cursor: pointer;
+            border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink);
+            letter-spacing: 0.03em; transition: background 0.15s, color 0.15s;
+        }
+        .nav-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+        .nav-btn:disabled { opacity: 0.28; cursor: not-allowed; }
+        .nav-btn.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+        .nav-btn.primary:hover { background: #333; }
+        .nav-btn.complete { background: #7A57CD; color: #fff; border-color: #7A57CD; }
+        .nav-btn.complete:hover { background: #6344b8; border-color: #6344b8; }
+        .nav-btn.done { background: #ede5ff; color: #5a3ea6; border-color: #c8b1ff; }
+        .nav-btn.done:hover { background: #d8c8f8; border-color: #a888e8; }
+
+        /* Art overlay */
+        .art-overlay {
+            position: fixed; inset: 0; background: var(--bg);
+            z-index: 3000; opacity: 0; visibility: hidden;
+            transition: opacity 0.4s; overflow: hidden;
+        }
+        .art-overlay.show { opacity: 1; visibility: visible; }
+        .art-piece { position: absolute; animation: drift 6s ease-in-out infinite; }
+        .art-piece img {
+            width: 96px; height: 96px; object-fit: cover;
+            border-radius: 2px; border: 1px solid var(--line-strong);
+        }
+        @keyframes drift {
+            0%, 100% { transform: translate(0,0) rotate(-2deg); }
+            50%        { transform: translate(8px,-18px) rotate(2deg); }
+        }
+        .art-close { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); }
+
+        /* Modal */
+        .modal-bg {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            z-index: 4000; display: flex; align-items: center;
+            justify-content: center; padding: 24px;
+        }
+        .report-card { background: var(--surface); width: 100%; max-width: 320px; border-radius: 4px; overflow: hidden; }
+        .report-header { padding: 22px 22px 14px; border-bottom: 1px solid var(--line); }
+        .report-title { font-family: 'DM Serif Display', serif; font-size: 20px; font-weight: 400; color: var(--ink); }
+        .report-sub { font-size: 11px; color: var(--ink-3); margin-top: 3px; letter-spacing: 0.05em; }
+        .photo-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; padding: 14px; }
+        .photo-grid-cell { aspect-ratio: 1; background: var(--bg); border-radius: 2px; overflow: hidden; border: 1px solid var(--line); }
+        .photo-grid-cell img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .report-footer { padding: 12px 22px 22px; display: flex; gap: 10px; }
+
+        /* Tag colors */
+        .tag-food  { background: #f5ebe0; color: #7a4f30; }
+        .tag-cafe  { background: #e8f2ef; color: #2e6b59; }
+        .tag-view  { background: #e8eef5; color: #2e4e70; }
+        .tag-party { background: #f2e8f2; color: #633363; }
+        .tag-shop  { background: #eeeedf; color: #4a4a30; }
+
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="container">
+
+        <div class="header">
+            <div class="header-eyebrow">Travel Log · Paju</div>
+            <h1 class="header-title">파주 2박 3일<br>트렌디 나들이</h1>
+
+            <div class="header-dates">
+                <div class="date-item">
+                    <span class="date-label">출발</span>
+                    <input type="date" v-model="startDate" class="header-date-input">
+                </div>
+                <span class="date-arrow">→</span>
+                <div class="date-item">
+                    <span class="date-label">도착</span>
+                    <span class="date-static">{{ endDate }}</span>
+                </div>
+            </div>
+
+            <div v-if="currentPlace" class="now-card">
+                <div class="now-eyebrow"><span class="now-dot"></span>지금 여기</div>
+                <div>
+                    <div class="now-name">{{ currentPlace.name }}</div>
+                    <div class="now-chips">
+                        <span class="now-time">{{ currentPlace.time }}</span>
+                        <span class="now-chip">{{ currentPlace.theme }}</span>
+                    </div>
+                </div>
+                <div class="now-divider"></div>
+                <div class="now-rows">
+                    <div class="now-row">
+                        <svg class="now-icon" viewBox="0 0 24 24">
+                            <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        <span class="now-row-text">{{ currentPlace.name }}, 파주시</span>
+                    </div>
+                    <div class="now-row">
+                        <svg class="now-icon" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        <span class="now-row-text">{{ currentPlace.tip }}</span>
+                    </div>
+                    <div class="now-row">
+                        <svg class="now-icon" viewBox="0 0 24 24">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                        <span class="now-row-text">{{ currentPlace.enjoyTip }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div v-for="(day, dIdx) in schedule" :key="dIdx" class="day-section">
+            <div class="day-label">
+                <span class="day-number">Day {{ dIdx + 1 }}</span>
+                <span class="day-date">{{ getFormattedDate(dIdx) }}</span>
+            </div>
+            <div
+                v-for="p in day.places" :key="p.id"
+                class="place-row"
+                :class="{ active: currentPlace?.id === p.id }"
+            >
+                <span class="place-time">{{ p.time }}</span>
+                <div class="place-body">
+                    <div class="place-name-row">
+                        <span class="place-name">{{ p.name }}</span>
+                        <span class="place-tag" :class="'tag-' + p.theme_id">{{ p.theme }}</span>
+                    </div>
+                    <div class="place-tip">{{ p.tip }}</div>
+                </div>
+                <div class="photo-slot" :class="{ 'has-img': p.photo }" @click="clickUpload(p.id)">
+                    <img v-if="p.photo" :src="p.photo" alt="">
+                    <svg v-else class="photo-slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                    <input type="file" :id="'file-'+p.id" hidden accept="image/*" @change="uploadPhoto($event, p.id)">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-btn" @click="playArt" :disabled="allPhotos.length === 0">모아보기</button>
+        <button :class="['nav-btn', isVisited ? 'done' : (allPhotos.length > 0 ? 'complete' : '')]"
+                :disabled="!isVisited && allPhotos.length === 0"
+                @click="toggleVisited">
+            {{ isVisited ? '완료됨 ✓' : '여행 완료' }}
+        </button>
+    </div>
+
+    <div class="art-overlay" :class="{ show: isArtPlaying }">
+        <div v-for="(piece, idx) in collagePieces" :key="idx" class="art-piece" :style="piece.style">
+            <img :src="piece.src" alt="">
+        </div>
+        <div class="art-close">
+            <button class="nav-btn" @click="isArtPlaying = false">돌아가기</button>
+        </div>
+    </div>
+
+    <div class="modal-bg" v-if="showReport" @click.self="showReport = false">
+        <div id="report-content" class="report-card">
+            <div class="report-header">
+                <div class="report-title">Paju Moment</div>
+                <div class="report-sub">{{ allPhotos.length }} photos · {{ getFormattedDate(0) }} – {{ getFormattedDate(2) }}</div>
+            </div>
+            <div class="photo-grid">
+                <div v-for="n in 9" :key="n" class="photo-grid-cell">
+                    <img v-if="allPhotos[n-1]" :src="allPhotos[n-1]" alt="">
+                </div>
+            </div>
+            <div class="report-footer">
+                <button class="nav-btn" style="flex:1" @click="showReport = false">닫기</button>
+                <button class="nav-btn primary" style="flex:1" @click="saveImage">저장</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const { createApp, ref, computed, onMounted } = Vue;
+
+const TRIP_URL    = 'trips/paju.html';
+const VISITED_KEY = 'huihui_visited';
+function _getVisitedSet() {
+    try { return new Set(JSON.parse(localStorage.getItem(VISITED_KEY) || '[]')); }
+    catch(e) { return new Set(); }
+}
+
+createApp({
+    setup() {
+        const startDate = ref(dayjs().format('YYYY-MM-DD'));
+        const isArtPlaying = ref(false);
+        const showReport = ref(false);
+        const collagePieces = ref([]);
+        const isVisited = ref(_getVisitedSet().has(TRIP_URL));
+
+        const toggleVisited = () => {
+            if (!isVisited.value && allPhotos.value.length === 0) return;
+            const s = _getVisitedSet();
+            if (s.has(TRIP_URL)) s.delete(TRIP_URL);
+            else s.add(TRIP_URL);
+            localStorage.setItem(VISITED_KEY, JSON.stringify([...s]));
+            isVisited.value = s.has(TRIP_URL);
+        };
+
+        const DAY_LABELS = ['일','월','화','수','목','금','토'];
+        const endDate = computed(() => {
+            const d = dayjs(startDate.value).add(2, 'day');
+            return d.format('MM.DD') + ' (' + DAY_LABELS[d.day()] + ')';
+        });
+
+        const schedule = ref([
+    { places: [
+        { id:'p1-1', time:'11:00', name:'아이노스 본점',        theme:'식사',   theme_id:'food',  tip:'감각적인 브런치와 파스타',            enjoyTip:'트렌디한 분위기에서 여유로운 첫 끼', photo:null, h:11 },
+        { id:'p1-2', time:'13:00', name:'뮌스터담',              theme:'카페',   theme_id:'cafe',  tip:'유럽 감성 대형 브랜딩 공간',          enjoyTip:'압도적 인테리어 배경으로 사진 촬영', photo:null, h:13 },
+        { id:'p1-3', time:'15:00', name:'미메시스 아트 뮤지엄',  theme:'전시',   theme_id:'view',  tip:'곡선이 아름다운 현대 미술관',         enjoyTip:'햇빛이 들어오는 창가에서 작품 감상', photo:null, h:15 },
+        { id:'p1-4', time:'17:30', name:'레드파이프',            theme:'식사',   theme_id:'food',  tip:'초대형 복합문화공간 다이닝',          enjoyTip:'탁 트인 뷰와 함께 특별한 저녁 식사', photo:null, h:17.5 },
+        { id:'p1-5', time:'19:30', name:'1일차 마무리',          theme:'휴식',   theme_id:'party', tip:'숙소 이동 및 자유 시간',              enjoyTip:'오늘 찍은 사진 정리하며 편안한 휴식', photo:null, h:19.5 }
+    ]},
+    { places: [
+        { id:'p2-1', time:'10:00', name:'파주닭국수 본점',       theme:'식사',   theme_id:'food',  tip:'진한 육수의 든든한 로컬 미식',        enjoyTip:'닭 반 마리가 통째로 들어간 국수 맛보기', photo:null, h:10 },
+        { id:'p2-2', time:'12:00', name:'헤이리 갤러리 투어',    theme:'전시',   theme_id:'view',  tip:'독립 갤러리 및 예술관 순회',          enjoyTip:'취향에 맞는 소규모 전시 찾아보기', photo:null, h:12 },
+        { id:'p2-3', time:'14:30', name:'황인용뮤직스페이스',    theme:'체험',   theme_id:'view',  tip:'카메라타에서 즐기는 빈티지 오디오',   enjoyTip:'음악에 온전히 집중하는 딥한 휴식', photo:null, h:14.5 },
+        { id:'p2-4', time:'17:30', name:'근현대사박물관',        theme:'전시',   theme_id:'view',  tip:'헤이리에서 느끼는 힙한 레트로 감성',  enjoyTip:'옛날 거리 세트장에서 컨셉 사진 남기기', photo:null, h:17.5 },
+        { id:'p2-5', time:'19:30', name:'파주장단콩두부마을',    theme:'식사',   theme_id:'food',  tip:'파주 특산물 장단콩 요리',             enjoyTip:'조리되어 나오는 정갈한 두부 정식 식사', photo:null, h:19.5 }
+    ]},
+    { places: [
+        { id:'p3-1', time:'10:00', name:'지혜의숲',              theme:'체험',   theme_id:'view',  tip:'출판단지 내 거대한 북 큐레이션',      enjoyTip:'천장까지 닿은 서재를 배경으로 감성샷', photo:null, h:10 },
+        { id:'p3-2', time:'12:30', name:'아티장베이커스',        theme:'카페',   theme_id:'cafe',  tip:'한옥 공간에서의 감각적인 브런치',     enjoyTip:'고즈넉한 한옥 뷰와 함께 베이커리 즐기기', photo:null, h:12.5 },
+        { id:'p3-3', time:'14:30', name:'파주 로컬 편집샵 투어', theme:'쇼핑',   theme_id:'shop',  tip:'파주 감성 오브제 및 굿즈 발굴',       enjoyTip:'나만의 취향이 담긴 로컬 아이템 찾기', photo:null, h:14.5 },
+        { id:'p3-4', time:'16:30', name:'여행 마무리',           theme:'복귀',   theme_id:'view',  tip:'일정 종료 및 서울 복귀',              enjoyTip:'안전하게 돌아갈 교통편 확인', photo:null, h:16.5 }
+    ]}
+]);
+
+        const getFormattedDate = (offset) => dayjs(startDate.value).add(offset, 'day').format('MM.DD');
+        const allPhotos = computed(() =>
+            schedule.value.flatMap(d => d.places).filter(p => p.photo).map(p => p.photo)
+        );
+        const currentPlace = computed(() => {
+            const now = dayjs();
+            const all = schedule.value.flatMap((d, i) => d.places.map(p => ({
+                ...p,
+                fullDate: dayjs(startDate.value).add(i, 'day').hour(Math.floor(p.h)).minute(Math.round((p.h % 1) * 60))
+            })));
+            return all.reverse().find(p => now.isAfter(p.fullDate)) || null;
+        });
+
+        const clickUpload = (id) => document.getElementById('file-' + id).click();
+        const uploadPhoto = (e, id) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (res) => {
+                schedule.value.forEach(d => d.places.forEach(p => {
+                    if (p.id === id) p.photo = res.target.result;
+                }));
+                localStorage.setItem('trip_paju_v1', JSON.stringify(schedule.value));
+            };
+            reader.readAsDataURL(file);
+        };
+
+        const playArt = () => {
+            isArtPlaying.value = true;
+            collagePieces.value = [];
+            allPhotos.value.forEach((photo, i) => {
+                setTimeout(() => {
+                    collagePieces.value.push({
+                        src: photo,
+                        style: {
+                            top:  (Math.random() * 58 + 8) + '%',
+                            left: (Math.random() * 62 + 6) + '%',
+                            animationDelay:    (i * 0.5) + 's',
+                            animationDuration: (5 + Math.random() * 3) + 's'
+                        }
+                    });
+                }, i * 260);
+            });
+        };
+
+        const saveImage = () => {
+            html2canvas(document.getElementById('report-content')).then(canvas => {
+                const link = document.createElement('a');
+                link.download = '파주로그.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        };
+
+        onMounted(() => {
+            const saved = localStorage.getItem('trip_paju_v1');
+            if (saved) schedule.value = JSON.parse(saved);
+        });
+
+        return {
+            startDate, endDate, schedule, getFormattedDate,
+            currentPlace, allPhotos, clickUpload, uploadPhoto,
+            isArtPlaying, playArt, showReport, saveImage, collagePieces,
+            isVisited, toggleVisited
+        };
+    }
+}).mount('#app');
+</script>
+</body>
+</html>
