@@ -116,7 +116,7 @@
     .key-card.coming-soon:hover { transform:none; filter:none; }
     .key-card.reserved { cursor:default; }
     .key-card.reserved:hover { transform:none; filter:none; }
-    .key-card.reserved .card-key-img { align-items: flex-end; }
+    .key-card.reserved .card-key-img { align-items: flex-end; overflow: visible; bottom: 2%; }
     .key-card.not-visited { cursor:default; }
     .key-card.not-visited:hover { transform:none; filter:none; }
 
@@ -438,7 +438,7 @@
 
     function _reservedSVG(no) {
       const n = String(no).padStart(2,'0');
-      return `<svg style="width:70%;height:92%" viewBox="0 0 276.91 392" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      return `<svg style="width:74%;height:98%;transform:translateY(14%)" viewBox="0 0 276.91 392" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <defs>
     <linearGradient id="res_g52_${no}" x1="137.66" y1="0" x2="137.66" y2="375.57" gradientTransform="translate(276.88) rotate(-180) scale(1 -1) skewX(-5.61)" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#ffedce"/><stop offset="1" stop-color="#805ecd"/>
