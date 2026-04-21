@@ -43,13 +43,14 @@
       z-index: 0;
     }
 
-    /* 로고: 세로 중앙, 가로 중앙 */
+    /* 로고: 보라색 큰 그라디언트 영역 중앙 (y≈99.5 / 162 ≈ 61%) */
     .header-logo-wrap {
       position: absolute;
       inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
+      padding-top: 22%;
       z-index: 1;
       pointer-events: none;
     }
@@ -143,7 +144,7 @@
       display:flex; align-items:center; justify-content:center;
       font-family:'Playfair Display',serif;
       font-style:italic;
-      font-size: clamp(8px,1.6vw,15px);
+      font-size: clamp(11px,2.2vw,20px);
       font-weight:400;
       color:var(--text-dark);
       letter-spacing:0.03em;
@@ -151,7 +152,7 @@
     }
     .card-name.coming-soon span {
       font-family:'Cormorant Garamond',serif;
-      font-size: clamp(8px,1.4vw,13px);
+      font-size: clamp(10px,1.8vw,16px);
       font-weight:300;
       color:var(--text-mid);
       letter-spacing:0.1em;
