@@ -114,7 +114,7 @@
       transition: transform 0.18s ease, filter 0.18s ease;
     }
     .key-card:hover { filter:brightness(1.05); }
-    .key-card.coming-soon,
+    .key-card.coming-soon { cursor:pointer; }
     .key-card.reserved,
     .key-card.not-visited { cursor:default; }
     .key-card.coming-soon:hover,
@@ -167,7 +167,7 @@
     .card-key-img > * {
       transform-origin: center top;
     }
-    .key-card:not(.coming-soon):not(.reserved):not(.not-visited):hover .card-key-img > * {
+    .key-card:not(.coming-soon):not(.reserved):hover .card-key-img > * {
       animation: keySwing 1.2s ease-in-out infinite;
     }
 
@@ -244,6 +244,49 @@
       .header-svg-wrap { height: 200px; }
       .bottom-svg { height: 126px; }
     }
+
+    /* ── COMING SOON POPUP ── */
+    .cs-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(42,26,74,0.45);
+      z-index: 500;
+      align-items: center; justify-content: center;
+    }
+    .cs-overlay.show { display: flex; }
+    .cs-card {
+      background: var(--cream);
+      border-radius: 14px;
+      padding: 36px 32px 28px;
+      text-align: center;
+      max-width: 280px; width: 85%;
+      box-shadow: 0 8px 40px rgba(122,87,205,0.28);
+      animation: csSlideUp 0.22s ease;
+    }
+    @keyframes csSlideUp {
+      from { transform: translateY(18px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    .cs-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px; font-weight: 700;
+      color: var(--text-dark); margin-bottom: 8px;
+    }
+    .cs-sub {
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 13px; color: var(--text-mid); line-height: 1.6;
+    }
+    .cs-btn {
+      margin-top: 22px;
+      display: inline-block;
+      padding: 9px 28px;
+      background: var(--purple-deep); color: #fff;
+      border: none; border-radius: 20px;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 13px; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .cs-btn:hover { background: var(--purple-mid); }
   </style>
 </head>
 <body>
@@ -338,6 +381,15 @@
     </div>
   </footer>
 
+  <!-- COMING SOON POPUP -->
+  <div class="cs-overlay" id="csOverlay" onclick="hideComingSoonPopup(event)">
+    <div class="cs-card" onclick="event.stopPropagation()">
+      <div class="cs-title">준비중이에요!</div>
+      <div class="cs-sub">조금만 기다려주세요!</div>
+      <button class="cs-btn" onclick="hideComingSoonPopup()">확인</button>
+    </div>
+  </div>
+
   <script>
     /* ── TRIP CONFIG (커스텀 데이터만 기입, 나머지는 GitHub에서 자동 감지) ──
        trips/ 폴더에 HTML 파일만 올리면 카드가 자동으로 생성됩니다.
@@ -387,6 +439,12 @@
       _attachLongPress();
     }
     function goTo(url) { window.location.href = url; }
+    function showComingSoonPopup() {
+      document.getElementById('csOverlay').classList.add('show');
+    }
+    function hideComingSoonPopup(e) {
+      document.getElementById('csOverlay').classList.remove('show');
+    }
     function ringBell() {
       const top = document.getElementById('bellTop');
       top.classList.add('ringing');
@@ -538,7 +596,9 @@
     function _renderCard(trip, i) {
       const s = _effectiveStatus(trip, i);
       const classes = 'key-card' + (s !== 'visited' ? ' ' + s : '');
-      const onclick = trip.url ? `onclick="goTo('${trip.url}')"` : '';
+      const onclick = s === 'visited' && trip.url
+        ? `onclick="goTo('${trip.url}')"`
+        : s === 'coming-soon' ? `onclick="showComingSoonPopup()"` : '';
       const isKo = LANGS[langIdx].code === 'ko';
       const label = s === 'coming-soon'
         ? (isKo ? '준비중' : 'Coming Soon')
@@ -610,7 +670,7 @@
       return ordered.map((slug, idx) => {
         const cfg  = TRIP_CONFIG[slug] || {};
         const file = files.find(f => f.slug === slug);
-        const status = cfg.status ?? (file?.size > 0 ? 'not-visited' : 'coming-soon');
+        const status = cfg.status ?? (file?.size > 500 ? 'not-visited' : 'coming-soon');
         const nameEn = slug.charAt(0).toUpperCase() + slug.slice(1);
         return {
           nameEn,
