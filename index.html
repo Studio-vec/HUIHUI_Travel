@@ -576,21 +576,28 @@
       });
     }
 
-    function _buildTrips(slugs) {
+    /* files = [{ slug, size }]
+       size === 0 → 빈 파일 → coming-soon (이름만 표시)
+       size  > 0 → 내용 있음 → not-visited (마름모 키 표시)
+       visitedSet에 있으면 → visited (커스텀 키)                  */
+    function _buildTrips(files) {
       const cfgOrder = Object.keys(TRIP_CONFIG);
       const ordered = [
-        ...cfgOrder.filter(s => slugs.includes(s)),
-        ...slugs.filter(s => !cfgOrder.includes(s)).sort(),
+        ...cfgOrder.filter(s => files.some(f => f.slug === s)),
+        ...files.filter(f => !cfgOrder.includes(f.slug))
+                .sort((a, b) => a.slug.localeCompare(b.slug))
+                .map(f => f.slug),
       ];
       return ordered.map((slug, idx) => {
-        const cfg = TRIP_CONFIG[slug] || {};
-        const name = slug.charAt(0).toUpperCase() + slug.slice(1);
+        const cfg  = TRIP_CONFIG[slug] || {};
+        const file = files.find(f => f.slug === slug);
+        const status = cfg.status ?? (file?.size > 0 ? 'not-visited' : 'coming-soon');
         return {
-          name,
-          status: 'coming-soon',
-          url:    `trips/${slug}.html`,
-          no:     cfg.no ?? (idx + 1),
-          key:    cfg.key ?? null,
+          name:    slug.charAt(0).toUpperCase() + slug.slice(1),
+          status,
+          url:     `trips/${slug}.html`,
+          no:      cfg.no ?? (idx + 1),
+          key:     cfg.key ?? null,
           tagline: cfg.tagline ?? '',
         };
       });
@@ -606,26 +613,26 @@
       try {
         const raw = sessionStorage.getItem('huihui_trips');
         if (raw) {
-          const { ts, slugs } = JSON.parse(raw);
-          if (Date.now() - ts < 5 * 60 * 1000) {
-            TRIPS = _buildTrips(slugs);
+          const { ts, files } = JSON.parse(raw);
+          if (files && Date.now() - ts < 5 * 60 * 1000) {
+            TRIPS = _buildTrips(files);
             _renderGrid(); _attachLongPress(); return;
           }
         }
       } catch(e) {}
 
-      /* GitHub API로 trips/ 폴더 스캔 */
+      /* GitHub API로 trips/ 폴더 스캔 (size 포함) */
       try {
         const res  = await fetch(GITHUB_TRIPS_API);
         const list = await res.json();
-        const slugs = list
+        const files = list
           .filter(f => f.type === 'file' && f.name.endsWith('.html'))
-          .map(f => f.name.replace('.html', ''));
-        sessionStorage.setItem('huihui_trips', JSON.stringify({ ts: Date.now(), slugs }));
-        TRIPS = _buildTrips(slugs);
+          .map(f => ({ slug: f.name.replace('.html', ''), size: f.size }));
+        sessionStorage.setItem('huihui_trips', JSON.stringify({ ts: Date.now(), files }));
+        TRIPS = _buildTrips(files);
       } catch(e) {
-        /* API 실패 시 TRIP_CONFIG만으로 fallback */
-        TRIPS = _buildTrips(Object.keys(TRIP_CONFIG));
+        /* API 실패 시 TRIP_CONFIG만으로 fallback (내용 있다고 가정) */
+        TRIPS = _buildTrips(Object.keys(TRIP_CONFIG).map(slug => ({ slug, size: 1 })));
       }
       _renderGrid();
       _attachLongPress();
