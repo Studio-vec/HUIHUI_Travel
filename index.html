@@ -343,10 +343,10 @@
        trips/ 폴더에 HTML 파일만 올리면 카드가 자동으로 생성됩니다.
        순서 고정, 키 이미지 경로가 필요한 여행지만 여기에 추가하세요.   ── */
     const TRIP_CONFIG = {
-      'yeosu':  { no:1, key:'assets/keys/yeosu-key.svg', tagline:'' },
-      'icheon': { no:2, tagline:'' },
-      'paju':   { no:3, tagline:'' },
-      // tagline 예시: 'busan': { no:4, tagline:'City of Sea' }
+      'yeosu':  { no:1, key:'assets/keys/yeosu-key.svg', nameKo:'여수', tagline:'' },
+      'icheon': { no:2, nameKo:'이천', tagline:'' },
+      'paju':   { no:3, nameKo:'파주', tagline:'' },
+      // 예시: 'busan': { no:4, nameKo:'부산', tagline:'City of Sea' }
     };
 
     const GITHUB_TRIPS_API =
@@ -376,8 +376,11 @@
     }
     function cycleLang() {
       langIdx = (langIdx+1) % LANGS.length;
+      const code = LANGS[langIdx].code;
       document.getElementById('langLabel').textContent = LANGS[langIdx].label;
-      document.getElementById('checkoutStatus').textContent = _checkoutText(LANGS[langIdx].code);
+      document.getElementById('checkoutStatus').textContent = _checkoutText(code);
+      _renderGrid();
+      _attachLongPress();
     }
     function goTo(url) { window.location.href = url; }
     function ringBell() {
@@ -532,9 +535,11 @@
       const s = _effectiveStatus(trip, i);
       const classes = 'key-card' + (s !== 'visited' ? ' ' + s : '');
       const onclick = trip.url ? `onclick="goTo('${trip.url}')"` : '';
-      const hasName = !!trip.name;
-      const nameClass = (s === 'coming-soon' && !hasName) ? 'card-name coming-soon' : 'card-name';
-      const label = trip.name || 'Coming Soon';
+      const isKo = LANGS[langIdx].code === 'ko';
+      const label = s === 'coming-soon'
+        ? (isKo ? '준비중' : 'Coming Soon')
+        : (isKo ? trip.nameKo : trip.nameEn);
+      const nameClass = s === 'coming-soon' ? 'card-name coming-soon' : 'card-name';
       let keyHTML = '';
       if (s === 'visited')          keyHTML = `<div class="card-key-img">${_visitedKeyHTML(trip)}</div>`;
       else if (s === 'reserved')    keyHTML = `<div class="card-key-img">${_reservedSVG(trip.no)}</div>`;
@@ -602,8 +607,10 @@
         const cfg  = TRIP_CONFIG[slug] || {};
         const file = files.find(f => f.slug === slug);
         const status = cfg.status ?? (file?.size > 0 ? 'not-visited' : 'coming-soon');
+        const nameEn = slug.charAt(0).toUpperCase() + slug.slice(1);
         return {
-          name:    slug.charAt(0).toUpperCase() + slug.slice(1),
+          nameEn,
+          nameKo:  cfg.nameKo ?? nameEn,
           status,
           url:     `trips/${slug}.html`,
           no:      cfg.no ?? (idx + 1),
