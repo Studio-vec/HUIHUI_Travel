@@ -56,8 +56,8 @@
     .header-logo-svg {
       display: block;
       position: relative;
-      top: 10%;
-      height: clamp(36px, 9vw, 72px);
+      top: calc(10% + 5px);
+      height: clamp(42px, 10.5vw, 82px);
       width: auto;
       max-width: min(90%, 500px);
     }
@@ -176,7 +176,7 @@
     .bell-wrapper {
       position: fixed;
       /* 푸터 높이(19.34vw, 최대 76px) 기준으로 벨 위치 고정 */
-      bottom: clamp(28px, 12vw, 58px);
+      bottom: clamp(78px, calc(12vw + 50px), 108px);
       right: clamp(12px, 3vw, 40px);
       z-index: 110;
       cursor: pointer;
@@ -199,7 +199,7 @@
       position:fixed; bottom:0; left:0;
       width:100%; z-index:100;
     }
-    .bottom-svg { display:block; width:100%; height:min(76px, 19.34vw); }
+    .bottom-svg { display:block; width:100%; height:min(126px, calc(19.34vw + 50px)); }
 
     @keyframes keySwing {
       0%   { transform: rotate(0deg); }
