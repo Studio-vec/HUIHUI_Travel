@@ -337,19 +337,19 @@
   </footer>
 
   <script>
-    /* ── TRIP DATA ── */
-    const TRIPS = [
-      { name:'Yeosu',  status:'not-visited', url:'trips/yeosu.html',  no:1,  key:'assets/keys/yeosu-key.svg' },
-      { name:'Icheon', status:'not-visited', url:'trips/icheon.html', no:2,  key:null },
-      { name:'Paju',   status:'coming-soon', url:'trips/paju.html', no:3 },
-      { name:'',       status:'coming-soon', no:4  },
-      { name:'',       status:'coming-soon', no:5  },
-      { name:'',       status:'coming-soon', no:6  },
-      { name:'',       status:'coming-soon', no:7  },
-      { name:'',       status:'coming-soon', no:8  },
-      { name:'',       status:'coming-soon', no:9  },
-      { name:'',       status:'coming-soon', no:10 },
-    ];
+    /* ── TRIP CONFIG (커스텀 데이터만 기입, 나머지는 GitHub에서 자동 감지) ──
+       trips/ 폴더에 HTML 파일만 올리면 카드가 자동으로 생성됩니다.
+       순서 고정, 키 이미지 경로가 필요한 여행지만 여기에 추가하세요.   ── */
+    const TRIP_CONFIG = {
+      'yeosu':  { no:1, key:'assets/keys/yeosu-key.svg' },
+      'icheon': { no:2 },
+      'paju':   { no:3 },
+    };
+
+    const GITHUB_TRIPS_API =
+      'https://api.github.com/repos/Studio-vec/HUIHUI_Travel/contents/trips';
+
+    let TRIPS = [];
 
     /* ── LANGUAGE ── */
     const langs = [
@@ -551,13 +551,62 @@
       });
     }
 
+    function _buildTrips(slugs) {
+      const cfgOrder = Object.keys(TRIP_CONFIG);
+      const ordered = [
+        ...cfgOrder.filter(s => slugs.includes(s)),
+        ...slugs.filter(s => !cfgOrder.includes(s)).sort(),
+      ];
+      return ordered.map((slug, idx) => {
+        const cfg = TRIP_CONFIG[slug] || {};
+        const name = slug.charAt(0).toUpperCase() + slug.slice(1);
+        return {
+          name,
+          status: 'coming-soon',
+          url:    `trips/${slug}.html`,
+          no:     cfg.no ?? (idx + 1),
+          key:    cfg.key ?? null,
+          tagline: cfg.tagline ?? '',
+        };
+      });
+    }
+
     function _renderGrid() {
       document.getElementById('keyGrid').innerHTML = TRIPS.map((t, i) => _renderCard(t, i)).join('');
       document.getElementById('checkoutStatus').textContent = _checkoutText('ko');
     }
 
-    _renderGrid();
-    _attachLongPress();
+    async function _loadAndRender() {
+      /* sessionStorage 캐시 5분 */
+      try {
+        const raw = sessionStorage.getItem('huihui_trips');
+        if (raw) {
+          const { ts, slugs } = JSON.parse(raw);
+          if (Date.now() - ts < 5 * 60 * 1000) {
+            TRIPS = _buildTrips(slugs);
+            _renderGrid(); _attachLongPress(); return;
+          }
+        }
+      } catch(e) {}
+
+      /* GitHub API로 trips/ 폴더 스캔 */
+      try {
+        const res  = await fetch(GITHUB_TRIPS_API);
+        const list = await res.json();
+        const slugs = list
+          .filter(f => f.type === 'file' && f.name.endsWith('.html'))
+          .map(f => f.name.replace('.html', ''));
+        sessionStorage.setItem('huihui_trips', JSON.stringify({ ts: Date.now(), slugs }));
+        TRIPS = _buildTrips(slugs);
+      } catch(e) {
+        /* API 실패 시 TRIP_CONFIG만으로 fallback */
+        TRIPS = _buildTrips(Object.keys(TRIP_CONFIG));
+      }
+      _renderGrid();
+      _attachLongPress();
+    }
+
+    _loadAndRender();
 
     /* 뒤로가기(bfcache) 복원 시 localStorage 재읽기 */
     window.addEventListener('pageshow', (e) => {
