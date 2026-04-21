@@ -468,9 +468,7 @@
 </svg>`;
     }
 
-    function _visitedKeyHTML(trip) {
-      if (trip.key) return `<img src="${trip.key}" style="max-width:70%;max-height:85%;object-fit:contain" alt="key"/>`;
-      return `<svg style="width:60%;height:70%" viewBox="0 0 80 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    var _placeholderKey = `<svg style="width:60%;height:70%" viewBox="0 0 80 200" fill="none" xmlns="http://www.w3.org/2000/svg">
 <circle cx="40" cy="38" r="30" stroke="#7A57CD" stroke-width="3" fill="rgba(200,177,255,0.2)"/>
 <circle cx="40" cy="38" r="20" stroke="#946EEE" stroke-width="2" fill="rgba(237,229,255,0.3)"/>
 <circle cx="40" cy="38" r="8" fill="rgba(122,87,205,0.3)" stroke="#7A57CD" stroke-width="1.5"/>
@@ -479,6 +477,10 @@
 <rect x="43" y="126" width="8" height="8" rx="2" fill="rgba(122,87,205,0.5)" stroke="#7A57CD" stroke-width="1.2"/>
 <rect x="43" y="142" width="12" height="8" rx="2" fill="rgba(122,87,205,0.5)" stroke="#7A57CD" stroke-width="1.2"/>
 </svg>`;
+
+    function _visitedKeyHTML(trip) {
+      if (trip.key) return `<img src="${trip.key}" style="max-width:70%;max-height:85%;object-fit:contain" alt="key" onerror="this.outerHTML=_placeholderKey"/>`;
+      return _placeholderKey;
     }
 
     /* ── VISITED STATE (set by trip pages) ── */
@@ -564,6 +566,16 @@
 
     _renderGrid();
     _attachLongPress();
+
+    /* 뒤로가기(bfcache) 복원 시 localStorage 재읽기 */
+    window.addEventListener('pageshow', (e) => {
+      if (e.persisted) {
+        visitedSet  = _getSet(VISITED_KEY);
+        reservedSet = _getSet(RESERVED_KEY);
+        _renderGrid();
+        _attachLongPress();
+      }
+    });
   </script>
 </body>
 </html>
