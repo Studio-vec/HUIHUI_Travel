@@ -715,7 +715,7 @@
         TRIPS = _buildTrips(files);
       } catch(e) {
         /* API 실패 시 TRIP_CONFIG만으로 fallback (내용 있다고 가정) */
-        TRIPS = _buildTrips(Object.keys(TRIP_CONFIG).map(slug => ({ slug, size: 1 })));
+        TRIPS = _buildTrips(Object.keys(TRIP_CONFIG).map(slug => ({ slug, size: 9999 })));
       }
       _renderGrid();
       _attachLongPress();
