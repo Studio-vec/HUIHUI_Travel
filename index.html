@@ -391,22 +391,20 @@
   </div>
 
   <script>
-    /* ── TRIP CONFIG (커스텀 데이터만 기입, 나머지는 GitHub에서 자동 감지) ──
-       trips/ 폴더에 HTML 파일만 올리면 카드가 자동으로 생성됩니다.
-       순서 고정, 키 이미지 경로가 필요한 여행지만 여기에 추가하세요.   ── */
+    /* ── TRIP CONFIG ──
+       status 없음 → not-visited (HTML 파일 있음)
+       status: 'coming-soon' → 준비중 팝업
+       key: SVG 경로 → 방문 완료 시 커스텀 키 이미지           ── */
     const TRIP_CONFIG = {
-      'yeosu':       { no:1, key:'assets/keys/yeosu-key.svg', nameKo:'여수',    tagline:'' },
-      'icheon':      { no:2, nameKo:'이천',    tagline:'' },
-      'paju':        { no:3, nameKo:'파주',    tagline:'' },
-      'dongincheon': { no:4, nameKo:'동인천',  tagline:'' },
-      'gangneung':   { no:5, nameKo:'강릉',    tagline:'' },
-      'nowon':       { no:6, nameKo:'노원',    tagline:'' },
-      'suwon':       { no:7, nameKo:'수원',    tagline:'' },
-      'daejeon':     { no:8, nameKo:'대전',    tagline:'' },
+      'yeosu':       { no:1, key:'assets/keys/yeosu-key.svg', nameKo:'여수' },
+      'icheon':      { no:2, nameKo:'이천' },
+      'paju':        { no:3, nameKo:'파주',   status:'coming-soon' },
+      'dongincheon': { no:4, nameKo:'동인천' },
+      'gangneung':   { no:5, nameKo:'강릉' },
+      'nowon':       { no:6, nameKo:'노원',   status:'coming-soon' },
+      'suwon':       { no:7, nameKo:'수원',   status:'coming-soon' },
+      'daejeon':     { no:8, nameKo:'대전',   status:'coming-soon' },
     };
-
-    const GITHUB_TRIPS_API =
-      'https://api.github.com/repos/Studio-vec/HUIHUI_Travel/contents/trips';
 
     let TRIPS = [];
 
@@ -573,11 +571,10 @@
       return _placeholderKey;
     }
 
-    /* ── STATE KEYS & CONSTANTS ── */
+    /* ── STATE ── */
     const VISITED_KEY  = 'huihui_visited';
     const RESERVED_KEY = 'huihui_reserved';
-    const CACHE_TTL_MS = 5 * 60 * 1000;  /* sessionStorage 캐시 유효 시간: 5분 */
-    const HOLD_MS      = 600;             /* 롱프레스 인식 임계값 (ms) */
+    const HOLD_MS      = 600;
     function _getSet(key) {
       try { return new Set(JSON.parse(localStorage.getItem(key) || '[]')); }
       catch(e) { return new Set(); }
@@ -586,169 +583,113 @@
     let visitedSet  = _getSet(VISITED_KEY);
     let reservedSet = _getSet(RESERVED_KEY);
 
+    /* trip.status: 'not-visited' | 'coming-soon'
+       visitedSet / reservedSet 이 우선 적용           */
     function _effectiveStatus(trip, i) {
-      if (trip.status === 'visited') return 'visited';
-      if (trip.url && visitedSet.has(trip.url)) return 'visited';
-      if (reservedSet.has(i)) return 'reserved';
+      if (visitedSet.has(trip.url)) return 'visited';
+      if (reservedSet.has(i))       return 'reserved';
       return trip.status;
     }
 
     function _renderCard(trip, i) {
-      const s = _effectiveStatus(trip, i);
-      const classes = 'key-card' + (s !== 'visited' ? ' ' + s : '');
+      const s  = _effectiveStatus(trip, i);
+      const cl = 'key-card' + (s !== 'visited' ? ' ' + s : '');
       const isKo = LANGS[langIdx].code === 'ko';
       const label = s === 'coming-soon'
         ? (isKo ? '준비중' : 'Coming Soon')
         : (isKo ? trip.nameKo : trip.nameEn);
       const nameClass = s === 'coming-soon' ? 'card-name coming-soon' : 'card-name';
       let keyHTML = '';
-      if (s === 'visited')          keyHTML = `<div class="card-key-img">${_visitedKeyHTML(trip)}</div>`;
+      if      (s === 'visited')     keyHTML = `<div class="card-key-img">${_visitedKeyHTML(trip)}</div>`;
       else if (s === 'reserved')    keyHTML = `<div class="card-key-img">${_reservedSVG(trip.no)}</div>`;
       else if (s === 'not-visited') keyHTML = `<div class="card-key-img">${_notVisitedSVG(trip.no, trip.tagline)}</div>`;
-      return `<div class="${classes}" data-trip-idx="${i}"><div class="card-3d">${_cardBgSVG(i)}<div class="${nameClass}">${_nameTagSVG(i)}<span>${label}</span></div>${keyHTML}</div></div>`;
+      return `<div class="${cl}" data-trip-idx="${i}"><div class="card-3d">${_cardBgSVG(i)}<div class="${nameClass}">${_nameTagSVG(i)}<span>${label}</span></div>${keyHTML}</div></div>`;
     }
 
-    /* ── LONG-PRESS → RESERVED TOGGLE ── */
+    /* ── 클릭 핸들러: 렌더 후 매번 카드에 직접 부착 ── */
+    function _attachCardClicks() {
+      document.querySelectorAll('[data-trip-idx]').forEach(card => {
+        const i = parseInt(card.dataset.tripIdx);
+        card.addEventListener('click', () => {
+          const trip = TRIPS[i];
+          const st   = _effectiveStatus(trip, i);
+          if (st === 'coming-soon')                        { showComingSoonPopup(); return; }
+          if ((st === 'visited' || st === 'not-visited') && trip.url) goTo(trip.url);
+        });
+      });
+    }
+
+    /* ── 롱프레스: reserved 토글 (그리드에 한 번만 등록) ── */
     function _toggleReserved(i) {
       if (reservedSet.has(i)) reservedSet.delete(i);
-      else reservedSet.add(i);
+      else                    reservedSet.add(i);
       _saveSet(RESERVED_KEY, reservedSet);
       _renderGrid();
     }
 
-    /* ── GRID EVENTS (click + long-press) — 한 번만 등록 ── */
-    let _gridEventsReady = false;
+    let _longPressReady = false;
     function _attachLongPress() {
-      if (_gridEventsReady) return;
-      _gridEventsReady = true;
-
+      if (_longPressReady) return;
+      _longPressReady = true;
       const grid = document.getElementById('keyGrid');
-      let timer = null;
-      let activeCard = null;
-      let didLongPress = false;
-
-      function cancel() {
+      let timer = null, activeCard = null;
+      const cancel = () => {
         clearTimeout(timer); timer = null;
         if (activeCard) { activeCard.classList.remove('pressing'); activeCard = null; }
-      }
-
+      };
       grid.addEventListener('pointerdown', e => {
-        didLongPress = false;
         const card = e.target.closest('[data-trip-idx]');
         if (!card) return;
         const i = parseInt(card.dataset.tripIdx);
-        const st = _effectiveStatus(TRIPS[i], i);
-        if (st !== 'reserved') return;
+        if (_effectiveStatus(TRIPS[i], i) !== 'reserved') return;
         e.preventDefault();
         activeCard = card;
         card.classList.add('pressing');
         card.setPointerCapture(e.pointerId);
-        timer = setTimeout(() => {
-          card.classList.remove('pressing');
-          activeCard = null;
-          timer = null;
-          didLongPress = true;
-          _toggleReserved(i);
-        }, HOLD_MS);
+        timer = setTimeout(() => { cancel(); _toggleReserved(i); }, HOLD_MS);
       });
-
       grid.addEventListener('pointerup',     cancel);
       grid.addEventListener('pointercancel', cancel);
-      grid.addEventListener('pointermove',   e => {
+      grid.addEventListener('pointermove', e => {
         if (!timer) return;
-        const card = e.target.closest('[data-trip-idx]');
-        if (!card || card !== activeCard) cancel();
-      });
-
-      grid.addEventListener('click', e => {
-        if (didLongPress) { didLongPress = false; return; }
-        const card = e.target.closest('[data-trip-idx]');
-        if (!card) return;
-        const i = parseInt(card.dataset.tripIdx);
-        const trip = TRIPS[i];
-        const st = _effectiveStatus(trip, i);
-        if ((st === 'visited' || st === 'not-visited') && trip.url) {
-          goTo(trip.url);
-        } else if (st === 'coming-soon') {
-          showComingSoonPopup();
-        }
+        if (e.target.closest('[data-trip-idx]') !== activeCard) cancel();
       });
     }
 
-    /* files = [{ slug, size }]
-       size === 0 → 빈 파일 → coming-soon (이름만 표시)
-       size  > 0 → 내용 있음 → not-visited (마름모 키 표시)
-       visitedSet에 있으면 → visited (커스텀 키)                  */
-    function _buildTrips(files) {
-      const cfgOrder = Object.keys(TRIP_CONFIG);
-      const ordered = [
-        ...cfgOrder.filter(s => files.some(f => f.slug === s)),
-        ...files.filter(f => !cfgOrder.includes(f.slug))
-                .sort((a, b) => a.slug.localeCompare(b.slug))
-                .map(f => f.slug),
-      ];
-      return ordered.map((slug, idx) => {
-        const cfg  = TRIP_CONFIG[slug] || {};
-        const file = files.find(f => f.slug === slug);
-        const status = cfg.status ?? (file?.size > 500 ? 'not-visited' : 'coming-soon');
-        const nameEn = slug.charAt(0).toUpperCase() + slug.slice(1);
-        return {
-          nameEn,
-          nameKo:  cfg.nameKo ?? nameEn,
-          status,
-          url:     `trips/${slug}.html`,
-          no:      cfg.no ?? (idx + 1),
-          key:     cfg.key ?? null,
-          tagline: cfg.tagline ?? '',
-        };
-      });
+    /* ── 데이터: TRIP_CONFIG에서 직접 구성 (GitHub API 불필요) ── */
+    function _buildTrips() {
+      return Object.entries(TRIP_CONFIG).map(([slug, cfg], idx) => ({
+        nameEn:  slug.charAt(0).toUpperCase() + slug.slice(1),
+        nameKo:  cfg.nameKo  || slug,
+        status:  cfg.status  || 'not-visited',
+        url:     `trips/${slug}.html`,
+        no:      cfg.no      || (idx + 1),
+        key:     cfg.key     || null,
+        tagline: cfg.tagline || '',
+      }));
     }
 
     function _renderGrid() {
-      document.getElementById('keyGrid').innerHTML = TRIPS.map((t, i) => _renderCard(t, i)).join('');
+      document.getElementById('keyGrid').innerHTML =
+        TRIPS.map((t, i) => _renderCard(t, i)).join('');
       document.getElementById('checkoutStatus').textContent = _checkoutText('ko');
+      _attachCardClicks();
     }
 
-    async function _loadAndRender() {
-      /* sessionStorage 캐시 5분 */
-      try {
-        const raw = sessionStorage.getItem('huihui_trips');
-        if (raw) {
-          const { ts, files } = JSON.parse(raw);
-          if (files && Date.now() - ts < CACHE_TTL_MS) {
-            TRIPS = _buildTrips(files);
-            _renderGrid(); _attachLongPress(); return;
-          }
-        }
-      } catch(e) {}
-
-      /* GitHub API로 trips/ 폴더 스캔 (size 포함) */
-      try {
-        const res  = await fetch(GITHUB_TRIPS_API);
-        const list = await res.json();
-        const files = list
-          .filter(f => f.type === 'file' && f.name.endsWith('.html'))
-          .map(f => ({ slug: f.name.replace('.html', ''), size: f.size }));
-        sessionStorage.setItem('huihui_trips', JSON.stringify({ ts: Date.now(), files }));
-        TRIPS = _buildTrips(files);
-      } catch(e) {
-        /* API 실패 시 TRIP_CONFIG만으로 fallback (내용 있다고 가정) */
-        TRIPS = _buildTrips(Object.keys(TRIP_CONFIG).map(slug => ({ slug, size: 9999 })));
-      }
+    function _init() {
+      TRIPS = _buildTrips();
       _renderGrid();
       _attachLongPress();
     }
 
-    _loadAndRender();
+    _init();
 
     /* 뒤로가기(bfcache) 복원 시 localStorage 재읽기 */
-    window.addEventListener('pageshow', (e) => {
-      if (e.persisted) {
-        visitedSet  = _getSet(VISITED_KEY);
-        reservedSet = _getSet(RESERVED_KEY);
-        _renderGrid();
-        _attachLongPress();
-      }
+    window.addEventListener('pageshow', e => {
+      if (!e.persisted) return;
+      visitedSet  = _getSet(VISITED_KEY);
+      reservedSet = _getSet(RESERVED_KEY);
+      _renderGrid();
     });
   </script>
 </body>
