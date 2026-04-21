@@ -50,7 +50,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding-top: 22%;
+      padding-top: 12%;
       z-index: 1;
       pointer-events: none;
     }
@@ -439,7 +439,7 @@
 
     function _reservedSVG(no) {
       const n = String(no).padStart(2,'0');
-      return `<svg style="width:74%;height:98%;transform:translateY(14%)" viewBox="0 0 276.91 392" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      return `<svg style="width:74%;height:98%;transform:translateY(8%)" viewBox="0 0 276.91 392" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <defs>
     <linearGradient id="res_g52_${no}" x1="137.66" y1="0" x2="137.66" y2="375.57" gradientTransform="translate(276.88) rotate(-180) scale(1 -1) skewX(-5.61)" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#ffedce"/><stop offset="1" stop-color="#805ecd"/>
@@ -462,7 +462,7 @@
     function _notVisitedSVG(no, tagline) {
       const n  = String(no).padStart(2,'0');
       const tl = tagline || '';
-      return `<svg style="width:64%;height:84%" viewBox="0 0 208.06 357.17" xmlns="http://www.w3.org/2000/svg">
+      return `<svg style="width:64%;height:84%;transform:translateY(8%)" viewBox="0 0 208.06 357.17" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <filter id="nv_sh_${no}" x="-5%" y="-5%" width="115%" height="115%" filterUnits="userSpaceOnUse">
       <feOffset dx="7" dy="5"/>
