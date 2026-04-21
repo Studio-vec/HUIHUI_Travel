@@ -189,7 +189,7 @@
             0%, 100% { transform: translate(0,0) rotate(-2deg); }
             50%       { transform: translate(8px,-18px) rotate(2deg); }
         }
-        .art-close { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); }
+        .art-close { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; }
 
         /* Modal */
         .modal-bg {
@@ -314,6 +314,7 @@
         </div>
         <div class="art-close">
             <button class="nav-btn" @click="isArtPlaying = false">돌아가기</button>
+            <button class="nav-btn primary" @click="isArtPlaying = false; showReport = true">저장</button>
         </div>
     </div>
 
