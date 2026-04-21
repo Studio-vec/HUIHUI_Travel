@@ -596,9 +596,11 @@
     function _renderCard(trip, i) {
       const s = _effectiveStatus(trip, i);
       const classes = 'key-card' + (s !== 'visited' ? ' ' + s : '');
-      const onclick = s === 'visited' && trip.url
-        ? `onclick="goTo('${trip.url}')"`
-        : s === 'coming-soon' ? `onclick="showComingSoonPopup()"` : '';
+      const onclick = s === 'coming-soon'
+        ? `onclick="showComingSoonPopup()"`
+        : (s === 'visited' || s === 'not-visited') && trip.url
+          ? `onclick="goTo('${trip.url}')"`
+          : '';
       const isKo = LANGS[langIdx].code === 'ko';
       const label = s === 'coming-soon'
         ? (isKo ? '준비중' : 'Coming Soon')
