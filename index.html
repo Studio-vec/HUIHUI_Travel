@@ -635,7 +635,8 @@
         const card = e.target.closest('[data-trip-idx]');
         if (!card) return;
         const i = parseInt(card.dataset.tripIdx);
-        if (_effectiveStatus(TRIPS[i], i) === 'visited') return;
+        const st = _effectiveStatus(TRIPS[i], i);
+        if (st === 'visited' || st === 'coming-soon' || st === 'not-visited') return;
         e.preventDefault();
         activeCard = card;
         card.classList.add('pressing');
