@@ -150,7 +150,7 @@
     }
     .card-name.coming-soon span {
       font-family:'Cormorant Garamond',serif;
-      font-size: clamp(6px,1.1vw,10px);
+      font-size: clamp(8px,1.4vw,13px);
       font-weight:300;
       color:var(--text-mid);
       letter-spacing:0.1em;
@@ -497,8 +497,9 @@
       const s = _effectiveStatus(trip, i);
       const classes = 'key-card' + (s !== 'visited' ? ' ' + s : '');
       const onclick = trip.url ? `onclick="goTo('${trip.url}')"` : '';
-      const nameClass = s === 'coming-soon' ? 'card-name coming-soon' : 'card-name';
-      const label = trip.name || (s === 'coming-soon' ? 'Coming Soon' : '');
+      const hasName = !!trip.name;
+      const nameClass = (s === 'coming-soon' && !hasName) ? 'card-name coming-soon' : 'card-name';
+      const label = trip.name || 'Coming Soon';
       let keyHTML = '';
       if (s === 'visited')          keyHTML = `<div class="card-key-img">${_visitedKeyHTML(trip)}</div>`;
       else if (s === 'reserved')    keyHTML = `<div class="card-key-img">${_reservedSVG(trip.no)}</div>`;
