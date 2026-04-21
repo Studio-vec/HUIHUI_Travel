@@ -595,9 +595,7 @@
       const s  = _effectiveStatus(trip, i);
       const cl = 'key-card' + (s !== 'visited' ? ' ' + s : '');
       const isKo = LANGS[langIdx].code === 'ko';
-      const label = s === 'coming-soon'
-        ? (isKo ? '준비중' : 'Coming Soon')
-        : (isKo ? trip.nameKo : trip.nameEn);
+      const label = isKo ? trip.nameKo : trip.nameEn;
       const nameClass = s === 'coming-soon' ? 'card-name coming-soon' : 'card-name';
       let keyHTML = '';
       if      (s === 'visited')     keyHTML = `<div class="card-key-img">${_visitedKeyHTML(trip)}</div>`;
@@ -641,7 +639,7 @@
         const card = e.target.closest('[data-trip-idx]');
         if (!card) return;
         const i = parseInt(card.dataset.tripIdx);
-        if (_effectiveStatus(TRIPS[i], i) !== 'reserved') return;
+        if (_effectiveStatus(TRIPS[i], i) === 'visited') return;
         e.preventDefault();
         activeCard = card;
         card.classList.add('pressing');

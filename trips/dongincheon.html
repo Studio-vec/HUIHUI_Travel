@@ -300,7 +300,9 @@
 
     <div class="bottom-nav">
         <button class="nav-btn" @click="playArt" :disabled="allPhotos.length === 0">모아보기</button>
-        <button :class="['nav-btn', isVisited ? 'done' : 'complete']" @click="toggleVisited">
+        <button :class="['nav-btn', isVisited ? 'done' : (allPhotos.length > 0 ? 'complete' : '')]"
+                :disabled="!isVisited && allPhotos.length === 0"
+                @click="toggleVisited">
             {{ isVisited ? '완료됨 ✓' : '여행 완료' }}
         </button>
     </div>
@@ -352,6 +354,7 @@ createApp({
         const isVisited = ref(_getVisitedSet().has(TRIP_URL));
 
         const toggleVisited = () => {
+            if (!isVisited.value && allPhotos.value.length === 0) return;
             const s = _getVisitedSet();
             if (s.has(TRIP_URL)) s.delete(TRIP_URL);
             else s.add(TRIP_URL);
