@@ -198,7 +198,6 @@
       position:fixed; bottom:0; left:0;
       width:100%; z-index:100;
     }
-    .bottom-svg { display:block; width:100%; height:min(126px, calc(19.34vw + 50px)); }
 
     @keyframes keySwing {
       0%   { transform: rotate(0deg); }
@@ -227,7 +226,17 @@
     }
 
     /* ── FOOTER TEXT ── */
-    .footer-inner { position: relative; width: 100%; }
+    .footer-inner {
+      position: relative;
+      width: 100%;
+      height: min(126px, calc(19.34vw + 50px));
+      border-style: solid;
+      border-color: transparent;
+      border-width: 0 25vw;
+      border-image: url('assets/footer-bg.png') 0 25% fill;
+      border-image-repeat: stretch;
+      box-sizing: border-box;
+    }
     .footer-text {
       position: absolute;
       inset: 0;
@@ -242,7 +251,6 @@
 
     @media (min-width: 720px) {
       .header-svg-wrap { height: 200px; }
-      .bottom-svg { height: 126px; }
     }
 
     /* ── COMING SOON POPUP ── */
@@ -363,21 +371,7 @@
   <!-- FOOTER -->
   <footer class="footer">
     <div class="footer-inner">
-      <svg class="bottom-svg" viewBox="0 0 393 76" preserveAspectRatio="none" width="100%" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect y="19" width="393" height="57" fill="url(#bot_grad0)"/>
-<rect width="393" height="19" fill="url(#bot_grad1)"/>
-<defs>
-<linearGradient id="bot_grad0" x1="197" y1="19" x2="197" y2="103.5" gradientUnits="userSpaceOnUse">
-<stop stop-color="#8F9D68"/>
-<stop offset="1" stop-color="#FFF8EB"/>
-</linearGradient>
-<linearGradient id="bot_grad1" x1="197" y1="-7.5" x2="197" y2="19" gradientUnits="userSpaceOnUse">
-<stop stop-color="#8F9D68"/>
-<stop offset="1" stop-color="#FFF8EB"/>
-</linearGradient>
-</defs>
-</svg>
-      <div class="footer-text">태희의 국내 여행 안내서 – Studio.Vec</div>
+<div class="footer-text">태희의 국내 여행 안내서 – Studio.Vec</div>
     </div>
   </footer>
 
