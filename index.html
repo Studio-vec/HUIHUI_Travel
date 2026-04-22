@@ -229,8 +229,8 @@
     .footer-inner {
       position: relative;
       width: 100%;
-      /* height proportional to image set (2816×1236), capped at natural mobile height */
-      height: min(173px, 43.9vw);
+      /* all images are 5467px tall; total width 12787px → 5467/12787 ≈ 42.8vw */
+      height: min(168px, 42.8vw);
     }
     .footer-panels {
       position: absolute;
@@ -238,17 +238,14 @@
       display: flex;
       align-items: stretch;
     }
-    .fp { background-repeat: no-repeat; }
-    /* sides: plain stripes → stretch to fill remaining width */
-    .fp-l { flex: 1 1 0; background-image: url('assets/footer-bg-left.png');   background-size: 100% 100%; }
-    .fp-r { flex: 1 1 0; background-image: url('assets/footer-bg-right.png');  background-size: 100% 100%; }
-    /* center: decorative column → keep natural aspect ratio, never stretch */
-    .fp-c {
-      flex: 0 0 auto;
-      aspect-ratio: 1126 / 1236; /* image is 1126×1236 px */
-      background-image: url('assets/footer-bg-center.png');
-      background-size: 100% 100%;
-    }
+    .fp { background-repeat: no-repeat; background-size: 100% 100%; }
+    /* stretching panels — plain texture, OK to distort horizontally */
+    .fp-l  { flex: 1 1 0; background-image: url('assets/footer-bg_Left.jpg'); }
+    .fp-c  { flex: 1 1 0; background-image: url('assets/footer-bg_center.jpg'); }
+    .fp-r  { flex: 1 1 0; background-image: url('assets/footer-bg_right.jpg'); }
+    /* fixed decoration panels — aspect-ratio locks width to natural image proportion */
+    .fp-lm { flex: 0 0 auto; aspect-ratio: 3003/5467; background-image: url('assets/footer-bg_left-mid.jpg'); }
+    .fp-rm { flex: 0 0 auto; aspect-ratio: 3043/5467; background-image: url('assets/footer-bg_right-mid.jpg'); }
     .footer-text {
       position: absolute;
       inset: 0;
@@ -385,7 +382,9 @@
     <div class="footer-inner">
       <div class="footer-panels">
         <div class="fp fp-l"></div>
+        <div class="fp fp-lm"></div>
         <div class="fp fp-c"></div>
+        <div class="fp fp-rm"></div>
         <div class="fp fp-r"></div>
       </div>
       <div class="footer-text">태희의 국내 여행 안내서 – Studio.Vec</div>
