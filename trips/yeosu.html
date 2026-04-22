@@ -214,10 +214,27 @@
         .tag-shop  { background: #eeeedf; color: #4a4a30; }
 
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+        .btn-home {
+            position: fixed; top: 16px; right: 16px; z-index: 500;
+            display: flex; align-items: center; gap: 6px;
+            font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500;
+            color: var(--ink-2); background: rgba(250,249,247,0.75);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            border: 1px solid var(--line-strong); border-radius: 20px;
+            padding: 7px 14px; text-decoration: none;
+            letter-spacing: 0.03em; transition: background 0.15s, color 0.15s;
+        }
+        .btn-home:hover { background: rgba(250,249,247,0.95); color: var(--ink); }
+        .btn-home svg { width: 12px; height: 12px; flex-shrink: 0; }
     </style>
 </head>
 <body>
 <div id="app">
+    <a href="../index.html" class="btn-home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        홈
+    </a>
     <div class="container">
 
         <div class="header">
