@@ -229,23 +229,26 @@
     .footer-inner {
       position: relative;
       width: 100%;
-      /* natural height: images are 2816×1236, so height = width × 1236/2816 ≈ 43.9vw */
+      /* height proportional to image set (2816×1236), capped at natural mobile height */
       height: min(173px, 43.9vw);
     }
     .footer-panels {
       position: absolute;
       inset: 0;
       display: flex;
+      align-items: stretch;
     }
-    .fp {
-      /* 100% 100%: each panel stretches to fill its own container — 9-slice behavior */
+    .fp { background-repeat: no-repeat; }
+    /* sides: plain stripes → stretch to fill remaining width */
+    .fp-l { flex: 1 1 0; background-image: url('assets/footer-bg-left.png');   background-size: 100% 100%; }
+    .fp-r { flex: 1 1 0; background-image: url('assets/footer-bg-right.png');  background-size: 100% 100%; }
+    /* center: decorative column → keep natural aspect ratio, never stretch */
+    .fp-c {
+      flex: 0 0 auto;
+      aspect-ratio: 1126 / 1236; /* image is 1126×1236 px */
+      background-image: url('assets/footer-bg-center.png');
       background-size: 100% 100%;
-      background-repeat: no-repeat;
     }
-    /* ends: fixed 30% each (matches image proportions 845/2816≈30%), center stretches */
-    .fp-l { flex: 0 0 30%; background-image: url('assets/footer-bg-left.png'); }
-    .fp-c { flex: 1 1 0;   background-image: url('assets/footer-bg-center.png'); }
-    .fp-r { flex: 0 0 30%; background-image: url('assets/footer-bg-right.png'); }
     .footer-text {
       position: absolute;
       inset: 0;
