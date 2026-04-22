@@ -239,6 +239,8 @@
       align-items: stretch;
     }
     .fp { background-repeat: no-repeat; background-size: 100% 100%; }
+    /* 2px overlap between adjacent panels to hide seams */
+    .fp + .fp { margin-left: -2px; }
     /* stretching panels — plain texture, OK to distort horizontally */
     .fp-l  { flex: 1 1 0; background-image: url('assets/footer-bg_Left.jpg'); }
     .fp-c  { flex: 1 1 0; background-image: url('assets/footer-bg_center.jpg'); }
