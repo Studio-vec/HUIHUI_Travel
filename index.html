@@ -230,16 +230,21 @@
       position: relative;
       width: 100%;
       height: min(126px, calc(19.34vw + 50px));
-      border-style: solid;
-      border-color: transparent;
-      border-top-width: 0;
-      border-bottom-width: 0;
-      border-left-width: min(101px, 22vw);
-      border-right-width: min(101px, 22vw);
-      border-image: url('assets/footer-bg.png') 0 986 fill;
-      border-image-repeat: stretch;
-      box-sizing: border-box;
+      overflow: hidden;
     }
+    .footer-panels {
+      position: absolute;
+      inset: 0;
+      display: flex;
+    }
+    .fp {
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+    .fp-l { flex: 3 3 0%; background-image: url('assets/footer-bg-left.png'); }
+    .fp-c { flex: 4 4 0%; background-image: url('assets/footer-bg-center.png'); }
+    .fp-r { flex: 3 3 0%; background-image: url('assets/footer-bg-right.png'); }
     .footer-text {
       position: absolute;
       inset: 0;
@@ -374,7 +379,12 @@
   <!-- FOOTER -->
   <footer class="footer">
     <div class="footer-inner">
-<div class="footer-text">태희의 국내 여행 안내서 – Studio.Vec</div>
+      <div class="footer-panels">
+        <div class="fp fp-l"></div>
+        <div class="fp fp-c"></div>
+        <div class="fp fp-r"></div>
+      </div>
+      <div class="footer-text">태희의 국내 여행 안내서 – Studio.Vec</div>
     </div>
   </footer>
 
