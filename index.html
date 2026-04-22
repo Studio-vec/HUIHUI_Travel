@@ -229,8 +229,8 @@
     .footer-inner {
       position: relative;
       width: 100%;
-      height: min(126px, calc(19.34vw + 50px));
-      overflow: hidden;
+      /* natural height: images are 2816×1236, so height = width × 1236/2816 ≈ 43.9vw */
+      height: min(173px, 43.9vw);
     }
     .footer-panels {
       position: absolute;
@@ -238,13 +238,14 @@
       display: flex;
     }
     .fp {
-      background-size: cover;
-      background-position: center center;
+      /* 100% 100%: each panel stretches to fill its own container — 9-slice behavior */
+      background-size: 100% 100%;
       background-repeat: no-repeat;
     }
-    .fp-l { flex: 3 3 0%; background-image: url('assets/footer-bg-left.png'); }
-    .fp-c { flex: 4 4 0%; background-image: url('assets/footer-bg-center.png'); }
-    .fp-r { flex: 3 3 0%; background-image: url('assets/footer-bg-right.png'); }
+    /* ends: fixed 30% each (matches image proportions 845/2816≈30%), center stretches */
+    .fp-l { flex: 0 0 30%; background-image: url('assets/footer-bg-left.png'); }
+    .fp-c { flex: 1 1 0;   background-image: url('assets/footer-bg-center.png'); }
+    .fp-r { flex: 0 0 30%; background-image: url('assets/footer-bg-right.png'); }
     .footer-text {
       position: absolute;
       inset: 0;
