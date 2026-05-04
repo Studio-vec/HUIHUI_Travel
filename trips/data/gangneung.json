@@ -1,0 +1,108 @@
+{
+  "id": "gangneung",
+  "title": "강릉, 힙플 나들이",
+  "tags": ["강원도", "☕ 카페 투어", "2박 3일"],
+  "meta": ["11곳의 장소", "2024년 봄/여름", "해변·카페·로컬 맛집"],
+  "operatorNote": {
+    "avatar": "🌊",
+    "name": "태희",
+    "text": "강릉은 카페거리, 해변, 로컬 맛집이 모두 걸어서 다닐 수 있는 거리에 있어요. 오프더월, 갤러리밥스 같은 힙한 카페는 휴무일이 많으니 방문 전 꼭 확인하세요."
+  },
+  "places": [
+    {
+      "id": "g1", "no": "01", "name": "감자유원지",
+      "tags": [{ "label": "식사", "style": "tag-lime" }, { "label": "로컬", "style": "tag-sand" }],
+      "photos": ["옹심이", "감자 굿즈"],
+      "desc": "강릉 로컬 감자를 재해석한 감성 식당. 옹심이와 감자 관련 굿즈로 인기 있는 강릉 필수 코스예요.",
+      "tips": [
+        { "id": "gg1", "author": "태희", "avatar": "🌊", "isOperator": true, "date": "2024.05",
+          "body": "수요일 휴무예요 — 방문 전 일정 꼭 체크하세요.",
+          "season": "", "upvotes": 13 }
+      ]
+    },
+    {
+      "id": "g2", "no": "02", "name": "오프더월",
+      "tags": [{ "label": "카페", "style": "tag-lavender" }],
+      "photos": ["옥수수 타르트", "감자 타르트"],
+      "desc": "옥수수·감자 타르트로 유명한 독보적 무드의 카페. 강릉 교동 골목에 위치한 힙한 공간이에요.",
+      "tips": [
+        { "id": "gg2", "author": "태희", "avatar": "🌊", "isOperator": true, "date": "2024.05",
+          "body": "화·수 휴무예요. 창가 자리가 분위기 제일 좋아요.",
+          "season": "", "upvotes": 10 }
+      ]
+    },
+    {
+      "id": "g3", "no": "03", "name": "르봉마젤",
+      "tags": [{ "label": "카페", "style": "tag-lavender" }, { "label": "소품샵", "style": "tag-sand" }],
+      "photos": ["유럽 빈티지", "4층 카페"],
+      "desc": "유럽 빈티지 감성의 4층 카페 겸 소품샵. 층마다 다른 분위기로 꾸며져 있어 구경하는 재미가 있어요.",
+      "tips": [
+        { "id": "gg3", "author": "태희", "avatar": "🌊", "isOperator": true, "date": "2024.05",
+          "body": "화·수 휴무 주의하세요. 소품 구경도 알찹니다.",
+          "season": "", "upvotes": 8 }
+      ]
+    },
+    {
+      "id": "g4", "no": "04", "name": "폴앤메리 강문해변점",
+      "tags": [{ "label": "식사", "style": "tag-lime" }, { "label": "해변 뷰", "style": "tag-lavender" }],
+      "photos": ["수제버거", "해변 뷰"],
+      "desc": "강문해변 앞 강릉 대표 수제버거 아점 스팟. 연중무휴 본점으로 해변 뷰 창가 자리가 인기예요.",
+      "tips": [
+        { "id": "gg4", "author": "태희", "avatar": "🌊", "isOperator": true, "date": "2024.06",
+          "body": "연중무휴라 아무 때나 방문 가능. 해변 뷰 창가 자리 확보가 관건이에요.",
+          "season": "🌿 여름", "upvotes": 15 }
+      ]
+    },
+    {
+      "id": "g5", "no": "05", "name": "강문해변",
+      "tags": [{ "label": "산책", "style": "tag-lavender" }],
+      "photos": ["바다 인증샷", "오션뷰"],
+      "desc": "바다 배경 인증샷의 성지. 파도 소리를 들으며 여유롭게 산책하기 좋은 강릉 대표 해변이에요.",
+      "tips": []
+    },
+    {
+      "id": "g6", "no": "06", "name": "고래책방",
+      "tags": [{ "label": "쇼핑", "style": "tag-sand" }],
+      "photos": ["독립출판물", "로컬 굿즈"],
+      "desc": "독립출판물과 강릉 로컬 굿즈를 만날 수 있는 서점. 연중무휴로 층별로 큐레이션이 잘 되어 있어요.",
+      "tips": [
+        { "id": "gg6", "author": "태희", "avatar": "🌊", "isOperator": true, "date": "2024.06",
+          "body": "연중무휴예요. 층별 큐레이션을 천천히 감상하는 게 묘미입니다.",
+          "season": "", "upvotes": 6 }
+      ]
+    },
+    {
+      "id": "g7", "no": "07", "name": "갤러리밥스",
+      "tags": [{ "label": "카페", "style": "tag-lavender" }, { "label": "오픈런", "style": "tag-lime" }],
+      "photos": ["초당옥수수커피", "카페 내부"],
+      "desc": "초당옥수수커피 원조 카페. 목요일 휴무이며 오픈런을 해야 맛볼 수 있는 강릉 시그니처 카페예요.",
+      "tips": [
+        { "id": "gg7", "author": "태희", "avatar": "🌊", "isOperator": true, "date": "2024.06",
+          "body": "목요일 휴무, 오픈 전 줄 서기를 강추해요. 안 줄 서면 못 먹어요!",
+          "season": "🌿 여름", "upvotes": 22 }
+      ]
+    },
+    {
+      "id": "g8", "no": "08", "name": "엄지네포장마차 본점",
+      "tags": [{ "label": "식사", "style": "tag-lime" }],
+      "photos": ["꼬막비빔밥"],
+      "desc": "전국구 꼬막비빔밥 본점. 연중무휴이며 웨이팅이 길어 여유롭게 방문하는 것을 추천해요.",
+      "tips": [
+        { "id": "gg8", "author": "태희", "avatar": "🌊", "isOperator": true, "date": "2024.06",
+          "body": "연중무휴. 웨이팅 예상하고 여유롭게 방문하세요.",
+          "season": "", "upvotes": 17 }
+      ]
+    },
+    {
+      "id": "g9", "no": "09", "name": "테라로사 경포호수점",
+      "tags": [{ "label": "카페", "style": "tag-lavender" }, { "label": "호수 뷰", "style": "tag-sand" }],
+      "photos": ["서적과 커피", "2층 창가"],
+      "desc": "서적과 커피를 동시에 즐기는 대형 감성 카페. 2층 창가에서 경포 뷰를 감상할 수 있어요.",
+      "tips": [
+        { "id": "gg9", "author": "태희", "avatar": "🌊", "isOperator": true, "date": "2024.06",
+          "body": "연중무휴. 2층 창가에서 경포 뷰 보며 커피 한 잔 — 이것이 강릉 감성.",
+          "season": "", "upvotes": 20 }
+      ]
+    }
+  ]
+}

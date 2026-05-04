@@ -1,0 +1,123 @@
+{
+  "id": "dongincheon",
+  "title": "동인천, 개항로 산책",
+  "tags": ["인천", "🏛️ 근대 역사", "1박 2일"],
+  "meta": ["11곳의 장소", "2024년 봄/여름", "개항로·차이나타운 코스"],
+  "operatorNote": {
+    "avatar": "⚓",
+    "name": "태희",
+    "text": "동인천 개항로는 근대 역사와 힙한 카페 문화가 공존하는 곳이에요. 월요일에 방문하면 대부분의 문화시설이 휴무라 화~일요일 방문을 강력 추천드려요."
+  },
+  "places": [
+    {
+      "id": "di1", "no": "01", "name": "잉글랜드 돈까스",
+      "tags": [{ "label": "식사", "style": "tag-lime" }],
+      "photos": ["경양식 돈까스"],
+      "desc": "추억의 경양식 돈까스 전문점. 연중무휴로 오픈 직후 방문하면 대기 없이 여유롭게 식사할 수 있어요.",
+      "tips": [
+        { "id": "dit1", "author": "태희", "avatar": "⚓", "isOperator": true, "date": "2024.04",
+          "body": "오픈 직후 방문하면 대기 없이 여유롭게 시작할 수 있어요.",
+          "season": "", "upvotes": 8 }
+      ]
+    },
+    {
+      "id": "di2", "no": "02", "name": "제물포구락부 & 자유공원",
+      "tags": [{ "label": "관광", "style": "tag-sand" }, { "label": "역사", "style": "tag-lavender" }],
+      "photos": ["이국적 건축물", "인천항 조망"],
+      "desc": "이국적인 건축물 산책과 인천항 조망을 즐길 수 있는 역사 명소. 월요일 휴무예요.",
+      "tips": [
+        { "id": "dit2", "author": "태희", "avatar": "⚓", "isOperator": true, "date": "2024.04",
+          "body": "자유공원 맥아더 동상에서 인천항 전경 감상을 추천해요. 월요일 휴무 주의.",
+          "season": "", "upvotes": 10 }
+      ]
+    },
+    {
+      "id": "di3", "no": "03", "name": "대불호텔 전시관",
+      "tags": [{ "label": "문화", "style": "tag-sand" }],
+      "photos": ["복원 객실", "포토존"],
+      "desc": "국내 최초 서양식 호텔 복원 전시관. 1층 재현 객실이 대표 포토존이에요. 월요일 휴무.",
+      "tips": [
+        { "id": "dit3", "author": "태희", "avatar": "⚓", "isOperator": true, "date": "2024.04",
+          "body": "1층 재현 객실이 포토존이에요. 30분 집중 관람으로 충분합니다.",
+          "season": "", "upvotes": 7 }
+      ]
+    },
+    {
+      "id": "di4", "no": "04", "name": "짜장면박물관",
+      "tags": [{ "label": "문화", "style": "tag-sand" }, { "label": "차이나타운", "style": "tag-lime" }],
+      "photos": ["짜장면 역사", "화교 문화"],
+      "desc": "짜장면의 역사와 인천 화교 문화를 탐방하는 박물관. 차이나타운 바로 옆에 위치해요.",
+      "tips": [
+        { "id": "dit4", "author": "태희", "avatar": "⚓", "isOperator": true, "date": "2024.04",
+          "body": "관람 후 차이나타운 주변 골목 산책으로 자연스럽게 연결돼요.",
+          "season": "", "upvotes": 9 }
+      ]
+    },
+    {
+      "id": "di5", "no": "05", "name": "팟알",
+      "tags": [{ "label": "카페", "style": "tag-lavender" }],
+      "photos": ["팥빙수", "한옥 카페"],
+      "desc": "팥빙수와 함께하는 고즈넉한 한옥 카페. 팥빙수는 시즌 한정이니 미리 확인하세요. 월요일 휴무.",
+      "tips": [
+        { "id": "dit5", "author": "태희", "avatar": "⚓", "isOperator": true, "date": "2024.05",
+          "body": "한옥 카페 분위기. 팥빙수는 시즌 한정이니 미리 확인하세요.",
+          "season": "🌿 여름", "upvotes": 12 }
+      ]
+    },
+    {
+      "id": "di6", "no": "06", "name": "일광전구 라이트하우스",
+      "tags": [{ "label": "카페", "style": "tag-lavender" }],
+      "photos": ["전구 공장", "조명 카페"],
+      "desc": "전구 공장을 개조한 감성 카페. 독특한 조명 인테리어와 전구 소품을 구매할 수 있어요. 월요일 휴무.",
+      "tips": [
+        { "id": "dit6", "author": "태희", "avatar": "⚓", "isOperator": true, "date": "2024.05",
+          "body": "전구 소품 구매 가능. 조명이 예뻐서 사진 잘 나와요.",
+          "season": "", "upvotes": 15 }
+      ]
+    },
+    {
+      "id": "di7", "no": "07", "name": "브라운핸즈 개항로",
+      "tags": [{ "label": "카페", "style": "tag-lavender" }],
+      "photos": ["폐건물 개조", "2층 창가"],
+      "desc": "폐건물의 결을 살린 감성 카페. 2층 창가 자리가 채광이 좋고 분위기 최고예요. 연중무휴.",
+      "tips": [
+        { "id": "dit7", "author": "태희", "avatar": "⚓", "isOperator": true, "date": "2024.05",
+          "body": "2층 창가 자리가 채광 좋고 분위기 최고. 라떼 계열 추천해요.",
+          "season": "", "upvotes": 18 }
+      ]
+    },
+    {
+      "id": "di8", "no": "08", "name": "신포 국제시장",
+      "tags": [{ "label": "식사", "style": "tag-lime" }, { "label": "간식", "style": "tag-sand" }],
+      "photos": ["신포닭강정", "공갈빵"],
+      "desc": "닭강정·회·공갈빵·만두 등 다양한 시장 간식을 즐길 수 있는 인천 대표 시장이에요.",
+      "tips": [
+        { "id": "dit8", "author": "태희", "avatar": "⚓", "isOperator": true, "date": "2024.05",
+          "body": "신포닭강정이 원조예요. 회는 시장 안 횟집에서 포장 요청도 가능해요.",
+          "season": "", "upvotes": 20 }
+      ]
+    },
+    {
+      "id": "di9", "no": "09", "name": "배다리 헌책방 거리",
+      "tags": [{ "label": "관광", "style": "tag-sand" }, { "label": "레트로", "style": "tag-lavender" }],
+      "photos": ["아벨서점", "헌책방 골목"],
+      "desc": "아벨서점 등 레트로한 골목 산책 코스. 골목 깊숙이 들어갈수록 더 오래된 책방이 나와요. 목요일 휴무.",
+      "tips": [
+        { "id": "dit9", "author": "방문객", "avatar": "📖", "isOperator": false, "date": "2024.06",
+          "body": "골목 깊숙이 들어갈수록 더 오래된 책방이 나와요. 탐험하는 기분이에요.",
+          "season": "", "upvotes": 8 }
+      ]
+    },
+    {
+      "id": "di10", "no": "10", "name": "인천맥주",
+      "tags": [{ "label": "식사", "style": "tag-lime" }],
+      "photos": ["탭 맥주", "수제 맥주"],
+      "desc": "외부 음식 반입이 가능한 인천 수제 맥주 바. 다양한 탭 맥주를 소량씩 여러 종류 시도해보세요. 월요일 휴무.",
+      "tips": [
+        { "id": "dit10", "author": "태희", "avatar": "⚓", "isOperator": true, "date": "2024.05",
+          "body": "외부 음식 반입 가능. 탭 맥주 다양하니 소량씩 여러 종류 시도해보세요.",
+          "season": "", "upvotes": 13 }
+      ]
+    }
+  ]
+}
