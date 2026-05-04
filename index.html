@@ -496,12 +496,11 @@
 
   <!-- ── NAVBAR ── -->
   <nav class="navbar">
-    <a href="/" class="navbar-logo">HUIHUI Travel</a>
+    <a href="index.html" class="navbar-logo">HUIHUI Travel</a>
     <ul class="navbar-links">
-      <li><a href="#">코스</a></li>
-      <li><a href="#">갤러리</a></li>
-      <li><a href="#">게임</a></li>
-      <li><a href="#">소개</a></li>
+      <li><a href="https://blog.naver.com/kty1297" target="_blank" rel="noopener">블로그</a></li>
+      <li><a href="gallery.html">갤러리</a></li>
+      <li><a href="game.html">게임</a></li>
     </ul>
     <div class="navbar-right">
       <button class="lang-btn" id="langBtn" onclick="cycleLang()">
@@ -828,8 +827,8 @@
     let reservedSet = _getSet(RESERVED_KEY);
 
     function _effectiveStatus(trip, i) {
-      if (visitedSet.has(trip.url)) return 'visited';
-      if (reservedSet.has(i))       return 'reserved';
+      if (trip.key || visitedSet.has(trip.url)) return 'visited';
+      if (reservedSet.has(i))                   return 'reserved';
       return trip.status;
     }
 

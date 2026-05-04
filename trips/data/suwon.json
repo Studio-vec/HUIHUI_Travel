@@ -2,7 +2,7 @@
   "id": "suwon",
   "title": "수원, 트렌디 나들이",
   "tags": ["경기도", "🏯 행궁동·광교", "2박 3일"],
-  "meta": ["13곳의 장소", "2024년 봄/여름", "행궁동·광교·스타필드 코스"],
+  "meta": ["8곳의 장소", "2024년 봄/여름", "행궁동·광교·스타필드 코스"],
   "operatorNote": {
     "avatar": "🏰",
     "name": "태희",
@@ -10,85 +10,73 @@
   },
   "places": [
     {
-      "id": "sw1", "no": "01", "name": "몽상가옥",
+      "id": "sw1", "day": 1, "no": "01", "name": "몽상가옥",
       "tags": [{ "label": "식사", "style": "tag-lime" }],
       "photos": ["파스타", "리조또"],
       "desc": "빈티지 공간에서 즐기는 양식 미식. 파스타와 리조또가 유명하며 화요일 휴무예요.",
-      "tips": [
-        { "id": "swt1", "author": "태희", "avatar": "🏰", "isOperator": true, "date": "2024.04",
-          "body": "분위기 좋은 곳에서 파스타/리조또 즐기기. 화 휴무 주의하세요.",
-          "season": "", "upvotes": 10 }
-      ]
+      "tips": []
     },
     {
-      "id": "sw2", "no": "02", "name": "널담은공간 화홍문점",
+      "id": "sw2", "day": 1, "no": "02", "name": "널담은공간 화홍문점",
       "tags": [{ "label": "체험", "style": "tag-lavender" }],
       "photos": ["편지 쓰기", "실링왁스"],
       "desc": "미래의 나에게 편지를 쓰는 감성 카페 겸 체험 공간. 실링왁스로 직접 편지 봉투를 봉인할 수 있어요.",
       "tips": [
-        { "id": "swt2", "author": "태희", "avatar": "🏰", "isOperator": true, "date": "2024.04",
+        { "id": "swt2", "author": "편지쟁이", "avatar": "✉️", "isOperator": false, "date": "2024.04",
           "body": "실링왁스로 직접 편지 봉투 봉인해보기. 특별한 추억이 남아요.",
           "season": "", "upvotes": 13 }
       ]
     },
     {
-      "id": "sw3", "no": "03", "name": "행궁동 소품샵 투어",
+      "id": "sw3", "day": 1, "no": "03", "name": "행궁동 소품샵 투어",
       "tags": [{ "label": "쇼핑", "style": "tag-sand" }],
       "photos": ["감성 굿즈", "편집샵"],
       "desc": "행궁동 골목에 숨어 있는 감각적인 굿즈 및 편집샵 탐방. 골목길 깊은 곳에 숨은 소품샵에서 인생 아이템을 발굴하세요.",
       "tips": []
     },
     {
-      "id": "sw4", "no": "04", "name": "행궁동 골목 탐방",
+      "id": "sw4", "day": 1, "no": "04", "name": "행궁동 골목 탐방",
       "tags": [{ "label": "관광", "style": "tag-lavender" }, { "label": "성곽길", "style": "tag-sand" }],
       "photos": ["수원 화성", "성곽길"],
       "desc": "트렌디한 거리와 브랜딩 공간이 모여 있는 행궁동 골목. 수원 화성 성곽길을 따라 예쁜 배경을 담을 수 있어요.",
       "tips": [
-        { "id": "swt4", "author": "방문객", "avatar": "✈️", "isOperator": false, "date": "2024.05",
+        { "id": "swt4", "author": "성곽워커", "avatar": "🚶", "isOperator": false, "date": "2024.05",
           "body": "수원 화성 성곽길 따라 걸으면 배경이 다 예뻐요. 저녁 노을 시간대가 최고예요.",
           "season": "🌸 봄", "upvotes": 16 }
       ]
     },
     {
-      "id": "sw5", "no": "05", "name": "방화수류정 야경",
+      "id": "sw5", "day": 1, "no": "05", "name": "방화수류정 야경",
       "tags": [{ "label": "야경", "style": "tag-lavender" }],
       "photos": ["야경 사진", "연못 반영"],
       "desc": "연못에 비친 화려한 정자와 성곽 야경이 아름다운 수원 대표 야경 스팟이에요.",
       "tips": [
-        { "id": "swt5", "author": "태희", "avatar": "🏰", "isOperator": true, "date": "2024.04",
+        { "id": "swt5", "author": "야경헌터", "avatar": "🌙", "isOperator": false, "date": "2024.04",
           "body": "연못에 비친 화려한 정자와 성곽 야경이 장관이에요. 삼각대 필수!",
           "season": "", "upvotes": 21 }
       ]
     },
     {
-      "id": "sw6", "no": "06", "name": "일월수목원",
+      "id": "sw6", "day": 2, "no": "06", "name": "일월수목원",
       "tags": [{ "label": "관광", "style": "tag-lavender" }, { "label": "포토존", "style": "tag-lime" }],
       "photos": ["온실 포토존", "열대식물"],
       "desc": "트렌디한 대형 온실과 포토존으로 인기 있는 수목원. 월요일 휴무이며 오전 방문이 쾌적해요.",
-      "tips": [
-        { "id": "swt6", "author": "태희", "avatar": "🏰", "isOperator": true, "date": "2024.05",
-          "body": "트렌디한 대형 온실 포토존에서 인생샷 남기기. 월 휴무 꼭 확인하세요.",
-          "season": "🌸 봄", "upvotes": 14 }
-      ]
+      "tips": []
     },
     {
-      "id": "sw7", "no": "07", "name": "광교 앨리웨이",
+      "id": "sw7", "day": 2, "no": "07", "name": "광교 앨리웨이",
       "tags": [{ "label": "쇼핑", "style": "tag-sand" }, { "label": "서점", "style": "tag-lavender" }],
       "photos": ["큐레이션 서점", "라이프스타일 샵"],
       "desc": "큐레이션 서점과 감각적인 라이프스타일 편집샵이 모인 광교 대표 복합공간이에요.",
-      "tips": [
-        { "id": "swt7", "author": "태희", "avatar": "🏰", "isOperator": true, "date": "2024.05",
-          "body": "책발전소 및 감각적인 라이프스타일 브랜드 구경 추천이에요.",
-          "season": "", "upvotes": 9 }
-      ]
+      "tips": []
     },
     {
-      "id": "sw8", "no": "08", "name": "광교 호수공원",
+      "id": "sw8", "day": 2, "no": "08", "name": "광교 호수공원",
       "tags": [{ "label": "산책", "style": "tag-lavender" }],
       "photos": ["원천호수", "산책로"],
       "desc": "광교신도시의 대표 도시 공원. 해 질 녘 원천호수 산책로를 걷는 것을 추천해요.",
       "tips": [
-        { "id": "swt8", "author": "방문객", "avatar": "🌿", "isOperator": false, "date": "2024.06",
+        { "id": "swt8", "author": "호수산책러", "avatar": "🌿", "isOperator": false, "date": "2024.06",
           "body": "해 질 녘 원천호수 산책로 걷기가 최고예요. 도시 야경과 호수가 어우러져요.",
           "season": "🌿 여름", "upvotes": 11 }
       ]
