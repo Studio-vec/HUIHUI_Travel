@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>노원 경춘선 로그</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink:   #2A1F48;
+            --ink-2: #6B5E8A;
+            --ink-3: #9B90B4;
+            --line:        rgba(42,31,72,0.09);
+            --line-strong: rgba(42,31,72,0.18);
+            --bg:      #FFF8EB;
+            --surface: #ffffff;
+            --lavender:        #8B6FD0;
+            --lavender-light:  #EDE5FF;
+            --lavender-border: #D8C8FF;
+            --lavender-dark:   #4E3490;
+            --lavender-mid:    #C0A8FF;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'DM Sans', -apple-system, sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
+        .container { max-width: 420px; margin: 0 auto; padding: 0 0 140px; }
+        .header { padding: 48px 24px 28px; border-bottom: 1px solid var(--line-strong); }
+        .header-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px; }
+        .header-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 28px; font-weight: 400; color: var(--ink); line-height: 1.2; margin-bottom: 22px; }
+        .header-dates { display: flex; align-items: flex-end; margin-bottom: 20px; }
+        .date-item { display: flex; flex-direction: column; gap: 5px; }
+        .date-label { font-size: 9px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+        .header-date-input { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 400; color: var(--ink-2); border: none; background: transparent; cursor: pointer; padding: 0 0 4px; outline: none; border-bottom: 1px solid var(--line-strong); width: 128px; }
+        .date-arrow { font-size: 11px; color: var(--ink-3); padding: 0 10px 5px; flex-shrink: 0; }
+        .date-static { font-size: 14px; font-weight: 400; color: var(--ink-3); padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+        .now-card { background: var(--lavender-dark); border-radius: 6px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; }
+        .now-eyebrow { display: flex; align-items: center; gap: 7px; font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.38); }
+        .now-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--lavender-mid); flex-shrink: 0; animation: pulse 2s ease-in-out infinite; }
+        .now-name { font-family: 'DM Serif Display', serif; font-size: 24px; font-weight: 400; color: #fff; line-height: 1.15; }
+        .now-chips { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 5px; }
+        .now-time { font-size: 11px; color: rgba(255,255,255,0.38); font-variant-numeric: tabular-nums; }
+        .now-chip { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 3px; letter-spacing: 0.04em; background: rgba(192,168,255,0.15); color: rgba(255,255,255,0.7); }
+        .now-divider { height: 1px; background: rgba(255,255,255,0.1); }
+        .now-rows { display: flex; flex-direction: column; gap: 9px; }
+        .now-row { display: flex; align-items: flex-start; gap: 9px; }
+        .now-icon { width: 13px; height: 13px; flex-shrink: 0; margin-top: 2px; fill: none; stroke: rgba(192,168,255,0.5); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+        .now-row-text { font-size: 12px; color: rgba(255,255,255,0.5); line-height: 1.55; font-weight: 300; }
+        .day-section { padding: 0 24px; }
+        .day-label { display: flex; align-items: baseline; gap: 10px; padding: 28px 0 14px; border-bottom: 1px solid var(--line); }
+        .day-number { font-family: 'DM Serif Display', serif; font-size: 13px; font-weight: 400; color: var(--ink-3); letter-spacing: 0.05em; }
+        .day-date { font-size: 11px; color: var(--ink-3); letter-spacing: 0.08em; }
+        .place-row { display: flex; align-items: flex-start; gap: 14px; padding: 15px 0; border-bottom: 1px solid var(--line); position: relative; transition: padding-left 0.2s; }
+        .place-row.active { padding-left: 12px; }
+        .place-row.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--lavender); border-radius: 1px; }
+        .place-row.active .place-time { color: var(--lavender); font-weight: 500; }
+        .place-time { font-size: 11px; color: var(--ink-3); min-width: 38px; padding-top: 3px; font-variant-numeric: tabular-nums; letter-spacing: 0.03em; flex-shrink: 0; }
+        .place-body { flex: 1; min-width: 0; }
+        .place-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+        .place-name { font-size: 15px; font-weight: 500; color: var(--ink); line-height: 1.3; }
+        .place-tag { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 3px; white-space: nowrap; letter-spacing: 0.04em; }
+        .place-tip { font-size: 12px; color: var(--ink-3); line-height: 1.5; font-weight: 300; }
+        .photo-slot { width: 50px; height: 50px; border-radius: 4px; border: 1px solid var(--line-strong); overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: border-color 0.2s; background: var(--surface); }
+        .photo-slot:hover { border-color: var(--lavender); }
+        .photo-slot.has-img { border-color: var(--lavender); }
+        .photo-slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .photo-slot-icon { width: 15px; height: 15px; opacity: 0.18; }
+        .tips-section { padding: 0 24px; }
+        .tips-header { display: flex; align-items: center; justify-content: space-between; padding: 28px 0 14px; }
+        .tips-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); }
+        .add-tip-btn { font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 500; color: var(--lavender); background: var(--lavender-light); border: 1px solid var(--lavender-border); border-radius: 20px; padding: 5px 12px; cursor: pointer; letter-spacing: 0.03em; transition: background 0.15s; }
+        .add-tip-btn:hover { background: var(--lavender-border); }
+        .tip-item { display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+        .tip-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--lavender-light); border: 1px solid var(--lavender-border); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; margin-top: 2px; }
+        .tip-content { flex: 1; }
+        .tip-meta { display: flex; align-items: baseline; gap: 8px; margin-bottom: 5px; flex-wrap: wrap; }
+        .tip-author { font-size: 12px; font-weight: 500; color: var(--ink-2); }
+        .tip-operator-badge { font-size: 9px; font-weight: 500; letter-spacing: 0.08em; color: var(--lavender); background: var(--lavender-light); padding: 1px 5px; border-radius: 2px; }
+        .tip-date { font-size: 10px; color: var(--ink-3); margin-left: auto; }
+        .tip-text { font-size: 12px; color: var(--ink-2); line-height: 1.55; font-weight: 300; }
+        .tip-upvote { display: inline-flex; align-items: center; gap: 4px; margin-top: 8px; font-size: 11px; color: var(--ink-3); background: none; border: 1px solid var(--line-strong); border-radius: 3px; padding: 2px 8px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+        .tip-upvote:hover { color: var(--lavender); border-color: var(--lavender-border); }
+        .tip-upvote.active { color: var(--lavender); border-color: var(--lavender-border); background: var(--lavender-light); }
+        .tips-empty { padding: 28px 0; text-align: center; font-size: 12px; color: var(--ink-3); line-height: 1.6; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, var(--bg) 55%); padding: 28px 24px 30px; display: flex; gap: 10px; justify-content: center; }
+        .nav-btn { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 10px 22px; border-radius: 3px; cursor: pointer; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); letter-spacing: 0.03em; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+        .nav-btn:hover { background: var(--lavender); color: #fff; border-color: var(--lavender); }
+        .nav-btn:disabled { opacity: 0.28; cursor: not-allowed; }
+        .nav-btn.primary { background: var(--lavender); color: #fff; border-color: var(--lavender); }
+        .nav-btn.primary:hover { background: var(--lavender-dark); border-color: var(--lavender-dark); }
+        .nav-btn.complete { background: var(--lavender); color: #fff; border-color: var(--lavender); }
+        .nav-btn.complete:hover { background: var(--lavender-dark); border-color: var(--lavender-dark); }
+        .nav-btn.done { background: var(--lavender-light); color: var(--lavender); border-color: var(--lavender-border); }
+        .nav-btn.done:hover { background: var(--lavender-border); }
+        .art-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 3000; opacity: 0; visibility: hidden; transition: opacity 0.4s; overflow: hidden; }
+        .art-overlay.show { opacity: 1; visibility: visible; }
+        .art-piece { position: absolute; animation: drift 6s ease-in-out infinite; }
+        .art-piece img { width: 96px; height: 96px; object-fit: cover; border-radius: 2px; border: 1px solid var(--line-strong); }
+        @keyframes drift { 0%, 100% { transform: translate(0,0) rotate(-2deg); } 50% { transform: translate(8px,-18px) rotate(2deg); } }
+        .art-close { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); }
+        .modal-bg { position: fixed; inset: 0; background: rgba(42,31,72,0.5); z-index: 4000; display: flex; align-items: center; justify-content: center; padding: 24px; }
+        .report-card { background: var(--surface); width: 100%; max-width: 320px; border-radius: 4px; overflow: hidden; }
+        .report-header { padding: 22px 22px 14px; border-bottom: 1px solid var(--line); }
+        .report-title { font-family: 'DM Serif Display', serif; font-size: 20px; font-weight: 400; color: var(--ink); }
+        .report-sub { font-size: 11px; color: var(--ink-3); margin-top: 3px; letter-spacing: 0.05em; }
+        .photo-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; padding: 14px; }
+        .photo-grid-cell { aspect-ratio: 1; background: var(--bg); border-radius: 2px; overflow: hidden; border: 1px solid var(--line); }
+        .photo-grid-cell img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .report-footer { padding: 12px 22px 22px; display: flex; gap: 10px; }
+        .tip-modal-bg { position: fixed; inset: 0; background: rgba(42,31,72,0.5); z-index: 4000; display: flex; align-items: flex-end; justify-content: center; }
+        .tip-modal-card { background: var(--surface); width: 100%; max-width: 420px; border-radius: 8px 8px 0 0; padding: 28px 24px 36px; display: flex; flex-direction: column; gap: 14px; animation: slideUp 0.22s ease-out; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .tip-modal-title { font-family: 'DM Serif Display', serif; font-size: 20px; font-weight: 400; color: var(--ink); }
+        .tip-modal-hint { font-size: 12px; color: var(--ink-3); }
+        .tip-input { font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink); background: var(--bg); border: 1px solid var(--line-strong); border-radius: 4px; padding: 10px 12px; width: 100%; outline: none; transition: border-color 0.15s; }
+        .tip-input:focus { border-color: var(--lavender-border); }
+        .tip-textarea { font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink); background: var(--bg); border: 1px solid var(--line-strong); border-radius: 4px; padding: 10px 12px; width: 100%; resize: none; height: 90px; outline: none; transition: border-color 0.15s; }
+        .tip-textarea:focus { border-color: var(--lavender-border); }
+        .tip-modal-btns { display: flex; gap: 10px; }
+        .tag-food { background: #f5ebe0; color: #7a4f30; }
+        .tag-cafe { background: #e8f2ef; color: #2e6b59; }
+        .tag-view { background: #e8eef5; color: #2e4e70; }
+        .tag-exp  { background: #f0ece2; color: #5a4a28; }
+        .tag-shop { background: #eeeedf; color: #4a4a30; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+        .btn-home { position: fixed; top: 16px; right: 16px; z-index: 500; display: flex; align-items: center; gap: 6px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; color: var(--ink-2); background: rgba(255,248,235,0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid var(--line-strong); border-radius: 20px; padding: 7px 14px; text-decoration: none; letter-spacing: 0.03em; transition: background 0.15s, color 0.15s; }
+        .btn-home:hover { background: rgba(255,248,235,0.98); color: var(--lavender); }
+        .btn-home svg { width: 12px; height: 12px; flex-shrink: 0; }
+    </style>
+</head>
+<body>
+<div id="app">
+    <a href="../index.html" class="btn-home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        홈
+    </a>
+    <div class="container">
+        <div class="header">
+            <div class="header-eyebrow">Travel Log · Nowon</div>
+            <h1 class="header-title">노원<br>경춘선 나들이</h1>
+            <div class="header-dates">
+                <div class="date-item">
+                    <span class="date-label">출발</span>
+                    <input type="date" v-model="startDate" class="header-date-input">
+                </div>
+                <span class="date-arrow">→</span>
+                <div class="date-item">
+                    <span class="date-label">도착</span>
+                    <span class="date-static">{{ endDate }}</span>
+                </div>
+            </div>
+            <div v-if="currentPlace" class="now-card">
+                <div class="now-eyebrow"><span class="now-dot"></span>지금 여기</div>
+                <div>
+                    <div class="now-name">{{ currentPlace.name }}</div>
+                    <div class="now-chips">
+                        <span class="now-time">{{ currentPlace.time }}</span>
+                        <span class="now-chip">{{ currentPlace.theme }}</span>
+                    </div>
+                </div>
+                <div class="now-divider"></div>
+                <div class="now-rows">
+                    <div class="now-row">
+                        <svg class="now-icon" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <span class="now-row-text">{{ currentPlace.name }}, 노원구</span>
+                    </div>
+                    <div class="now-row">
+                        <svg class="now-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <span class="now-row-text">{{ currentPlace.tip }}</span>
+                    </div>
+                    <div class="now-row">
+                        <svg class="now-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <span class="now-row-text">{{ currentPlace.enjoyTip }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div v-for="(day, dIdx) in schedule" :key="dIdx" class="day-section">
+            <div class="day-label">
+                <span class="day-number">Day {{ dIdx + 1 }}</span>
+                <span class="day-date">{{ getFormattedDate(dIdx) }}</span>
+            </div>
+            <div v-for="p in day.places" :key="p.id" class="place-row" :class="{ active: currentPlace?.id === p.id }">
+                <span class="place-time">{{ p.time }}</span>
+                <div class="place-body">
+                    <div class="place-name-row">
+                        <span class="place-name">{{ p.name }}</span>
+                        <span class="place-tag" :class="'tag-' + p.theme_id">{{ p.theme }}</span>
+                    </div>
+                    <div class="place-tip">{{ p.tip }}</div>
+                </div>
+                <div class="photo-slot" :class="{ 'has-img': p.photo }" @click="clickUpload(p.id)">
+                    <img v-if="p.photo" :src="p.photo" alt="">
+                    <svg v-else class="photo-slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                    <input type="file" :id="'file-'+p.id" hidden accept="image/*" @change="uploadPhoto($event, p.id)">
+                </div>
+            </div>
+        </div>
+
+        <div class="tips-section">
+            <div class="tips-header">
+                <span class="tips-eyebrow">여행자 팁 · {{ tips.length }}</span>
+                <button class="add-tip-btn" @click="showTipModal = true">+ 팁 남기기</button>
+            </div>
+            <div v-if="tips.length === 0" class="tips-empty">첫 번째 팁을 남겨보세요 ✦<br>방문 정보, 추천 메뉴, 주차 팁 등 뭐든 좋아요</div>
+            <div v-for="tip in tips" :key="tip.id" class="tip-item">
+                <div class="tip-avatar">{{ tip.avatar }}</div>
+                <div class="tip-content">
+                    <div class="tip-meta">
+                        <span class="tip-author">{{ tip.author }}</span>
+                        <span v-if="tip.isOperator" class="tip-operator-badge">운영자</span>
+                        <span class="tip-date">{{ tip.date }}</span>
+                    </div>
+                    <div class="tip-text">{{ tip.body }}</div>
+                    <button class="tip-upvote" :class="{ active: tip.upvoted }" @click="upvoteTip(tip)">↑ {{ tip.upvotes }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-btn" @click="playArt" :disabled="allPhotos.length === 0">모아보기</button>
+        <button :class="['nav-btn', isVisited ? 'done' : (allPhotos.length > 0 ? 'complete' : '')]"
+                :disabled="!isVisited && allPhotos.length === 0" @click="toggleVisited">
+            {{ isVisited ? '완료됨 ✓' : '여행 완료' }}
+        </button>
+    </div>
+
+    <div class="art-overlay" :class="{ show: isArtPlaying }">
+        <div v-for="(piece, idx) in collagePieces" :key="idx" class="art-piece" :style="piece.style">
+            <img :src="piece.src" alt="">
+        </div>
+        <div class="art-close"><button class="nav-btn" @click="isArtPlaying = false">돌아가기</button></div>
+    </div>
+
+    <div class="modal-bg" v-if="showReport" @click.self="showReport = false">
+        <div id="report-content" class="report-card">
+            <div class="report-header">
+                <div class="report-title">Nowon Moment</div>
+                <div class="report-sub">{{ allPhotos.length }} photos · {{ getFormattedDate(0) }} – {{ getFormattedDate(schedule.length - 1) }}</div>
+            </div>
+            <div class="photo-grid">
+                <div v-for="n in 9" :key="n" class="photo-grid-cell">
+                    <img v-if="allPhotos[n-1]" :src="allPhotos[n-1]" alt="">
+                </div>
+            </div>
+            <div class="report-footer">
+                <button class="nav-btn" style="flex:1" @click="showReport = false">닫기</button>
+                <button class="nav-btn primary" style="flex:1" @click="saveImage">저장</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="tip-modal-bg" v-if="showTipModal" @click.self="showTipModal = false">
+        <div class="tip-modal-card">
+            <div>
+                <div class="tip-modal-title">팁 남기기</div>
+                <div class="tip-modal-hint">방문 정보, 추천 메뉴, 웨이팅, 주차 등 실용적인 팁을 공유해주세요</div>
+            </div>
+            <input class="tip-input" v-model="newTipAuthor" placeholder="닉네임" maxlength="20">
+            <textarea class="tip-textarea" v-model="newTipText" placeholder="팁 내용을 입력해주세요 (최대 200자)" maxlength="200"></textarea>
+            <div class="tip-modal-btns">
+                <button class="nav-btn" style="flex:1" @click="showTipModal = false">취소</button>
+                <button class="nav-btn primary" style="flex:1" @click="submitTip">등록</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const { createApp, ref, computed, onMounted } = Vue;
+const TRIP_URL = 'trips/nowon.html';
+const STORAGE_KEY = 'trip_nowon_v1';
+const TIPS_KEY = 'trip_nowon_tips_v1';
+const VISITED_KEY = 'huihui_visited';
+function _getVisitedSet() {
+    try { return new Set(JSON.parse(localStorage.getItem(VISITED_KEY) || '[]')); } catch(e) { return new Set(); }
+}
+createApp({
+    setup() {
+        const startDate = ref(dayjs().format('YYYY-MM-DD'));
+        const isArtPlaying = ref(false);
+        const showReport = ref(false);
+        const showTipModal = ref(false);
+        const newTipAuthor = ref('');
+        const newTipText = ref('');
+        const collagePieces = ref([]);
+        const isVisited = ref(_getVisitedSet().has(TRIP_URL));
+        const toggleVisited = () => {
+            if (!isVisited.value && allPhotos.value.length === 0) return;
+            const s = _getVisitedSet();
+            if (s.has(TRIP_URL)) s.delete(TRIP_URL); else s.add(TRIP_URL);
+            localStorage.setItem(VISITED_KEY, JSON.stringify([...s]));
+            isVisited.value = s.has(TRIP_URL);
+        };
+        const DAY_LABELS = ['일','월','화','수','목','금','토'];
+        const endDate = computed(() => {
+            const d = dayjs(startDate.value).add(schedule.value.length - 1, 'day');
+            return d.format('MM.DD') + ' (' + DAY_LABELS[d.day()] + ')';
+        });
+        const schedule = ref([
+            { places: [
+                { id:'n1-1', time:'11:00', name:'경춘선 숲길',       theme:'산책', theme_id:'view', tip:'폐철로 개조 선형공원, 구 화랑대역 증기기관차 포토존', enjoyTip:'화랑대역 철도공원~월릉교 구간 2.2km. 카페·팝업샵 밀집',            photo:null, h:11 },
+                { id:'n1-2', time:'13:00', name:'수락산 돈가스 골목', theme:'식사', theme_id:'food', tip:'90년대 감성 대형 수제 돈가스 골목',                   enjoyTip:'수락산역 인근 원조 수락산 돈가스 일대. 평일 방문 추천',             photo:null, h:13 },
+                { id:'n1-3', time:'14:30', name:'노원 오픈갤러리',    theme:'관광', theme_id:'view', tip:'노원역 7호선 역사 미술관, 540m 아트월 무료 관람',      enjoyTip:'역사 내부 아트월 포토스팟 곳곳에. 무료 입장',                      photo:null, h:14.5 },
+                { id:'n1-4', time:'16:30', name:'공릉동 카페 골목',   theme:'카페', theme_id:'cafe', tip:'서울과기대 앞 소규모 감성 카페 밀집 지대',             enjoyTip:'노원역~공릉역 사이 카페골목. 늦은 오후 방문 추천',                  photo:null, h:16.5 },
+                { id:'n1-5', time:'18:30', name:'도깨비시장',         theme:'식사', theme_id:'food', tip:'노원 대표 전통 야시장, 국밥·파전·어묵 골목',          enjoyTip:'수락산역 인근 야시장. 노원 국밥타운과 함께 이용 추천',              photo:null, h:18.5 }
+            ]},
+            { places: [
+                { id:'n2-1', time:'09:30', name:'불암산 계곡길',      theme:'체험', theme_id:'exp',  tip:'가벼운 계곡 트레킹, 불암사 탐방 코스',               enjoyTip:'수락산역→불암산 입구 버스 이동. 왕복 2시간 코스',                   photo:null, h:9.5 },
+                { id:'n2-2', time:'12:00', name:'공릉동 먹자골목',    theme:'식사', theme_id:'food', tip:'서울과기대 앞 로컬 맛집 집결지, 순대국·삼겹살',       enjoyTip:'홍순이식당 순대국 추천. 진한 국물에 소주 한 잔',                    photo:null, h:12 },
+                { id:'n2-3', time:'14:30', name:'태릉',               theme:'관광', theme_id:'view', tip:'조선 문정왕후 능, 사적 201호 울창한 왕릉 숲',        enjoyTip:'태릉입구역 도보 10분. 왕릉 산책로 한 바퀴 약 40분',                photo:null, h:14.5 },
+                { id:'n2-4', time:'16:30', name:'노원역 인생네컷',    theme:'기록', theme_id:'shop', tip:'여행 마무리 스티커사진과 기념품 쇼핑',               enjoyTip:'노원역 주변 하루필름·인생네컷 포토부스에서 마지막 추억 남기기',     photo:null, h:16.5 }
+            ]}
+        ]);
+        const tips = ref([
+            { id:'t1', author:'태희', avatar:'🌙', isOperator:true, date:'2025.03',
+              body:'경춘선 숲길은 구 화랑대역 구간이 가장 분위기 있어요. 주말엔 팝업마켓도 열려서 구경하는 재미가 있답니다!', upvotes:11, upvoted:false },
+        ]);
+        const getFormattedDate = (offset) => dayjs(startDate.value).add(offset, 'day').format('MM.DD');
+        const allPhotos = computed(() => schedule.value.flatMap(d => d.places).filter(p => p.photo).map(p => p.photo));
+        const currentPlace = computed(() => {
+            const now = dayjs();
+            const all = schedule.value.flatMap((d, i) => d.places.map(p => ({
+                ...p, fullDate: dayjs(startDate.value).add(i, 'day').hour(Math.floor(p.h)).minute(Math.round((p.h % 1) * 60))
+            })));
+            return all.reverse().find(p => now.isAfter(p.fullDate)) || null;
+        });
+        const clickUpload = (id) => document.getElementById('file-' + id).click();
+        const uploadPhoto = (e, id) => {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (res) => {
+                schedule.value.forEach(d => d.places.forEach(p => { if (p.id === id) p.photo = res.target.result; }));
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(schedule.value));
+            };
+            reader.readAsDataURL(file);
+        };
+        const upvoteTip = (tip) => {
+            tip.upvoted = !tip.upvoted; tip.upvotes += tip.upvoted ? 1 : -1;
+            localStorage.setItem(TIPS_KEY, JSON.stringify(tips.value));
+        };
+        const submitTip = () => {
+            const text = newTipText.value.trim(); if (!text) return;
+            const author = newTipAuthor.value.trim() || '익명';
+            tips.value.unshift({ id:'t'+Date.now(), author, avatar:'✈️', isOperator:false, date:dayjs().format('YYYY.MM'), body:text, upvotes:0, upvoted:false });
+            localStorage.setItem(TIPS_KEY, JSON.stringify(tips.value));
+            newTipText.value = ''; newTipAuthor.value = ''; showTipModal.value = false;
+        };
+        const playArt = () => {
+            isArtPlaying.value = true; collagePieces.value = [];
+            allPhotos.value.forEach((photo, i) => {
+                setTimeout(() => { collagePieces.value.push({ src:photo, style:{ top:(Math.random()*58+8)+'%', left:(Math.random()*62+6)+'%', animationDelay:(i*0.5)+'s', animationDuration:(5+Math.random()*3)+'s' } }); }, i*260);
+            });
+        };
+        const saveImage = () => {
+            html2canvas(document.getElementById('report-content')).then(canvas => {
+                const link = document.createElement('a'); link.download = '노원로그.png'; link.href = canvas.toDataURL(); link.click();
+            });
+        };
+        onMounted(() => {
+            const saved = localStorage.getItem(STORAGE_KEY); if (saved) schedule.value = JSON.parse(saved);
+            const savedTips = localStorage.getItem(TIPS_KEY); if (savedTips) tips.value = JSON.parse(savedTips);
+        });
+        return { startDate, endDate, schedule, getFormattedDate, currentPlace, allPhotos, clickUpload, uploadPhoto, isArtPlaying, playArt, showReport, saveImage, collagePieces, isVisited, toggleVisited, tips, showTipModal, newTipAuthor, newTipText, upvoteTip, submitTip };
+    }
+}).mount('#app');
+</script>
+</body>
+</html>
