@@ -3,25 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>여수 빛의 항구 로그</title>
+    <title>여수 밤바다 로그 v3</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --ink:   #2A1F48;
-            --ink-2: #6B5E8A;
-            --ink-3: #9B90B4;
-            --line:        rgba(42,31,72,0.09);
-            --line-strong: rgba(42,31,72,0.18);
-            --bg:      #FFF8EB;
+            --ink:   #1a1a1a;
+            --ink-2: #555;
+            --ink-3: #999;
+            --line:        rgba(0,0,0,0.09);
+            --line-strong: rgba(0,0,0,0.16);
+            --bg:      #faf9f7;
             --surface: #ffffff;
-            --lavender:        #8B6FD0;
-            --lavender-light:  #EDE5FF;
-            --lavender-border: #D8C8FF;
-            --lavender-dark:   #4E3490;
-            --lavender-mid:    #C0A8FF;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body {
@@ -67,7 +62,7 @@
 
         /* Now card */
         .now-card {
-            background: var(--lavender-dark); border-radius: 6px;
+            background: var(--ink); border-radius: 6px;
             padding: 18px 20px; display: flex; flex-direction: column; gap: 12px;
         }
         .now-eyebrow {
@@ -78,7 +73,7 @@
         }
         .now-dot {
             width: 5px; height: 5px; border-radius: 50%;
-            background: var(--lavender-mid); flex-shrink: 0;
+            background: #fff; flex-shrink: 0;
             animation: pulse 2s ease-in-out infinite;
         }
         .now-name {
@@ -90,14 +85,14 @@
         .now-chip {
             font-size: 10px; font-weight: 500; padding: 2px 8px;
             border-radius: 3px; letter-spacing: 0.04em;
-            background: rgba(192,168,255,0.15); color: rgba(255,255,255,0.7);
+            background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6);
         }
-        .now-divider { height: 1px; background: rgba(255,255,255,0.1); }
+        .now-divider { height: 1px; background: rgba(255,255,255,0.08); }
         .now-rows { display: flex; flex-direction: column; gap: 9px; }
         .now-row { display: flex; align-items: flex-start; gap: 9px; }
         .now-icon {
             width: 13px; height: 13px; flex-shrink: 0; margin-top: 2px;
-            fill: none; stroke: rgba(192,168,255,0.5);
+            fill: none; stroke: rgba(255,255,255,0.32);
             stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round;
         }
         .now-row-text { font-size: 12px; color: rgba(255,255,255,0.5); line-height: 1.55; font-weight: 300; }
@@ -124,9 +119,9 @@
         .place-row.active::before {
             content: ''; position: absolute;
             left: 0; top: 0; bottom: 0; width: 2px;
-            background: var(--lavender); border-radius: 1px;
+            background: var(--ink); border-radius: 1px;
         }
-        .place-row.active .place-time { color: var(--lavender); font-weight: 500; }
+        .place-row.active .place-time { color: var(--ink); font-weight: 500; }
         .place-time {
             font-size: 11px; color: var(--ink-3); min-width: 38px;
             padding-top: 3px; font-variant-numeric: tabular-nums;
@@ -151,63 +146,10 @@
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; transition: border-color 0.2s; background: var(--surface);
         }
-        .photo-slot:hover { border-color: var(--lavender); }
-        .photo-slot.has-img { border-color: var(--lavender); }
+        .photo-slot:hover { border-color: var(--ink); }
+        .photo-slot.has-img { border-color: var(--ink); }
         .photo-slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .photo-slot-icon { width: 15px; height: 15px; opacity: 0.18; }
-
-        /* Tips section */
-        .tips-section { padding: 0 24px; }
-        .tips-header {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 28px 0 14px;
-        }
-        .tips-eyebrow {
-            font-size: 10px; font-weight: 500;
-            letter-spacing: 0.16em; text-transform: uppercase;
-            color: var(--ink-3);
-        }
-        .add-tip-btn {
-            font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 500;
-            color: var(--lavender); background: var(--lavender-light);
-            border: 1px solid var(--lavender-border); border-radius: 20px;
-            padding: 5px 12px; cursor: pointer; letter-spacing: 0.03em;
-            transition: background 0.15s;
-        }
-        .add-tip-btn:hover { background: var(--lavender-border); }
-        .tip-item {
-            display: flex; gap: 12px;
-            padding: 14px 0; border-bottom: 1px solid var(--line);
-        }
-        .tip-avatar {
-            width: 28px; height: 28px; border-radius: 50%;
-            background: var(--lavender-light); border: 1px solid var(--lavender-border);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 13px; flex-shrink: 0; margin-top: 2px;
-        }
-        .tip-content { flex: 1; }
-        .tip-meta { display: flex; align-items: baseline; gap: 8px; margin-bottom: 5px; flex-wrap: wrap; }
-        .tip-author { font-size: 12px; font-weight: 500; color: var(--ink-2); }
-        .tip-operator-badge {
-            font-size: 9px; font-weight: 500; letter-spacing: 0.08em;
-            color: var(--lavender); background: var(--lavender-light);
-            padding: 1px 5px; border-radius: 2px;
-        }
-        .tip-date { font-size: 10px; color: var(--ink-3); margin-left: auto; }
-        .tip-text { font-size: 12px; color: var(--ink-2); line-height: 1.55; font-weight: 300; }
-        .tip-upvote {
-            display: inline-flex; align-items: center; gap: 4px;
-            margin-top: 8px; font-size: 11px; color: var(--ink-3);
-            background: none; border: 1px solid var(--line-strong);
-            border-radius: 3px; padding: 2px 8px; cursor: pointer;
-            font-family: 'DM Sans', sans-serif; transition: all 0.15s;
-        }
-        .tip-upvote:hover { color: var(--lavender); border-color: var(--lavender-border); }
-        .tip-upvote.active { color: var(--lavender); border-color: var(--lavender-border); background: var(--lavender-light); }
-        .tips-empty {
-            padding: 28px 0; text-align: center;
-            font-size: 12px; color: var(--ink-3); line-height: 1.6;
-        }
 
         /* Bottom nav */
         .bottom-nav {
@@ -220,16 +162,16 @@
             font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
             padding: 10px 22px; border-radius: 3px; cursor: pointer;
             border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink);
-            letter-spacing: 0.03em; transition: background 0.15s, color 0.15s, border-color 0.15s;
+            letter-spacing: 0.03em; transition: background 0.15s, color 0.15s;
         }
-        .nav-btn:hover { background: var(--lavender); color: #fff; border-color: var(--lavender); }
+        .nav-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
         .nav-btn:disabled { opacity: 0.28; cursor: not-allowed; }
-        .nav-btn.primary { background: var(--lavender); color: #fff; border-color: var(--lavender); }
-        .nav-btn.primary:hover { background: var(--lavender-dark); border-color: var(--lavender-dark); }
-        .nav-btn.complete { background: var(--lavender); color: #fff; border-color: var(--lavender); }
-        .nav-btn.complete:hover { background: var(--lavender-dark); border-color: var(--lavender-dark); }
-        .nav-btn.done { background: var(--lavender-light); color: var(--lavender); border-color: var(--lavender-border); }
-        .nav-btn.done:hover { background: var(--lavender-border); }
+        .nav-btn.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+        .nav-btn.primary:hover { background: #333; }
+        .nav-btn.complete { background: #7A57CD; color: #fff; border-color: #7A57CD; }
+        .nav-btn.complete:hover { background: #6344b8; border-color: #6344b8; }
+        .nav-btn.done { background: #ede5ff; color: #5a3ea6; border-color: #c8b1ff; }
+        .nav-btn.done:hover { background: #d8c8f8; border-color: #a888e8; }
 
         /* Art overlay */
         .art-overlay {
@@ -249,9 +191,9 @@
         }
         .art-close { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); }
 
-        /* Report modal */
+        /* Modal */
         .modal-bg {
-            position: fixed; inset: 0; background: rgba(42,31,72,0.5);
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
             z-index: 4000; display: flex; align-items: center;
             justify-content: center; padding: 24px;
         }
@@ -264,52 +206,12 @@
         .photo-grid-cell img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .report-footer { padding: 12px 22px 22px; display: flex; gap: 10px; }
 
-        /* Tip modal */
-        .tip-modal-bg {
-            position: fixed; inset: 0; background: rgba(42,31,72,0.5);
-            z-index: 4000; display: flex; align-items: flex-end;
-            justify-content: center;
-        }
-        .tip-modal-card {
-            background: var(--surface); width: 100%; max-width: 420px;
-            border-radius: 8px 8px 0 0;
-            padding: 28px 24px 36px;
-            display: flex; flex-direction: column; gap: 14px;
-            animation: slideUp 0.22s ease-out;
-        }
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-        }
-        .tip-modal-title {
-            font-family: 'DM Serif Display', serif;
-            font-size: 20px; font-weight: 400; color: var(--ink);
-        }
-        .tip-modal-hint { font-size: 12px; color: var(--ink-3); }
-        .tip-input {
-            font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink);
-            background: var(--bg); border: 1px solid var(--line-strong);
-            border-radius: 4px; padding: 10px 12px; width: 100%; outline: none;
-            transition: border-color 0.15s;
-        }
-        .tip-input:focus { border-color: var(--lavender-border); }
-        .tip-textarea {
-            font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink);
-            background: var(--bg); border: 1px solid var(--line-strong);
-            border-radius: 4px; padding: 10px 12px; width: 100%;
-            resize: none; height: 90px; outline: none;
-            transition: border-color 0.15s;
-        }
-        .tip-textarea:focus { border-color: var(--lavender-border); }
-        .tip-modal-btns { display: flex; gap: 10px; }
-
         /* Tag colors */
-        .tag-food    { background: #f5ebe0; color: #7a4f30; }
-        .tag-cafe    { background: #e8f2ef; color: #2e6b59; }
-        .tag-view    { background: #e8eef5; color: #2e4e70; }
-        .tag-exp     { background: #f0ece2; color: #5a4a28; }
-        .tag-spa     { background: #edf0f5; color: #34486a; }
-        .tag-shop    { background: #eeeedf; color: #4a4a30; }
+        .tag-food  { background: #f5ebe0; color: #7a4f30; }
+        .tag-cafe  { background: #e8f2ef; color: #2e6b59; }
+        .tag-view  { background: #e8eef5; color: #2e4e70; }
+        .tag-party { background: #f2e8f2; color: #633363; }
+        .tag-shop  { background: #eeeedf; color: #4a4a30; }
 
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
 
@@ -317,13 +219,13 @@
             position: fixed; top: 16px; right: 16px; z-index: 500;
             display: flex; align-items: center; gap: 6px;
             font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500;
-            color: var(--ink-2); background: rgba(255,248,235,0.85);
+            color: var(--ink-2); background: rgba(250,249,247,0.75);
             backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
             border: 1px solid var(--line-strong); border-radius: 20px;
             padding: 7px 14px; text-decoration: none;
             letter-spacing: 0.03em; transition: background 0.15s, color 0.15s;
         }
-        .btn-home:hover { background: rgba(255,248,235,0.98); color: var(--lavender); }
+        .btn-home:hover { background: rgba(250,249,247,0.95); color: var(--ink); }
         .btn-home svg { width: 12px; height: 12px; flex-shrink: 0; }
     </style>
 </head>
@@ -337,7 +239,7 @@
 
         <div class="header">
             <div class="header-eyebrow">Travel Log · Yeosu</div>
-            <h1 class="header-title">여수<br>빛의 항구</h1>
+            <h1 class="header-title">여수 밤바다<br>나들이</h1>
 
             <div class="header-dates">
                 <div class="date-item">
@@ -412,32 +314,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- 여행자 팁 -->
-        <div class="tips-section">
-            <div class="tips-header">
-                <span class="tips-eyebrow">여행자 팁 · {{ tips.length }}</span>
-                <button class="add-tip-btn" @click="showTipModal = true">+ 팁 남기기</button>
-            </div>
-            <div v-if="tips.length === 0" class="tips-empty">
-                첫 번째 팁을 남겨보세요 ✦<br>방문 정보, 추천 메뉴, 주차 팁 등 뭐든 좋아요
-            </div>
-            <div v-for="tip in tips" :key="tip.id" class="tip-item">
-                <div class="tip-avatar">{{ tip.avatar }}</div>
-                <div class="tip-content">
-                    <div class="tip-meta">
-                        <span class="tip-author">{{ tip.author }}</span>
-                        <span v-if="tip.isOperator" class="tip-operator-badge">운영자</span>
-                        <span class="tip-date">{{ tip.date }}</span>
-                    </div>
-                    <div class="tip-text">{{ tip.body }}</div>
-                    <button class="tip-upvote" :class="{ active: tip.upvoted }" @click="upvoteTip(tip)">
-                        ↑ {{ tip.upvotes }}
-                    </button>
-                </div>
-            </div>
-        </div>
-
     </div>
 
     <div class="bottom-nav">
@@ -462,7 +338,7 @@
         <div id="report-content" class="report-card">
             <div class="report-header">
                 <div class="report-title">Yeosu Moment</div>
-                <div class="report-sub">{{ allPhotos.length }} photos · {{ getFormattedDate(0) }} – {{ getFormattedDate(schedule.length - 1) }}</div>
+                <div class="report-sub">{{ allPhotos.length }} photos · {{ getFormattedDate(0) }} – {{ getFormattedDate(2) }}</div>
             </div>
             <div class="photo-grid">
                 <div v-for="n in 9" :key="n" class="photo-grid-cell">
@@ -475,31 +351,13 @@
             </div>
         </div>
     </div>
-
-    <div class="tip-modal-bg" v-if="showTipModal" @click.self="showTipModal = false">
-        <div class="tip-modal-card">
-            <div>
-                <div class="tip-modal-title">팁 남기기</div>
-                <div class="tip-modal-hint">방문 정보, 추천 메뉴, 웨이팅, 주차 등 실용적인 팁을 공유해주세요</div>
-            </div>
-            <input class="tip-input" v-model="newTipAuthor" placeholder="닉네임" maxlength="20">
-            <textarea class="tip-textarea" v-model="newTipText" placeholder="팁 내용을 입력해주세요 (최대 200자)" maxlength="200"></textarea>
-            <div class="tip-modal-btns">
-                <button class="nav-btn" style="flex:1" @click="showTipModal = false">취소</button>
-                <button class="nav-btn primary" style="flex:1" @click="submitTip">등록</button>
-            </div>
-        </div>
-    </div>
 </div>
 
 <script>
 const { createApp, ref, computed, onMounted } = Vue;
 
 const TRIP_URL    = 'trips/yeosu.html';
-const STORAGE_KEY = 'trip_yeosu_v1';
-const TIPS_KEY    = 'trip_yeosu_tips_v1';
 const VISITED_KEY = 'huihui_visited';
-
 function _getVisitedSet() {
     try { return new Set(JSON.parse(localStorage.getItem(VISITED_KEY) || '[]')); }
     catch(e) { return new Set(); }
@@ -507,14 +365,11 @@ function _getVisitedSet() {
 
 createApp({
     setup() {
-        const startDate    = ref(dayjs().format('YYYY-MM-DD'));
+        const startDate = ref(dayjs().format('YYYY-MM-DD'));
         const isArtPlaying = ref(false);
-        const showReport   = ref(false);
-        const showTipModal = ref(false);
-        const newTipAuthor = ref('');
-        const newTipText   = ref('');
+        const showReport = ref(false);
         const collagePieces = ref([]);
-        const isVisited    = ref(_getVisitedSet().has(TRIP_URL));
+        const isVisited = ref(_getVisitedSet().has(TRIP_URL));
 
         const toggleVisited = () => {
             if (!isVisited.value && allPhotos.value.length === 0) return;
@@ -527,34 +382,35 @@ createApp({
 
         const DAY_LABELS = ['일','월','화','수','목','금','토'];
         const endDate = computed(() => {
-            const d = dayjs(startDate.value).add(schedule.value.length - 1, 'day');
+            const d = dayjs(startDate.value).add(2, 'day');
             return d.format('MM.DD') + ' (' + DAY_LABELS[d.day()] + ')';
         });
 
         const schedule = ref([
-            { places: [
-                { id:'y1-1', time:'11:00', name:'오동도',           theme:'관광', theme_id:'view', tip:'여수의 상징. 동백나무숲과 등대, 유람선 코스',      enjoyTip:'유람선은 오전 11시 첫 출발. 등대까지 산책로 1.8km 완보 추천',          photo:null, h:11 },
-                { id:'y1-2', time:'13:30', name:'여수 수산시장',     theme:'식사', theme_id:'food', tip:'갓잡은 서대회·갱국으로 점심',                     enjoyTip:'시장 내 2층 식당가 이용. 서대회무침+갱국 조합 강추',                    photo:null, h:13.5 },
-                { id:'y1-3', time:'15:30', name:'여수 돌산케이블카', theme:'체험', theme_id:'exp',  tip:'왕복 12분, 한려해상 절경을 하늘에서',              enjoyTip:'일몰 30분 전 탑승이 가장 드라마틱. 사전 예약 필수',                    photo:null, h:15.5 },
-                { id:'y1-4', time:'18:30', name:'돌산도 꼬막정식',  theme:'식사', theme_id:'food', tip:'돌산갓김치와 꼬막, 여수 대표 한상',               enjoyTip:'케이블카 하단 근처 식당가. 고흥유자막걸리 곁들이기 추천',              photo:null, h:18.5 },
-                { id:'y1-5', time:'20:30', name:'여수 밤바다',       theme:'관광', theme_id:'view', tip:'이난영 노래비, 거북선대교 야경과 하멜등대',        enjoyTip:'하멜등대에서 거북선대교까지 해안 산책로 따라 걷기 추천',              photo:null, h:20.5 }
-            ]},
-            { places: [
-                { id:'y2-1', time:'09:30', name:'흥국사',            theme:'관광', theme_id:'view', tip:'고려 시대 창건. 국내 최아름다운 돌다리 홍교',      enjoyTip:'주차장→사찰 숲길 1km. 홍교는 반드시 하류에서 감상',                   photo:null, h:9.5 },
-                { id:'y2-2', time:'12:00', name:'이순신 광장',       theme:'관광', theme_id:'view', tip:'이순신 동상·거북선 전시관, 여수 원도심',           enjoyTip:'거북선 선내 관람 가능. 고소동 벽화마을도 도보 5분',                   photo:null, h:12 },
-                { id:'y2-3', time:'14:00', name:'낭만포차거리 카페', theme:'카페', theme_id:'cafe', tip:'여수 로컬 카페와 기념품 골목 탐방',               enjoyTip:'포차거리 인근 오천 굴구이 골목으로 여행 마무리 가능',                 photo:null, h:14 },
-                { id:'y2-4', time:'16:00', name:'여수엑스포역',      theme:'이동', theme_id:'view', tip:'KTX 탑승 및 1박 2일 여행 마무리',                enjoyTip:'출발 30분 전 역 도착. 역내 성경당 빵 픽업 추천',                      photo:null, h:16 }
-            ]}
-        ]);
-
-        const tips = ref([
-            { id:'t1', author:'태희', avatar:'🌙', isOperator:true, date:'2024.10',
-              body:'케이블카는 저녁 5시 이후 탑승하면 노을과 야경을 동시에 볼 수 있어요. 성수기엔 대기가 1시간 넘으니 사전 예약 필수!', upvotes:18, upvoted:false },
-            { id:'t2', author:'바다산책러', avatar:'🌊', isOperator:false, date:'2024.09',
-              body:'동백숲 안쪽 산책로는 사람이 별로 없어서 조용하게 걷기 좋아요. 오동도 등대까지 걸어가면 탁 트인 바다 뷰!', upvotes:7, upvoted:false },
-            { id:'t3', author:'사찰매니아', avatar:'🏯', isOperator:false, date:'2024.06',
-              body:'흥국사 주차장에서 사찰까지 걸어 올라가는 길이 숲길이라 힐링 그 자체예요. 편한 신발 꼭 챙기세요!', upvotes:5, upvoted:false },
-        ]);
+    { places: [
+        { id:'y1-1', time:'13:00', name:'PS 파스타',        theme:'식사',   theme_id:'food',  tip:'여수에서의 첫 끼',            enjoyTip:'추천 파스타와 시그니처 메뉴 확인', photo:null, h:13 },
+        { id:'y1-2', time:'14:30', name:'낭반 게스트하우스', theme:'숙소',   theme_id:'party', tip:'체크인 및 파티 준비',        enjoyTip:'짐 풀고 옷 갈아입기', photo:null, h:14.5 },
+        { id:'y1-3', time:'15:20', name:'해상케이블카',      theme:'체험',   theme_id:'view',  tip:'바다 위 스릴, 사진 명소',      enjoyTip:'크리스탈 캐빈 이용 추천', photo:null, h:15.3 },
+        { id:'y1-4', time:'16:10', name:'무슬목 해변',      theme:'산책',   theme_id:'view',  tip:'모이핀 근처 아름다운 해변',    enjoyTip:'해변 산책하며 인생샷 남기기', photo:null, h:16.1 },
+        { id:'y1-5', time:'17:00', name:'모이핀 스카이',    theme:'카페',   theme_id:'cafe',  tip:'오션뷰 카페, 인생샷 타임',      enjoyTip:'노을 시간대 창가 자리 확보', photo:null, h:17 },
+        { id:'y1-6', time:'18:00', name:'낭반 게하 파티',    theme:'이벤트', theme_id:'party', tip:'여행의 핵심, 설레는 교류',      enjoyTip:'새로운 사람들과 즐거운 대화', photo:null, h:18 },
+        { id:'y1-7', time:'21:20', name:'낭만포차 거리',    theme:'술상',   theme_id:'food',  tip:'해산물 안주와 밤바다 감성',    enjoyTip:'여수 밤바다 야경과 함께 한 잔', photo:null, h:21.3 }
+    ]},
+    { places: [
+        { id:'y2-1', time:'10:00', name:'녹테마레',        theme:'전시', theme_id:'view',  tip:'SNS 핫플, 미디어아트 공간',    enjoyTip:'조명 변화에 맞춰 사진 촬영', photo:null, h:10 },
+        { id:'y2-2', time:'12:00', name:'시내 식당',       theme:'식사', theme_id:'food',  tip:'갓김치찌개 로컬 맛 체험',      enjoyTip:'갓김치와 함께 든든한 백반', photo:null, h:12 },
+        { id:'y2-3', time:'13:20', name:'이순신광장',      theme:'쇼핑', theme_id:'shop',  tip:'디저트와 기념품 쇼핑',        enjoyTip:'딸기모찌 등 유명 간식 구매', photo:null, h:13.3 },
+        { id:'y2-4', time:'19:00', name:'진남옥',          theme:'식사', theme_id:'food',  tip:'여수 로컬 저녁 식사',          enjoyTip:'진남옥의 특색 있는 메뉴 맛보기', photo:null, h:19 },
+        { id:'y2-5', time:'20:00', name:'돌산대교',        theme:'야경', theme_id:'view',  tip:'여수 대표 야경 포인트',        enjoyTip:'돌산공원에서 전체 뷰 감상', photo:null, h:20 },
+        { id:'y2-6', time:'21:00', name:'해양공원',        theme:'산책', theme_id:'view',  tip:'밤 산책으로 감성 마무리',      enjoyTip:'조명 켜진 해안 산책로 걷기', photo:null, h:21 }
+    ]},
+    { places: [
+        { id:'y3-1', time:'09:00', name:'바지락돼지국밥',   theme:'식사', theme_id:'food',  tip:'든든한 아침 식사',            enjoyTip:'뜨끈한 국물로 아침 시작', photo:null, h:9 },
+        { id:'y3-2', time:'11:00', name:'아쿠아플라넷',    theme:'체험', theme_id:'view',  tip:'여수 바다 생태계 관람',        enjoyTip:'수중 터널에서 마지막 사진', photo:null, h:13 },
+        { id:'y3-3', time:'14:00', name:'미가칼국수',       theme:'식사', theme_id:'food',  tip:'여수 로컬 칼국수 맛집',        enjoyTip:'해물 베이스의 시원한 국물 추천', photo:null, h:12 },
+        { id:'y3-4', time:'16:00', name:'여수 엑스포역',    theme:'복귀', theme_id:'view',  tip:'KTX 서울 출발',              enjoyTip:'출발 30분 전 역 도착', photo:null, h:16 }
+    ]}
+]);
 
         const getFormattedDate = (offset) => dayjs(startDate.value).add(offset, 'day').format('MM.DD');
         const allPhotos = computed(() =>
@@ -578,35 +434,9 @@ createApp({
                 schedule.value.forEach(d => d.places.forEach(p => {
                     if (p.id === id) p.photo = res.target.result;
                 }));
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(schedule.value));
+                localStorage.setItem('trip_yeosu_v3', JSON.stringify(schedule.value));
             };
             reader.readAsDataURL(file);
-        };
-
-        const upvoteTip = (tip) => {
-            tip.upvoted = !tip.upvoted;
-            tip.upvotes += tip.upvoted ? 1 : -1;
-            localStorage.setItem(TIPS_KEY, JSON.stringify(tips.value));
-        };
-
-        const submitTip = () => {
-            const text = newTipText.value.trim();
-            const author = newTipAuthor.value.trim() || '익명';
-            if (!text) return;
-            tips.value.unshift({
-                id: 't' + Date.now(),
-                author,
-                avatar: '✈️',
-                isOperator: false,
-                date: dayjs().format('YYYY.MM'),
-                body: text,
-                upvotes: 0,
-                upvoted: false
-            });
-            localStorage.setItem(TIPS_KEY, JSON.stringify(tips.value));
-            newTipText.value = '';
-            newTipAuthor.value = '';
-            showTipModal.value = false;
         };
 
         const playArt = () => {
@@ -637,18 +467,15 @@ createApp({
         };
 
         onMounted(() => {
-            const saved = localStorage.getItem(STORAGE_KEY);
+            const saved = localStorage.getItem('trip_yeosu_v3');
             if (saved) schedule.value = JSON.parse(saved);
-            const savedTips = localStorage.getItem(TIPS_KEY);
-            if (savedTips) tips.value = JSON.parse(savedTips);
         });
 
         return {
             startDate, endDate, schedule, getFormattedDate,
             currentPlace, allPhotos, clickUpload, uploadPhoto,
             isArtPlaying, playArt, showReport, saveImage, collagePieces,
-            isVisited, toggleVisited,
-            tips, showTipModal, newTipAuthor, newTipText, upvoteTip, submitTip
+            isVisited, toggleVisited
         };
     }
 }).mount('#app');

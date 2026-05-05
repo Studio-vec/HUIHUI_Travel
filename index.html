@@ -902,7 +902,7 @@
         nameEn:  slug.charAt(0).toUpperCase() + slug.slice(1),
         nameKo:  cfg.nameKo  || slug,
         status:  cfg.status  || 'not-visited',
-        url:     `trip.html?id=${slug}`,
+        url:     `trips/${slug}.html`,
         no:      cfg.no      || (idx + 1),
         key:     cfg.key     || null,
         tagline: cfg.tagline || '',
