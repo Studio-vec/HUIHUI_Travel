@@ -1,4 +1,4 @@
-function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloadName }) {
+function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloadName, tips: initialTips, tipsKey }) {
     const { createApp, ref, computed, onMounted } = Vue;
     const VISITED_KEY = 'huihui_visited';
     function _getVisitedSet() {
@@ -11,9 +11,13 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
             const startDate     = ref(dayjs().format('YYYY-MM-DD'));
             const isArtPlaying  = ref(false);
             const showReport    = ref(false);
+            const showTipModal  = ref(false);
+            const newTipAuthor  = ref('');
+            const newTipText    = ref('');
             const collagePieces = ref([]);
             const isVisited     = ref(_getVisitedSet().has(tripUrl));
             const schedule      = ref(initialSchedule);
+            const tips          = ref(initialTips || []);
 
             const toggleVisited = () => {
                 if (!isVisited.value && allPhotos.value.length === 0) return;
@@ -88,16 +92,39 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
                 });
             };
 
+            const upvoteTip = (tip) => {
+                tip.upvoted = !tip.upvoted;
+                tip.upvotes += tip.upvoted ? 1 : -1;
+                if (tipsKey) localStorage.setItem(tipsKey, JSON.stringify(tips.value));
+            };
+
+            const submitTip = () => {
+                const text = newTipText.value.trim();
+                if (!text) return;
+                const author = newTipAuthor.value.trim() || '익명';
+                tips.value.unshift({
+                    id: 't' + Date.now(), author, avatar: '✈️', isOperator: false,
+                    date: dayjs().format('YYYY.MM'), body: text, upvotes: 0, upvoted: false
+                });
+                if (tipsKey) localStorage.setItem(tipsKey, JSON.stringify(tips.value));
+                newTipText.value = ''; newTipAuthor.value = ''; showTipModal.value = false;
+            };
+
             onMounted(() => {
                 const saved = localStorage.getItem(storageKey);
                 if (saved) schedule.value = JSON.parse(saved);
+                if (tipsKey) {
+                    const savedTips = localStorage.getItem(tipsKey);
+                    if (savedTips) tips.value = JSON.parse(savedTips);
+                }
             });
 
             return {
                 startDate, endDate, schedule, getFormattedDate,
                 currentPlace, allPhotos, clickUpload, uploadPhoto,
                 isArtPlaying, playArt, showReport, saveImage, collagePieces,
-                isVisited, toggleVisited
+                isVisited, toggleVisited,
+                tips, showTipModal, newTipAuthor, newTipText, upvoteTip, submitTip
             };
         }
     }).mount('#app');

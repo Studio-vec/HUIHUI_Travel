@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>여수 밤바다 로그 v3</title>
+    <title>여수 밤바다 로그</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -80,6 +80,25 @@
                 </div>
             </div>
         </div>
+        <div class="tips-section">
+            <div class="tips-header">
+                <span class="tips-eyebrow">여행자 팁 · {{ tips.length }}</span>
+                <button class="add-tip-btn" @click="showTipModal = true">+ 팁 남기기</button>
+            </div>
+            <div v-if="tips.length === 0" class="tips-empty">첫 번째 팁을 남겨보세요 ✦<br>방문 정보, 추천 메뉴, 주차 팁 등 뭐든 좋아요</div>
+            <div v-for="tip in tips" :key="tip.id" class="tip-item">
+                <div class="tip-avatar">{{ tip.avatar }}</div>
+                <div class="tip-content">
+                    <div class="tip-meta">
+                        <span class="tip-author">{{ tip.author }}</span>
+                        <span v-if="tip.isOperator" class="tip-operator-badge">운영자</span>
+                        <span class="tip-date">{{ tip.date }}</span>
+                    </div>
+                    <div class="tip-text">{{ tip.body }}</div>
+                    <button class="tip-upvote" :class="{ active: tip.upvoted }" @click="upvoteTip(tip)">↑ {{ tip.upvotes }}</button>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="bottom-nav">
         <button class="nav-btn" @click="playArt" :disabled="allPhotos.length === 0">모아보기</button>
@@ -96,12 +115,28 @@
             <button class="nav-btn" @click="isArtPlaying = false">돌아가기</button>
         </div>
     </div>
+    <div class="tip-modal-bg" v-if="showTipModal" @click.self="showTipModal = false">
+        <div class="tip-modal-card">
+            <div>
+                <div class="tip-modal-title">팁 남기기</div>
+                <div class="tip-modal-hint">방문 정보, 추천 메뉴, 웨이팅, 주차 등 실용적인 팁을 공유해주세요</div>
+            </div>
+            <input class="tip-input" v-model="newTipAuthor" placeholder="닉네임" maxlength="20">
+            <textarea class="tip-textarea" v-model="newTipText" placeholder="팁 내용을 입력해주세요 (최대 200자)" maxlength="200"></textarea>
+            <div class="tip-modal-btns">
+                <button class="nav-btn" style="flex:1" @click="showTipModal = false">취소</button>
+                <button class="nav-btn primary" style="flex:1" @click="submitTip">등록</button>
+            </div>
+        </div>
+    </div>
 </div>
 <script src="../assets/js/trip-app.js"></script>
 <script>
 createTripApp({
     tripUrl: 'trips/yeosu.html',
     storageKey: 'trip_yeosu_v3',
+    tipsKey: 'trip_yeosu_tips_v1',
+    tips: [],
     schedule: [
     { places: [
         { id:'y1-1', time:'13:00', name:'PS 파스타',        theme:'식사',   theme_id:'food',  tip:'여수에서의 첫 끼',            enjoyTip:'추천 파스타와 시그니처 메뉴 확인', photo:null, h:13 },
