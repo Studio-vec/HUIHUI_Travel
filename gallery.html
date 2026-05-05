@@ -329,7 +329,7 @@ function openLightbox(idx) {
   document.getElementById('lbTrip').textContent = it.course.title;
   document.getElementById('lbPlace').textContent = it.place.name;
   document.getElementById('lbDesc').textContent = it.place.desc;
-  document.getElementById('lbLink').href = 'trip.html?id=' + it.tripId;
+  document.getElementById('lbLink').href = 'trips/' + it.tripId + '.html';
   document.getElementById('lightbox').classList.add('show');
 }
 

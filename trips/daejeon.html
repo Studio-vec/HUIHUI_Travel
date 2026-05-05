@@ -6,7 +6,6 @@
     <title>대전 성심당 로그</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -99,15 +98,6 @@
         .art-piece img { width: 96px; height: 96px; object-fit: cover; border-radius: 2px; border: 1px solid var(--line-strong); }
         @keyframes drift { 0%, 100% { transform: translate(0,0) rotate(-2deg); } 50% { transform: translate(8px,-18px) rotate(2deg); } }
         .art-close { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); }
-        .modal-bg { position: fixed; inset: 0; background: rgba(42,31,72,0.5); z-index: 4000; display: flex; align-items: center; justify-content: center; padding: 24px; }
-        .report-card { background: var(--surface); width: 100%; max-width: 320px; border-radius: 4px; overflow: hidden; }
-        .report-header { padding: 22px 22px 14px; border-bottom: 1px solid var(--line); }
-        .report-title { font-family: 'DM Serif Display', serif; font-size: 20px; font-weight: 400; color: var(--ink); }
-        .report-sub { font-size: 11px; color: var(--ink-3); margin-top: 3px; letter-spacing: 0.05em; }
-        .photo-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; padding: 14px; }
-        .photo-grid-cell { aspect-ratio: 1; background: var(--bg); border-radius: 2px; overflow: hidden; border: 1px solid var(--line); }
-        .photo-grid-cell img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .report-footer { padding: 12px 22px 22px; display: flex; gap: 10px; }
         .tip-modal-bg { position: fixed; inset: 0; background: rgba(42,31,72,0.5); z-index: 4000; display: flex; align-items: flex-end; justify-content: center; }
         .tip-modal-card { background: var(--surface); width: 100%; max-width: 420px; border-radius: 8px 8px 0 0; padding: 28px 24px 36px; display: flex; flex-direction: column; gap: 14px; animation: slideUp 0.22s ease-out; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
@@ -239,24 +229,6 @@
         <div class="art-close"><button class="nav-btn" @click="isArtPlaying = false">돌아가기</button></div>
     </div>
 
-    <div class="modal-bg" v-if="showReport" @click.self="showReport = false">
-        <div id="report-content" class="report-card">
-            <div class="report-header">
-                <div class="report-title">Daejeon Moment</div>
-                <div class="report-sub">{{ allPhotos.length }} photos · {{ getFormattedDate(0) }} – {{ getFormattedDate(schedule.length - 1) }}</div>
-            </div>
-            <div class="photo-grid">
-                <div v-for="n in 9" :key="n" class="photo-grid-cell">
-                    <img v-if="allPhotos[n-1]" :src="allPhotos[n-1]" alt="">
-                </div>
-            </div>
-            <div class="report-footer">
-                <button class="nav-btn" style="flex:1" @click="showReport = false">닫기</button>
-                <button class="nav-btn primary" style="flex:1" @click="saveImage">저장</button>
-            </div>
-        </div>
-    </div>
-
     <div class="tip-modal-bg" v-if="showTipModal" @click.self="showTipModal = false">
         <div class="tip-modal-card">
             <div>
@@ -286,7 +258,6 @@ createApp({
     setup() {
         const startDate = ref(dayjs().format('YYYY-MM-DD'));
         const isArtPlaying = ref(false);
-        const showReport = ref(false);
         const showTipModal = ref(false);
         const newTipAuthor = ref('');
         const newTipText = ref('');
@@ -361,16 +332,11 @@ createApp({
                 setTimeout(() => { collagePieces.value.push({ src:photo, style:{ top:(Math.random()*58+8)+'%', left:(Math.random()*62+6)+'%', animationDelay:(i*0.5)+'s', animationDuration:(5+Math.random()*3)+'s' } }); }, i*260);
             });
         };
-        const saveImage = () => {
-            html2canvas(document.getElementById('report-content')).then(canvas => {
-                const link = document.createElement('a'); link.download = '대전로그.png'; link.href = canvas.toDataURL(); link.click();
-            });
-        };
         onMounted(() => {
             const saved = localStorage.getItem(STORAGE_KEY); if (saved) schedule.value = JSON.parse(saved);
             const savedTips = localStorage.getItem(TIPS_KEY); if (savedTips) tips.value = JSON.parse(savedTips);
         });
-        return { startDate, endDate, schedule, getFormattedDate, currentPlace, allPhotos, clickUpload, uploadPhoto, isArtPlaying, playArt, showReport, saveImage, collagePieces, isVisited, toggleVisited, tips, showTipModal, newTipAuthor, newTipText, upvoteTip, submitTip };
+        return { startDate, endDate, schedule, getFormattedDate, currentPlace, allPhotos, clickUpload, uploadPhoto, isArtPlaying, playArt, collagePieces, isVisited, toggleVisited, tips, showTipModal, newTipAuthor, newTipText, upvoteTip, submitTip };
     }
 }).mount('#app');
 </script>
