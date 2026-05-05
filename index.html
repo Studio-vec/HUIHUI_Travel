@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>HUIHUI Travel — 태희의 국내 여행 안내서</title>
+  <title>HUIHUI Travel — 국내 여행 안내서</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet"/>
@@ -520,14 +520,13 @@
   <!-- ── HERO ── -->
   <section class="hero">
     <div class="hero-inner">
-      <p class="hero-eyebrow fade-up">Studio.Vec · 국내 여행 큐레이션</p>
-      <h1 class="hero-title fade-up">
-        태희의<br>
+      <p class="hero-eyebrow fade-up" id="heroEyebrow">Studio.Vec · 국내 여행 큐레이션</p>
+      <h1 class="hero-title fade-up" id="heroTitle">
         <em>국내 여행 안내서</em>
       </h1>
-      <p class="hero-desc fade-up">
+      <p class="hero-desc fade-up" id="heroDesc">
         직접 다녀온 국내 여행 코스를 공유합니다.<br>
-        장소마다 쌓이는 여행자들의 팁과 함께.
+        소소한 기억들
       </p>
       <div class="hero-meta fade-up">
         <div class="checkout-pill">
@@ -543,7 +542,7 @@
 
   <!-- ── SECTION LABEL ── -->
   <div class="section-label">
-    <span class="section-label-text">여행 코스</span>
+    <span class="section-label-text" id="sectionLabel">여행 코스</span>
     <div class="section-label-line"></div>
   </div>
 
@@ -566,7 +565,7 @@
   <footer class="footer">
     <div>
       <div class="footer-brand">HUIHUI Travel</div>
-      <div class="footer-tagline" style="margin-top:4px">태희의 국내 여행 안내서 · Studio.Vec</div>
+      <div class="footer-tagline" style="margin-top:4px">국내 여행 안내서 · Studio.Vec</div>
     </div>
     <div class="footer-right">
       <a href="#" class="footer-link">소개</a>
@@ -626,12 +625,47 @@
       ja: (v,n) => `${v}/${n} チェックアウト完了`,
       zh: (v,n) => `${v}/${n} 退房完成`,
     };
+    const HERO_TEXTS = {
+      ko: {
+        eyebrow: 'Studio.Vec · 국내 여행 큐레이션',
+        title:   '<em>국내 여행 안내서</em>',
+        desc:    '직접 다녀온 국내 여행 코스를 공유합니다.<br>소소한 기억들',
+        section: '여행 코스',
+      },
+      en: {
+        eyebrow: 'Studio.Vec · Domestic Travel Curation',
+        title:   '<em>Korea Travel Guide</em>',
+        desc:    'Curated travel courses from personal visits.<br>Little memories along the way.',
+        section: 'Travel Courses',
+      },
+      ja: {
+        eyebrow: 'Studio.Vec · 国内旅行キュレーション',
+        title:   '<em>国内旅行ガイド</em>',
+        desc:    '実際に旅した国内旅行コースをシェアします。<br>ささやかな思い出とともに。',
+        section: '旅行コース',
+      },
+      zh: {
+        eyebrow: 'Studio.Vec · 国内旅游精选',
+        title:   '<em>国内旅行指南</em>',
+        desc:    '分享亲自探访的国内旅游路线。<br>留下美好的小记忆。',
+        section: '旅游路线',
+      },
+    };
     let langIdx = 0;
+
+    function _updateHeroText(code = 'ko') {
+      const t = HERO_TEXTS[code];
+      document.getElementById('heroEyebrow').textContent = t.eyebrow;
+      document.getElementById('heroTitle').innerHTML     = t.title;
+      document.getElementById('heroDesc').innerHTML      = t.desc;
+      document.getElementById('sectionLabel').textContent = t.section;
+    }
 
     function cycleLang() {
       langIdx = (langIdx + 1) % LANGS.length;
       const code = LANGS[langIdx].code;
       document.getElementById('langLabel').textContent = LANGS[langIdx].label;
+      _updateHeroText(code);
       _updateCheckoutUI(code);
       _renderGrid();
       _attachLongPress();

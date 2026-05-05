@@ -1,5 +1,5 @@
 function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloadName, tips: initialTips, tipsKey }) {
-    const { createApp, ref, computed, onMounted } = Vue;
+    const { createApp, ref, computed, onMounted, watch } = Vue;
     const VISITED_KEY = 'huihui_visited';
     function _getVisitedSet() {
         try { return new Set(JSON.parse(localStorage.getItem(VISITED_KEY) || '[]')); }
@@ -110,6 +110,9 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
                 newTipText.value = ''; newTipAuthor.value = ''; showTipModal.value = false;
             };
 
+            const dateKey = storageKey + '_date';
+            watch(startDate, val => localStorage.setItem(dateKey, val));
+
             onMounted(() => {
                 const saved = localStorage.getItem(storageKey);
                 if (saved) schedule.value = JSON.parse(saved);
@@ -117,6 +120,8 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
                     const savedTips = localStorage.getItem(tipsKey);
                     if (savedTips) tips.value = JSON.parse(savedTips);
                 }
+                const savedDate = localStorage.getItem(dateKey);
+                if (savedDate) startDate.value = savedDate;
             });
 
             return {
