@@ -615,19 +615,18 @@
   <script>
     /* ════════════════════════════════════════════
        TRIP CONFIG
-       status 없음      → not-visited
-       status:'coming-soon' → 준비중 팝업
-       key: 이미지 경로  → 방문 완료 커스텀 키
+       키 이미지(assets/keys/[slug].png)가 존재하면 → 오픈
+       키 이미지가 없으면 → 자동으로 준비중 처리
     ════════════════════════════════════════════ */
     const TRIP_CONFIG = {
-      'yeosu':       { no:1, key:'assets/keys/yeosu.png',       nameKo:'여수' },
-      'icheon':      { no:2, key:'assets/keys/icheon.png',      nameKo:'이천' },
-      'paju':        { no:3, key:'assets/keys/paju.png',        nameKo:'파주' },
-      'dongincheon': { no:4, key:'assets/keys/dongincheon.png', nameKo:'동인천' },
-      'gangneung':   { no:5, key:'assets/keys/gangneung.png',   nameKo:'강릉' },
-      'nowon':       { no:6, nameKo:'노원',  status:'coming-soon' },
-      'suwon':       { no:7, key:'assets/keys/suwon.png',       nameKo:'수원' },
-      'daejeon':     { no:8, nameKo:'대전',  status:'coming-soon' },
+      'yeosu':       { no:1, nameKo:'여수' },
+      'icheon':      { no:2, nameKo:'이천' },
+      'paju':        { no:3, nameKo:'파주' },
+      'dongincheon': { no:4, nameKo:'동인천' },
+      'gangneung':   { no:5, nameKo:'강릉' },
+      'nowon':       { no:6, nameKo:'노원' },
+      'suwon':       { no:7, nameKo:'수원' },
+      'daejeon':     { no:8, nameKo:'대전' },
     };
 
     let TRIPS = [];
@@ -957,10 +956,10 @@
       return Object.entries(TRIP_CONFIG).map(([slug, cfg], idx) => ({
         nameEn:  slug.charAt(0).toUpperCase() + slug.slice(1),
         nameKo:  cfg.nameKo  || slug,
-        status:  cfg.status  || 'not-visited',
+        status:  'not-visited',
         url:     `trips/${slug}.html`,
         no:      cfg.no      || (idx + 1),
-        key:     cfg.key     || null,
+        key:     `assets/keys/${slug}.png`,
         tagline: cfg.tagline || '',
       }));
     }
@@ -972,8 +971,24 @@
       _attachCardClicks();
     }
 
-    function _init() {
+    /* 키 이미지가 실제로 로드되는지 확인 */
+    function _probeImg(src) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload  = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = src;
+      });
+    }
+
+    async function _init() {
       TRIPS = _buildTrips();
+      /* 키 이미지 존재 여부 병렬 체크 → 없으면 coming-soon */
+      await Promise.all(TRIPS.map(async trip => {
+        if (visitedSet.has(trip.url)) return; // 방문 완료는 스킵
+        const exists = await _probeImg(trip.key);
+        if (!exists) { trip.status = 'coming-soon'; trip.key = null; }
+      }));
       _renderGrid();
       _attachLongPress();
     }
