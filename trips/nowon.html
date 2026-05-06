@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>노원 경춘선 로그</title>
+    <title>노원 철도&자연 나들이 로그</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -18,7 +18,7 @@
     <div class="container">
         <div class="header">
             <div class="header-eyebrow">Travel Log · Nowon</div>
-            <h1 class="header-title">노원<br>경춘선 나들이</h1>
+            <h1 class="header-title">노원<br>철도&자연 나들이</h1>
             <div class="header-dates">
                 <div class="date-item">
                     <span class="date-label">출발</span>
@@ -145,23 +145,21 @@ createTripApp({
     tripUrl: 'trips/nowon.html',
     storageKey: 'trip_nowon_v1',
     tipsKey: 'trip_nowon_tips_v1',
-    tips: [
-        { id:'t1', author:'태희', avatar:'🌙', isOperator:true, date:'2025.03',
-          body:'경춘선 숲길은 구 화랑대역 구간이 가장 분위기 있어요. 주말엔 팝업마켓도 열려서 구경하는 재미가 있답니다!', upvotes:11, upvoted:false }
-    ],
+    tips: [],
     schedule: [
         { places: [
-            { id:'n1-1', time:'11:00', name:'경춘선 숲길',       theme:'산책', theme_id:'view', tip:'폐철로 개조 선형공원, 구 화랑대역 증기기관차 포토존', enjoyTip:'화랑대역 철도공원~월릉교 구간 2.2km. 카페·팝업샵 밀집',            photo:null, h:11 },
-            { id:'n1-2', time:'13:00', name:'수락산 돈가스 골목', theme:'식사', theme_id:'food', tip:'90년대 감성 대형 수제 돈가스 골목',                   enjoyTip:'수락산역 인근 원조 수락산 돈가스 일대. 평일 방문 추천',             photo:null, h:13 },
-            { id:'n1-3', time:'14:30', name:'노원 오픈갤러리',    theme:'관광', theme_id:'view', tip:'노원역 7호선 역사 미술관, 540m 아트월 무료 관람',      enjoyTip:'역사 내부 아트월 포토스팟 곳곳에. 무료 입장',                      photo:null, h:14.5 },
-            { id:'n1-4', time:'16:30', name:'공릉동 카페 골목',   theme:'카페', theme_id:'cafe', tip:'서울과기대 앞 소규모 감성 카페 밀집 지대',             enjoyTip:'노원역~공릉역 사이 카페골목. 늦은 오후 방문 추천',                  photo:null, h:16.5 },
-            { id:'n1-5', time:'18:30', name:'도깨비시장',         theme:'식사', theme_id:'food', tip:'노원 대표 전통 야시장, 국밥·파전·어묵 골목',          enjoyTip:'수락산역 인근 야시장. 노원 국밥타운과 함께 이용 추천',              photo:null, h:18.5 }
+            { id:'n1-1', time:'11:00', name:'에이든데이', theme:'식사', theme_id:'food', tip:'여유로운 브런치 식사', enjoyTip:'든든하게 배를 채우고 철도 여행 시작', photo:null, h:11 },
+            { id:'n1-2', time:'13:00', name:'노원 기차마을', theme:'관광', theme_id:'view', tip:'스위스관 & 이탈리아관', enjoyTip:'정교하게 구현된 미니어처 기차 관람', photo:null, h:13 },
+            { id:'n1-3', time:'14:20', name:'기차가 있는 풍경', theme:'카페', theme_id:'cafe', tip:'미니어처 기차가 커피를 배달하는 이색 카페', enjoyTip:'창가 자리에서 화랑대 정원과 기차 뷰 감상', photo:null, h:14.3 },
+            { id:'n1-4', time:'15:30', name:'화랑대 철도공원 & 경춘선 숲길', theme:'관광', theme_id:'view', tip:'실제 기차 객차 관람 및 산책', enjoyTip:'해가 지기 전 야외 산책로에서 예쁜 사진 남기기', photo:null, h:15.5 },
+            { id:'n1-5', time:'18:00', name:'익스프레스 노원 by 미라쥬', theme:'식사', theme_id:'food', tip:'분위기 좋은 곳에서 저녁 식사', enjoyTip:'산책 후 맛있는 음식으로 에너지 충전', photo:null, h:18 },
+            { id:'n1-6', time:'20:00', name:'노원 불빛정원', theme:'관광', theme_id:'view', tip:'화랑대 철도공원의 화려한 야경', enjoyTip:'색색으로 변하는 철길과 미디어 아트 감상', photo:null, h:20 }
         ]},
         { places: [
-            { id:'n2-1', time:'09:30', name:'불암산 계곡길',      theme:'체험', theme_id:'exp',  tip:'가벼운 계곡 트레킹, 불암사 탐방 코스',               enjoyTip:'수락산역→불암산 입구 버스 이동. 왕복 2시간 코스',                   photo:null, h:9.5 },
-            { id:'n2-2', time:'12:00', name:'공릉동 먹자골목',    theme:'식사', theme_id:'food', tip:'서울과기대 앞 로컬 맛집 집결지, 순대국·삼겹살',       enjoyTip:'홍순이식당 순대국 추천. 진한 국물에 소주 한 잔',                    photo:null, h:12 },
-            { id:'n2-3', time:'14:30', name:'태릉',               theme:'관광', theme_id:'view', tip:'조선 문정왕후 능, 사적 201호 울창한 왕릉 숲',        enjoyTip:'태릉입구역 도보 10분. 왕릉 산책로 한 바퀴 약 40분',                photo:null, h:14.5 },
-            { id:'n2-4', time:'16:30', name:'노원역 인생네컷',    theme:'기록', theme_id:'shop', tip:'여행 마무리 스티커사진과 기념품 쇼핑',               enjoyTip:'노원역 주변 하루필름·인생네컷 포토부스에서 마지막 추억 남기기',     photo:null, h:16.5 }
+            { id:'n2-1', time:'10:30', name:'더숲', theme:'문화', theme_id:'exp', tip:'노원역 인근 복합 문화 공간', enjoyTip:'독립 서적과 예술 작품을 감상하며 모닝 커피', photo:null, h:10.5 },
+            { id:'n2-2', time:'12:00', name:'은행사거리 인근', theme:'식사', theme_id:'food', tip:'불암산 이동 전 점심 식사', enjoyTip:'은행사거리 맛집 거리에서 취향에 맞는 메뉴 선택', photo:null, h:12 },
+            { id:'n2-3', time:'13:00', name:'불암산 나비정원', theme:'관광', theme_id:'view', tip:'자연 친화적 생태 관람', enjoyTip:'아이들도 좋아하는 예쁜 온실 정원 구경', photo:null, h:13 },
+            { id:'n2-4', time:'14:00', name:'불암산 무장애 순환산책로', theme:'체험', theme_id:'exp', tip:'누구나 걷기 좋은 숲속 데크길', enjoyTip:'피톤치드를 마시며 천천히 힐링 산책 후 일정 마무리', photo:null, h:14 }
         ]}
     ]
 });
