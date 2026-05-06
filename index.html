@@ -858,8 +858,10 @@
 <rect x="43" y="142" width="12" height="8" rx="2" fill="rgba(139,111,208,0.45)" stroke="#8B6FD0" stroke-width="1.2"/>
 </svg>`;
 
+    function _onKeyImgError(img) { img.outerHTML = _placeholderKey; }
+
     function _visitedKeyHTML(trip) {
-      if (trip.key) return `<img src="${trip.key}" style="max-width:70%;max-height:85%;object-fit:contain" alt="key" onerror="this.outerHTML='${_placeholderKey.replace(/'/g,"\\'")}'" />`;
+      if (trip.key) return `<img src="${trip.key}" style="max-width:55%;max-height:75%;object-fit:contain" alt="key" onerror="_onKeyImgError(this)" />`;
       return _placeholderKey;
     }
 
