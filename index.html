@@ -617,13 +617,13 @@
        key: 이미지 경로  → 방문 완료 커스텀 키
     ════════════════════════════════════════════ */
     const TRIP_CONFIG = {
-      'yeosu':       { no:1, key:'assets/keys/yeosu-key.png', nameKo:'여수' },
-      'icheon':      { no:2, nameKo:'이천' },
-      'paju':        { no:3, nameKo:'파주' },
-      'dongincheon': { no:4, nameKo:'동인천' },
-      'gangneung':   { no:5, nameKo:'강릉' },
+      'yeosu':       { no:1, key:'assets/keys/yeosu.png',       nameKo:'여수' },
+      'icheon':      { no:2, key:'assets/keys/icheon.png',      nameKo:'이천' },
+      'paju':        { no:3, key:'assets/keys/paju.png',        nameKo:'파주' },
+      'dongincheon': { no:4, key:'assets/keys/dongincheon.png', nameKo:'동인천' },
+      'gangneung':   { no:5, key:'assets/keys/gangneung.png',   nameKo:'강릉' },
       'nowon':       { no:6, nameKo:'노원',  status:'coming-soon' },
-      'suwon':       { no:7, nameKo:'수원' },
+      'suwon':       { no:7, key:'assets/keys/suwon.png',       nameKo:'수원' },
       'daejeon':     { no:8, nameKo:'대전',  status:'coming-soon' },
     };
 
@@ -878,7 +878,7 @@
     let reservedSet = _getSet(RESERVED_KEY);
 
     function _effectiveStatus(trip, i) {
-      if (trip.key || visitedSet.has(trip.url)) return 'visited';
+      if (visitedSet.has(trip.url)) return 'visited';
       if (reservedSet.has(i))                   return 'reserved';
       return trip.status;
     }
