@@ -286,6 +286,9 @@
       display: flex; align-items: center; justify-content: center;
       z-index: 2;
     }
+    .key-card .card-key-img img {
+      height: 110%; width: auto; max-width: 110%; object-fit: contain;
+    }
     .card-key-img > * { transform-origin: center top; }
     .key-card:not(.coming-soon):not(.reserved):hover .card-key-img > * {
       animation: keySwing 1.2s ease-in-out infinite;
@@ -861,7 +864,7 @@
     function _onKeyImgError(img) { img.outerHTML = _placeholderKey; }
 
     function _visitedKeyHTML(trip) {
-      if (trip.key) return `<img src="${trip.key}" style="width:100%;max-height:110%;object-fit:contain;margin-top:20px" alt="key" onerror="_onKeyImgError(this)" />`;
+      if (trip.key) return `<img src="${trip.key}" style="margin-top:20px" alt="key" onerror="_onKeyImgError(this)" />`;
       return _placeholderKey;
     }
 
