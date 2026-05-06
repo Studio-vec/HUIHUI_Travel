@@ -864,7 +864,7 @@
     function _onKeyImgError(img) { img.outerHTML = _placeholderKey; }
 
     function _visitedKeyHTML(trip) {
-      if (trip.key) return `<img src="${trip.key}" style="margin-top:20px" alt="key" onerror="_onKeyImgError(this)" />`;
+      if (trip.key) return `<img src="${trip.key}" style="margin-top:35px" alt="key" onerror="_onKeyImgError(this)" />`;
       return _placeholderKey;
     }
 
