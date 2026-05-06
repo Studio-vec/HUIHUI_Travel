@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -70,8 +70,8 @@
                     </div>
                     <div class="place-tip">{{ p.tip }}</div>
                 </div>
-                <div class="photo-slot" :class="{ 'has-img': p.photo }" @click="clickUpload(p.id)">
-                    <img v-if="p.photo" :src="p.photo" alt="">
+                <div class="photo-slot" :class="{ 'has-img': p.photo }" @click="p.photo ? null : clickUpload(p.id)">
+                    <img v-if="p.photo" :src="p.photo" alt="" @touchstart.prevent="startPress(p.id)" @touchend="endPress()" @mousedown="startPress(p.id)" @mouseup="endPress()" @mouseleave="endPress()" @contextmenu.prevent>
                     <svg v-else class="photo-slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
                         <circle cx="12" cy="13" r="4"/>
@@ -129,7 +129,16 @@
             </div>
         </div>
     </div>
-</div>
+    <div class="modal-bg" v-if="deleteConfirmId" @click.self="cancelDelete">
+        <div class="tip-modal-card">
+            <div class="tip-modal-title">사진 삭제</div>
+            <div class="tip-modal-hint">이 사진을 삭제하시겠습니까?</div>
+            <div class="tip-modal-btns">
+                <button class="nav-btn" style="flex:1" @click="cancelDelete">취소</button>
+                <button class="nav-btn primary" style="flex:1" @click="confirmDelete">삭제</button>
+            </div>
+        </div>
+    </div></div>
 <script src="../assets/js/trip-app.js"></script>
 <script>
 createTripApp({

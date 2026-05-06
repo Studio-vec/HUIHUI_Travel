@@ -51,6 +51,26 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
             });
 
             const clickUpload = (id) => document.getElementById('file-' + id).click();
+
+            const deleteConfirmId = ref(null);
+            let _pressTimer = null;
+            const startPress = (id) => {
+                _pressTimer = setTimeout(() => { deleteConfirmId.value = id; }, 600);
+            };
+            const endPress = () => {
+                clearTimeout(_pressTimer);
+                _pressTimer = null;
+            };
+            const cancelDelete = () => { deleteConfirmId.value = null; };
+            const confirmDelete = () => {
+                const id = deleteConfirmId.value;
+                schedule.value.forEach(d => d.places.forEach(p => {
+                    if (p.id === id) p.photo = null;
+                }));
+                localStorage.setItem(storageKey, JSON.stringify(schedule.value));
+                deleteConfirmId.value = null;
+            };
+
             const uploadPhoto = (e, id) => {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -129,7 +149,8 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
                 currentPlace, allPhotos, clickUpload, uploadPhoto,
                 isArtPlaying, playArt, showReport, saveImage, collagePieces,
                 isVisited, toggleVisited,
-                tips, showTipModal, newTipAuthor, newTipText, upvoteTip, submitTip
+                tips, showTipModal, newTipAuthor, newTipText, upvoteTip, submitTip,
+                deleteConfirmId, startPress, endPress, cancelDelete, confirmDelete
             };
         }
     }).mount('#app');
