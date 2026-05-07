@@ -46,7 +46,6 @@
     .navbar-links {
       display: flex; gap: var(--space-6);
       list-style: none;
-      flex: 1;
     }
     .navbar-links a {
       font-family: var(--font-heading);
@@ -59,30 +58,6 @@
       white-space: nowrap;
     }
     .navbar-links a:hover { color: var(--lavender-600); }
-    .navbar-right {
-      display: flex; align-items: center; gap: var(--space-3);
-      margin-left: auto; flex-shrink: 0;
-    }
-    /* lang button */
-    .lang-btn {
-      display: inline-flex; align-items: center; gap: var(--space-1);
-      font-family: var(--font-heading);
-      font-size: var(--text-xs);
-      font-weight: 500;
-      color: var(--color-text-secondary);
-      background: none;
-      border: 1.5px solid var(--color-border);
-      border-radius: var(--radius-full);
-      padding: var(--space-1) var(--space-3);
-      cursor: pointer;
-      letter-spacing: var(--tracking-wide);
-      transition: border-color var(--dur-fast), color var(--dur-fast), background var(--dur-fast);
-    }
-    .lang-btn:hover {
-      border-color: var(--lavender-300);
-      color: var(--lavender-600);
-      background: var(--lavender-50);
-    }
 
     /* ── NAVBAR CENTER SEARCH (모바일) ── */
     .navbar-center-search {
@@ -137,7 +112,6 @@
     .mm-sep { height:1px; background:rgba(139,111,208,0.12); margin:4px 0; }
     @media (max-width:767px) {
       .navbar-links { display:none !important; }
-      .navbar-right  { display:none !important; }
       .hamburger-btn { display:flex; }
       .navbar-center-search { display:flex; }
     }
@@ -584,19 +558,6 @@
         <input id="navCenterSearch" type="text" placeholder="여행지 검색하기"/>
       </div>
     </div>
-    <div class="navbar-right">
-      <button class="lang-btn" id="langBtn" onclick="cycleLang()">
-        <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
-          <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M8 1.5C8 1.5 5.5 4 5.5 8s2.5 6.5 2.5 6.5" stroke="currentColor" stroke-width="1.2"/>
-          <path d="M8 1.5C8 1.5 10.5 4 10.5 8s-2.5 6.5-2.5 6.5" stroke="currentColor" stroke-width="1.2"/>
-          <line x1="1.5" y1="8" x2="14.5" y2="8" stroke="currentColor" stroke-width="1.2"/>
-          <line x1="2.5" y1="5.5" x2="13.5" y2="5.5" stroke="currentColor" stroke-width="1.2"/>
-          <line x1="2.5" y1="10.5" x2="13.5" y2="10.5" stroke="currentColor" stroke-width="1.2"/>
-        </svg>
-        <span id="langLabel">한국어</span>
-      </button>
-    </div>
     <button class="hamburger-btn" id="hamburgerBtn" aria-label="메뉴">
       <svg width="20" height="15" viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 1.5h18M1 7.5h18M1 13.5h18"/></svg>
     </button>
@@ -605,11 +566,6 @@
     <a class="mm-item" href="https://blog.naver.com/kty1297" target="_blank" rel="noopener">블로그</a>
     <a class="mm-item" href="gallery.html">갤러리</a>
     <a class="mm-item" href="game.html">게임</a>
-    <div class="mm-sep"></div>
-    <button class="mm-item" onclick="closeMobileMenu(); cycleLang()">
-      <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5C8 1.5 5.5 4 5.5 8s2.5 6.5 2.5 6.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 1.5C8 1.5 10.5 4 10.5 8s-2.5 6.5-2.5 6.5" stroke="currentColor" stroke-width="1.2"/><line x1="1.5" y1="8" x2="14.5" y2="8" stroke="currentColor" stroke-width="1.2"/><line x1="2.5" y1="5.5" x2="13.5" y2="5.5" stroke="currentColor" stroke-width="1.2"/><line x1="2.5" y1="10.5" x2="13.5" y2="10.5" stroke="currentColor" stroke-width="1.2"/></svg>
-      언어변경
-    </button>
   </div>
 
   <!-- ── HERO ── -->
