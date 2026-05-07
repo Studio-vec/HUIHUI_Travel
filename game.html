@@ -34,7 +34,38 @@
       transition: color var(--dur-fast), background var(--dur-fast);
     }
     .navbar-links a:hover, .navbar-links a.active { color: var(--lavender-600); background: var(--lavender-50); }
-    @media (max-width: 600px) { .navbar-links { display: none; } }
+
+    /* ── HAMBURGER & MOBILE MENU ── */
+    .hamburger-btn {
+      display:none; flex-shrink:0; margin-left:auto;
+      background:none; border:none; cursor:pointer;
+      width:36px; height:36px; border-radius:10px;
+      align-items:center; justify-content:center;
+      color:var(--lavender-600); transition:background 0.15s;
+    }
+    .hamburger-btn:hover { background:var(--lavender-50); }
+    .mobile-menu {
+      position:fixed; top:56px; left:0; right:0; z-index:49;
+      background:rgba(255,248,235,0.97); backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(139,111,208,0.12);
+      padding:8px 12px 14px; display:none; flex-direction:column;
+      box-shadow:0 8px 32px rgba(80,40,160,0.1);
+    }
+    .mobile-menu.open { display:flex; }
+    .mm-item {
+      font-family:var(--font-heading); font-size:15px; font-weight:500;
+      color:var(--color-text-secondary); text-decoration:none;
+      padding:11px 14px; border-radius:12px;
+      display:flex; align-items:center; gap:10px;
+      transition:color 0.15s,background 0.15s;
+      background:none; border:none; cursor:pointer; width:100%; text-align:left;
+    }
+    .mm-item:hover { color:var(--lavender-600); background:rgba(139,111,208,0.08); }
+    .mm-item.active { color:var(--lavender-600); font-weight:600; }
+    @media (max-width:767px) {
+      .navbar-links { display:none !important; }
+      .hamburger-btn { display:flex; }
+    }
 
     /* LAYOUT */
     .game-wrap {
@@ -208,7 +239,15 @@
     <li><a href="gallery.html">갤러리</a></li>
     <li><a href="game.html" class="active">게임</a></li>
   </ul>
+  <button class="hamburger-btn" id="hamburgerBtn" aria-label="메뉴">
+    <svg width="20" height="15" viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 1.5h18M1 7.5h18M1 13.5h18"/></svg>
+  </button>
 </nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a class="mm-item" href="https://blog.naver.com/kty1297" target="_blank" rel="noopener">블로그</a>
+  <a class="mm-item" href="gallery.html">갤러리</a>
+  <a class="mm-item active" href="game.html">게임</a>
+</div>
 
 <div class="game-wrap">
   <div class="game-header">
@@ -440,6 +479,15 @@ function updateScore() {
 }
 
 init();
+
+/* ── HAMBURGER ── */
+(function(){
+  const btn  = document.getElementById('hamburgerBtn');
+  const menu = document.getElementById('mobileMenu');
+  function closeMobileMenu() { menu.classList.remove('open'); }
+  btn.addEventListener('click', e => { e.stopPropagation(); menu.classList.toggle('open'); });
+  document.addEventListener('click', e => { if (!menu.contains(e.target)) closeMobileMenu(); });
+})();
 </script>
 </body>
 </html>
