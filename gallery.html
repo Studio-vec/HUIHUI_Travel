@@ -67,19 +67,20 @@
     }
     .key-rack {
       display:flex; gap:0;
-      padding:0 0 16px;
+      padding:0 0 12px;
       overflow-x:auto; scroll-snap-type:x mandatory;
       scrollbar-width:none; -webkit-overflow-scrolling:touch;
       justify-content:flex-start; flex-wrap:nowrap;
-      width:100%; align-items:flex-end;
+      width:100%; height:100%; align-items:flex-start;
       user-select:none;
     }
     .key-rack::-webkit-scrollbar { display:none; }
 
     .key-item {
       flex-shrink:0; scroll-snap-align:center;
-      display:flex; flex-direction:column; align-items:center; gap:12px;
+      display:flex; flex-direction:column; align-items:center; gap:8px;
       cursor:pointer; user-select:none;
+      height:100%;
       transition:transform 0.25s var(--ease-out);
     }
     .key-item:hover { transform:translateY(-8px); }
@@ -102,7 +103,9 @@
 
     /* 열쇠 이미지 */
     .key-img-wrap {
-      position:relative; width:clamp(280px, 56vw, 800px); height:clamp(500px, calc(100vh - 250px), 960px);
+      position:relative;
+      width:clamp(180px, 19vw, 360px);
+      flex:1; min-height:0;
       display:flex; align-items:flex-start; justify-content:center;
     }
     .key-hook {
@@ -113,7 +116,7 @@
     }
     .key-img {
       width:100%; height:100%; object-fit:contain;
-      margin-top:12px;
+      margin-top:4px;
       transform-origin:50% 0%;
       transition:transform 0.35s var(--ease-out), filter 0.3s;
       drop-shadow: 0 8px 24px rgba(60,20,120,0.3);
@@ -202,20 +205,13 @@
     }
     #khCircleEl.sphere #khSphereLayer { opacity:1; }
 
-    /* ── 스노우볼 부유 애니메이션 ── */
-    @keyframes sphereFloat {
-      0%   { transform: translate(0px,   0px)  scale(1.12); }
-      15%  { transform: translate(7px,  -12px) scale(1.12); }
-      30%  { transform: translate(-5px, -20px) scale(1.13); }
-      50%  { transform: translate(-12px,-10px) scale(1.12); }
-      68%  { transform: translate(-4px,  4px)  scale(1.12); }
-      83%  { transform: translate(8px,   -6px) scale(1.12); }
-      100% { transform: translate(0px,   0px)  scale(1.12); }
-    }
-    #khPhotosEl.floating .kh-photo.active img {
-      animation: sphereFloat 7s ease-in-out infinite;
-      will-change: transform;
-    }
+    /* ── 스노우볼 조각 부유 애니메이션 ── */
+    @keyframes sbFloat1 { 0%,100%{transform:translate(0,0) rotate(-3deg);} 38%{transform:translate(14px,-20px) rotate(2deg);} 72%{transform:translate(-8px,-10px) rotate(-1deg);} }
+    @keyframes sbFloat2 { 0%,100%{transform:translate(0,0) rotate(5deg);} 33%{transform:translate(-16px,-18px) rotate(-2deg);} 66%{transform:translate(10px,-14px) rotate(4deg);} }
+    @keyframes sbFloat3 { 0%,100%{transform:translate(0,0) rotate(-2deg);} 50%{transform:translate(12px,-22px) rotate(3deg);} 78%{transform:translate(-6px,-8px) rotate(-3deg);} }
+    @keyframes sbFloat4 { 0%,100%{transform:translate(0,0) rotate(4deg);} 36%{transform:translate(-14px,-16px) rotate(-1deg);} 64%{transform:translate(16px,-18px) rotate(2deg);} }
+    @keyframes sbFloat5 { 0%,100%{transform:translate(0,0) rotate(-1deg);} 44%{transform:translate(-8px,-24px) rotate(3deg);} 74%{transform:translate(10px,-6px) rotate(-2deg);} }
+    @keyframes sbFloat6 { 0%,100%{transform:translate(0,0) rotate(3deg);} 42%{transform:translate(16px,-14px) rotate(-2deg);} 70%{transform:translate(-10px,-18px) rotate(1deg);} }
 
     /* Shaft — keyhole body below circle */
     #khShaftEl {
@@ -229,11 +225,23 @@
       z-index:1;
     }
 
-    /* Photos inside circle */
-    #khPhotosEl { position:absolute; inset:0; z-index:1; }
-    .kh-photo { position:absolute; inset:0; opacity:0; transition:opacity 0.5s; }
-    .kh-photo.active { opacity:1; }
+    /* Photos inside circle — snow globe 조각 방식 */
+    #khPhotosEl { position:absolute; inset:0; z-index:1; border-radius:50%; overflow:hidden; }
+    .kh-photo {
+      position:absolute;
+      border-radius:8px; overflow:hidden;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.15);
+      opacity:0; transition:opacity 0.7s ease;
+    }
     .kh-photo img { width:100%; height:100%; object-fit:cover; display:block; }
+    /* 부유 시작 — .floating 클래스 추가 시 페이드인 + 애니메이션 */
+    #khPhotosEl.floating .kh-photo { opacity:1; }
+    #khPhotosEl.floating .kh-photo:nth-child(1) { animation:sbFloat1 6.2s ease-in-out infinite; }
+    #khPhotosEl.floating .kh-photo:nth-child(2) { animation:sbFloat2 7.6s ease-in-out infinite 0.9s; }
+    #khPhotosEl.floating .kh-photo:nth-child(3) { animation:sbFloat3 8.1s ease-in-out infinite 1.6s; }
+    #khPhotosEl.floating .kh-photo:nth-child(4) { animation:sbFloat4 6.7s ease-in-out infinite 2.3s; }
+    #khPhotosEl.floating .kh-photo:nth-child(5) { animation:sbFloat5 7.3s ease-in-out infinite 0.5s; }
+    #khPhotosEl.floating .kh-photo:nth-child(6) { animation:sbFloat6 8.8s ease-in-out infinite 1.2s; }
     .kh-empty {
       position:absolute; inset:0;
       display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -711,19 +719,36 @@ function setKeyholeSize(diam) {
 
 function loadSphereContent(photos) {
   const pe = document.getElementById('khPhotosEl');
-  const de = document.getElementById('khDotsEl');
+  // 화살표·점 숨김 (스노우볼 모드에선 한번에 여러 조각 표시)
+  document.getElementById('khPrev').style.display  = 'none';
+  document.getElementById('khNext').style.display  = 'none';
+  document.getElementById('khDotsEl').innerHTML    = '';
+
   if (photos.length === 0) {
     pe.innerHTML = `<div class="kh-empty"><span>📷</span><span>아직 사진이 없어요</span></div>`;
-    de.innerHTML = '';
-  } else {
-    pe.innerHTML = photos.map((p,i)=>
-      `<div class="kh-photo${i===0?' active':''}" data-idx="${i}">
-         <img src="${p.photo}" alt="${p.name||''}" loading="lazy">
-       </div>`).join('');
-    de.innerHTML = photos.map((_,i)=>
-      `<div class="kh-dot${i===0?' active':''}" onclick="goToPhoto(${i})"></div>`).join('');
+    return;
   }
-  updateArrows();
+
+  /* 구슬 안에 흩뿌릴 조각 위치 (left·top·width·height: 구슬 지름 기준 %) */
+  const SLOTS = [
+    { l:'8%',  t:'14%', w:'40%', h:'36%' },
+    { l:'52%', t:'8%',  w:'38%', h:'34%' },
+    { l:'56%', t:'50%', w:'36%', h:'32%' },
+    { l:'6%',  t:'54%', w:'40%', h:'36%' },
+    { l:'25%', t:'30%', w:'42%', h:'38%' },
+    { l:'18%', t:'6%',  w:'34%', h:'30%' },
+  ];
+
+  /* 최대 6장, 사진이 적으면 반복해서 채움 */
+  const count = Math.min(6, SLOTS.length);
+  const pieces = Array.from({length: count}, (_, i) => photos[i % photos.length]);
+
+  pe.innerHTML = pieces.map((p, i) => {
+    const s = SLOTS[i];
+    return `<div class="kh-photo" style="left:${s.l};top:${s.t};width:${s.w};height:${s.h};">
+      <img src="${p.photo}" alt="${p.name||''}" loading="lazy">
+    </div>`;
+  }).join('');
 }
 
 function goToPhoto(idx) {
@@ -748,6 +773,8 @@ function closeKeyhole() {
   circle.classList.remove('sphere');
   circle.classList.remove('glowing');
   document.getElementById('khPhotosEl').classList.remove('floating');
+  document.getElementById('khPrev').style.display = '';
+  document.getElementById('khNext').style.display = '';
   document.getElementById('khUiLayer').classList.remove('show');
   document.getElementById('khDim').classList.remove('show');
   // 축소
