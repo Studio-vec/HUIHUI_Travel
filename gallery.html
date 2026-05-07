@@ -61,17 +61,17 @@
 
     /* KEY RACK */
     .key-rack-section {
-      padding: 16px 0 0;
-      min-height: calc(100vh - 56px - 120px);
-      display: flex; align-items: center;
+      padding: 8px 0 0;
+      height: calc(100vh - 56px - 180px);
+      display: flex; align-items: flex-end;
     }
     .key-rack {
-      display:flex; gap:clamp(24px,4vw,52px);
-      padding:0 clamp(20px,6vw,64px) 40px;
+      display:flex; gap:clamp(20px,3vw,44px);
+      padding:0 clamp(20px,6vw,64px) 32px;
       overflow-x:auto; scroll-snap-type:x mandatory;
       scrollbar-width:none; -webkit-overflow-scrolling:touch;
-      justify-content:center; flex-wrap:nowrap;
-      width:100%;
+      justify-content:safe center; flex-wrap:nowrap;
+      width:100%; align-items:flex-end;
     }
     .key-rack::-webkit-scrollbar { display:none; }
 
@@ -101,7 +101,7 @@
 
     /* 열쇠 이미지 */
     .key-img-wrap {
-      position:relative; width:clamp(80px,10vw,130px); height:clamp(120px,15vw,190px);
+      position:relative; width:clamp(160px,18vw,240px); height:clamp(260px,48vh,520px);
       display:flex; align-items:flex-start; justify-content:center;
     }
     .key-hook {
@@ -136,39 +136,66 @@
     }
     .key-item.coming-soon .key-status-dot { display:none; }
 
-    /* ── KEYHOLE SCENE ── */
-    .kh-scene {
-      position:fixed; inset:0; z-index:200;
-      pointer-events:none; opacity:0;
-      transition:opacity 0.35s;
-      /* 씬 뒤로 페이지 그라데이션이 비치게 */
-      background: transparent;
+    /* ══════════════════════════════
+       NEW KEYHOLE SYSTEM
+    ══════════════════════════════ */
+    /* Dim overlay */
+    #khDim {
+      position:fixed; inset:0; z-index:199;
+      background:rgba(6,3,18,0.75);
+      opacity:0; pointer-events:none;
+      transition:opacity 0.5s;
     }
-    .kh-scene.active { opacity:1; pointer-events:all; }
+    #khDim.show { opacity:1; pointer-events:auto; }
 
-    /* SVG overlay (on top of sphere) */
-    .kh-svg {
-      position:absolute; inset:0; width:100%; height:100%;
-      z-index:3; pointer-events:none;
+    /* Holder — zero-size anchor at viewport center */
+    #khHolder {
+      position:fixed; top:50%; left:50%;
+      z-index:200; display:none;
     }
 
-    /* Sphere (behind SVG) */
-    .kh-sphere-wrap {
-      position:absolute;
-      width:min(80vmin,560px); height:min(80vmin,560px);
-      top:50%; left:50%; transform:translate(-50%,-50%);
-      border-radius:50%; overflow:hidden;
+    /* Circle — keyhole head, centered on holder */
+    #khCircleEl {
+      position:absolute; border-radius:50%;
+      background:rgb(6,3,18);
+      transform:translate(-50%,-50%);
+      width:0; height:0; overflow:hidden;
+      transition:width 0.65s cubic-bezier(0.22,1,0.36,1),
+                 height 0.65s cubic-bezier(0.22,1,0.36,1);
       z-index:2;
-      box-shadow:
-        inset -30px -30px 80px rgba(0,0,0,0.65),
-        inset 20px 20px 50px rgba(255,255,255,0.12),
-        0 0 80px rgba(139,111,208,0.25),
-        0 30px 80px rgba(0,0,0,0.5);
-      opacity:0; transition:opacity 0.5s;
     }
-    .kh-scene.sphere-visible .kh-sphere-wrap { opacity:1; }
+    #khCircleEl.sphere {
+      background:radial-gradient(circle at 38% 36%,
+        #f0e8ff 0%,#d4b0ff 10%,#a060f8 28%,
+        #6028e8 50%,#2a0a80 72%,#06021a 100%);
+    }
 
-    /* 3D glass overlay */
+    /* Shaft — keyhole body below circle */
+    #khShaftEl {
+      position:absolute; background:rgb(6,3,18);
+      left:0; top:0; width:0; height:0;
+      transform:translateX(-50%);
+      clip-path:polygon(12% 0%,88% 0%,96% 100%,4% 100%);
+      transition:width 0.65s cubic-bezier(0.22,1,0.36,1),
+                 height 0.65s cubic-bezier(0.22,1,0.36,1),
+                 top 0.65s cubic-bezier(0.22,1,0.36,1);
+      z-index:1;
+    }
+
+    /* Photos inside circle */
+    #khPhotosEl { position:absolute; inset:0; }
+    .kh-photo { position:absolute; inset:0; opacity:0; transition:opacity 0.5s; }
+    .kh-photo.active { opacity:1; }
+    .kh-photo img { width:100%; height:100%; object-fit:contain; display:block; background:rgb(6,3,18); }
+    .kh-empty {
+      position:absolute; inset:0;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:12px; color:rgba(255,255,255,0.4);
+    }
+    .kh-empty span:first-child { font-size:40px; }
+    .kh-empty span { font-size:13px; font-family:var(--font-display); font-style:italic; }
+
+    /* Glass highlight on sphere */
     .kh-glass {
       position:absolute; inset:0; border-radius:50%;
       background:
@@ -177,27 +204,24 @@
       pointer-events:none; z-index:10;
     }
 
-    /* Photos inside sphere */
-    .kh-photos { position:absolute; inset:0; }
-    .kh-photo {
-      position:absolute; inset:0;
-      opacity:0; transition:opacity 0.5s;
+    /* Arrows */
+    .kh-arrow {
+      position:absolute; top:50%; z-index:11; transform:translateY(-50%);
+      background:rgba(255,255,255,0.12); border:none;
+      color:rgba(255,255,255,0.8); width:34px; height:34px; border-radius:50%;
+      font-size:15px; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      transition:background 0.2s; backdrop-filter:blur(4px);
     }
-    .kh-photo.active { opacity:1; }
-    .kh-photo img { width:100%; height:100%; object-fit:contain; display:block; background:rgb(6,3,15); }
-    .kh-photo-empty {
-      position:absolute; inset:0;
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      gap:12px; color:rgba(255,255,255,0.4);
-      background:radial-gradient(circle at 50% 40%, rgba(139,111,208,0.3) 0%, rgba(20,10,40,0.9) 100%);
-    }
-    .kh-photo-empty span:first-child { font-size:40px; }
-    .kh-photo-empty span { font-size:13px; font-family:var(--font-display); font-style:italic; }
+    .kh-arrow:hover { background:rgba(255,255,255,0.22); }
+    .kh-arrow.prev { left:10px; }
+    .kh-arrow.next { right:10px; }
+    .kh-arrow:disabled { opacity:0.2; cursor:default; }
 
-    /* Sphere navigation */
-    .kh-nav {
-      position:absolute; bottom:16px; left:50%; transform:translateX(-50%);
-      display:flex; align-items:center; gap:10px; z-index:11;
+    /* Dots */
+    .kh-nav-dots {
+      position:absolute; bottom:14px; left:50%; transform:translateX(-50%);
+      display:flex; align-items:center; gap:8px; z-index:11;
     }
     .kh-dot {
       width:6px; height:6px; border-radius:50%;
@@ -206,52 +230,34 @@
     }
     .kh-dot.active { background:rgba(255,255,255,0.9); transform:scale(1.3); }
 
-    .kh-arrow {
-      position:absolute; top:50%; z-index:11;
-      transform:translateY(-50%);
-      background:rgba(255,255,255,0.12); border:none;
-      color:rgba(255,255,255,0.8); width:36px; height:36px; border-radius:50%;
-      font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center;
-      transition:background 0.2s; backdrop-filter:blur(4px);
+    /* Fixed UI (destination label, link, close) */
+    #khUiLayer {
+      position:fixed; inset:0; z-index:201;
+      pointer-events:none; opacity:0; transition:opacity 0.4s;
     }
-    .kh-arrow:hover { background:rgba(255,255,255,0.22); }
-    .kh-arrow.prev { left:10px; }
-    .kh-arrow.next { right:10px; }
-    .kh-arrow:disabled { opacity:0.25; cursor:default; }
-
-    /* Destination label + close (above SVG overlay) */
-    .kh-ui {
-      position:absolute; inset:0; z-index:20; pointer-events:none;
-    }
-    .kh-dest-label {
+    #khUiLayer.show { opacity:1; pointer-events:auto; }
+    #khDestLbl {
       position:absolute; top:clamp(20px,4vh,36px); left:50%; transform:translateX(-50%);
-      font-family:var(--font-display); font-style:italic; font-size:clamp(20px,3vw,28px);
-      color:rgba(255,255,255,0.9); white-space:nowrap;
-      pointer-events:none;
+      font-family:var(--font-display); font-style:italic;
+      font-size:clamp(20px,3vw,28px); color:rgba(255,255,255,0.92);
+      white-space:nowrap; pointer-events:none;
     }
-    .kh-photo-label {
-      position:absolute; bottom:calc(50% - min(40vmin,280px) - 28px); left:50%; transform:translateX(-50%);
-      font-size:11px; font-family:var(--font-heading); letter-spacing:0.08em;
-      color:rgba(255,255,255,0.35); white-space:nowrap; pointer-events:none;
-    }
-    .kh-trip-link {
+    #khTripLnk {
       position:absolute; bottom:clamp(20px,4vh,36px); left:50%; transform:translateX(-50%);
-      font-family:var(--font-heading); font-size:12px; font-weight:600; letter-spacing:0.08em;
-      background:rgba(139,111,208,0.85); color:#fff;
+      font-family:var(--font-heading); font-size:12px; font-weight:600;
+      letter-spacing:0.08em; background:rgba(139,111,208,0.85); color:#fff;
       border-radius:20px; padding:8px 22px; text-decoration:none;
-      backdrop-filter:blur(8px); pointer-events:all;
-      transition:background 0.2s;
+      backdrop-filter:blur(8px); transition:background 0.2s; pointer-events:auto;
     }
-    .kh-trip-link:hover { background:rgba(139,111,208,1); }
-    .kh-close {
+    #khTripLnk:hover { background:rgba(139,111,208,1); }
+    #khCloseBtn {
       position:absolute; top:clamp(16px,3vh,28px); right:clamp(16px,3vw,32px);
       background:rgba(255,255,255,0.1); border:none; color:rgba(255,255,255,0.7);
       width:40px; height:40px; border-radius:50%; font-size:18px;
       cursor:pointer; display:flex; align-items:center; justify-content:center;
-      backdrop-filter:blur(8px); pointer-events:all;
-      transition:background 0.2s;
+      backdrop-filter:blur(8px); transition:background 0.2s; pointer-events:auto;
     }
-    .kh-close:hover { background:rgba(255,255,255,0.2); color:#fff; }
+    #khCloseBtn:hover { background:rgba(255,255,255,0.2); color:#fff; }
 
     /* ── UNVISITED POPUP ── */
     .unv-overlay {
@@ -324,40 +330,28 @@
   <div class="key-rack" id="keyRack"></div>
 </section>
 
-<!-- Keyhole scene -->
-<div class="kh-scene" id="khScene">
-  <!-- Sphere -->
-  <div class="kh-sphere-wrap" id="khSphereWrap">
-    <div class="kh-photos" id="khPhotos"></div>
+<!-- Dim overlay -->
+<div id="khDim" onclick="closeKeyhole()"></div>
+
+<!-- Keyhole holder (zero-size anchor at viewport center) -->
+<div id="khHolder">
+  <!-- Circle = keyhole head -->
+  <div id="khCircleEl">
+    <div id="khPhotosEl"></div>
     <div class="kh-glass"></div>
     <button class="kh-arrow prev" id="khPrev">&#8592;</button>
     <button class="kh-arrow next" id="khNext">&#8594;</button>
-    <div class="kh-nav" id="khDots"></div>
+    <div class="kh-nav-dots" id="khDotsEl"></div>
   </div>
-  <!-- SVG keyhole overlay -->
-  <svg class="kh-svg" id="khSvg" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice">
-    <defs>
-      <mask id="kMask" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
-        <rect fill="white" width="1000" height="1000"/>
-        <circle id="khMaskCircle" fill="black" cx="500" cy="430" r="0"/>
-        <polygon id="khMaskShaft" fill="black" opacity="0" points="468,486 456,598 544,598 532,486"/>
-      </mask>
-    </defs>
-    <defs>
-      <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#3b0e80"/>
-        <stop offset="100%" stop-color="#100530"/>
-      </linearGradient>
-    </defs>
-    <rect fill="url(#bgGrad)" width="1000" height="1000" mask="url(#kMask)"/>
-  </svg>
-  <!-- UI layer -->
-  <div class="kh-ui">
-    <div class="kh-dest-label" id="khDestLabel"></div>
-    <div class="kh-photo-label" id="khPhotoLabel"></div>
-    <a href="#" class="kh-trip-link" id="khTripLink">코스 보기 →</a>
-    <button class="kh-close" onclick="closeKeyhole()">✕</button>
-  </div>
+  <!-- Shaft = keyhole body -->
+  <div id="khShaftEl"></div>
+</div>
+
+<!-- Fixed UI layer -->
+<div id="khUiLayer">
+  <div id="khDestLbl"></div>
+  <a href="#" id="khTripLnk">코스 보기 →</a>
+  <button id="khCloseBtn" onclick="closeKeyhole()">✕</button>
 </div>
 
 <!-- Unvisited popup -->
@@ -417,8 +411,7 @@ async function renderKeyRack() {
 
   document.getElementById('keyRack').innerHTML = DESTINATIONS.map((dest, i) => {
     if (!probeResults[i]) {
-      /* 키 이미지 없음 → 준비중 */
-      return `<div class="key-item coming-soon">
+      return `<div class="key-item coming-soon" data-dest-id="${dest.id}">
         <div class="key-nametag">${dest.nameKo}</div>
         <div class="key-img-wrap"><div class="key-hook"></div>
           <div style="width:110px;height:160px;display:flex;align-items:center;justify-content:center;opacity:0.3;font-size:36px;margin-top:10px">🔑</div>
@@ -428,7 +421,7 @@ async function renderKeyRack() {
     }
     const isVisited = visited.has(dest.url);
     const cls = isVisited ? 'visited' : 'unvisited';
-    return `<div class="key-item ${cls}" onclick="handleKeyClick('${dest.id}')">
+    return `<div class="key-item ${cls}" data-dest-id="${dest.id}" onclick="handleKeyClick('${dest.id}')">
       <div class="key-nametag">${dest.nameKo}</div>
       <div class="key-img-wrap">
         <div class="key-hook"></div>
@@ -443,11 +436,8 @@ function handleKeyClick(id) {
   const dest = DESTINATIONS.find(d=>d.id===id);
   if (!dest) return;
   const visited = getVisitedSet();
-  if (visited.has(dest.url)) {
-    openKeyhole(dest);
-  } else {
-    showUnvisited(dest);
-  }
+  if (visited.has(dest.url)) openKeyhole(dest);
+  else showUnvisited(dest);
 }
 
 /* ── SOUND ── */
@@ -455,143 +445,144 @@ function playClickSound() {
   try {
     const ctx = new (window.AudioContext||window.webkitAudioContext)();
     const t = ctx.currentTime;
-    const osc1 = ctx.createOscillator();
-    const osc2 = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc1.type = 'square'; osc1.frequency.setValueAtTime(900,t); osc1.frequency.exponentialRampToValueAtTime(300,t+0.06);
-    osc2.type = 'sawtooth'; osc2.frequency.setValueAtTime(1200,t); osc2.frequency.exponentialRampToValueAtTime(200,t+0.05);
-    gain.gain.setValueAtTime(0.18,t); gain.gain.exponentialRampToValueAtTime(0.001,t+0.12);
-    osc1.connect(gain); osc2.connect(gain); gain.connect(ctx.destination);
-    osc1.start(t); osc1.stop(t+0.12);
-    osc2.start(t); osc2.stop(t+0.08);
+    const o1 = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain();
+    o1.type='square'; o1.frequency.setValueAtTime(900,t); o1.frequency.exponentialRampToValueAtTime(300,t+0.06);
+    o2.type='sawtooth'; o2.frequency.setValueAtTime(1200,t); o2.frequency.exponentialRampToValueAtTime(200,t+0.05);
+    g.gain.setValueAtTime(0.18,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.12);
+    o1.connect(g); o2.connect(g); g.connect(ctx.destination);
+    o1.start(t); o1.stop(t+0.12); o2.start(t); o2.stop(t+0.08);
   } catch(e) {}
 }
 
-/* ── KEYHOLE ANIMATION ── */
-let khAnimFrame = null;
-let currentPhotos = [];
-let currentPhotoIdx = 0;
+/* ── NEW KEYHOLE ANIMATION ── */
+const delay = ms => new Promise(r => setTimeout(r, ms));
+let currentPhotos = [], currentPhotoIdx = 0, khOpen = false;
 
 async function openKeyhole(dest) {
-  playClickSound();
+  if (khOpen) return;
+  khOpen = true;
 
   const photos = getUserPhotos(dest.storageKey);
-  currentPhotos = photos;
-  currentPhotoIdx = 0;
+  currentPhotos = photos; currentPhotoIdx = 0;
 
-  // Load sphere content
-  const photosEl = document.getElementById('khPhotos');
+  const rack    = document.getElementById('keyRack');
+  const keyItem = rack.querySelector(`[data-dest-id="${dest.id}"]`);
+
+  /* STEP 1 — 선택한 열쇠를 가로 중앙으로 스크롤 */
+  if (keyItem) {
+    const rr = rack.getBoundingClientRect();
+    const ir = keyItem.getBoundingClientRect();
+    rack.scrollTo({ left: rack.scrollLeft + ir.left - rr.left + ir.width/2 - rr.width/2, behavior:'smooth' });
+    await delay(580);
+  }
+
+  /* STEP 2 — 찰칵 소리 + 다른 열쇠 페이드 아웃 */
+  playClickSound();
+  document.querySelectorAll('.key-item').forEach(el => {
+    if (el !== keyItem) { el.style.transition='opacity 0.4s'; el.style.opacity='0'; }
+  });
+  await delay(220);
+
+  /* STEP 3 — 선택한 열쇠 아래로 사라짐 */
+  if (keyItem) {
+    keyItem.style.transition = 'transform 0.55s cubic-bezier(0.5,0,1,1), opacity 0.45s ease-in';
+    keyItem.style.transform  = 'translateY(180px) scale(0.85)';
+    keyItem.style.opacity    = '0';
+    keyItem.style.pointerEvents = 'none';
+  }
+  await delay(600);
+
+  /* STEP 4 — 어두운 딤 오버레이 등장 */
+  document.getElementById('khDim').classList.add('show');
+
+  /* STEP 5 — 열쇠 구멍 작게 시작 */
+  const holder = document.getElementById('khHolder');
+  holder.style.display = 'block';
+  setKeyholeSize(0);
+  await delay(60); // reflow
+
+  /* STEP 6 — 열쇠 구멍이 화면 1/3 크기로 확대 */
+  const targetDiam = Math.min(window.innerHeight / 3, 380);
+  setKeyholeSize(targetDiam);
+  loadSphereContent(photos);
+  document.getElementById('khDestLbl').textContent = dest.nameKo;
+  document.getElementById('khTripLnk').href = dest.url;
+  await delay(700);
+
+  /* STEP 7 — 원 부분이 수정구슬로 변환 */
+  document.getElementById('khCircleEl').classList.add('sphere');
+  document.getElementById('khUiLayer').classList.add('show');
+}
+
+function setKeyholeSize(diam) {
+  const c = document.getElementById('khCircleEl');
+  const s = document.getElementById('khShaftEl');
+  const r = diam / 2;
+  c.style.width  = diam + 'px';
+  c.style.height = diam + 'px';
+  s.style.width  = (diam * 0.44) + 'px';
+  s.style.height = (diam * 0.52) + 'px';
+  s.style.top    = r + 'px';
+}
+
+function loadSphereContent(photos) {
+  const pe = document.getElementById('khPhotosEl');
+  const de = document.getElementById('khDotsEl');
   if (photos.length === 0) {
-    photosEl.innerHTML = `<div class="kh-photo-empty"><span>📷</span><span>아직 사진이 없어요</span><span style="font-style:normal;font-size:12px;opacity:0.6">여행 후 사진을 추가해보세요</span></div>`;
-    document.getElementById('khDots').innerHTML = '';
+    pe.innerHTML = `<div class="kh-empty"><span>📷</span><span>아직 사진이 없어요</span></div>`;
+    de.innerHTML = '';
   } else {
-    photosEl.innerHTML = photos.map((p,i)=>`<div class="kh-photo${i===0?' active':''}" data-idx="${i}"><img src="${p.photo}" alt="${p.name}" loading="lazy"></div>`).join('');
-    document.getElementById('khDots').innerHTML = photos.map((_,i)=>`<div class="kh-dot${i===0?' active':''}" onclick="goToPhoto(${i})"></div>`).join('');
-    document.getElementById('khPhotoLabel').textContent = photos.length > 1 ? `${photos.length}장의 사진` : '';
+    pe.innerHTML = photos.map((p,i)=>
+      `<div class="kh-photo${i===0?' active':''}" data-idx="${i}">
+         <img src="${p.photo}" alt="${p.name||''}" loading="lazy">
+       </div>`).join('');
+    de.innerHTML = photos.map((_,i)=>
+      `<div class="kh-dot${i===0?' active':''}" onclick="goToPhoto(${i})"></div>`).join('');
   }
   updateArrows();
-
-  document.getElementById('khDestLabel').textContent = dest.nameKo;
-  document.getElementById('khTripLink').href = dest.url;
-
-  // Show scene
-  const scene = document.getElementById('khScene');
-  scene.classList.add('active');
-  document.body.style.overflow = 'hidden';
-
-  // Phase 1: small keyhole appears (0 → 60px radius)
-  await animateKeyhole(0, 62, 400, 'ease-out', true);
-  // Phase 2: keyhole expands rapidly
-  await animateKeyhole(62, 820, 700, 'ease-in', false);
-  // Phase 3: switch to sphere
-  scene.classList.add('sphere-visible');
-  // Reset SVG hole to 0 (sphere takes over visually)
-  setKeyholeR(0);
-  document.getElementById('khMaskShaft').setAttribute('opacity','0');
 }
 
-function animateKeyhole(fromR, toR, duration, easing, showShaft) {
-  return new Promise(resolve => {
-    const circle = document.getElementById('khMaskCircle');
-    const shaft  = document.getElementById('khMaskShaft');
-    const start  = performance.now();
-
-    if (showShaft) shaft.setAttribute('opacity', '1');
-
-    function ease(t) {
-      if (easing==='ease-out') return 1-(1-t)*(1-t);
-      if (easing==='ease-in')  return t*t;
-      return t;
-    }
-
-    function frame(now) {
-      const p = Math.min((now-start)/duration, 1);
-      const r = fromR + (toR-fromR)*ease(p);
-      circle.setAttribute('r', r);
-      if (!showShaft) {
-        const opacity = Math.max(0, 1-(r-62)/180);
-        shaft.setAttribute('opacity', opacity);
-      }
-      if (p < 1) {
-        khAnimFrame = requestAnimationFrame(frame);
-      } else {
-        circle.setAttribute('r', toR);
-        resolve();
-      }
-    }
-    cancelAnimationFrame(khAnimFrame);
-    khAnimFrame = requestAnimationFrame(frame);
-  });
+function goToPhoto(idx) {
+  if (!currentPhotos.length) return;
+  idx = Math.max(0, Math.min(currentPhotos.length-1, idx));
+  document.querySelectorAll('#khPhotosEl .kh-photo').forEach((el,i)=>el.classList.toggle('active',i===idx));
+  document.querySelectorAll('#khDotsEl .kh-dot').forEach((el,i)=>el.classList.toggle('active',i===idx));
+  currentPhotoIdx = idx; updateArrows();
 }
-
-function setKeyholeR(r) {
-  document.getElementById('khMaskCircle').setAttribute('r', r);
+function updateArrows() {
+  const p = document.getElementById('khPrev'), n = document.getElementById('khNext');
+  if (p) p.disabled = currentPhotoIdx === 0;
+  if (n) n.disabled = currentPhotoIdx >= currentPhotos.length-1;
 }
 
 function closeKeyhole() {
-  cancelAnimationFrame(khAnimFrame);
-  const scene = document.getElementById('khScene');
-  scene.classList.remove('active','sphere-visible');
-  document.body.style.overflow = '';
-  setKeyholeR(0);
-  document.getElementById('khMaskShaft').setAttribute('opacity','0');
+  if (!khOpen) return;
+  khOpen = false;
+  document.getElementById('khCircleEl').classList.remove('sphere');
+  document.getElementById('khUiLayer').classList.remove('show');
+  setKeyholeSize(0);
+  document.getElementById('khDim').classList.remove('show');
+  setTimeout(() => {
+    document.getElementById('khHolder').style.display = 'none';
+    document.querySelectorAll('.key-item').forEach(el => {
+      el.style.transition = 'opacity 0.4s, transform 0.4s';
+      el.style.opacity = ''; el.style.transform = ''; el.style.pointerEvents = '';
+    });
+  }, 450);
 }
 
-/* ── PHOTO CAROUSEL ── */
-function goToPhoto(idx) {
-  if (currentPhotos.length === 0) return;
-  idx = Math.max(0, Math.min(currentPhotos.length-1, idx));
-  document.querySelectorAll('.kh-photo').forEach((el,i)=>{
-    el.classList.toggle('active', i===idx);
-  });
-  document.querySelectorAll('.kh-dot').forEach((el,i)=>{
-    el.classList.toggle('active', i===idx);
-  });
-  currentPhotoIdx = idx;
-  updateArrows();
-}
-function updateArrows() {
-  const prev = document.getElementById('khPrev');
-  const next = document.getElementById('khNext');
-  if (prev) prev.disabled = currentPhotoIdx === 0;
-  if (next) next.disabled = currentPhotoIdx >= currentPhotos.length-1;
-}
+/* ── TOUCH / KEYBOARD ── */
 document.getElementById('khPrev').onclick = () => goToPhoto(currentPhotoIdx-1);
 document.getElementById('khNext').onclick = () => goToPhoto(currentPhotoIdx+1);
 
-// Touch swipe inside sphere
-let touchStartX = 0;
-const sphere = document.getElementById('khSphereWrap');
-sphere.addEventListener('touchstart', e=>{ touchStartX=e.touches[0].clientX; }, {passive:true});
-sphere.addEventListener('touchend', e=>{
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  if (Math.abs(dx) > 30) dx < 0 ? goToPhoto(currentPhotoIdx+1) : goToPhoto(currentPhotoIdx-1);
+let _tx = 0;
+document.getElementById('khCircleEl').addEventListener('touchstart', e=>{ _tx=e.touches[0].clientX; },{passive:true});
+document.getElementById('khCircleEl').addEventListener('touchend', e=>{
+  const dx = e.changedTouches[0].clientX - _tx;
+  if (Math.abs(dx)>30) goToPhoto(dx<0?currentPhotoIdx+1:currentPhotoIdx-1);
 });
-
-// Keyboard navigation
 document.addEventListener('keydown', e=>{
-  const scene = document.getElementById('khScene');
-  if (!scene.classList.contains('active')) return;
+  if (!khOpen) return;
   if (e.key==='ArrowRight') goToPhoto(currentPhotoIdx+1);
   if (e.key==='ArrowLeft')  goToPhoto(currentPhotoIdx-1);
   if (e.key==='Escape')     closeKeyhole();
