@@ -62,12 +62,13 @@
     /* KEY RACK */
     .key-rack-section {
       padding: 8px 0 0;
-      height: calc(100vh - 56px - 180px);
+      height: calc(100vh - 56px - 48px);
       display: flex; align-items: flex-end;
+      overflow: hidden;
     }
     .key-rack {
-      display:flex; gap:clamp(20px,3vw,44px);
-      padding:0 clamp(20px,6vw,64px) 32px;
+      display:flex; gap:clamp(14px,3.5vw,32px);
+      padding:0 clamp(16px,5vw,48px) 24px;
       overflow-x:auto; scroll-snap-type:x mandatory;
       scrollbar-width:none; -webkit-overflow-scrolling:touch;
       justify-content:safe center; flex-wrap:nowrap;
@@ -101,7 +102,7 @@
 
     /* 열쇠 이미지 */
     .key-img-wrap {
-      position:relative; width:clamp(160px,18vw,240px); height:clamp(260px,48vh,520px);
+      position:relative; width:clamp(200px,55vw,320px); height:clamp(340px,68vh,580px);
       display:flex; align-items:flex-start; justify-content:center;
     }
     .key-hook {
@@ -148,10 +149,11 @@
     }
     #khDim.show { opacity:1; pointer-events:auto; }
 
-    /* Holder — zero-size anchor at viewport center */
+    /* Holder — zero-size anchor, positioned dynamically */
     #khHolder {
-      position:fixed; top:50%; left:50%;
+      position:fixed; top:80%; left:50%;
       z-index:200; display:none;
+      transition: top 0.75s cubic-bezier(0.22,1,0.36,1);
     }
 
     /* Circle — keyhole head, centered on holder */
@@ -160,14 +162,26 @@
       background:rgb(6,3,18);
       transform:translate(-50%,-50%);
       width:0; height:0; overflow:hidden;
-      transition:width 0.65s cubic-bezier(0.22,1,0.36,1),
-                 height 0.65s cubic-bezier(0.22,1,0.36,1);
+      transition:width 0.7s cubic-bezier(0.22,1,0.36,1),
+                 height 0.7s cubic-bezier(0.22,1,0.36,1);
       z-index:2;
     }
+    /* 수정구슬 — 반투명 광택 흰색 */
     #khCircleEl.sphere {
-      background:radial-gradient(circle at 38% 36%,
-        #f0e8ff 0%,#d4b0ff 10%,#a060f8 28%,
-        #6028e8 50%,#2a0a80 72%,#06021a 100%);
+      background: radial-gradient(circle at 33% 28%,
+        #ffffff 0%,
+        rgba(255,255,255,0.95) 10%,
+        rgba(248,244,255,0.78) 26%,
+        rgba(235,225,255,0.55) 44%,
+        rgba(218,205,255,0.38) 62%,
+        rgba(200,185,255,0.24) 78%,
+        rgba(180,160,255,0.14) 100%
+      );
+      box-shadow:
+        0 0 80px rgba(180,150,255,0.45),
+        0 0 180px rgba(160,120,255,0.25),
+        inset 0 0 50px rgba(255,255,255,0.35);
+      border: 1px solid rgba(255,255,255,0.55);
     }
 
     /* Shaft — keyhole body below circle */
@@ -175,10 +189,10 @@
       position:absolute; background:rgb(6,3,18);
       left:0; top:0; width:0; height:0;
       transform:translateX(-50%);
-      clip-path:polygon(12% 0%,88% 0%,96% 100%,4% 100%);
-      transition:width 0.65s cubic-bezier(0.22,1,0.36,1),
-                 height 0.65s cubic-bezier(0.22,1,0.36,1),
-                 top 0.65s cubic-bezier(0.22,1,0.36,1);
+      clip-path:polygon(10% 0%,90% 0%,98% 100%,2% 100%);
+      transition:width 0.7s cubic-bezier(0.22,1,0.36,1),
+                 height 0.7s cubic-bezier(0.22,1,0.36,1),
+                 top 0.7s cubic-bezier(0.22,1,0.36,1);
       z-index:1;
     }
 
@@ -186,21 +200,21 @@
     #khPhotosEl { position:absolute; inset:0; }
     .kh-photo { position:absolute; inset:0; opacity:0; transition:opacity 0.5s; }
     .kh-photo.active { opacity:1; }
-    .kh-photo img { width:100%; height:100%; object-fit:contain; display:block; background:rgb(6,3,18); }
+    .kh-photo img { width:100%; height:100%; object-fit:cover; display:block; }
     .kh-empty {
       position:absolute; inset:0;
       display:flex; flex-direction:column; align-items:center; justify-content:center;
-      gap:12px; color:rgba(255,255,255,0.4);
+      gap:12px; color:rgba(80,40,140,0.5);
     }
-    .kh-empty span:first-child { font-size:40px; }
-    .kh-empty span { font-size:13px; font-family:var(--font-display); font-style:italic; }
+    .kh-empty span:first-child { font-size:48px; }
+    .kh-empty span { font-size:14px; font-family:var(--font-display); font-style:italic; }
 
     /* Glass highlight on sphere */
     .kh-glass {
       position:absolute; inset:0; border-radius:50%;
       background:
-        radial-gradient(circle at 32% 26%, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.06) 35%, transparent 55%),
-        radial-gradient(circle at 70% 74%, rgba(0,0,0,0.45) 0%, transparent 45%);
+        radial-gradient(circle at 30% 24%, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.18) 28%, transparent 48%),
+        radial-gradient(circle at 68% 70%, rgba(200,185,255,0.18) 0%, transparent 35%);
       pointer-events:none; z-index:10;
     }
 
@@ -237,27 +251,32 @@
     }
     #khUiLayer.show { opacity:1; pointer-events:auto; }
     #khDestLbl {
-      position:absolute; top:clamp(20px,4vh,36px); left:50%; transform:translateX(-50%);
+      position:absolute; top:clamp(18px,3.5vh,32px); left:50%; transform:translateX(-50%);
       font-family:var(--font-display); font-style:italic;
-      font-size:clamp(20px,3vw,28px); color:rgba(255,255,255,0.92);
+      font-size:clamp(22px,3.5vw,34px);
+      color:rgba(60,20,110,0.88);
+      text-shadow: 0 1px 10px rgba(255,255,255,0.8), 0 2px 20px rgba(255,255,255,0.5);
       white-space:nowrap; pointer-events:none;
     }
     #khTripLnk {
-      position:absolute; bottom:clamp(20px,4vh,36px); left:50%; transform:translateX(-50%);
+      position:absolute; bottom:clamp(18px,4vh,36px); left:50%; transform:translateX(-50%);
       font-family:var(--font-heading); font-size:12px; font-weight:600;
-      letter-spacing:0.08em; background:rgba(139,111,208,0.85); color:#fff;
-      border-radius:20px; padding:8px 22px; text-decoration:none;
-      backdrop-filter:blur(8px); transition:background 0.2s; pointer-events:auto;
+      letter-spacing:0.08em; background:rgba(107,79,180,0.82); color:#fff;
+      border-radius:20px; padding:9px 24px; text-decoration:none;
+      backdrop-filter:blur(12px); transition:background 0.2s; pointer-events:auto;
+      box-shadow: 0 2px 16px rgba(80,40,160,0.25);
     }
-    #khTripLnk:hover { background:rgba(139,111,208,1); }
+    #khTripLnk:hover { background:rgba(107,79,180,1); }
     #khCloseBtn {
-      position:absolute; top:clamp(16px,3vh,28px); right:clamp(16px,3vw,32px);
-      background:rgba(255,255,255,0.1); border:none; color:rgba(255,255,255,0.7);
-      width:40px; height:40px; border-radius:50%; font-size:18px;
+      position:absolute; top:clamp(14px,2.5vh,24px); right:clamp(14px,3vw,28px);
+      background:rgba(255,255,255,0.35); border:1px solid rgba(255,255,255,0.5);
+      color:rgba(60,20,110,0.8);
+      width:40px; height:40px; border-radius:50%; font-size:17px;
       cursor:pointer; display:flex; align-items:center; justify-content:center;
-      backdrop-filter:blur(8px); transition:background 0.2s; pointer-events:auto;
+      backdrop-filter:blur(10px); transition:background 0.2s; pointer-events:auto;
+      box-shadow: 0 2px 12px rgba(180,150,255,0.2);
     }
-    #khCloseBtn:hover { background:rgba(255,255,255,0.2); color:#fff; }
+    #khCloseBtn:hover { background:rgba(255,255,255,0.55); }
 
     /* ── UNVISITED POPUP ── */
     .unv-overlay {
@@ -473,43 +492,45 @@ async function openKeyhole(dest) {
     const rr = rack.getBoundingClientRect();
     const ir = keyItem.getBoundingClientRect();
     rack.scrollTo({ left: rack.scrollLeft + ir.left - rr.left + ir.width/2 - rr.width/2, behavior:'smooth' });
-    await delay(580);
+    await delay(600);
   }
 
-  /* STEP 2 — 찰칵 소리 + 다른 열쇠 페이드 아웃 */
+  /* STEP 2 — 찰칵 소리 */
   playClickSound();
-  document.querySelectorAll('.key-item').forEach(el => {
-    if (el !== keyItem) { el.style.transition='opacity 0.4s'; el.style.opacity='0'; }
-  });
-  await delay(220);
+  await delay(60);
 
-  /* STEP 3 — 선택한 열쇠 아래로 사라짐 */
+  /* STEP 3 — 선택한 열쇠 아래로 슬라이드 (크기·투명도 변화 없음) */
   if (keyItem) {
-    keyItem.style.transition = 'transform 0.55s cubic-bezier(0.5,0,1,1), opacity 0.45s ease-in';
-    keyItem.style.transform  = 'translateY(180px) scale(0.85)';
-    keyItem.style.opacity    = '0';
+    keyItem.style.transition = 'transform 0.6s cubic-bezier(0.4,0,1,1)';
+    keyItem.style.transform  = 'translateY(115%)';
     keyItem.style.pointerEvents = 'none';
   }
-  await delay(600);
+  await delay(320);
 
-  /* STEP 4 — 어두운 딤 오버레이 등장 */
-  document.getElementById('khDim').classList.add('show');
-
-  /* STEP 5 — 열쇠 구멍 작게 시작 */
+  /* STEP 4 — 열쇠 구멍 : 화면 하단에서 작게 시작 */
   const holder = document.getElementById('khHolder');
-  holder.style.display = 'block';
+  holder.style.transition = 'none';
+  holder.style.display    = 'block';
+  holder.style.top  = (window.innerHeight * 0.85) + 'px';
+  holder.style.left = '50%';
   setKeyholeSize(0);
-  await delay(60); // reflow
+  await delay(40); // reflow
 
-  /* STEP 6 — 열쇠 구멍이 화면 1/3 크기로 확대 */
-  const targetDiam = Math.min(window.innerHeight / 3, 380);
-  setKeyholeSize(targetDiam);
+  /* STEP 5 — 열쇠 구멍 확대 */
+  const diam = Math.min(window.innerWidth * 0.96, window.innerHeight * 0.96);
+  setKeyholeSize(diam);
   loadSphereContent(photos);
   document.getElementById('khDestLbl').textContent = dest.nameKo;
   document.getElementById('khTripLnk').href = dest.url;
-  await delay(700);
+  await delay(220);
 
-  /* STEP 7 — 원 부분이 수정구슬로 변환 */
+  /* STEP 6 — 위로 이동: 원만 화면에 보이게 (샤프트는 화면 아래로) */
+  holder.style.transition = 'top 0.78s cubic-bezier(0.22,1,0.36,1)';
+  const finalTop = diam / 2 + 18; // 원 상단이 화면 18px 아래에 오도록
+  holder.style.top = finalTop + 'px';
+  await delay(620);
+
+  /* STEP 7 — 원 → 반투명 광택 수정구슬 */
   document.getElementById('khCircleEl').classList.add('sphere');
   document.getElementById('khUiLayer').classList.add('show');
 }
@@ -520,8 +541,8 @@ function setKeyholeSize(diam) {
   const r = diam / 2;
   c.style.width  = diam + 'px';
   c.style.height = diam + 'px';
-  s.style.width  = (diam * 0.44) + 'px';
-  s.style.height = (diam * 0.52) + 'px';
+  s.style.width  = (diam * 0.42) + 'px';
+  s.style.height = (diam * 0.55) + 'px';
   s.style.top    = r + 'px';
 }
 
@@ -561,14 +582,20 @@ function closeKeyhole() {
   document.getElementById('khCircleEl').classList.remove('sphere');
   document.getElementById('khUiLayer').classList.remove('show');
   setKeyholeSize(0);
-  document.getElementById('khDim').classList.remove('show');
+  // holder slides back down
+  const holder = document.getElementById('khHolder');
+  holder.style.transition = 'top 0.45s cubic-bezier(0.4,0,1,1)';
+  holder.style.top = (window.innerHeight + 200) + 'px';
   setTimeout(() => {
-    document.getElementById('khHolder').style.display = 'none';
+    holder.style.display = 'none';
+    holder.style.transition = 'none';
+    // 열쇠 복원 (transform만)
     document.querySelectorAll('.key-item').forEach(el => {
-      el.style.transition = 'opacity 0.4s, transform 0.4s';
-      el.style.opacity = ''; el.style.transform = ''; el.style.pointerEvents = '';
+      el.style.transition = 'transform 0.45s var(--ease-out)';
+      el.style.transform  = '';
+      el.style.pointerEvents = '';
     });
-  }, 450);
+  }, 460);
 }
 
 /* ── TOUCH / KEYBOARD ── */
