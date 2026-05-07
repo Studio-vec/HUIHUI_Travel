@@ -147,7 +147,7 @@
       opacity:0; transition:opacity 0.5s;
     }
     .kh-photo.active { opacity:1; }
-    .kh-photo img { width:100%; height:100%; object-fit:cover; display:block; }
+    .kh-photo img { width:100%; height:100%; object-fit:contain; display:block; background:rgb(6,3,15); }
     .kh-photo-empty {
       position:absolute; inset:0;
       display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -326,9 +326,9 @@ const DESTINATIONS = [
   { id:'paju',        nameKo:'파주',   tagline:'트렌디 아트 나들이',    storageKey:'trip_paju_v1',        url:'trips/paju.html',        particle:'를' },
   { id:'dongincheon', nameKo:'동인천', tagline:'레트로 감성 골목',      storageKey:'trip_dongincheon_v1', url:'trips/dongincheon.html', particle:'을' },
   { id:'gangneung',   nameKo:'강릉',   tagline:'커피향 가득한 해변',    storageKey:'trip_gangneung_v1',   url:'trips/gangneung.html',   particle:'을' },
-  { id:'nowon',       nameKo:'노원',   tagline:'준비중',               storageKey:'trip_nowon_v1',        url:'trips/nowon.html',       particle:'을', comingSoon:true },
+  { id:'nowon',       nameKo:'노원',   tagline:'노원 나들이',           storageKey:'trip_nowon_v1',        url:'trips/nowon.html',       particle:'을' },
   { id:'suwon',       nameKo:'수원',   tagline:'역사가 살아있는 도시',  storageKey:'trip_suwon_v1',       url:'trips/suwon.html',       particle:'을' },
-  { id:'daejeon',     nameKo:'대전',   tagline:'준비중',               storageKey:'trip_daejeon_v1',      url:'trips/daejeon.html',     particle:'을', comingSoon:true },
+  { id:'daejeon',     nameKo:'대전',   tagline:'대전 여행',             storageKey:'trip_daejeon_v1',      url:'trips/daejeon.html',     particle:'을' },
 ];
 
 /* ── DATA ── */
@@ -345,14 +345,30 @@ function getUserPhotos(storageKey) {
 }
 
 /* ── KEY RACK ── */
-function renderKeyRack() {
+function _probeImg(src) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload  = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = src;
+  });
+}
+
+async function renderKeyRack() {
   const visited = getVisitedSet();
-  document.getElementById('keyRack').innerHTML = DESTINATIONS.map(dest => {
-    if (dest.comingSoon) {
+
+  /* 키 이미지 존재 여부 병렬 체크 */
+  const probeResults = await Promise.all(
+    DESTINATIONS.map(dest => _probeImg(`assets/keys/${dest.id}.png`))
+  );
+
+  document.getElementById('keyRack').innerHTML = DESTINATIONS.map((dest, i) => {
+    if (!probeResults[i]) {
+      /* 키 이미지 없음 → 준비중 */
       return `<div class="key-item coming-soon">
         <div class="key-nametag">${dest.nameKo}</div>
         <div class="key-img-wrap"><div class="key-hook"></div>
-          <div style="width:110px;height:160px;display:flex;align-items:center;justify-content:center;opacity:0.4;font-size:36px;margin-top:10px">🔑</div>
+          <div style="width:110px;height:160px;display:flex;align-items:center;justify-content:center;opacity:0.3;font-size:36px;margin-top:10px">🔑</div>
         </div>
         <div class="key-status-dot"></div>
       </div>`;
@@ -363,7 +379,7 @@ function renderKeyRack() {
       <div class="key-nametag">${dest.nameKo}</div>
       <div class="key-img-wrap">
         <div class="key-hook"></div>
-        <img class="key-img" src="assets/keys/${dest.id}.png" alt="${dest.nameKo}" onerror="this.style.opacity='0.2'">
+        <img class="key-img" src="assets/keys/${dest.id}.png" alt="${dest.nameKo}">
       </div>
       <div class="key-status-dot"></div>
     </div>`;
