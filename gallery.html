@@ -322,21 +322,34 @@
     /* ── MOBILE: 열쇠 하나씩 보기 ── */
     .mobile-nav-btn {
       display:none; position:absolute; top:50%; transform:translateY(-50%); z-index:20;
-      width:40px; height:40px; border-radius:50%;
-      background:rgba(255,255,255,0.55); border:1px solid rgba(139,111,208,0.3);
-      color:var(--lavender-600); font-size:18px; cursor:pointer;
-      align-items:center; justify-content:center;
-      backdrop-filter:blur(8px); transition:background 0.2s;
+      width:44px; height:44px; border-radius:50%;
+      background:rgba(255,255,255,0.10); border:1.5px solid rgba(255,255,255,0.28);
+      cursor:pointer; align-items:center; justify-content:center;
+      backdrop-filter:blur(6px); transition:background 0.2s;
     }
-    .mobile-nav-btn:hover { background:rgba(255,255,255,0.8); }
+    .mobile-nav-btn:hover { background:rgba(255,255,255,0.22); }
     .mobile-nav-prev { left:12px; }
     .mobile-nav-next { right:12px; }
+
+    /* 모바일 네비바 검색창 */
+    .navbar-search-mobile {
+      display:none;
+      margin-left:auto;
+      font-family:var(--font-heading); font-size:12px; color:var(--color-text-secondary);
+      background:rgba(255,255,255,0.65); backdrop-filter:blur(8px);
+      border:1px solid rgba(139,111,208,0.22); border-radius:999px;
+      padding:6px 16px; outline:none; width:130px; text-align:center;
+      transition:border-color 0.2s,background 0.2s,width 0.3s;
+    }
+    .navbar-search-mobile:focus { width:160px; background:rgba(255,255,255,0.9); border-color:rgba(139,111,208,0.5); }
 
     @media (max-width:767px) {
       .key-rack-section { position:relative; }
       .mobile-nav-btn { display:flex; }
+      .page-header { display:none; }
+      .navbar-search-mobile { display:block; }
       .key-item { min-width:100vw; width:100vw; }
-      .key-img-wrap { width:clamp(200px,68vw,300px); }
+      .key-img-wrap { width:clamp(220px,76vw,340px); }
       .key-item:hover { transform:none; }
     }
 
@@ -389,6 +402,8 @@
     <li><a href="gallery.html" class="active">갤러리</a></li>
     <li><a href="game.html">게임</a></li>
   </ul>
+  <input id="mobileSearchInput" class="navbar-search-mobile" type="text" placeholder="검색하는 곳"
+    oninput="filterBySearch(this.value)"/>
 </nav>
 
 <div class="page-header">
@@ -408,9 +423,13 @@
 </div>
 
 <section class="key-rack-section">
-  <button class="mobile-nav-btn mobile-nav-prev" id="mobileNavPrev">&#8592;</button>
+  <button class="mobile-nav-btn mobile-nav-prev" id="mobileNavPrev">
+    <svg width="10" height="18" viewBox="0 0 10 18" fill="none"><path d="M9 1L1 9l8 8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
   <div class="key-rack" id="keyRack"></div>
-  <button class="mobile-nav-btn mobile-nav-next" id="mobileNavNext">&#8594;</button>
+  <button class="mobile-nav-btn mobile-nav-next" id="mobileNavNext">
+    <svg width="10" height="18" viewBox="0 0 10 18" fill="none"><path d="M1 1l8 8-8 8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
 </section>
 
 <!-- Dim overlay -->
