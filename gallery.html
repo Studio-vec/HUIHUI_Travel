@@ -331,23 +331,48 @@
     .mobile-nav-prev { left:12px; }
     .mobile-nav-next { right:12px; }
 
-    /* 모바일 네비바 검색창 */
-    .navbar-search-mobile {
-      display:none;
-      margin-left:auto;
+    /* 데스크톱 검색 래퍼 */
+    .search-wrap {
+      position:relative; display:inline-flex; align-items:center; margin-top:16px;
+    }
+    .search-wrap .search-icon {
+      position:absolute; left:13px; pointer-events:none;
+      color:var(--lavender-400); display:flex; align-items:center;
+    }
+    .search-wrap input {
+      font-family:var(--font-heading); font-size:13px; color:var(--color-text-secondary);
+      background:rgba(255,255,255,0.7); backdrop-filter:blur(8px);
+      border:1px solid rgba(139,111,208,0.25); border-radius:999px;
+      padding:8px 20px 8px 36px; outline:none; width:230px;
+      transition:border-color 0.2s,background 0.2s,width 0.3s;
+    }
+    .search-wrap input::placeholder { color:var(--color-text-tertiary); }
+    .search-wrap input:focus { width:260px; background:rgba(255,255,255,0.92); border-color:rgba(139,111,208,0.5); }
+
+    /* 모바일 네비바 검색 래퍼 */
+    .navbar-search-wrap {
+      display:none; margin-left:auto;
+      position:relative; align-items:center;
+    }
+    .navbar-search-wrap .search-icon {
+      position:absolute; left:11px; pointer-events:none;
+      color:var(--lavender-400); display:flex; align-items:center;
+    }
+    .navbar-search-wrap input {
       font-family:var(--font-heading); font-size:12px; color:var(--color-text-secondary);
       background:rgba(255,255,255,0.65); backdrop-filter:blur(8px);
       border:1px solid rgba(139,111,208,0.22); border-radius:999px;
-      padding:6px 16px; outline:none; width:130px; text-align:center;
+      padding:6px 16px 6px 32px; outline:none; width:148px;
       transition:border-color 0.2s,background 0.2s,width 0.3s;
     }
-    .navbar-search-mobile:focus { width:160px; background:rgba(255,255,255,0.9); border-color:rgba(139,111,208,0.5); }
+    .navbar-search-wrap input::placeholder { color:var(--color-text-tertiary); }
+    .navbar-search-wrap input:focus { width:172px; background:rgba(255,255,255,0.92); border-color:rgba(139,111,208,0.5); }
 
     @media (max-width:767px) {
       .key-rack-section { position:relative; }
       .mobile-nav-btn { display:flex; }
       .page-header { display:none; }
-      .navbar-search-mobile { display:block; }
+      .navbar-search-wrap { display:inline-flex; }
       .key-item { min-width:100vw; width:100vw; }
       .key-img-wrap { width:clamp(220px,76vw,340px); }
       .key-item:hover { transform:none; }
@@ -402,23 +427,23 @@
     <li><a href="gallery.html" class="active">갤러리</a></li>
     <li><a href="game.html">게임</a></li>
   </ul>
-  <input id="mobileSearchInput" class="navbar-search-mobile" type="text" placeholder="검색하는 곳"
-    oninput="filterBySearch(this.value)"/>
+  <div class="navbar-search-wrap">
+    <span class="search-icon">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </span>
+    <input id="mobileSearchInput" type="text" placeholder="여행지 검색하기" oninput="filterBySearch(this.value)"/>
+  </div>
 </nav>
 
 <div class="page-header">
   <p class="page-eyebrow">Gallery</p>
   <h1 class="page-title">모든 여행의 장면들</h1>
   <p class="page-desc">열쇠를 눌러 여행의 기억을 열어보세요</p>
-  <div style="margin-top:16px;">
-    <input id="searchInput" type="text" placeholder="검색하는 곳"
-      style="font-family:var(--font-heading);font-size:13px;color:var(--color-text-secondary);
-             background:rgba(255,255,255,0.7);backdrop-filter:blur(8px);
-             border:1px solid rgba(139,111,208,0.25);border-radius:999px;
-             padding:8px 20px;outline:none;width:220px;text-align:center;
-             transition:border-color 0.2s,background 0.2s;"
-      oninput="filterBySearch(this.value)"
-    />
+  <div class="search-wrap">
+    <span class="search-icon">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </span>
+    <input id="searchInput" type="text" placeholder="여행지 검색하기" oninput="filterBySearch(this.value)"/>
   </div>
 </div>
 
