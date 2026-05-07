@@ -10,11 +10,24 @@
     <link rel="stylesheet" href="../assets/css/trip.css">
 </head>
 <body>
+<nav class="trip-navbar">
+  <a href="../index.html" class="trip-nav-logo">HUIHUI Travel</a>
+  <div class="trip-nav-search">
+    <span class="trip-search-icon">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </span>
+    <input id="tripNavSearch" type="text" placeholder="여행지 검색하기"/>
+  </div>
+  <button class="trip-hamburger" id="hamburgerBtn" aria-label="메뉴">
+    <svg width="20" height="15" viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 1.5h18M1 7.5h18M1 13.5h18"/></svg>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a class="mm-item" href="https://blog.naver.com/kty1297" target="_blank" rel="noopener">블로그</a>
+  <a class="mm-item" href="../gallery.html">갤러리</a>
+  <a class="mm-item" href="../game.html">게임</a>
+</div>
 <div id="app">
-    <a href="../index.html" class="btn-home">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-        홈
-    </a>
     <div class="container">
         <div class="header">
             <div class="header-eyebrow">Travel Log · Daejeon</div>
@@ -167,6 +180,19 @@ createTripApp({
         ]}
     ]
 });
+</script>
+<script>
+(function(){
+  var btn  = document.getElementById('hamburgerBtn');
+  var menu = document.getElementById('mobileMenu');
+  btn.addEventListener('click', function(e){ e.stopPropagation(); menu.classList.toggle('open'); });
+  document.addEventListener('click', function(e){ if(!menu.contains(e.target)) menu.classList.remove('open'); });
+  var si = document.getElementById('tripNavSearch');
+  si.addEventListener('keydown', function(e){
+    if(e.key==='Enter' && si.value.trim())
+      window.location.href='../gallery.html?q='+encodeURIComponent(si.value.trim());
+  });
+})();
 </script>
 </body>
 </html>

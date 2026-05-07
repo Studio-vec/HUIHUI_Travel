@@ -337,7 +337,7 @@
     }
     .search-wrap .search-icon {
       position:absolute; left:13px; pointer-events:none;
-      color:var(--lavender-400); display:flex; align-items:center;
+      color:var(--lavender-600); display:flex; align-items:center;
     }
     .search-wrap input {
       font-family:var(--font-heading); font-size:13px; color:var(--color-text-secondary);
@@ -349,28 +349,29 @@
     .search-wrap input::placeholder { color:var(--color-text-tertiary); }
     .search-wrap input:focus { width:260px; background:rgba(255,255,255,0.92); border-color:rgba(139,111,208,0.5); }
 
-    /* 모바일 네비바 검색 래퍼 */
+    /* 모바일 네비바 검색 래퍼 — 가운데 절대 고정 */
     .navbar-search-wrap {
-      display:none; margin-left:auto;
-      position:relative; align-items:center;
+      display:none;
+      position:absolute; left:50%; transform:translateX(-50%);
+      align-items:center;
     }
     .navbar-search-wrap .search-icon {
       position:absolute; left:11px; pointer-events:none;
-      color:var(--lavender-400); display:flex; align-items:center;
+      color:var(--lavender-600); display:flex; align-items:center;
     }
     .navbar-search-wrap input {
       font-family:var(--font-heading); font-size:12px; color:var(--color-text-secondary);
-      background:rgba(255,255,255,0.65); backdrop-filter:blur(8px);
-      border:1px solid rgba(139,111,208,0.22); border-radius:999px;
-      padding:6px 16px 6px 32px; outline:none; width:148px;
-      transition:border-color 0.2s,background 0.2s,width 0.3s;
+      background:rgba(255,255,255,0.7); backdrop-filter:blur(8px);
+      border:1px solid rgba(139,111,208,0.25); border-radius:999px;
+      padding:6px 16px 6px 32px; outline:none; width:clamp(130px,28vw,170px);
+      transition:border-color 0.2s,background 0.2s;
     }
     .navbar-search-wrap input::placeholder { color:var(--color-text-tertiary); }
-    .navbar-search-wrap input:focus { width:172px; background:rgba(255,255,255,0.92); border-color:rgba(139,111,208,0.5); }
+    .navbar-search-wrap input:focus { background:rgba(255,255,255,0.92); border-color:rgba(139,111,208,0.5); }
 
     /* ── HAMBURGER & MOBILE MENU ── */
     .hamburger-btn {
-      display:none; flex-shrink:0; margin-left:8px;
+      display:none; flex-shrink:0; margin-left:auto;
       background:none; border:none; cursor:pointer;
       width:36px; height:36px; border-radius:10px;
       align-items:center; justify-content:center;
@@ -402,7 +403,7 @@
       .key-rack-section { position:relative; }
       .mobile-nav-btn { display:flex; }
       .page-header { display:none; }
-      .navbar-search-wrap { display:inline-flex; }
+      .navbar-search-wrap { display:flex; }
       .key-item { min-width:100vw; width:100vw; }
       .key-img-wrap { width:clamp(220px,76vw,340px); }
       .key-item:hover { transform:none; }
@@ -956,6 +957,17 @@ document.getElementById('mobileNavNext').onclick = () => {
   function closeMobileMenu() { menu.classList.remove('open'); }
   btn.addEventListener('click', e => { e.stopPropagation(); menu.classList.toggle('open'); });
   document.addEventListener('click', e => { if (!menu.contains(e.target)) closeMobileMenu(); });
+})();
+
+/* ── URL PARAM: ?q= 로 갤러리 진입 시 자동 검색 ── */
+(function(){
+  const q = new URLSearchParams(location.search).get('q');
+  if (!q) return;
+  ['searchInput','mobileSearchInput'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = q;
+  });
+  filterBySearch(q);
 })();
 
 /* ── INIT ── */

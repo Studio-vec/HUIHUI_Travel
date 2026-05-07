@@ -84,6 +84,26 @@
       background: var(--lavender-50);
     }
 
+    /* ── NAVBAR CENTER SEARCH (모바일) ── */
+    .navbar-center-search {
+      display:none;
+      position:absolute; left:50%; transform:translateX(-50%);
+      align-items:center;
+    }
+    .navbar-center-search .cs-icon {
+      position:absolute; left:11px; pointer-events:none;
+      color:var(--lavender-600); display:flex; align-items:center;
+    }
+    .navbar-center-search input {
+      font-family:var(--font-heading); font-size:12px; color:var(--color-text-secondary);
+      background:rgba(255,255,255,0.7); backdrop-filter:blur(8px);
+      border:1px solid rgba(139,111,208,0.25); border-radius:999px;
+      padding:6px 16px 6px 32px; outline:none; width:clamp(130px,28vw,170px);
+      transition:border-color 0.2s,background 0.2s;
+    }
+    .navbar-center-search input::placeholder { color:var(--color-text-tertiary); }
+    .navbar-center-search input:focus { background:rgba(255,255,255,0.92); border-color:rgba(139,111,208,0.5); }
+
     /* ── HAMBURGER & MOBILE MENU ── */
     .hamburger-btn {
       display:none; flex-shrink:0;
@@ -116,6 +136,7 @@
       .navbar-links { display:none !important; }
       .navbar-right  { display:none !important; }
       .hamburger-btn { display:flex; }
+      .navbar-center-search { display:flex; }
     }
 
     /* ══════════════════════════════
@@ -554,6 +575,10 @@
       <li><a href="gallery.html">갤러리</a></li>
       <li><a href="game.html">게임</a></li>
     </ul>
+    <div class="navbar-center-search">
+      <span class="cs-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span>
+      <input id="navCenterSearch" type="text" placeholder="여행지 검색하기"/>
+    </div>
     <div class="navbar-right">
       <button class="lang-btn" id="langBtn" onclick="cycleLang()">
         <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
@@ -1049,6 +1074,16 @@
       reservedSet = _getSet(RESERVED_KEY);
       _renderGrid();
     });
+
+    /* ── NAV CENTER SEARCH → gallery ── */
+    (function(){
+      const si = document.getElementById('navCenterSearch');
+      if (!si) return;
+      si.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && si.value.trim())
+          window.location.href = 'gallery.html?q=' + encodeURIComponent(si.value.trim());
+      });
+    })();
 
     /* ── HAMBURGER ── */
     (function(){
