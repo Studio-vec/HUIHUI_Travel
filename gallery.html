@@ -72,9 +72,8 @@
       scrollbar-width:none; -webkit-overflow-scrolling:touch;
       justify-content:flex-start; flex-wrap:nowrap;
       width:100%; align-items:flex-end;
-      cursor:grab; user-select:none;
+      user-select:none;
     }
-    .key-rack.dragging { cursor:grabbing; }
     .key-rack::-webkit-scrollbar { display:none; }
 
     .key-item {
@@ -440,21 +439,50 @@ function _probeImg(src) {
   });
 }
 
-/* ── 드래그 스크롤 ── */
-let _drag = false, _dragX = 0, _dragSL = 0, _dragMoved = 0;
+/* ── 드래그 스크롤 (PC 마우스 전용, 터치는 브라우저 네이티브 처리) ── */
+let _pDelta = 0; // 마지막 드래그 이동거리 (클릭 판별용)
 function _initDragScroll(rack) {
-  rack.addEventListener('mousedown', e => {
-    _drag = true; _dragX = e.pageX; _dragSL = rack.scrollLeft; _dragMoved = 0;
-    rack.classList.add('dragging');
+  let active = false, startX = 0, startSL = 0;
+
+  rack.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'touch') return; // 터치는 네이티브에 위임
+    active = true; startX = e.clientX; startSL = rack.scrollLeft; _pDelta = 0;
+    rack.style.scrollSnapType = 'none'; // 드래그 중 스냅 해제
+    rack.style.cursor = 'grabbing';
+    rack.setPointerCapture(e.pointerId);
   });
-  window.addEventListener('mousemove', e => {
-    if (!_drag) return;
-    _dragMoved = e.pageX - _dragX;
-    rack.scrollLeft = _dragSL - _dragMoved;
+
+  rack.addEventListener('pointermove', e => {
+    if (!active) return;
+    _pDelta = startX - e.clientX;
+    rack.scrollLeft = startSL + _pDelta;
   });
-  window.addEventListener('mouseup', () => {
-    _drag = false; rack.classList.remove('dragging');
+
+  function endDrag() {
+    if (!active) return;
+    active = false;
+    rack.style.cursor = '';
+    rack.style.scrollSnapType = ''; // 스냅 복원
+    // 드래그 후 가장 가까운 키로 스냅
+    if (Math.abs(_pDelta) > 6) _snapNearest(rack);
+  }
+  rack.addEventListener('pointerup',     endDrag);
+  rack.addEventListener('pointercancel', endDrag);
+}
+
+function _snapNearest(rack) {
+  const rr = rack.getBoundingClientRect();
+  const vc = rr.left + rr.width / 2;
+  let nearest = null, minD = Infinity;
+  rack.querySelectorAll('.key-item').forEach(el => {
+    const ir = el.getBoundingClientRect();
+    const d  = Math.abs(ir.left + ir.width / 2 - vc);
+    if (d < minD) { minD = d; nearest = el; }
   });
+  if (nearest) {
+    const ir = nearest.getBoundingClientRect();
+    rack.scrollTo({ left: rack.scrollLeft + (ir.left + ir.width / 2 - vc), behavior: 'smooth' });
+  }
 }
 
 /* ── 무한 스크롤 세팅 ── */
@@ -467,7 +495,7 @@ function _initInfiniteScroll(rack) {
 }
 
 /* ── 클릭인지 드래그인지 판단 ── */
-function _wasDrag() { return Math.abs(_dragMoved) > 6; }
+function _wasDrag() { return Math.abs(_pDelta) > 6; }
 
 /* ── 현재 화면에 가장 가까운 키 아이템 찾기 (무한 복사본 중) ── */
 function _findBestKey(destId) {
