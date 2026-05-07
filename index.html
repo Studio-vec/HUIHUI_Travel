@@ -87,8 +87,10 @@
     /* ── NAVBAR CENTER SEARCH (모바일) ── */
     .navbar-center-search {
       display:none;
-      position:absolute; left:50%; transform:translateX(-50%);
-      align-items:center;
+      flex:1; justify-content:center; align-items:center;
+    }
+    .navbar-center-search .cs-inner {
+      position:relative; display:inline-flex; align-items:center;
     }
     .navbar-center-search .cs-icon {
       position:absolute; left:13px; pointer-events:none;
@@ -577,8 +579,10 @@
       <li><a href="game.html">게임</a></li>
     </ul>
     <div class="navbar-center-search">
-      <span class="cs-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span>
-      <input id="navCenterSearch" type="text" placeholder="여행지 검색하기"/>
+      <div class="cs-inner">
+        <span class="cs-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span>
+        <input id="navCenterSearch" type="text" placeholder="여행지 검색하기"/>
+      </div>
     </div>
     <div class="navbar-right">
       <button class="lang-btn" id="langBtn" onclick="cycleLang()">

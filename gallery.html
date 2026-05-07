@@ -349,11 +349,13 @@
     .search-wrap input::placeholder { color:var(--color-text-tertiary); }
     .search-wrap input:focus { width:260px; background:rgba(255,255,255,0.92); border-color:rgba(139,111,208,0.5); }
 
-    /* 모바일 네비바 검색 래퍼 — 가운데 절대 고정 */
+    /* 모바일 네비바 검색 래퍼 */
     .navbar-search-wrap {
       display:none;
-      position:absolute; left:50%; transform:translateX(-50%);
-      align-items:center;
+      flex:1; justify-content:center; align-items:center;
+    }
+    .navbar-search-wrap .search-inner {
+      position:relative; display:inline-flex; align-items:center;
     }
     .navbar-search-wrap .search-icon {
       position:absolute; left:13px; pointer-events:none;
@@ -460,10 +462,12 @@
     <li><a href="game.html">게임</a></li>
   </ul>
   <div class="navbar-search-wrap">
-    <span class="search-icon">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    </span>
-    <input id="mobileSearchInput" type="text" placeholder="여행지 검색하기" oninput="filterBySearch(this.value)"/>
+    <div class="search-inner">
+      <span class="search-icon">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </span>
+      <input id="mobileSearchInput" type="text" placeholder="여행지 검색하기" oninput="filterBySearch(this.value)"/>
+    </div>
   </div>
   <button class="hamburger-btn" id="hamburgerBtn" aria-label="메뉴">
     <svg width="20" height="15" viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 1.5h18M1 7.5h18M1 13.5h18"/></svg>
