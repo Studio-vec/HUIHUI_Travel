@@ -66,8 +66,8 @@
       display: flex; align-items: flex-end;
     }
     .key-rack {
-      display:flex; gap:clamp(4px,1vw,8px);
-      padding:0 clamp(8px,2.5vw,20px) 16px;
+      display:flex; gap:2px;
+      padding:0 clamp(6px,2vw,16px) 16px;
       overflow-x:auto; scroll-snap-type:x mandatory;
       scrollbar-width:none; -webkit-overflow-scrolling:touch;
       justify-content:flex-start; flex-wrap:nowrap;
@@ -589,7 +589,6 @@ async function openKeyhole(dest) {
   const photos = getUserPhotos(dest.storageKey);
   currentPhotos = photos; currentPhotoIdx = 0;
 
-  /* 현재 화면에서 가장 가까운 복사본 찾기 */
   const rack    = document.getElementById('keyRack');
   const keyItem = _findBestKey(dest.id);
 
@@ -610,34 +609,53 @@ async function openKeyhole(dest) {
   playClickSound();
   await delay(60);
 
-  /* STEP 3 — 선택한 열쇠 아래로 슬라이드 (크기·투명도 변화 없음) */
+  /* STEP 3 — 선택한 열쇠 아래로 슬라이드 */
   if (keyItem) {
     keyItem.style.transition = 'transform 0.65s cubic-bezier(0.4,0,1,1)';
     keyItem.style.transform  = 'translateY(120%)';
     keyItem.style.pointerEvents = 'none';
   }
-  await delay(200);
+  await delay(150);
 
-  /* STEP 4 — 열쇠 헤드 자리에 작은 열쇠 구멍 즉시 등장 */
+  /* STEP 4 — 열쇠 헤드 자리에 가는 슬릿(세로 틈) 페이드인 */
   const holder = document.getElementById('khHolder');
   const circle = document.getElementById('khCircleEl');
   const shaft  = document.getElementById('khShaftEl');
+  circle.style.opacity    = '1';
+  shaft.style.opacity     = '1';
   circle.style.transition = 'none';
   shaft.style.transition  = 'none';
   holder.style.transition = 'none';
+  holder.style.opacity    = '0';
   holder.style.display    = 'block';
   holder.style.left = headX + 'px';
   holder.style.top  = headY + 'px';
-  setKeyholeSize(56);
-  await delay(180); // 잠깐 보여줘서 열쇠 구멍 형태 인지
+  /* 슬릿: 매우 가늘고 긴 타원 */
+  circle.style.width  = '3px';
+  circle.style.height = '52px';
+  shaft.style.width   = '3px';
+  shaft.style.height  = '30px';
+  shaft.style.top     = '26px';
+  await delay(30); // reflow
 
-  /* STEP 5 — 트랜지션 복원 후 크게 확대 + 아래로 이동 */
-  /* diam을 화면 높이보다 충분히 크게 → 샤프트가 반드시 화면 밖으로 */
-  const diam     = Math.max(window.innerWidth, window.innerHeight) * 1.1;
-  const finalTop = diam / 2 + 216; /* +200px 아래 */
-  circle.style.transition = 'width 0.85s cubic-bezier(0.22,1,0.36,1), height 0.85s cubic-bezier(0.22,1,0.36,1), box-shadow 0.7s ease';
-  shaft.style.transition  = 'width 0.85s cubic-bezier(0.22,1,0.36,1), height 0.85s cubic-bezier(0.22,1,0.36,1), top 0.85s cubic-bezier(0.22,1,0.36,1)';
-  holder.style.transition = 'top 1.0s cubic-bezier(0.22,1,0.36,1), left 0.6s cubic-bezier(0.22,1,0.36,1)';
+  holder.style.transition = 'opacity 0.22s ease';
+  holder.style.opacity    = '1';
+  await delay(240); // 슬릿 잠깐 보이기
+
+  /* STEP 5 — 슬릿 → 작은 열쇠 구멍 */
+  const ease = 'cubic-bezier(0.22,1,0.36,1)';
+  circle.style.transition = `width 0.42s ${ease}, height 0.42s ${ease}`;
+  shaft.style.transition  = `width 0.42s ${ease}, height 0.42s ${ease}, top 0.42s ${ease}`;
+  holder.style.transition = 'none';
+  setKeyholeSize(58);
+  await delay(460);
+
+  /* STEP 6 — 작은 열쇠 구멍 → 화면 중앙으로 이동하며 확대 */
+  const diam     = Math.min(window.innerWidth * 0.78, window.innerHeight * 0.62);
+  const finalTop = window.innerHeight * 0.46;
+  circle.style.transition = `width 0.88s ${ease}, height 0.88s ${ease}, box-shadow 0.7s ease`;
+  shaft.style.transition  = `width 0.88s ${ease}, height 0.88s ${ease}, top 0.88s ${ease}`;
+  holder.style.transition = `top 0.95s ${ease}, left 0.65s ${ease}`;
   holder.style.left = '50%';
   holder.style.top  = finalTop + 'px';
   setKeyholeSize(diam);
@@ -645,16 +663,15 @@ async function openKeyhole(dest) {
   document.getElementById('khDestLbl').textContent = dest.nameKo;
   document.getElementById('khTripLnk').href = dest.url;
 
-  /* STEP 6 — 확대 도중 보라 글로우 시작 */
-  await delay(300);
+  /* 확대 도중 보라 글로우 시작 */
+  await delay(320);
   circle.classList.add('glowing');
-
-  /* 구슬 밖 클릭 → 닫기용 투명 오버레이 활성화 */
   document.getElementById('khDim').classList.add('show');
+  await delay(580);
 
-  await delay(650);
-
-  /* STEP 7 — 글로우에서 흰 수정구슬로 페이드인 */
+  /* STEP 7 — 샤프트 숨기고 흰 수정구슬로 전환 */
+  shaft.style.transition = 'opacity 0.45s ease';
+  shaft.style.opacity    = '0';
   circle.classList.add('sphere');
   document.getElementById('khUiLayer').classList.add('show');
 }
@@ -711,13 +728,16 @@ function closeKeyhole() {
   document.getElementById('khUiLayer').classList.remove('show');
   document.getElementById('khDim').classList.remove('show');
   // 축소
+  shaft.style.opacity     = '1'; // 샤프트 복원
+  holder.style.opacity    = '1';
   circle.style.transition = 'width 0.4s ease-in, height 0.4s ease-in, box-shadow 0.3s ease';
   shaft.style.transition  = 'width 0.4s ease-in, height 0.4s ease-in, top 0.4s ease-in';
-  holder.style.transition = 'top 0.5s cubic-bezier(0.4,0,1,1)';
+  holder.style.transition = 'opacity 0.35s ease';
+  holder.style.opacity    = '0';
   setKeyholeSize(0);
-  holder.style.top = (window.innerHeight + 200) + 'px';
   setTimeout(() => {
     holder.style.display = 'none';
+    holder.style.opacity = '1';
     circle.style.boxShadow = '';
     // 열쇠 복원
     document.querySelectorAll('.key-item').forEach(el => {
