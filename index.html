@@ -46,7 +46,6 @@
     .navbar-links {
       display: flex; gap: var(--space-6);
       list-style: none;
-      flex: 1;
     }
     .navbar-links a {
       font-family: var(--font-heading);
@@ -59,29 +58,62 @@
       white-space: nowrap;
     }
     .navbar-links a:hover { color: var(--lavender-600); }
-    .navbar-right {
-      display: flex; align-items: center; gap: var(--space-3);
-      margin-left: auto; flex-shrink: 0;
+
+    /* ── NAVBAR CENTER SEARCH (모바일) ── */
+    .navbar-center-search {
+      display:none;
+      flex:1; justify-content:center; align-items:center;
     }
-    /* lang button */
-    .lang-btn {
-      display: inline-flex; align-items: center; gap: var(--space-1);
-      font-family: var(--font-heading);
-      font-size: var(--text-xs);
-      font-weight: 500;
-      color: var(--color-text-secondary);
-      background: none;
-      border: 1.5px solid var(--color-border);
-      border-radius: var(--radius-full);
-      padding: var(--space-1) var(--space-3);
-      cursor: pointer;
-      letter-spacing: var(--tracking-wide);
-      transition: border-color var(--dur-fast), color var(--dur-fast), background var(--dur-fast);
+    .navbar-center-search .cs-inner {
+      position:relative; display:inline-flex; align-items:center;
     }
-    .lang-btn:hover {
-      border-color: var(--lavender-300);
-      color: var(--lavender-600);
-      background: var(--lavender-50);
+    .navbar-center-search .cs-icon {
+      position:absolute; left:13px; pointer-events:none;
+      color:var(--lavender-600); display:flex; align-items:center;
+    }
+    .navbar-center-search input {
+      font-family:var(--font-heading); font-size:12px; color:var(--color-text-secondary);
+      background:rgba(255,255,255,0.7); backdrop-filter:blur(8px);
+      border:1px solid rgba(139,111,208,0.25); border-radius:999px;
+      padding:7px 18px 7px 34px; outline:none;
+      width:clamp(130px,28vw,180px);
+      transition:border-color 0.2s,background 0.2s;
+    }
+    .navbar-center-search input::placeholder { color:var(--color-text-tertiary); }
+    .navbar-center-search input:focus { background:rgba(255,255,255,0.95); border-color:rgba(139,111,208,0.5); }
+
+    /* ── HAMBURGER & MOBILE MENU ── */
+    .hamburger-btn {
+      display:none; flex-shrink:0; margin-left:auto;
+      background:none; border:none; cursor:pointer;
+      width:36px; height:36px; border-radius:10px;
+      align-items:center; justify-content:center;
+      color:var(--lavender-600); transition:background 0.15s;
+    }
+    .hamburger-btn:hover { background:var(--lavender-50); }
+    .mobile-menu {
+      position:fixed; top:56px; left:0; right:0; z-index:49;
+      background:rgba(255,248,235,0.97); backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(139,111,208,0.12);
+      padding:8px 12px 14px; display:none; flex-direction:column;
+      box-shadow:0 8px 32px rgba(80,40,160,0.1);
+    }
+    .mobile-menu.open { display:flex; }
+    .mm-item {
+      font-family:var(--font-heading); font-size:15px; font-weight:500;
+      color:var(--color-text-secondary); text-decoration:none;
+      padding:11px 14px; border-radius:12px;
+      display:flex; align-items:center; gap:10px;
+      transition:color 0.15s,background 0.15s;
+      background:none; border:none; cursor:pointer; width:100%; text-align:left;
+    }
+    .mm-item:hover { color:var(--lavender-600); background:rgba(139,111,208,0.08); }
+    .mm-item.active { color:var(--lavender-600); font-weight:600; }
+    .mm-sep { height:1px; background:rgba(139,111,208,0.12); margin:4px 0; }
+    @media (max-width:767px) {
+      .navbar-links { display:none !important; }
+      .hamburger-btn { display:flex; }
+      .navbar-center-search { display:flex; }
     }
 
     /* ══════════════════════════════
@@ -98,7 +130,7 @@
     .hero::before {
       content: '';
       position: absolute;
-      top: -60px; right: -80px;
+      top: 0; right: -80px;
       width: 480px; height: 480px;
       background: radial-gradient(circle, rgba(192,168,255,0.22) 0%, transparent 70%);
       pointer-events: none;
@@ -520,20 +552,21 @@
       <li><a href="gallery.html">갤러리</a></li>
       <li><a href="game.html">게임</a></li>
     </ul>
-    <div class="navbar-right">
-      <button class="lang-btn" id="langBtn" onclick="cycleLang()">
-        <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
-          <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M8 1.5C8 1.5 5.5 4 5.5 8s2.5 6.5 2.5 6.5" stroke="currentColor" stroke-width="1.2"/>
-          <path d="M8 1.5C8 1.5 10.5 4 10.5 8s-2.5 6.5-2.5 6.5" stroke="currentColor" stroke-width="1.2"/>
-          <line x1="1.5" y1="8" x2="14.5" y2="8" stroke="currentColor" stroke-width="1.2"/>
-          <line x1="2.5" y1="5.5" x2="13.5" y2="5.5" stroke="currentColor" stroke-width="1.2"/>
-          <line x1="2.5" y1="10.5" x2="13.5" y2="10.5" stroke="currentColor" stroke-width="1.2"/>
-        </svg>
-        <span id="langLabel">한국어</span>
-      </button>
+    <div class="navbar-center-search">
+      <div class="cs-inner">
+        <span class="cs-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span>
+        <input id="navCenterSearch" type="text" placeholder="여행지 검색하기"/>
+      </div>
     </div>
+    <button class="hamburger-btn" id="hamburgerBtn" aria-label="메뉴">
+      <svg width="20" height="15" viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 1.5h18M1 7.5h18M1 13.5h18"/></svg>
+    </button>
   </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a class="mm-item" href="https://blog.naver.com/kty1297" target="_blank" rel="noopener">블로그</a>
+    <a class="mm-item" href="gallery.html">갤러리</a>
+    <a class="mm-item" href="game.html">게임</a>
+  </div>
 
   <!-- ── HERO ── -->
   <section class="hero">
@@ -615,19 +648,18 @@
   <script>
     /* ════════════════════════════════════════════
        TRIP CONFIG
-       status 없음      → not-visited
-       status:'coming-soon' → 준비중 팝업
-       key: 이미지 경로  → 방문 완료 커스텀 키
+       키 이미지(assets/keys/[slug].png)가 존재하면 → 오픈
+       키 이미지가 없으면 → 자동으로 준비중 처리
     ════════════════════════════════════════════ */
     const TRIP_CONFIG = {
-      'yeosu':       { no:1, key:'assets/keys/yeosu.png',       nameKo:'여수' },
-      'icheon':      { no:2, key:'assets/keys/icheon.png',      nameKo:'이천' },
-      'paju':        { no:3, key:'assets/keys/paju.png',        nameKo:'파주' },
-      'dongincheon': { no:4, key:'assets/keys/dongincheon.png', nameKo:'동인천' },
-      'gangneung':   { no:5, key:'assets/keys/gangneung.png',   nameKo:'강릉' },
-      'nowon':       { no:6, nameKo:'노원',  status:'coming-soon' },
-      'suwon':       { no:7, key:'assets/keys/suwon.png',       nameKo:'수원' },
-      'daejeon':     { no:8, nameKo:'대전',  status:'coming-soon' },
+      'yeosu':       { no:1, nameKo:'여수' },
+      'icheon':      { no:2, nameKo:'이천' },
+      'paju':        { no:3, nameKo:'파주' },
+      'dongincheon': { no:4, nameKo:'동인천' },
+      'gangneung':   { no:5, nameKo:'강릉' },
+      'nowon':       { no:6, nameKo:'노원' },
+      'suwon':       { no:7, nameKo:'수원' },
+      'daejeon':     { no:8, nameKo:'대전' },
     };
 
     let TRIPS = [];
@@ -957,10 +989,10 @@
       return Object.entries(TRIP_CONFIG).map(([slug, cfg], idx) => ({
         nameEn:  slug.charAt(0).toUpperCase() + slug.slice(1),
         nameKo:  cfg.nameKo  || slug,
-        status:  cfg.status  || 'not-visited',
+        status:  'not-visited',
         url:     `trips/${slug}.html`,
         no:      cfg.no      || (idx + 1),
-        key:     cfg.key     || null,
+        key:     `assets/keys/${slug}.png`,
         tagline: cfg.tagline || '',
       }));
     }
@@ -972,8 +1004,24 @@
       _attachCardClicks();
     }
 
-    function _init() {
+    /* 키 이미지가 실제로 로드되는지 확인 */
+    function _probeImg(src) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload  = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = src;
+      });
+    }
+
+    async function _init() {
       TRIPS = _buildTrips();
+      /* 키 이미지 존재 여부 병렬 체크 → 없으면 coming-soon */
+      await Promise.all(TRIPS.map(async trip => {
+        if (visitedSet.has(trip.url)) return; // 방문 완료는 스킵
+        const exists = await _probeImg(trip.key);
+        if (!exists) { trip.status = 'coming-soon'; trip.key = null; }
+      }));
       _renderGrid();
       _attachLongPress();
     }
@@ -987,6 +1035,26 @@
       reservedSet = _getSet(RESERVED_KEY);
       _renderGrid();
     });
+
+    /* ── NAV CENTER SEARCH → gallery ── */
+    (function(){
+      const si = document.getElementById('navCenterSearch');
+      if (!si) return;
+      si.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && si.value.trim())
+          window.location.href = 'gallery.html?q=' + encodeURIComponent(si.value.trim());
+      });
+    })();
+
+    /* ── HAMBURGER ── */
+    (function(){
+      const btn  = document.getElementById('hamburgerBtn');
+      const menu = document.getElementById('mobileMenu');
+      function closeMobileMenu() { menu.classList.remove('open'); }
+      btn.addEventListener('click', e => { e.stopPropagation(); menu.classList.toggle('open'); });
+      document.addEventListener('click', e => { if (!menu.contains(e.target)) closeMobileMenu(); });
+      window.closeMobileMenu = closeMobileMenu;
+    })();
   </script>
 </body>
 </html>

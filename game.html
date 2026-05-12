@@ -37,7 +37,58 @@
       transition:color .15s, background .15s;
     }
     .navbar-links a:hover, .navbar-links a.active { color:var(--lavender-600); background:var(--lavender-50); }
-    @media(max-width:600px){ .navbar-links { display:none; } }
+
+    /* ── NAVBAR CENTER SEARCH (모바일) ── */
+    .navbar-center-search {
+      display:none; flex:1; justify-content:center; align-items:center;
+    }
+    .navbar-center-search .cs-inner { position:relative; display:inline-flex; align-items:center; }
+    .navbar-center-search .cs-icon {
+      position:absolute; left:13px; pointer-events:none;
+      color:var(--lavender-600); display:flex; align-items:center;
+    }
+    .navbar-center-search input {
+      font-family:var(--font-heading); font-size:12px; color:var(--color-text-secondary);
+      background:rgba(255,255,255,0.7); backdrop-filter:blur(8px);
+      border:1px solid rgba(139,111,208,0.25); border-radius:999px;
+      padding:7px 18px 7px 34px; outline:none; width:clamp(130px,28vw,180px);
+      transition:border-color 0.2s,background 0.2s;
+    }
+    .navbar-center-search input::placeholder { color:var(--color-text-tertiary); }
+    .navbar-center-search input:focus { background:rgba(255,255,255,0.95); border-color:rgba(139,111,208,0.5); }
+
+    /* ── HAMBURGER & MOBILE MENU ── */
+    .hamburger-btn {
+      display:none; flex-shrink:0; margin-left:auto; margin-right:0;
+      background:none; border:none; cursor:pointer;
+      width:36px; height:36px; border-radius:10px;
+      align-items:center; justify-content:center;
+      color:var(--lavender-600); transition:background 0.15s;
+    }
+    .hamburger-btn:hover { background:var(--lavender-50); }
+    .mobile-menu {
+      position:fixed; top:56px; left:0; right:0; z-index:49;
+      background:rgba(255,248,235,0.97); backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(139,111,208,0.12);
+      padding:8px 12px 14px; display:none; flex-direction:column;
+      box-shadow:0 8px 32px rgba(80,40,160,0.1);
+    }
+    .mobile-menu.open { display:flex; }
+    .mm-item {
+      font-family:var(--font-heading); font-size:15px; font-weight:500;
+      color:var(--color-text-secondary); text-decoration:none;
+      padding:11px 14px; border-radius:12px;
+      display:flex; align-items:center; gap:10px;
+      transition:color 0.15s,background 0.15s;
+      background:none; border:none; cursor:pointer; width:100%; text-align:left;
+    }
+    .mm-item:hover { color:var(--lavender-600); background:rgba(139,111,208,0.08); }
+    .mm-item.active { color:var(--lavender-600); font-weight:600; }
+    @media (max-width:767px) {
+      .navbar-links { display:none !important; }
+      .hamburger-btn { display:flex; }
+      .navbar-center-search { display:flex; }
+    }
 
     /* ── SCREENS ── */
     .screen { display:none; }
@@ -386,7 +437,21 @@
     <li><a href="gallery.html">갤러리</a></li>
     <li><a href="game.html" class="active">게임</a></li>
   </ul>
+  <div class="navbar-center-search">
+    <div class="cs-inner">
+      <span class="cs-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span>
+      <input id="navCenterSearch" type="text" placeholder="여행지 검색하기"/>
+    </div>
+  </div>
+  <button class="hamburger-btn" id="hamburgerBtn" aria-label="메뉴">
+    <svg width="20" height="15" viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 1.5h18M1 7.5h18M1 13.5h18"/></svg>
+  </button>
 </nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a class="mm-item" href="https://blog.naver.com/kty1297" target="_blank" rel="noopener">블로그</a>
+  <a class="mm-item" href="gallery.html">갤러리</a>
+  <a class="mm-item active" href="game.html">게임</a>
+</div>
 
 <!-- ══ START ══ -->
 <div class="screen active" id="screen-start">
@@ -1110,6 +1175,26 @@ function confirmCustomItem() {
   renderMyItemsGrid();
   const best = localStorage.getItem('hh_pack_best');
   if (best) { $('bestTxt').textContent=best; $('bestBadge').style.display=''; }
+})();
+
+/* ── NAV CENTER SEARCH → gallery ── */
+(function(){
+  const si = document.getElementById('navCenterSearch');
+  if (!si) return;
+  si.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && si.value.trim())
+      window.location.href = 'gallery.html?q=' + encodeURIComponent(si.value.trim());
+  });
+})();
+
+/* ── HAMBURGER ── */
+(function(){
+  const btn  = document.getElementById('hamburgerBtn');
+  const menu = document.getElementById('mobileMenu');
+  if (!btn || !menu) return;
+  function closeMobileMenu() { menu.classList.remove('open'); }
+  btn.addEventListener('click', e => { e.stopPropagation(); menu.classList.toggle('open'); });
+  document.addEventListener('click', e => { if (!menu.contains(e.target)) closeMobileMenu(); });
 })();
 </script>
 </body>

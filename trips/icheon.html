@@ -10,11 +10,24 @@
     <link rel="stylesheet" href="../assets/css/trip.css">
 </head>
 <body>
+<nav class="trip-navbar">
+  <a href="../index.html" class="trip-nav-logo">HUIHUI Travel</a>
+  <div class="trip-nav-search">
+    <span class="trip-search-icon">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </span>
+    <input id="tripNavSearch" type="text" placeholder="여행지 검색하기"/>
+  </div>
+  <button class="trip-hamburger" id="hamburgerBtn" aria-label="메뉴">
+    <svg width="20" height="15" viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 1.5h18M1 7.5h18M1 13.5h18"/></svg>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a class="mm-item" href="https://blog.naver.com/kty1297" target="_blank" rel="noopener">블로그</a>
+  <a class="mm-item" href="../gallery.html">갤러리</a>
+  <a class="mm-item" href="../game.html">게임</a>
+</div>
 <div id="app">
-    <a href="../index.html" class="btn-home">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-        홈
-    </a>
     <div class="container">
         <div class="header">
             <div class="header-eyebrow">Travel Log · Icheon</div>
@@ -148,7 +161,7 @@ createTripApp({
     tips: [],
     schedule: [
         { places: [
-            { id:'i1-1', time:'13:30', name:'카쿠레가 이천점', theme:'식사', theme_id:'food', tip:'스테키동 맛집, 일본식 덮밥',          enjoyTip:'점심 피크 전 입장 추천. 스테키동 미디엄 레어로', photo:null, h:13.5 },
+            { id:'i1-1', time:'13:30', name:'시래마루 이천본점', theme:'식사', theme_id:'food', tip:'시래기밥상, 한정식',          enjoyTip:'솥밥. 시래기 정식 추천', photo:null, h:13.5 },
             { id:'i1-2', time:'15:00', name:'예스파크',         theme:'체험', theme_id:'exp',  tip:'도자기 공방 밀집 예술마을',           enjoyTip:'공방 체험 예약하면 나만의 도자기 만들기 가능', photo:null, h:15 },
             { id:'i1-3', time:'17:00', name:'이진상회',         theme:'카페', theme_id:'cafe', tip:'이천 쌀빵 전문 카페',                 enjoyTip:'쌀식빵·쌀크로플 구매 추천. 포장도 가능', photo:null, h:17 },
             { id:'i1-4', time:'19:00', name:'장작집',           theme:'식사', theme_id:'food', tip:'누룽지 통닭 전문점',                  enjoyTip:'누룽지 통닭은 미리 예약 필수. 2인분부터 주문', photo:null, h:19 },
@@ -166,6 +179,19 @@ createTripApp({
         ]}
     ]
 });
+</script>
+<script>
+(function(){
+  var btn  = document.getElementById('hamburgerBtn');
+  var menu = document.getElementById('mobileMenu');
+  btn.addEventListener('click', function(e){ e.stopPropagation(); menu.classList.toggle('open'); });
+  document.addEventListener('click', function(e){ if(!menu.contains(e.target)) menu.classList.remove('open'); });
+  var si = document.getElementById('tripNavSearch');
+  si.addEventListener('keydown', function(e){
+    if(e.key==='Enter' && si.value.trim())
+      window.location.href='../gallery.html?q='+encodeURIComponent(si.value.trim());
+  });
+})();
 </script>
 </body>
 </html>
