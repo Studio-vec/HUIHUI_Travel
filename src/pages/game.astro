@@ -10,7 +10,6 @@ import Navbar from '../components/Navbar.astro';
 
 <!-- ══ START: SCENARIO SELECTION ══ -->
 <div class="screen active" id="screen-start">
-  <div class="start-icon">🧳</div>
   <h1 class="start-title">짐 싸기</h1>
   <p class="start-sub">어떤 여행을 떠나시나요?<br>힌트를 보고 딱 맞는 짐을 골라보세요!</p>
   <div class="scenario-grid" id="scenarioGrid"></div>
@@ -212,7 +211,7 @@ import Navbar from '../components/Navbar.astro';
   }
 </script>
 
-<script>
+<script is:inline>
 // ══════════════════════════════════════
 //  HELPERS
 // ══════════════════════════════════════
@@ -854,9 +853,11 @@ function renderScenarioGrid() {
         <img class="sc-key-img" src="${s.keyImg}" alt="${s.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
         <div class="sc-emoji-fallback" style="display:none">${s.emoji}</div>
       </div>
-      <div class="sc-title">${s.title}</div>
-      <div class="sc-detail">${s.detail}</div>
-      <div class="sc-season">${s.season}</div>
+      <div class="sc-info">
+        <div class="sc-title">${s.title}</div>
+        <div class="sc-detail">${s.detail}</div>
+        <div class="sc-season">${s.season}</div>
+      </div>
     </div>
   `).join('');
 }
@@ -1297,27 +1298,51 @@ function confirmCustomItem(){if(!pendingDataUrl)return;const name=$('itemNameInp
 
   /* ══ START ══ */
   #screen-start { min-height:calc(100vh - 56px); justify-content:center; gap:22px; padding:36px 20px 60px; }
-  .start-icon { font-size:72px; line-height:1; animation:float 3s ease-in-out infinite; }
-  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
   .start-title { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:clamp(30px,6vw,50px); text-align:center; }
   .start-sub { font-size:15px; color:var(--color-text-secondary); text-align:center; max-width:340px; line-height:1.6; }
 
   /* SCENARIO GRID */
-  .scenario-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; max-width:520px; width:100%; }
-  @media (max-width:480px) { .scenario-grid { grid-template-columns:1fr; max-width:340px; } }
-  .scenario-card { background:var(--sc-bg,#F8F5FF); border:1.5px solid rgba(0,0,0,0.07); border-radius:16px; padding:14px; cursor:pointer; transition:transform .15s,box-shadow .15s; display:flex; flex-direction:column; gap:5px; overflow:hidden; }
-  .scenario-card:hover { transform:translateY(-4px); box-shadow:0 10px 28px rgba(0,0,0,0.12); }
+  .scenario-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; max-width:720px; width:100%; }
+  @media (max-width:600px) { .scenario-grid { grid-template-columns:repeat(2,1fr); max-width:400px; gap:8px; } }
+  @media (max-width:340px) { .scenario-grid { grid-template-columns:1fr; max-width:220px; } }
+
+  .scenario-card {
+    background:var(--sc-bg,#F8F5FF);
+    border:1.5px solid rgba(0,0,0,0.07);
+    border-radius:14px;
+    cursor:pointer;
+    transition:transform .18s,box-shadow .18s;
+    display:flex; flex-direction:column;
+    overflow:hidden;
+    position:relative;
+  }
+  .scenario-card:hover { transform:translateY(-5px); box-shadow:0 14px 32px rgba(0,0,0,0.14); }
   .scenario-card:active { transform:translateY(-1px); }
-  .sc-key-wrap { width:100%; height:90px; display:flex; align-items:center; justify-content:center; margin-bottom:6px; }
-  .sc-key-img { max-width:100%; max-height:90px; object-fit:contain; filter:drop-shadow(0 4px 10px rgba(0,0,0,0.15)); transition:transform .2s; }
-  .scenario-card:hover .sc-key-img { transform:scale(1.06); }
-  .sc-emoji-fallback { font-size:36px; line-height:1; }
-  .sc-title { font-size:14px; font-weight:700; color:var(--color-text-primary); }
-  .sc-detail { font-size:10.5px; color:var(--color-text-tertiary); font-weight:500; }
-  .sc-season { font-size:10px; color:var(--color-text-secondary); background:rgba(0,0,0,0.05); border-radius:6px; padding:3px 7px; align-self:flex-start; margin-top:2px; }
+
+  /* 키 이미지를 히어로로 */
+  .sc-key-wrap {
+    width:100%; aspect-ratio:3/4;
+    background:rgba(0,0,0,0.04);
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden; position:relative;
+  }
+  .sc-key-img {
+    width:80%; height:90%;
+    object-fit:contain;
+    filter:drop-shadow(0 6px 16px rgba(0,0,0,0.18));
+    transition:transform .22s;
+  }
+  .scenario-card:hover .sc-key-img { transform:scale(1.07); }
+  .sc-emoji-fallback { font-size:40px; line-height:1; }
+
+  /* 카드 텍스트 하단 영역 */
+  .sc-info { padding:10px 10px 12px; display:flex; flex-direction:column; gap:3px; }
+  .sc-title { font-size:12px; font-weight:700; color:var(--color-text-primary); line-height:1.35; }
+  .sc-detail { font-size:10px; color:var(--color-text-tertiary); font-weight:500; }
+  .sc-season { font-size:9.5px; color:var(--color-text-secondary); margin-top:2px; }
 
   /* DETAIL KEY IMAGE */
-  .detail-key-img { max-width:120px; max-height:120px; object-fit:contain; filter:drop-shadow(0 6px 18px rgba(0,0,0,0.18)); }
+  .detail-key-img { max-width:110px; max-height:160px; object-fit:contain; filter:drop-shadow(0 6px 18px rgba(0,0,0,0.18)); }
   .detail-season-tag { display:inline-block; background:var(--lavender-50); color:var(--lavender-700); border:1px solid var(--lavender-200); border-radius:8px; padding:5px 12px; font-size:12px; font-weight:600; align-self:flex-start; }
 
   /* MY ITEMS */

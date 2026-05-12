@@ -184,7 +184,7 @@
   <ul class="hh-navbar-links">
     <li><a href="/"${homeActive}>홈</a></li>
     <li><a href="/gallery"${galleryActive}>갤러리</a></li>
-    <li><a href="/game"${gameActive}>게임</a></li>
+    <li><a href="/game"${gameActive}>짐싸기</a></li>
     <li><a href="${BLOG}" target="_blank" rel="noopener">블로그</a></li>
   </ul>
   <div class="hh-navbar-search">
@@ -220,7 +220,7 @@
   menu.innerHTML = `
   <a class="hh-mm-item${(page === '' || page === 'index') ? ' active' : ''}" href="/">홈</a>
   <a class="hh-mm-item${page === 'gallery' ? ' active' : ''}" href="/gallery">갤러리</a>
-  <a class="hh-mm-item${page === 'game'    ? ' active' : ''}" href="/game">게임</a>
+  <a class="hh-mm-item${page === 'game'    ? ' active' : ''}" href="/game">짐싸기</a>
   <a class="hh-mm-item" href="${BLOG}" target="_blank" rel="noopener">블로그</a>
   <hr class="hh-mm-divider"/>
   <div class="hh-mm-lang-row" id="hhMobileLangRow"></div>
