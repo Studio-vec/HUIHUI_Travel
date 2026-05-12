@@ -454,30 +454,7 @@
 </head>
 <body>
 
-<nav class="navbar">
-  <a href="index.html" class="navbar-logo">HUIHUI Travel</a>
-  <ul class="navbar-links">
-    <li><a href="https://blog.naver.com/kty1297" target="_blank" rel="noopener">블로그</a></li>
-    <li><a href="gallery.html" class="active">갤러리</a></li>
-    <li><a href="game.html">게임</a></li>
-  </ul>
-  <div class="navbar-search-wrap">
-    <div class="search-inner">
-      <span class="search-icon">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      </span>
-      <input id="mobileSearchInput" type="text" placeholder="여행지 검색하기" oninput="filterBySearch(this.value)"/>
-    </div>
-  </div>
-  <button class="hamburger-btn" id="hamburgerBtn" aria-label="메뉴">
-    <svg width="20" height="15" viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 1.5h18M1 7.5h18M1 13.5h18"/></svg>
-  </button>
-</nav>
-<div class="mobile-menu" id="mobileMenu">
-  <a class="mm-item" href="https://blog.naver.com/kty1297" target="_blank" rel="noopener">블로그</a>
-  <a class="mm-item active" href="gallery.html">갤러리</a>
-  <a class="mm-item" href="game.html">게임</a>
-</div>
+<script src="assets/js/navbar.js"></script>
 
 <div class="page-header">
   <p class="page-eyebrow">Gallery</p>
@@ -955,20 +932,11 @@ document.getElementById('mobileNavNext').onclick = () => {
   document.getElementById('keyRack').scrollBy({ left: window.innerWidth, behavior: 'smooth' });
 };
 
-/* ── HAMBURGER ── */
-(function(){
-  const btn  = document.getElementById('hamburgerBtn');
-  const menu = document.getElementById('mobileMenu');
-  function closeMobileMenu() { menu.classList.remove('open'); }
-  btn.addEventListener('click', e => { e.stopPropagation(); menu.classList.toggle('open'); });
-  document.addEventListener('click', e => { if (!menu.contains(e.target)) closeMobileMenu(); });
-})();
-
 /* ── URL PARAM: ?q= 로 갤러리 진입 시 자동 검색 ── */
 (function(){
   const q = new URLSearchParams(location.search).get('q');
   if (!q) return;
-  ['searchInput','mobileSearchInput'].forEach(id => {
+  ['searchInput','hhNavSearch'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = q;
   });
