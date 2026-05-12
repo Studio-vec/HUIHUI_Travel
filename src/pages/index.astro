@@ -1,0 +1,1367 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+<BaseLayout title="HUIHUI Travel — 국내 여행 안내서">
+  <Navbar />
+
+
+  <!-- ── NAVBAR ── -->
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="hero-eyebrow fade-up" id="heroEyebrow">Studio.Vec · 국내 여행 큐레이션</p>
+      <h1 class="hero-title fade-up" id="heroTitle">
+        <em>국내 여행 안내서</em>
+      </h1>
+      <p class="hero-desc fade-up" id="heroDesc">
+        직접 다녀온 국내 여행 코스를 공유합니다.<br>
+        소소한 기억들
+      </p>
+      <div class="hero-meta fade-up">
+        <div class="checkout-pill">
+          <span class="checkout-pill-dot"></span>
+          <span class="checkout-pill-text" id="checkoutStatus">0/8 체크아웃 완료</span>
+        </div>
+        <div class="checkout-track">
+          <div class="checkout-fill" id="checkoutFill" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECTION LABEL ── -->
+  <div class="section-label">
+    <span class="section-label-text" id="sectionLabel">여행 코스</span>
+    <div class="section-label-line"></div>
+  </div>
+
+  <!-- ── KEY GRID ── -->
+  <section class="grid-section">
+    <div class="key-grid" id="keyGrid"></div>
+  </section>
+
+  <!-- ── BELL ── -->
+  <div class="bell-wrapper" id="bellWrapper" onclick="ringBell()" title="프런트 데스크">
+    <div class="bell-inner">
+      <div class="bell-top" id="bellTop">
+        <img class="bell-img" src="/assets/bell-up.svg" alt="bell"/>
+      </div>
+      <div class="bell-bottom">
+        <img class="bell-img bell-img-down" src="/assets/bell-down.svg" alt=""/>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <footer class="footer">
+    <div>
+      <div class="footer-brand">HUIHUI Travel</div>
+      <div class="footer-tagline" style="margin-top:4px">국내 여행 안내서 · Studio.Vec</div>
+    </div>
+    <div class="footer-right">
+      <a href="https://studiovec.framer.website/" target="_blank" rel="noopener" class="footer-link">스튜디오 소개</a>
+      <a href="http://pf.kakao.com/_xipUhX/chat" target="_blank" rel="noopener" class="footer-link">기타 문의</a>
+      <span class="footer-link">© 2025</span>
+    </div>
+  </footer>
+
+  <!-- ── RECOMMENDATION POPUP ── -->
+  <div class="rec-overlay" id="recOverlay" onclick="hideRecPopup(event)">
+    <div class="rec-card" onclick="event.stopPropagation()">
+      <button class="rec-close" onclick="hideRecPopup()" aria-label="닫기">×</button>
+      <div class="rec-header">
+        <div class="rec-icon-wrap">🔔</div>
+        <div class="rec-title">프런트 데스크</div>
+        <div class="rec-sub">오늘의 여행지 추천</div>
+      </div>
+      <div id="recContent">
+        <div class="rec-loading">
+          <span class="rec-loading-dot"></span>
+          <span class="rec-loading-dot"></span>
+          <span class="rec-loading-dot"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LOGIN REQUIRED POPUP ── -->
+  <div class="login-req-overlay" id="loginReqOverlay" onclick="hideLoginReqPopup(event)">
+    <div class="login-req-card" onclick="event.stopPropagation()">
+      <div class="login-req-icon">🔑</div>
+      <div class="login-req-title">로그인이 필요해요</div>
+      <p class="login-req-sub">프런트 데스크 서비스는<br>회원만 이용할 수 있어요.<br>지금 바로 가입해보세요!</p>
+      <div class="login-req-btns">
+        <a href="/HUIHUI_Travel/auth/register.html" class="login-req-btn-primary">회원가입하기</a>
+        <a href="/HUIHUI_Travel/auth/login.html" class="login-req-btn-secondary">로그인하기</a>
+      </div>
+      <button class="login-req-close" onclick="hideLoginReqPopup()">나중에 할게요</button>
+    </div>
+  </div>
+
+  <!-- ── COMING SOON POPUP ── -->
+  <div class="cs-overlay" id="csOverlay" onclick="hideComingSoonPopup(event)">
+    <div class="cs-card" onclick="event.stopPropagation()">
+      <div class="cs-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="9" stroke="var(--lavender-500)" stroke-width="1.8"/>
+          <path d="M12 7v5.5M12 15.5v.5" stroke="var(--lavender-500)" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="cs-title">준비중이에요</div>
+      <p class="cs-sub">조금만 기다려주세요.<br>곧 공개될 예정이에요!</p>
+      <button class="cs-btn" onclick="hideComingSoonPopup()">확인</button>
+    </div>
+  </div>
+
+  <!-- ── TOAST CONTAINER ── -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    /* ════════════════════════════════════════════
+       TRIP CONFIG
+       키 이미지(assets/keys/[slug].png)가 존재하면 → 오픈
+       키 이미지가 없으면 → 자동으로 준비중 처리
+    ════════════════════════════════════════════ */
+    const TRIP_CONFIG = {
+      'yeosu':       { no:1, nameKo:'여수' },
+      'icheon':      { no:2, nameKo:'이천' },
+      'paju':        { no:3, nameKo:'파주' },
+      'dongincheon': { no:4, nameKo:'동인천' },
+      'gangneung':   { no:5, nameKo:'강릉' },
+      'nowon':       { no:6, nameKo:'노원' },
+      'suwon':       { no:7, nameKo:'수원' },
+      'daejeon':     { no:8, nameKo:'대전' },
+    };
+
+    let TRIPS = [];
+
+    /* ── LANGUAGE ── */
+    const CHECKOUT_LABELS = {
+      ko: (v,n) => `${v}/${n} 체크아웃 완료`,
+      en: (v,n) => `${v}/${n} checkouts complete`,
+      ja: (v,n) => `${v}/${n} チェックアウト完了`,
+      zh: (v,n) => `${v}/${n} 退房完成`,
+    };
+    const HERO_TEXTS = {
+      ko: {
+        eyebrow: 'Studio.Vec · 국내 여행 큐레이션',
+        title:   '<em>국내 여행 안내서</em>',
+        desc:    '직접 다녀온 국내 여행 코스를 공유합니다.<br>소소한 기억들',
+        section: '여행 코스',
+      },
+      en: {
+        eyebrow: 'Studio.Vec · Domestic Travel Curation',
+        title:   '<em>Korea Travel Guide</em>',
+        desc:    'Curated travel courses from personal visits.<br>Little memories along the way.',
+        section: 'Travel Courses',
+      },
+      ja: {
+        eyebrow: 'Studio.Vec · 国内旅行キュレーション',
+        title:   '<em>国内旅行ガイド</em>',
+        desc:    '実際に旅した国内旅行コースをシェアします。<br>ささやかな思い出とともに。',
+        section: '旅行コース',
+      },
+      zh: {
+        eyebrow: 'Studio.Vec · 国内旅游精选',
+        title:   '<em>国内旅行指南</em>',
+        desc:    '分享亲自探访的国内旅游路线。<br>留下美好的小记忆。',
+        section: '旅游路线',
+      },
+    };
+    function _currentLang() { return window.hhLang || 'ko'; }
+
+    function _updateHeroText(code = 'ko') {
+      const t = HERO_TEXTS[code];
+      document.getElementById('heroEyebrow').textContent = t.eyebrow;
+      document.getElementById('heroTitle').innerHTML     = t.title;
+      document.getElementById('heroDesc').innerHTML      = t.desc;
+      document.getElementById('sectionLabel').textContent = t.section;
+    }
+
+    document.addEventListener('hh:langchange', function (e) {
+      const code = e.detail.code;
+      _updateHeroText(code);
+      _updateCheckoutUI(code);
+      _renderGrid();
+      _attachLongPress();
+    });
+    function goTo(url) { window.location.href = url; }
+
+    function showComingSoonPopup() {
+      document.getElementById('csOverlay').classList.add('show');
+    }
+    function hideComingSoonPopup(e) {
+      document.getElementById('csOverlay').classList.remove('show');
+    }
+    function ringBell() {
+      const top = document.getElementById('bellTop');
+      top.classList.add('ringing');
+      setTimeout(() => top.classList.remove('ringing'), 500);
+
+      /* 로그인 여부 확인 */
+      if (window._hhUser) {
+        _showRecPopup();
+      } else {
+        document.getElementById('loginReqOverlay').classList.add('show');
+      }
+    }
+
+    /* ── 로그인 유도 팝업 ── */
+    function hideLoginReqPopup(e) {
+      if (e && e.target !== document.getElementById('loginReqOverlay')) return;
+      document.getElementById('loginReqOverlay').classList.remove('show');
+    }
+
+    /* ── 여행지 추천 팝업 ── */
+    const TRIP_COORDS = {
+      yeosu:       { lat: 34.7604, lon: 127.6622 },
+      icheon:      { lat: 37.2722, lon: 127.4344 },
+      paju:        { lat: 37.7600, lon: 126.7803 },
+      dongincheon: { lat: 37.4742, lon: 126.6164 },
+      gangneung:   { lat: 37.7519, lon: 128.8761 },
+      nowon:       { lat: 37.6543, lon: 127.0568 },
+      suwon:       { lat: 37.2636, lon: 127.0286 },
+      daejeon:     { lat: 36.3504, lon: 127.3845 },
+    };
+
+    function _weatherLabel(code) {
+      if (code === 0)        return { emoji: '☀️', label: '맑음' };
+      if (code <= 2)         return { emoji: '🌤️', label: '대체로 맑음' };
+      if (code === 3)        return { emoji: '☁️', label: '흐림' };
+      if (code <= 48)        return { emoji: '🌫️', label: '안개' };
+      if (code <= 55)        return { emoji: '🌦️', label: '이슬비' };
+      if (code <= 65)        return { emoji: '🌧️', label: '비' };
+      if (code <= 75)        return { emoji: '🌨️', label: '눈' };
+      if (code <= 82)        return { emoji: '🌦️', label: '소나기' };
+      return                        { emoji: '⛈️', label: '뇌우' };
+    }
+
+    function _getReason(slug, weatherCode, month) {
+      const isGood  = weatherCode <= 2;
+      const isRainy = weatherCode >= 51;
+      const s = month >= 3 && month <= 5 ? 'sp' :
+                month >= 6 && month <= 8 ? 'su' :
+                month >= 9 && month <= 11 ? 'fa' : 'wi';
+      const R = {
+        yeosu: {
+          sp: isGood ? '봄 햇살 아래 향일암과 여수 밤바다를 함께 즐기기 딱 좋은 날이에요'
+                     : '봄비 내리는 여수, 돌산도 게장 골목에서 따뜻한 한 끼 어떠세요',
+          su: isGood ? '시원한 바닷바람과 함께 오동도 일몰을 놓치지 마세요'
+                     : '여름 소나기가 지나면 더 선명해지는 여수 밤바다예요',
+          fa: isGood ? '해산물 제철인 가을, 맑은 하늘 아래 돌산대교 야경이 특별해요'
+                     : '단풍 드는 가을날 게장·낙지로 배 든든히 채워보세요',
+          wi: isGood ? '한겨울에도 따뜻한 여수, 오동도 동백꽃이 피기 시작해요'
+                     : '추운 날엔 여수 시장 서대회 국밥 한 그릇이 최고예요',
+        },
+        icheon: {
+          sp: isGood ? '봄볕 아래 이천 도자기 축제와 벚꽃길을 함께 즐겨보세요'
+                     : '비 내리는 날 도예 체험실에서 직접 도자기를 빚어보는 건 어때요',
+          su: isGood ? '설봉공원 연꽃과 이천 쌀밥 정식, 여름 나들이로 제격이에요'
+                     : '여름비엔 이천 온천에서 피로를 풀어보세요',
+          fa: isGood ? '황금빛 들녘과 함께 이천 쌀 문화 축제를 놓치지 마세요'
+                     : '가을비엔 이천 도자 마을 실내 체험으로 특별한 하루를 만들어요',
+          wi: isGood ? '맑은 겨울 하늘 아래 이천 온천 여행이 완벽한 힐링이 돼요'
+                     : '눈 오는 날 이천 도자 마을에서 특별한 겨울 기억을 만들어보세요',
+        },
+        paju: {
+          sp: isGood ? '봄꽃 가득한 헤이리 마을 산책과 임진각 나들이를 함께해보세요'
+                     : '비 내리는 파주, 책방 골목에서 하루 종일 책과 커피를 즐겨보세요',
+          su: isGood ? '프로방스 마을 라벤더밭과 파주 아울렛 쇼핑을 함께 즐겨보세요'
+                     : '여름비엔 파주 출판도시 카페거리가 더욱 운치 있어요',
+          fa: isGood ? '가을 단풍이 물드는 감악산과 헤이리 예술마을 산책을 추천해요'
+                     : '흐린 날 파주 갤러리와 북카페에서 감성 충전하기 좋아요',
+          wi: isGood ? '맑은 겨울날 임진각에서 역사를 느끼고 아울렛 쇼핑도 해보세요'
+                     : '눈 쌓인 헤이리 마을은 그림 같은 겨울 풍경을 선물해요',
+        },
+        dongincheon: {
+          sp: isGood ? '봄볕 아래 개항장 거리와 차이나타운 탐방이 즐거운 계절이에요'
+                     : '비 내려도 차이나타운 짜장면 투어는 언제나 즐거워요',
+          su: isGood ? '오랜 거리와 복합문화공간이 어우러진 동인천, 선선한 저녁 산책을 즐겨보세요'
+                     : '여름비엔 수도국산 달동네 박물관에서 옛 추억을 만나보세요',
+          fa: isGood ? '가을 하늘 아래 개항장 레트로 골목과 배다리 헌책방 거리를 걸어보세요'
+                     : '흐린 날 동인천 오래된 빵집들을 투어하는 것도 좋아요',
+          wi: isGood ? '겨울 맑은 날 차이나타운에서 공갈빵과 월병을 맛봐요'
+                     : '눈 내리는 날 동인천 개항장은 더욱 낭만적인 분위기예요',
+        },
+        gangneung: {
+          sp: isGood ? '봄 햇살 아래 경포 해변 자전거 산책과 커피 거리 탐방을 즐겨보세요'
+                     : '비 내리는 강릉, 실내 카페에서 창밖 파도 소리를 들어보세요',
+          su: isGood ? '에메랄드빛 경포 바다에서 물놀이와 해산물을 마음껏 즐겨보세요'
+                     : '소나기 사이로 정동진 암석해안과 커피 박물관을 둘러보세요',
+          fa: isGood ? '강릉 커피 축제 시즌, 바다 뷰 카페 투어를 즐겨보세요'
+                     : '파도 소리 들으며 강릉 커피 거리에서 분위기 있는 하루를 보내요',
+          wi: isGood ? '맑고 시린 겨울 바다, 정동진 해돋이는 인생 사진을 남겨줄 거예요'
+                     : '눈 내리는 강릉 해변은 일 년 중 가장 아름다운 풍경 중 하나예요',
+        },
+        nowon: {
+          sp: isGood ? '봄에 수락산 진달래가 만발해요, 가볍게 등산하며 서울 야경을 즐겨보세요'
+                     : '봄비 내리는 노원, 불암산 자락 카페 거리에서 느긋하게 쉬어가요',
+          su: isGood ? '수락산 계곡에서 발 담그며 더위를 식혀보는 게 어때요'
+                     : '비 오는 날 노원 예술의 전당에서 전시와 공연을 즐겨보세요',
+          fa: isGood ? '가을 단풍이 물드는 수락산 등산로는 서울 최고의 단풍 코스예요'
+                     : '흐린 날 중계동 은행나무 골목에서 황금빛 가을을 만끽해요',
+          wi: isGood ? '맑은 겨울 아침, 불암산 설경 산책 후 상계동 국밥 한 그릇 어때요'
+                     : '눈 오는 날 수락산 설경은 서울 안에서 만나는 특별한 풍경이에요',
+        },
+        suwon: {
+          sp: isGood ? '봄꽃 가득한 수원화성 성곽길 산책이 이보다 좋을 수 없어요'
+                     : '비 내려도 수원화성 박물관과 행궁동 벽화 골목은 볼거리가 넘쳐요',
+          su: isGood ? '행궁동 카페 거리와 통닭 골목, 여름 저녁 산책 코스로 딱이에요'
+                     : '여름비엔 화성행궁 실내 전시를 천천히 즐겨보세요',
+          fa: isGood ? '가을 하늘 아래 수원화성 야간 개장, 조명이 켜진 성벽이 환상적이에요'
+                     : '흐린 날 수원 전통시장에서 왕갈비탕 한 그릇으로 몸을 녹여요',
+          wi: isGood ? '맑은 겨울날 수원화성 설경 산책과 통닭 골목 투어를 추천해요'
+                     : '눈 덮인 수원화성은 드라마 속 한 장면처럼 아름다워요',
+        },
+        daejeon: {
+          sp: isGood ? '봄날 성심당 빵 투어와 엑스포 시민공원 꽃구경을 함께해요'
+                     : '비 내리는 날 성심당 본점에서 튀김소보로와 부추빵을 즐겨보세요',
+          su: isGood ? '계족산 황톳길 맨발 걷기와 대청호 드라이브를 추천해요'
+                     : '여름비엔 국립중앙과학관 실내 탐방과 성심당 빵 투어를 즐겨보세요',
+          fa: isGood ? '가을 계룡산 단풍과 유성 온천을 함께 즐겨보세요'
+                     : '가을비엔 대전 중앙시장 투어로 배를 든든히 채워요',
+          wi: isGood ? '겨울 성심당 빵 투어 후 유성온천에서 피로를 풀어보세요'
+                     : '눈 오는 날 뜨끈한 대전 순대국밥과 성심당 빵이 최고의 조합이에요',
+        },
+      };
+      return R[slug]?.[s] || '오늘 하루 특별한 여행을 즐겨보세요';
+    }
+
+    async function _showRecPopup() {
+      const available = TRIPS.filter(t => t.status !== 'coming-soon');
+      if (!available.length) { showToast('아직 공개된 여행지가 없어요'); return; }
+
+      /* 오늘 날짜 기준 고정 픽 (하루 종일 같은 여행지) */
+      const today = new Date();
+      const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
+      const trip = available[dayOfYear % available.length];
+      const slug = trip.url.replace('trips/','').replace('.html','');
+      const noStr = String(trip.no).padStart(2,'0');
+
+      /* 팝업 먼저 열기 (로딩 상태) */
+      document.getElementById('recOverlay').classList.add('show');
+
+      /* 날씨 API 호출 */
+      const coords = TRIP_COORDS[slug];
+      let weatherHTML = '<span class="rec-single-weather-loading">날씨 불러오는 중…</span>';
+      let reason = _getReason(slug, 3, today.getMonth() + 1); // 기본값 흐림
+
+      if (coords) {
+        try {
+          const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current=temperature_2m,weather_code&timezone=Asia%2FSeoul&forecast_days=1`;
+          const res  = await fetch(url);
+          const json = await res.json();
+          const code = json.current.weather_code;
+          const temp = Math.round(json.current.temperature_2m);
+          const { emoji, label } = _weatherLabel(code);
+          weatherHTML = `<span class="rec-single-weather">${emoji} ${temp}°C&nbsp;·&nbsp;${label}</span>`;
+          reason = _getReason(slug, code, today.getMonth() + 1);
+        } catch (_) { /* 날씨 실패 시 기본 문구 유지 */ }
+      }
+
+      const imgTag = trip.key
+        ? `<img class="rec-single-key" src="${trip.key}" alt="${trip.nameKo}" loading="lazy"/>`
+        : `<div class="rec-single-key-placeholder">${trip.nameKo[0]}</div>`;
+
+      document.getElementById('recContent').innerHTML = `
+        <div class="rec-single-hero">
+          ${imgTag}
+          <div class="rec-single-info">
+            <div class="rec-single-no">No.${noStr}</div>
+            <div class="rec-single-name">${trip.nameKo}</div>
+            ${weatherHTML}
+          </div>
+        </div>
+        <p class="rec-reason">"${reason}"</p>
+        <a class="rec-goto" href="${trip.url}">바로가기 →</a>`;
+    }
+
+    function hideRecPopup(e) {
+      if (e && e.target !== document.getElementById('recOverlay')) return;
+      document.getElementById('recOverlay').classList.remove('show');
+    }
+
+    /* ── TOAST ── */
+    function showToast(msg) {
+      const c = document.getElementById('toastContainer');
+      const t = document.createElement('div');
+      t.className = 'toast';
+      t.textContent = msg;
+      c.appendChild(t);
+      setTimeout(() => {
+        t.classList.add('removing');
+        setTimeout(() => t.remove(), 200);
+      }, 2200);
+    }
+
+    /* ── CHECKOUT UI ── */
+    function _updateCheckoutUI(code = 'ko') {
+      const visited = TRIPS.filter((t, i) => _effectiveStatus(t, i) === 'visited').length;
+      const total   = TRIPS.length;
+      const pct     = total ? Math.round((visited / total) * 100) : 0;
+      document.getElementById('checkoutStatus').textContent = CHECKOUT_LABELS[code](visited, total);
+      document.getElementById('checkoutFill').style.width = pct + '%';
+    }
+
+    /* ── UTILITIES ── */
+    function _fmtNo(no) { return String(no).padStart(2, '0'); }
+
+    /* ════════════════════════════════════════════
+       CARD SVG TEMPLATES  (new lavender palette)
+    ════════════════════════════════════════════ */
+    function _cardBgSVG(i) {
+      return `<svg class="card-slot-img" viewBox="0 0 200 276" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="199.463" y="275.122" width="199.463" height="275.122" transform="rotate(-180 199.463 275.122)" fill="url(#cb_g0_${i})"/>
+<path d="M0 275.122L18.9146 254.488H180.549L199.463 275.122H0Z" fill="url(#cb_g1_${i})"/>
+<rect x="18.9146" y="0" width="161.634" height="254.488" fill="url(#cb_g2_${i})"/>
+<path d="M199.547 0.461383L180.632 10.7785L18.9977 10.7785L0.0830985 0.4614L199.547 0.461383Z" fill="url(#cb_g3_${i})"/>
+<g filter="url(#cb_f0_${i})">
+  <g clip-path="url(#cb_cp_${i})"><rect x="38.6885" y="14.2175" width="123.805" height="41.2683" rx="20.6341" fill="url(#cb_g4_${i})"/></g>
+</g>
+<circle cx="49.0055" cy="34.8516" r="1.71951" fill="#8B6FD0"/>
+<circle cx="153.896" cy="34.8516" r="1.71951" fill="#8B6FD0"/>
+<defs>
+<filter id="cb_f0_${i}" x="38.6885" y="14.2175" width="123.805" height="43.2683" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="2"/><feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.545 0 0 0 0 0.435 0 0 0 0 0.816 0 0 0 0.45 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1" result="shape"/>
+</filter>
+<clipPath id="cb_cp_${i}"><rect x="38.6885" y="14.2175" width="123.805" height="41.2683" rx="20.6341"/></clipPath>
+<linearGradient id="cb_g0_${i}" x1="299.154" y1="294.435" x2="299.154" y2="549.783" gradientUnits="userSpaceOnUse">
+<stop stop-color="#8B6FD0"/><stop offset="1" stop-color="#FFF8EB"/></linearGradient>
+<linearGradient id="cb_g1_${i}" x1="99.7733" y1="285.041" x2="99.7732" y2="254.949" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/><stop offset="1" stop-color="#A68EE8"/></linearGradient>
+<linearGradient id="cb_g2_${i}" x1="99.7317" y1="0" x2="99.7317" y2="254.488" gradientUnits="userSpaceOnUse">
+<stop offset="0.22" stop-color="#FFF8EB"/><stop offset="1" stop-color="#D8C8FF"/></linearGradient>
+<linearGradient id="cb_g3_${i}" x1="99.8148" y1="-2.978" x2="99.8148" y2="14.2175" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FFF8EB"/><stop offset="1" stop-color="#F5EDD8"/></linearGradient>
+<linearGradient id="cb_g4_${i}" x1="38.6885" y1="14.2175" x2="162.494" y2="55.486" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/><stop offset="1" stop-color="#EDE5FF"/></linearGradient>
+</defs>
+</svg>`;
+    }
+
+    function _nameTagSVG(i) {
+      return `<svg class="card-name-img" viewBox="0 0 124 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#nt_f_${i})"><rect width="123.805" height="41.2683" rx="20.6341" fill="url(#nt_g_${i})"/></g>
+<circle cx="10.317" cy="20.6341" r="1.71951" fill="#8B6FD0"/>
+<circle cx="115.207" cy="20.6341" r="1.71951" fill="#8B6FD0"/>
+<defs>
+<filter id="nt_f_${i}" x="0" y="0" width="123.805" height="43.2683" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="2"/><feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.545 0 0 0 0 0.435 0 0 0 0 0.816 0 0 0 0.45 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1" result="shape"/>
+</filter>
+<linearGradient id="nt_g_${i}" x1="0" y1="0" x2="123.805" y2="41.268" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/><stop offset="1" stop-color="#EDE5FF"/></linearGradient>
+</defs>
+</svg>`;
+    }
+
+    function _comingSoonSVG(no) {
+      const n = _fmtNo(no);
+      return `<svg style="width:64%;height:84%;transform:translateY(8%)" viewBox="0 0 208.06 357.17" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cs_gr_${no}" x1="100.53" y1="0" x2="100.53" y2="352.17" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F5F0FF"/>
+      <stop offset="1" stop-color="#E8D9BF"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#cs_gr_${no})" opacity="0.55" d="M188.02,122.08l-51.22-99.91c-15.15-29.55-57.39-29.55-72.54,0L13.04,122.08c-17.38,33.91-17.38,74.11,0,108.02l51.22,99.91c15.15,29.55,57.39,29.55,72.54,0l51.22-99.91c17.38-33.91,17.38-74.11,0-108.02ZM100.53,47.87c-6.99,0-12.65-5.66-12.65-12.65s5.66-12.65,12.65-12.65,12.65,5.66,12.65,12.65-5.66,12.65-12.65,12.65Z"/>
+  <text x="101" y="115" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="20" font-style="italic" fill="rgba(139,111,208,0.35)">No.${n}</text>
+  <text x="101" y="200" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" fill="rgba(139,111,208,0.45)" letter-spacing="3">SOON</text>
+</svg>`;
+    }
+
+    function _reservedSVG(no) {
+      const n = _fmtNo(no);
+      return `<svg style="width:74%;height:98%;transform:translateY(8%)" viewBox="0 0 276.91 392" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="res_g52_${no}" x1="137.66" y1="0" x2="137.66" y2="375.57" gradientTransform="translate(276.88) rotate(-180) scale(1 -1) skewX(-5.61)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F5EDD8"/><stop offset="1" stop-color="#8B6FD0"/>
+    </linearGradient>
+    <linearGradient id="res_g9_${no}" x1="100" y1="0" x2="100" y2="392" gradientTransform="translate(38.49) skewX(-5.61)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#FFF8EB"/>
+    </linearGradient>
+    <linearGradient id="res_g18_${no}" x1="100.28" y1="86.91" x2="100.28" y2="255.43" gradientTransform="translate(38.49) skewX(-5.61)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fdf5ec"/><stop offset="1" stop-color="#8B6FD0"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#res_g52_${no})" d="M238.41,0l38.49,375.57h-56.17c-2.38-23.19-23.93-41.99-48.13-41.99s-41.9,18.8-39.52,41.99h-56.17S38.41,0,38.41,0h200Z"/>
+  <path fill="url(#res_g9_${no})" d="M38.49,0L0,392h56.17c2.38-24.2,23.93-43.83,48.13-43.83s41.9,19.62,39.52,43.83h56.17L238.49,0H38.49Z"/>
+  <path fill="url(#res_g18_${no})" d="M160.82,120.83c1.84-18.73-11.85-33.91-30.58-33.91s-35.4,15.18-37.24,33.91c-1.38,14.08,6.01,26.15,17.72,31.28l-30.94,103.33h67.83l-10.65-103.33c12.72-5.13,22.48-17.2,23.87-31.28Z"/>
+  <text font-family="Cormorant Garamond,serif" font-size="36.17" font-weight="500" font-style="italic" transform="translate(44.17 311.65) skewX(-5.61)" fill="#4E3490">Reserved</text>
+  <text font-family="Cormorant Garamond,serif" font-size="21.1" font-style="italic" transform="translate(107.5 60.23) skewX(-5.61)" fill="#4E3490">No.${n}</text>
+</svg>`;
+    }
+
+    function _notVisitedSVG(no, tagline) {
+      const n  = _fmtNo(no);
+      const tl = tagline || '';
+      return `<svg style="width:64%;height:84%;transform:translateY(8%)" viewBox="0 0 208.06 357.17" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="nv_sh_${no}" x="-5%" y="-5%" width="115%" height="115%" filterUnits="userSpaceOnUse">
+      <feOffset dx="6" dy="5"/>
+      <feGaussianBlur stdDeviation="0" result="blur"/>
+      <feFlood flood-color="#6B4FB4" flood-opacity="1"/>
+      <feComposite in2="blur" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <linearGradient id="nv_gr_${no}" x1="100.53" y1="0" x2="100.53" y2="352.17" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="1" stop-color="#8B6FD0"/>
+    </linearGradient>
+  </defs>
+  <g filter="url(#nv_sh_${no})">
+    <path fill="url(#nv_gr_${no})" d="M188.02,122.08l-51.22-99.91c-15.15-29.55-57.39-29.55-72.54,0L13.04,122.08c-17.38,33.91-17.38,74.11,0,108.02l51.22,99.91c15.15,29.55,57.39,29.55,72.54,0l51.22-99.91c17.38-33.91,17.38-74.11,0-108.02ZM100.53,47.87c-6.99,0-12.65-5.66-12.65-12.65s5.66-12.65,12.65-12.65,12.65,5.66,12.65,12.65-5.66,12.65-12.65,12.65Z"/>
+  </g>
+  <text x="101" y="115" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="20" font-style="italic" fill="rgba(107,79,180,0.6)">No.${n}</text>
+  <text x="101" y="205" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="78" font-weight="700" fill="#8B6FD0" opacity="0.82">${no}</text>
+  <text x="101" y="272" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="19" font-style="italic" fill="rgba(107,79,180,0.5)">${tl}</text>
+</svg>`;
+    }
+
+    const _placeholderKey = `<svg style="width:60%;height:70%" viewBox="0 0 80 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="40" cy="38" r="30" stroke="#8B6FD0" stroke-width="2.5" fill="rgba(192,168,255,0.15)"/>
+<circle cx="40" cy="38" r="20" stroke="#A68EE8" stroke-width="1.8" fill="rgba(237,229,255,0.25)"/>
+<circle cx="40" cy="38" r="8" fill="rgba(139,111,208,0.25)" stroke="#8B6FD0" stroke-width="1.5"/>
+<rect x="37" y="68" width="6" height="100" rx="3" fill="rgba(139,111,208,0.35)" stroke="#8B6FD0" stroke-width="1.5"/>
+<rect x="43" y="110" width="12" height="8" rx="2" fill="rgba(139,111,208,0.45)" stroke="#8B6FD0" stroke-width="1.2"/>
+<rect x="43" y="126" width="8"  height="8" rx="2" fill="rgba(139,111,208,0.45)" stroke="#8B6FD0" stroke-width="1.2"/>
+<rect x="43" y="142" width="12" height="8" rx="2" fill="rgba(139,111,208,0.45)" stroke="#8B6FD0" stroke-width="1.2"/>
+</svg>`;
+
+    function _onKeyImgError(img) { img.outerHTML = _placeholderKey; }
+
+    function _visitedKeyHTML(trip) {
+      if (trip.key) return `<img src="${trip.key}" style="margin-top:35px" alt="key" onerror="_onKeyImgError(this)" />`;
+      return _placeholderKey;
+    }
+
+    /* ── STATE (localStorage) ── */
+    const VISITED_KEY  = 'huihui_visited';
+    const RESERVED_KEY = 'huihui_reserved';
+    const HOLD_MS      = 600;
+
+    function _getSet(key) {
+      try { return new Set(JSON.parse(localStorage.getItem(key) || '[]')); }
+      catch(e) { return new Set(); }
+    }
+    function _saveSet(key, s) { localStorage.setItem(key, JSON.stringify([...s])); }
+
+    let visitedSet  = _getSet(VISITED_KEY);
+    let reservedSet = _getSet(RESERVED_KEY);
+
+    function _effectiveStatus(trip, i) {
+      if (visitedSet.has(trip.url)) return 'visited';
+      if (reservedSet.has(i))                   return 'reserved';
+      return trip.status;
+    }
+
+    /* ── RENDER CARD ── */
+    function _renderCard(trip, i) {
+      const s       = _effectiveStatus(trip, i);
+      const cl      = 'key-card' + (s !== 'visited' ? ' ' + s : '');
+      const isKo    = _currentLang() === 'ko';
+      const label   = isKo ? trip.nameKo : trip.nameEn;
+      const nameCls = s === 'coming-soon' ? 'card-name coming-soon' : 'card-name';
+      let keyHTML   = '';
+      if      (s === 'visited')     keyHTML = `<div class="card-key-img">${_visitedKeyHTML(trip)}</div>`;
+      else if (s === 'reserved')    keyHTML = `<div class="card-key-img">${_reservedSVG(trip.no)}</div>`;
+      else if (s === 'not-visited') keyHTML = `<div class="card-key-img">${_notVisitedSVG(trip.no, trip.tagline)}</div>`;
+      else if (s === 'coming-soon') keyHTML = `<div class="card-key-img">${_comingSoonSVG(trip.no)}</div>`;
+      return `<div class="${cl}" data-trip-idx="${i}"><div class="card-3d">${_cardBgSVG(i)}<div class="${nameCls}">${_nameTagSVG(i)}<span>${label}</span></div>${keyHTML}</div></div>`;
+    }
+
+    function _attachCardClicks() {
+      document.querySelectorAll('[data-trip-idx]').forEach(card => {
+        const i = parseInt(card.dataset.tripIdx);
+        card.addEventListener('click', () => {
+          const trip = TRIPS[i];
+          const st   = _effectiveStatus(trip, i);
+          if (st === 'coming-soon')                              showComingSoonPopup();
+          else if ((st === 'visited' || st === 'not-visited') && trip.url) goTo(trip.url);
+        });
+      });
+    }
+
+    /* ── LONG PRESS → reserved toggle ── */
+    function _toggleReserved(i) {
+      if (reservedSet.has(i)) reservedSet.delete(i);
+      else                    reservedSet.add(i);
+      _saveSet(RESERVED_KEY, reservedSet);
+      _renderGrid();
+    }
+
+    let _longPressReady = false;
+    function _attachLongPress() {
+      if (_longPressReady) return;
+      _longPressReady = true;
+      const grid = document.getElementById('keyGrid');
+      let timer = null, activeCard = null;
+      const cancel = () => {
+        clearTimeout(timer); timer = null;
+        if (activeCard) { activeCard.classList.remove('pressing'); activeCard = null; }
+      };
+      grid.addEventListener('pointerdown', e => {
+        const card = e.target.closest('[data-trip-idx]');
+        if (!card) return;
+        const i = parseInt(card.dataset.tripIdx);
+        if (_effectiveStatus(TRIPS[i], i) === 'visited') return;
+        e.preventDefault();
+        activeCard = card;
+        card.classList.add('pressing');
+        card.setPointerCapture(e.pointerId);
+        timer = setTimeout(() => { cancel(); _toggleReserved(i); }, HOLD_MS);
+      });
+      grid.addEventListener('pointerup',     cancel);
+      grid.addEventListener('pointercancel', cancel);
+      grid.addEventListener('pointermove', e => {
+        if (!timer) return;
+        if (e.target.closest('[data-trip-idx]') !== activeCard) cancel();
+      });
+    }
+
+    /* ── BUILD TRIPS FROM CONFIG ── */
+    function _buildTrips() {
+      return Object.entries(TRIP_CONFIG).map(([slug, cfg], idx) => ({
+        nameEn:  slug.charAt(0).toUpperCase() + slug.slice(1),
+        nameKo:  cfg.nameKo  || slug,
+        status:  'not-visited',
+        url:     `trips/${slug}.html`,
+        no:      cfg.no      || (idx + 1),
+        key:     `assets/keys/${slug}.png`,
+        tagline: cfg.tagline || '',
+      }));
+    }
+
+    function _renderGrid() {
+      document.getElementById('keyGrid').innerHTML =
+        TRIPS.map((t, i) => _renderCard(t, i)).join('');
+      _updateCheckoutUI(_currentLang());
+      _attachCardClicks();
+    }
+
+    /* 키 이미지가 실제로 로드되는지 확인 */
+    function _probeImg(src) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload  = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = src;
+      });
+    }
+
+    async function _init() {
+      TRIPS = _buildTrips();
+      /* 키 이미지 존재 여부 병렬 체크 → 없으면 coming-soon */
+      await Promise.all(TRIPS.map(async trip => {
+        if (visitedSet.has(trip.url)) return; // 방문 완료는 스킵
+        const exists = await _probeImg(trip.key);
+        if (!exists) { trip.status = 'coming-soon'; trip.key = null; }
+      }));
+      _renderGrid();
+      _attachLongPress();
+    }
+
+    _init();
+
+    /* bfcache 복원 시 localStorage 재읽기 */
+    window.addEventListener('pageshow', e => {
+      if (!e.persisted) return;
+      visitedSet  = _getSet(VISITED_KEY);
+      reservedSet = _getSet(RESERVED_KEY);
+      _renderGrid();
+    });
+
+  </script>
+  <Footer />
+
+<style is:global>
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--color-bg);
+      color: var(--color-text-primary);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ══════════════════════════════
+       NAVBAR
+    ══════════════════════════════ */
+    .navbar {
+      position:sticky; top:0; z-index:var(--z-fixed);
+      background:rgba(255,248,235,0.82); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+      border-bottom:1px solid rgba(139,111,208,0.15);
+      padding:0 clamp(20px,5vw,48px); height:56px;
+      display:flex; align-items:center; gap:24px;
+    }
+    .navbar-logo {
+      font-family:var(--font-display); font-size:20px;
+      font-style:italic; font-weight:600; color:var(--lavender-600);
+      text-decoration:none; flex-shrink:0;
+    }
+    .navbar-links { display:flex; gap:4px; list-style:none; }
+    .navbar-links a {
+      font-family:var(--font-heading); font-size:13px; font-weight:500;
+      color:var(--color-text-secondary); text-decoration:none;
+      padding:8px 12px; border-radius:10px;
+      transition:color 150ms, background 150ms;
+    }
+    .navbar-links a:hover, .navbar-links a.active { color:var(--lavender-600); background:var(--lavender-50); }
+
+    /* ── NAVBAR CENTER SEARCH (모바일) ── */
+    .navbar-center-search {
+      display:none;
+      flex:1; justify-content:center; align-items:center;
+    }
+    .navbar-center-search .cs-inner {
+      position:relative; display:inline-flex; align-items:center;
+    }
+    .navbar-center-search .cs-icon {
+      position:absolute; left:13px; pointer-events:none;
+      color:var(--lavender-600); display:flex; align-items:center;
+    }
+    .navbar-center-search input {
+      font-family:var(--font-heading); font-size:12px; color:var(--color-text-secondary);
+      background:rgba(255,255,255,0.7); backdrop-filter:blur(8px);
+      border:1px solid rgba(139,111,208,0.25); border-radius:999px;
+      padding:7px 18px 7px 34px; outline:none;
+      width:clamp(130px,28vw,180px);
+      transition:border-color 0.2s,background 0.2s;
+    }
+    .navbar-center-search input::placeholder { color:var(--color-text-tertiary); }
+    .navbar-center-search input:focus { background:rgba(255,255,255,0.95); border-color:rgba(139,111,208,0.5); }
+
+    /* ── HAMBURGER & MOBILE MENU ── */
+    .hamburger-btn {
+      display:none; flex-shrink:0; margin-left:auto;
+      background:none; border:none; cursor:pointer;
+      width:36px; height:36px; border-radius:10px;
+      align-items:center; justify-content:center;
+      color:var(--lavender-600); transition:background 0.15s;
+    }
+    .hamburger-btn:hover { background:var(--lavender-50); }
+    .mobile-menu {
+      position:fixed; top:56px; left:0; right:0; z-index:49;
+      background:rgba(255,248,235,0.97); backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(139,111,208,0.12);
+      padding:8px 12px 14px; display:none; flex-direction:column;
+      box-shadow:0 8px 32px rgba(80,40,160,0.1);
+    }
+    .mobile-menu.open { display:flex; }
+    .mm-item {
+      font-family:var(--font-heading); font-size:15px; font-weight:500;
+      color:var(--color-text-secondary); text-decoration:none;
+      padding:11px 14px; border-radius:12px;
+      display:flex; align-items:center; gap:10px;
+      transition:color 0.15s,background 0.15s;
+      background:none; border:none; cursor:pointer; width:100%; text-align:left;
+    }
+    .mm-item:hover { color:var(--lavender-600); background:rgba(139,111,208,0.08); }
+    .mm-item.active { color:var(--lavender-600); font-weight:600; }
+    .mm-sep { height:1px; background:rgba(139,111,208,0.12); margin:4px 0; }
+    @media (max-width:767px) {
+      .navbar-links { display:none !important; }
+      .hamburger-btn { display:flex; }
+      .navbar-center-search { display:flex; }
+    }
+
+    /* ══════════════════════════════
+       HERO
+    ══════════════════════════════ */
+    .hero {
+      position: relative;
+      padding: clamp(var(--space-12), 8vw, var(--space-20))
+               clamp(var(--space-5), 5vw, var(--space-12))
+               clamp(var(--space-10), 6vw, var(--space-16));
+      overflow: hidden;
+    }
+    /* subtle radial glow */
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; right: -80px;
+      width: 480px; height: 480px;
+      background: radial-gradient(circle, rgba(192,168,255,0.22) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -40px; left: -60px;
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(180,224,104,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner {
+      position: relative; z-index: 1;
+      max-width: 1148px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: var(--space-5);
+    }
+    .hero-eyebrow {
+      font-family: var(--font-heading);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--lavender-500);
+      letter-spacing: var(--tracking-widest);
+      text-transform: uppercase;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(36px, 7vw, 72px);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--color-text-primary);
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--lavender-500);
+    }
+    .hero-desc {
+      font-family: var(--font-body);
+      font-size: clamp(var(--text-sm), 2vw, var(--text-base));
+      color: var(--color-text-secondary);
+      line-height: var(--leading-normal);
+      max-width: 480px;
+    }
+    .hero-meta {
+      display: flex; align-items: center; gap: var(--space-6);
+      flex-wrap: wrap;
+      margin-top: var(--space-2);
+    }
+    /* checkout pill */
+    .checkout-pill {
+      display: inline-flex; align-items: center; gap: var(--space-3);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-full);
+      padding: var(--space-2) var(--space-4);
+      box-shadow: var(--shadow-sm);
+    }
+    .checkout-pill-dot {
+      width: 8px; height: 8px;
+      border-radius: var(--radius-full);
+      background: var(--lime-300);
+      flex-shrink: 0;
+    }
+    .checkout-pill-text {
+      font-family: var(--font-heading);
+      font-size: var(--text-xs);
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      letter-spacing: var(--tracking-wide);
+      white-space: nowrap;
+    }
+    /* progress track */
+    .checkout-track {
+      flex: 1; min-width: 120px; max-width: 200px;
+      height: 4px;
+      background: var(--sand-200);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+    .checkout-fill {
+      height: 100%;
+      background: linear-gradient(to right, var(--lavender-300), var(--lime-300));
+      border-radius: var(--radius-full);
+      transition: width var(--dur-slower) var(--ease-out);
+    }
+
+    /* ══════════════════════════════
+       SECTION LABEL
+    ══════════════════════════════ */
+    .section-label {
+      max-width: 1148px; margin: 0 auto;
+      padding: 0 clamp(var(--space-5), 5vw, var(--space-12));
+      display: flex; align-items: center; gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+    .section-label-text {
+      font-family: var(--font-heading);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--color-text-tertiary);
+      letter-spacing: var(--tracking-widest);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .section-label-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, var(--color-border), transparent);
+    }
+
+    /* ══════════════════════════════
+       KEY GRID
+    ══════════════════════════════ */
+    .grid-section {
+      padding: 0 clamp(var(--space-5), 5vw, var(--space-12))
+               clamp(var(--space-16), 14vw, var(--space-24));
+    }
+    .key-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(var(--space-3), 1.5vw, var(--space-5));
+      max-width: 1148px;
+      margin: 0 auto;
+    }
+    @media (min-width: 600px) {
+      .key-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    @media (min-width: 860px) {
+      .key-grid { grid-template-columns: repeat(5, 1fr); }
+    }
+
+    /* ── Key Card ── */
+    .key-card {
+      position: relative; cursor: pointer;
+      transition: transform var(--dur-base) var(--ease-out),
+                  filter var(--dur-base) var(--ease-out);
+      border-radius: var(--radius-lg);
+    }
+    .key-card:hover { transform: translateY(-3px); filter: brightness(1.04); }
+    .key-card.coming-soon { cursor: pointer; }
+    .key-card.reserved,
+    .key-card.not-visited { cursor: default; }
+    .key-card.coming-soon:hover,
+    .key-card.reserved:hover,
+    .key-card.not-visited:hover { transform: none; filter: none; }
+    .key-card.reserved .card-key-img { align-items: flex-end; overflow: visible; bottom: 2%; }
+
+    .card-3d {
+      position: relative; width: 100%;
+      padding-bottom: 138%;
+    }
+    .card-slot-img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      display: block;
+    }
+    .card-name {
+      position: absolute;
+      top: 3%; left: 8%; right: 8%;
+      z-index: 3;
+    }
+    .card-name-img { display: block; width: 100%; height: auto; }
+    .card-name span {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(14px, 3vw, 22px);
+      font-weight: 400;
+      color: var(--lavender-700);
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+    .card-name.coming-soon span {
+      font-family: var(--font-heading);
+      font-size: clamp(9px, 1.8vw, 13px);
+      font-weight: 400;
+      color: var(--color-text-tertiary);
+      letter-spacing: var(--tracking-wider);
+    }
+    .card-key-img {
+      position: absolute;
+      top: 20%; left: 12%; right: 12%; bottom: 14%;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 2;
+    }
+    .key-card .card-key-img img {
+      height: 110%; width: auto; max-width: 110%; object-fit: contain;
+    }
+    .card-key-img > * { transform-origin: center top; }
+    .key-card:not(.coming-soon):not(.reserved):hover .card-key-img > * {
+      animation: keySwing 1.2s ease-in-out infinite;
+    }
+
+    /* ── hold ring ── */
+    @keyframes holdRing {
+      0%   { box-shadow: inset 0 0 0 0px rgba(192,168,255,0); }
+      100% { box-shadow: inset 0 0 0 10px rgba(192,168,255,0.22); }
+    }
+    .key-card.pressing { animation: holdRing 0.6s ease-out forwards; }
+
+    @keyframes keySwing {
+      0%   { transform: rotate(0deg); }
+      15%  { transform: rotate(18deg); }
+      35%  { transform: rotate(-15deg); }
+      55%  { transform: rotate(10deg); }
+      70%  { transform: rotate(-7deg); }
+      82%  { transform: rotate(4deg); }
+      91%  { transform: rotate(-2deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    /* ══════════════════════════════
+       BELL
+    ══════════════════════════════ */
+    .bell-wrapper {
+      position: fixed;
+      bottom: clamp(var(--space-8), 8vw, var(--space-16));
+      right: clamp(var(--space-5), 3.5vw, var(--space-10));
+      z-index: var(--z-overlay);
+      cursor: pointer;
+      width: clamp(56px, 9vw, 84px);
+      height: clamp(56px, 9vw, 84px);
+      user-select: none;
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 16px rgba(107, 79, 180, 0.18), 0 1px 4px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: box-shadow var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out);
+    }
+    .bell-wrapper:hover {
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 6px 24px rgba(107, 79, 180, 0.28), 0 2px 8px rgba(0,0,0,0.10);
+    }
+    .bell-inner {
+      width: 62%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .bell-top { position: relative; z-index: 2; transform-origin: center bottom; }
+    .bell-top.ringing { animation: bellRingTop 0.45s ease; }
+    .bell-bottom { position: relative; z-index: 1; margin-top: -4%; }
+    .bell-img { width: 100%; height: auto; display: block; }
+    .bell-img-down { margin-top: -6%; }
+
+    @keyframes bellRingTop {
+      0%   { transform: rotate(0deg) translateY(0); }
+      20%  { transform: rotate(14deg) translateY(-4px); }
+      40%  { transform: rotate(-11deg) translateY(-2px); }
+      60%  { transform: rotate(8deg) translateY(-3px); }
+      80%  { transform: rotate(-5deg) translateY(-1px); }
+      100% { transform: rotate(0deg) translateY(0); }
+    }
+
+    /* ══════════════════════════════
+       FOOTER
+    ══════════════════════════════ */
+    .footer {
+      border-top: 1px solid var(--color-border);
+      padding: var(--space-8) clamp(var(--space-5), 5vw, var(--space-12));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+    }
+    .footer-brand {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: var(--text-lg);
+      color: var(--lavender-500);
+      letter-spacing: var(--tracking-wide);
+    }
+    .footer-tagline {
+      font-family: var(--font-heading);
+      font-size: var(--text-xs);
+      color: var(--color-text-tertiary);
+      letter-spacing: var(--tracking-wider);
+      text-transform: uppercase;
+    }
+    .footer-right {
+      display: flex; gap: var(--space-5); align-items: center;
+    }
+    .footer-link {
+      font-family: var(--font-heading);
+      font-size: var(--text-xs);
+      color: var(--color-text-tertiary);
+      text-decoration: none;
+      letter-spacing: var(--tracking-wide);
+      transition: color var(--dur-fast);
+    }
+    .footer-link:hover { color: var(--lavender-500); }
+
+    /* ══════════════════════════════
+       RECOMMENDATION POPUP (벨)
+    ══════════════════════════════ */
+    .rec-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(42,31,72,0.45); backdrop-filter: blur(6px);
+      z-index: var(--z-modal); align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .rec-overlay.show { display: flex; }
+    .rec-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-8) var(--space-8) var(--space-6);
+      max-width: 360px; width: 100%;
+      box-shadow: var(--shadow-xl);
+      animation: slideUp 0.22s var(--ease-out);
+      position: relative;
+    }
+    .rec-close {
+      position: absolute; top: 14px; right: 16px;
+      background: none; border: none; cursor: pointer;
+      font-size: 1.2rem; color: var(--color-text-tertiary);
+      line-height: 1; padding: 4px; border-radius: 6px;
+      transition: color .15s, background .15s;
+    }
+    .rec-close:hover { color: var(--color-text-primary); background: rgba(139,111,208,0.08); }
+    .rec-header { text-align: center; margin-bottom: var(--space-5); }
+    .rec-icon-wrap {
+      width: 44px; height: 44px; background: var(--lavender-100);
+      border-radius: var(--radius-full);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto var(--space-3); font-size: 1.2rem;
+    }
+    .rec-title {
+      font-family: var(--font-display); font-style: italic;
+      font-size: var(--text-xl); color: var(--color-text-primary);
+      letter-spacing: var(--tracking-tight);
+    }
+    .rec-sub { font-size: var(--text-xs); color: var(--color-text-tertiary); margin-top: 3px; }
+    /* 단일 추천 카드 */
+    .rec-single-hero {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 14px 16px; border-radius: var(--radius-xl);
+      background: var(--lavender-50);
+      border: 1px solid rgba(139,111,208,0.12);
+      margin-bottom: 14px;
+    }
+    .rec-single-key {
+      width: 52px; flex-shrink: 0; object-fit: contain;
+    }
+    .rec-single-key-placeholder {
+      width: 52px; height: 72px; flex-shrink: 0; border-radius: 8px;
+      background: linear-gradient(160deg, var(--lavender-200), var(--lavender-400));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-style: italic; font-size: 1.1rem; color: white;
+    }
+    .rec-single-info { flex: 1; min-width: 0; }
+    .rec-single-no { font-size: 10px; color: var(--color-text-tertiary); letter-spacing: .12em; margin-bottom: 2px; }
+    .rec-single-name {
+      font-family: var(--font-display); font-style: italic;
+      font-size: 1.7rem; color: var(--color-text-primary);
+      line-height: 1.1; letter-spacing: var(--tracking-tight);
+    }
+    .rec-single-weather {
+      display: inline-flex; align-items: center; gap: 5px;
+      margin-top: 8px; padding: 4px 10px;
+      background: rgba(255,255,255,0.8); border-radius: 999px;
+      border: 1px solid rgba(139,111,208,0.15);
+      font-size: var(--text-xs); color: var(--color-text-secondary);
+    }
+    .rec-single-weather-loading {
+      margin-top: 8px; font-size: var(--text-xs); color: var(--color-text-tertiary);
+    }
+    .rec-reason {
+      font-size: var(--text-sm); color: var(--color-text-secondary);
+      line-height: 1.65; margin-bottom: 14px; padding: 0 2px;
+      font-style: italic;
+    }
+    .rec-goto {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      width: 100%; padding: 12px;
+      background: var(--lavender-300); color: var(--lavender-700);
+      border: none; border-radius: var(--radius-full);
+      font-family: var(--font-heading); font-size: var(--text-sm); font-weight: 600;
+      letter-spacing: var(--tracking-wide); text-decoration: none; cursor: pointer;
+      transition: background .15s, box-shadow .15s; display: flex;
+    }
+    .rec-goto:hover { background: var(--lavender-400); color: #fff; box-shadow: var(--shadow-brand); }
+    .rec-loading {
+      text-align: center; padding: 24px 0;
+      font-size: var(--text-sm); color: var(--color-text-tertiary);
+    }
+    .rec-loading-dot {
+      display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--lavender-300); margin: 0 2px;
+      animation: recDot 1.2s ease-in-out infinite;
+    }
+    .rec-loading-dot:nth-child(2) { animation-delay: .2s; }
+    .rec-loading-dot:nth-child(3) { animation-delay: .4s; }
+    @keyframes recDot { 0%,80%,100% { opacity:.2; transform:scale(.8); } 40% { opacity:1; transform:scale(1); } }
+
+    /* 로그인 유도 팝업 */
+    .login-req-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(42,31,72,0.45); backdrop-filter: blur(6px);
+      z-index: var(--z-modal); align-items: center; justify-content: center;
+    }
+    .login-req-overlay.show { display: flex; }
+    .login-req-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-10) var(--space-10) var(--space-8);
+      text-align: center; max-width: 300px; width: 88%;
+      box-shadow: var(--shadow-xl);
+      animation: slideUp 0.22s var(--ease-out);
+    }
+    .login-req-icon {
+      width: 52px; height: 52px; background: var(--lavender-100);
+      border-radius: var(--radius-full);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto var(--space-4); font-size: 1.4rem;
+    }
+    .login-req-title {
+      font-family: var(--font-display); font-style: italic;
+      font-size: var(--text-xl); color: var(--color-text-primary);
+      margin-bottom: var(--space-2);
+    }
+    .login-req-sub {
+      font-size: var(--text-sm); color: var(--color-text-secondary);
+      line-height: var(--leading-normal); margin-bottom: var(--space-6);
+    }
+    .login-req-btns { display: flex; flex-direction: column; gap: 8px; }
+    .login-req-btn-primary {
+      display: block; width: 100%; padding: var(--space-3) var(--space-6);
+      background: var(--lavender-300); color: var(--lavender-700);
+      border: none; border-radius: var(--radius-full);
+      font-family: var(--font-heading); font-size: var(--text-sm); font-weight: 600;
+      letter-spacing: var(--tracking-wide); cursor: pointer; text-decoration: none;
+      transition: background .15s, box-shadow .15s;
+    }
+    .login-req-btn-primary:hover { background: var(--lavender-400); color: #fff; box-shadow: var(--shadow-brand); }
+    .login-req-btn-secondary {
+      display: block; width: 100%; padding: var(--space-3) var(--space-6);
+      background: none; color: var(--color-text-tertiary);
+      border: 1px solid var(--color-border); border-radius: var(--radius-full);
+      font-family: var(--font-heading); font-size: var(--text-sm); font-weight: 500;
+      cursor: pointer; text-decoration: none;
+      transition: border-color .15s, color .15s;
+    }
+    .login-req-btn-secondary:hover { border-color: var(--lavender-300); color: var(--lavender-500); }
+    .login-req-close {
+      margin-top: 10px; background: none; border: none; cursor: pointer;
+      font-size: var(--text-xs); color: var(--color-text-tertiary);
+      font-family: var(--font-heading);
+    }
+    .login-req-close:hover { color: var(--color-text-secondary); }
+
+    /* ══════════════════════════════
+       COMING SOON POPUP
+    ══════════════════════════════ */
+    .cs-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(42, 31, 72, 0.40);
+      backdrop-filter: blur(4px);
+      z-index: var(--z-modal);
+      align-items: center; justify-content: center;
+    }
+    .cs-overlay.show { display: flex; }
+    .cs-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-10) var(--space-10) var(--space-8);
+      text-align: center;
+      max-width: 300px; width: 88%;
+      box-shadow: var(--shadow-xl);
+      animation: slideUp 0.22s var(--ease-out);
+    }
+    @keyframes slideUp {
+      from { transform: translateY(16px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    .cs-icon {
+      width: 48px; height: 48px;
+      background: var(--lavender-100);
+      border-radius: var(--radius-full);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto var(--space-5);
+    }
+    .cs-title {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: var(--text-2xl);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-3);
+      letter-spacing: var(--tracking-tight);
+    }
+    .cs-sub {
+      font-size: var(--text-sm);
+      color: var(--color-text-secondary);
+      line-height: var(--leading-normal);
+    }
+    .cs-btn {
+      margin-top: var(--space-6);
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 100%;
+      padding: var(--space-3) var(--space-6);
+      background: var(--lavender-300);
+      color: var(--lavender-700);
+      border: none; border-radius: var(--radius-full);
+      font-family: var(--font-heading);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      letter-spacing: var(--tracking-wide);
+      cursor: pointer;
+      transition: background var(--dur-fast), box-shadow var(--dur-fast);
+    }
+    .cs-btn:hover {
+      background: var(--lavender-400);
+      color: #fff;
+      box-shadow: var(--shadow-brand);
+    }
+
+    /* ══════════════════════════════
+       TOAST
+    ══════════════════════════════ */
+    .toast-container {
+      position: fixed;
+      bottom: clamp(var(--space-8), 8vw, var(--space-12));
+      left: 50%; transform: translateX(-50%);
+      z-index: var(--z-toast);
+      display: flex; flex-direction: column; gap: var(--space-2);
+      align-items: center;
+      pointer-events: none;
+    }
+    .toast {
+      display: inline-flex; align-items: center; gap: var(--space-3);
+      background: var(--color-text-primary);
+      color: #fff;
+      font-family: var(--font-heading);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      padding: var(--space-3) var(--space-5);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-lg);
+      white-space: nowrap;
+      animation: toastIn 0.25s var(--ease-out);
+    }
+    .toast.removing { animation: toastOut 0.2s var(--ease-in-out) forwards; }
+    @keyframes toastIn  { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes toastOut { from { opacity:1; transform:translateY(0);   } to { opacity:0; transform:translateY(4px); } }
+
+    /* ══════════════════════════════
+       PAGE ENTRY ANIMATION
+    ══════════════════════════════ */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(14px);
+      animation: fadeUp var(--dur-slower) var(--ease-out) forwards;
+    }
+    .fade-up:nth-child(2) { animation-delay: 80ms; }
+    .fade-up:nth-child(3) { animation-delay: 140ms; }
+    .fade-up:nth-child(4) { animation-delay: 200ms; }
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+  
+</style>
+
+</BaseLayout>

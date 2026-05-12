@@ -1,0 +1,36 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = 'HUIHUI Travel — 국내 여행 안내서' } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  {description && <meta name="description" content={description} />}
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3271578034191442" crossorigin="anonymous"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <!-- Design tokens -->
+  <link rel="stylesheet" href="/assets/css/tokens.css" />
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" is:inline></script>
+  <script src="/assets/js/supabase-client.js" is:inline></script>
+
+  <slot name="head" />
+</head>
+<body>
+  <slot />
+</body>
+</html>
