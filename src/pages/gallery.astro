@@ -69,16 +69,16 @@ import Navbar from '../components/Navbar.astro';
   </div>
 </div>
 
-<script>
+<script is:inline>
 const DESTINATIONS = [
-  { id:'yeosu',       nameKo:'여수',   tagline:'남해의 빛과 바다',     storageKey:'trip_yeosu_v1',       url:'trips/yeosu.html',       particle:'을' },
-  { id:'icheon',      nameKo:'이천',   tagline:'도자기와 온천의 고장',  storageKey:'trip_icheon_v1',      url:'trips/icheon.html',      particle:'을' },
-  { id:'paju',        nameKo:'파주',   tagline:'트렌디 아트 나들이',    storageKey:'trip_paju_v1',        url:'trips/paju.html',        particle:'를' },
-  { id:'dongincheon', nameKo:'동인천', tagline:'레트로 감성 골목',      storageKey:'trip_dongincheon_v1', url:'trips/dongincheon.html', particle:'을' },
-  { id:'gangneung',   nameKo:'강릉',   tagline:'커피향 가득한 해변',    storageKey:'trip_gangneung_v1',   url:'trips/gangneung.html',   particle:'을' },
-  { id:'nowon',       nameKo:'노원',   tagline:'노원 나들이',           storageKey:'trip_nowon_v1',        url:'trips/nowon.html',       particle:'을' },
-  { id:'suwon',       nameKo:'수원',   tagline:'역사가 살아있는 도시',  storageKey:'trip_suwon_v1',       url:'trips/suwon.html',       particle:'을' },
-  { id:'daejeon',     nameKo:'대전',   tagline:'대전 여행',             storageKey:'trip_daejeon_v1',      url:'trips/daejeon.html',     particle:'을' },
+  { id:'yeosu',       nameKo:'여수',   tagline:'남해의 빛과 바다',     storageKey:'trip_yeosu_v3',       url:'/trips/yeosu',       particle:'을' },
+  { id:'icheon',      nameKo:'이천',   tagline:'도자기와 온천의 고장',  storageKey:'trip_icheon_v3',      url:'/trips/icheon',      particle:'을' },
+  { id:'paju',        nameKo:'파주',   tagline:'트렌디 아트 나들이',    storageKey:'trip_paju_v1',        url:'/trips/paju',        particle:'를' },
+  { id:'dongincheon', nameKo:'동인천', tagline:'레트로 감성 골목',      storageKey:'trip_dongincheon_v1', url:'/trips/dongincheon', particle:'을' },
+  { id:'gangneung',   nameKo:'강릉',   tagline:'커피향 가득한 해변',    storageKey:'trip_gangneung_v1',   url:'/trips/gangneung',   particle:'을' },
+  { id:'nowon',       nameKo:'노원',   tagline:'노원 나들이',           storageKey:'trip_nowon_v1',       url:'/trips/nowon',       particle:'을' },
+  { id:'suwon',       nameKo:'수원',   tagline:'역사가 살아있는 도시',  storageKey:'trip_suwon_v1',       url:'/trips/suwon',       particle:'을' },
+  { id:'daejeon',     nameKo:'대전',   tagline:'대전 여행',             storageKey:'trip_daejeon_v1',     url:'/trips/daejeon',     particle:'을' },
 ];
 
 /* ── DATA ── */
@@ -104,18 +104,34 @@ function _probeImg(src) {
   });
 }
 
-/* ── 드래그 스크롤 (PC 마우스 전용, 터치는 브라우저 네이티브 처리) ──
-   ※ setPointerCapture 미사용: 사용하면 pointerup이 rack으로 리다이렉트되어
-      key-item의 onclick(click 이벤트)이 발생하지 않는 버그가 있음.
-      대신 window 레벨 pointermove/pointerup을 동적으로 붙였다 뗌.         */
+/* ── PC 드래그: 카드 단위 이동 (터치는 브라우저 네이티브 처리) ── */
 let _pDelta = 0;
 function _initDragScroll(rack) {
-  let active = false, startX = 0, startSL = 0;
+  let active = false, startX = 0, startSL = 0, _delta = 0;
+
+  /* 드래그 방향으로 한 칸 이동 */
+  function _stepCard(dir) {
+    const rr = rack.getBoundingClientRect();
+    const vc = rr.left + rr.width / 2;
+    const items = [...rack.querySelectorAll('.key-item')];
+    let centerItem = null, minD = Infinity;
+    items.forEach(el => {
+      const ir = el.getBoundingClientRect();
+      const d = Math.abs(ir.left + ir.width / 2 - vc);
+      if (d < minD) { minD = d; centerItem = el; }
+    });
+    if (!centerItem) return _snapNearest(rack);
+    const idx = items.indexOf(centerItem);
+    const target = items[idx + dir];
+    if (!target) return _snapNearest(rack);
+    const ir = target.getBoundingClientRect();
+    rack.scrollTo({ left: rack.scrollLeft + (ir.left + ir.width / 2 - vc), behavior: 'smooth' });
+  }
 
   function onMove(e) {
     if (!active || e.pointerType === 'touch') return;
-    _pDelta = startX - e.clientX;
-    rack.scrollLeft = startSL + _pDelta;
+    _delta = startX - e.clientX;
+    rack.scrollLeft = startSL + _delta;
   }
   function onUp(e) {
     if (!active) return;
@@ -124,12 +140,17 @@ function _initDragScroll(rack) {
     rack.style.scrollSnapType = '';
     window.removeEventListener('pointermove', onMove);
     window.removeEventListener('pointerup',   onUp);
-    if (Math.abs(_pDelta) > 6) _snapNearest(rack);
+    _pDelta = _delta;
+    if (Math.abs(_delta) > 40) {
+      _stepCard(_delta > 0 ? 1 : -1); // 충분히 드래그했으면 한 칸 이동
+    } else {
+      _snapNearest(rack); // 조금만 움직였으면 현재 카드로 복귀
+    }
   }
 
   rack.addEventListener('pointerdown', e => {
-    _pDelta = 0; // 항상 초기화 (이전 드래그 값 잔류 방지)
-    if (e.pointerType === 'touch') return; // 터치는 네이티브에 위임
+    _pDelta = 0; _delta = 0;
+    if (e.pointerType === 'touch') return;
     active = true; startX = e.clientX; startSL = rack.scrollLeft;
     rack.style.scrollSnapType = 'none';
     rack.style.cursor = 'grabbing';
@@ -184,7 +205,7 @@ async function renderKeyRack() {
 
   /* 키 이미지 존재 여부 병렬 체크 */
   const probeResults = await Promise.all(
-    DESTINATIONS.map(dest => _probeImg(`assets/keys/${dest.id}.png`))
+    DESTINATIONS.map(dest => _probeImg(`/assets/keys/${dest.id}.png`))
   );
 
   function makeKeyHtml(dest, i) {
