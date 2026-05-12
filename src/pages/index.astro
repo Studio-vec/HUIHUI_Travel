@@ -358,7 +358,7 @@ import Footer from '../components/Footer.astro';
 
       document.getElementById('recContent').innerHTML = `
         <div class="rec-single-hero">
-          ${imgTag}
+          <div class="rec-key-stage">${imgTag}</div>
           <div class="rec-single-info">
             <div class="rec-single-no">No.${noStr}</div>
             <div class="rec-single-name">${trip.nameKo}</div>
@@ -1006,31 +1006,39 @@ import Footer from '../components/Footer.astro';
     .rec-sub { font-size: var(--text-xs); color: var(--color-text-tertiary); margin-top: 3px; }
     /* 단일 추천 카드 */
     .rec-single-hero {
-      display: flex; align-items: flex-start; gap: 16px;
-      padding: 14px 16px; border-radius: var(--radius-xl);
+      display: flex; align-items: center; gap: 18px;
+      padding: 16px 16px 14px; border-radius: var(--radius-xl);
       background: var(--lavender-50);
       border: 1px solid rgba(139,111,208,0.12);
       margin-bottom: 14px;
     }
+    /* 키 이미지 스테이지 — 세로로 긴 키 헤드 위주로 표시 */
+    .rec-key-stage {
+      flex-shrink: 0;
+      width: 72px; height: 130px;
+      display: flex; align-items: flex-start; justify-content: center;
+      overflow: hidden;
+    }
     .rec-single-key {
-      width: 52px; flex-shrink: 0; object-fit: contain;
+      height: 130px; width: auto; max-width: 72px;
+      object-fit: contain; object-position: top center;
     }
     .rec-single-key-placeholder {
-      width: 52px; height: 72px; flex-shrink: 0; border-radius: 8px;
+      width: 72px; height: 130px; flex-shrink: 0; border-radius: 8px;
       background: linear-gradient(160deg, var(--lavender-200), var(--lavender-400));
       display: flex; align-items: center; justify-content: center;
-      font-family: var(--font-display); font-style: italic; font-size: 1.1rem; color: white;
+      font-family: var(--font-display); font-style: italic; font-size: 1.4rem; color: white;
     }
     .rec-single-info { flex: 1; min-width: 0; }
-    .rec-single-no { font-size: 10px; color: var(--color-text-tertiary); letter-spacing: .12em; margin-bottom: 2px; }
+    .rec-single-no { font-size: 10px; color: var(--color-text-tertiary); letter-spacing: .12em; margin-bottom: 4px; }
     .rec-single-name {
       font-family: var(--font-display); font-style: italic;
-      font-size: 1.7rem; color: var(--color-text-primary);
+      font-size: 2rem; color: var(--color-text-primary);
       line-height: 1.1; letter-spacing: var(--tracking-tight);
     }
     .rec-single-weather {
       display: inline-flex; align-items: center; gap: 5px;
-      margin-top: 8px; padding: 4px 10px;
+      margin-top: 10px; padding: 4px 10px;
       background: rgba(255,255,255,0.8); border-radius: 999px;
       border: 1px solid rgba(139,111,208,0.15);
       font-size: var(--text-xs); color: var(--color-text-secondary);

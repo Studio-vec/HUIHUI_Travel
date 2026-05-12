@@ -1,4 +1,4 @@
----
+﻿---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Navbar from '../../components/Navbar.astro';
 
@@ -124,7 +124,7 @@ const _body = `
     <div class="bottom-nav">
         <button class="nav-btn" @click="playArt" :disabled="allPhotos.length === 0">모아보기</button>
         <button :class="['nav-btn', isVisited ? 'done' : (allPhotos.length > 0 ? 'complete' : '')]"
-                :disabled="!isVisited && allPhotos.length === 0" @click="toggleVisited">
+                @click="toggleVisited">
             {{ isVisited ? '완료됨 ✓' : '여행 완료' }}
         </button>
     </div>
