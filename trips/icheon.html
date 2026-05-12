@@ -60,21 +60,36 @@
             </div>
             <template v-for="p in day.places" :key="p.id">
                 <div class="place-row" :class="{ active: currentPlace?.id === p.id }">
-                    <span class="place-time">{{ p.time }}</span>
-                    <div class="place-body">
-                        <div class="place-name-row">
-                            <span class="place-name">{{ p.name }}</span>
-                            <span class="place-tag" :class="'tag-' + p.theme_id">{{ p.theme }}</span>
+                    <div class="place-row-inner" @click="toggleExpand(p.id)">
+                        <span class="place-time">{{ p.time }}</span>
+                        <div class="place-body">
+                            <div class="place-name-row">
+                                <span class="place-name">{{ p.name }}</span>
+                                <span class="place-tag" :class="'tag-' + p.theme_id">{{ p.theme }}</span>
+                            </div>
+                            <div class="place-tip">{{ p.tip }}</div>
                         </div>
-                        <div class="place-tip">{{ p.tip }}</div>
+                        <svg class="expand-chevron" :class="{ open: expandedId === p.id }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        <div class="photo-slot" :class="{ 'has-img': p.photo }" @click.stop="p.photo ? null : clickUpload(p.id)">
+                            <img v-if="p.photo" :src="p.photo" alt="" @touchstart.prevent="startPress(p.id)" @touchend="endPress()" @mousedown="startPress(p.id)" @mouseup="endPress()" @mouseleave="endPress()" @contextmenu.prevent>
+                            <svg v-else class="photo-slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                                <circle cx="12" cy="13" r="4"/>
+                            </svg>
+                            <input type="file" :id="'file-'+p.id" hidden accept="image/*" @change="uploadPhoto($event, p.id)">
+                        </div>
                     </div>
-                    <div class="photo-slot" :class="{ 'has-img': p.photo }" @click="p.photo ? null : clickUpload(p.id)">
-                        <img v-if="p.photo" :src="p.photo" alt="" @touchstart.prevent="startPress(p.id)" @touchend="endPress()" @mousedown="startPress(p.id)" @mouseup="endPress()" @mouseleave="endPress()" @contextmenu.prevent>
-                        <svg v-else class="photo-slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                            <circle cx="12" cy="13" r="4"/>
-                        </svg>
-                        <input type="file" :id="'file-'+p.id" hidden accept="image/*" @change="uploadPhoto($event, p.id)">
+                    <div class="place-expand" :class="{ open: expandedId === p.id }">
+                        <div v-if="p.enjoyTip" class="expand-enjoy">{{ p.enjoyTip }}</div>
+                        <div v-if="p.details && p.details.length" class="expand-details">
+                            <div v-for="d in p.details" :key="d.label" class="expand-item">
+                                <span class="expand-item-icon">{{ d.icon }}</span>
+                                <div class="expand-item-content">
+                                    <span class="expand-item-label">{{ d.label }}</span>
+                                    <span class="expand-item-value">{{ d.value }}</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div v-if="p.transitTo" class="transit-row" :class="p.transitTo.type">
@@ -159,36 +174,52 @@ createTripApp({
     schedule: [
     { places: [
         { id:'i1-1', time:'13:10', name:'이천역 · 터미널 도착',  theme:'도착',  theme_id:'view',  tip:'택시 승강장에서 바로 탑승', enjoyTip:'이천도자예술마을 2번 게이트 관광안내소로 이동해 짐 맡기기', photo:null, h:13.1,
-          transitTo:{ type:'taxi', icon:'🚕', desc:'택시 · 약 15분 · 약 1.2만원' } },
-        { id:'i1-2', time:'13:30', name:'시래마루 이천본점',      theme:'식사',  theme_id:'food',  tip:'시래기 밥상 한정식', enjoyTip:'솥밥에 나물과 된장 소스 넣고 비빔밥 만들어 먹기!', photo:null, h:13.5 },
-        { id:'i1-3', time:'15:00', name:'이천도자예술마을',        theme:'쇼핑',  theme_id:'shop',  tip:'공방 체험은 미리 예약하기', enjoyTip:'쇼핑 강력 추천: 토화담, 우화', photo:null, h:15 },
+          transitTo:{ type:'taxi', icon:'🚕', desc:'택시 · 약 15분 · 약 1.2만원' },
+          details:[ { icon:'💡', label:'짐 보관', value:'2번 게이트 관광안내소에 짐 맡기기 — 신의 한 수!' }, { icon:'🚕', label:'택시 팁', value:'이천도자예술마을 2번 게이트. 명확한 위치 지정하면 기사님이 잘 찾음' } ] },
+        { id:'i1-2', time:'13:30', name:'시래마루 이천본점',      theme:'식사',  theme_id:'food',  tip:'시래기 밥상 한정식', enjoyTip:'솥밥에 나물과 된장 소스 넣고 비빔밥 만들어 먹기!', photo:null, h:13.5,
+          details:[ { icon:'🕐', label:'운영 시간', value:'11:00–21:00 (브레이크타임 15:00–17:00)' }, { icon:'🍚', label:'추천 메뉴', value:'시래기 밥상 한정식 · 솥밥에 나물+된장 소스 넣어 비빔밥으로' } ] },
+        { id:'i1-3', time:'15:00', name:'이천도자예술마을',        theme:'쇼핑',  theme_id:'shop',  tip:'공방 체험은 미리 예약하기', enjoyTip:'쇼핑 강력 추천: 토화담, 우화', photo:null, h:15,
+          details:[ { icon:'🕐', label:'운영 시간', value:'10:00–18:00 (월요일 휴무)' }, { icon:'📞', label:'공방 예약', value:'방문 전 온라인 또는 전화 예약 필수' }, { icon:'🛍️', label:'쇼핑 추천', value:'토화담, 우화 — 도자기 쇼핑 강력 추천' } ] },
         { id:'i1-4', time:'16:30', name:'2번 게이트 짐 찾기',      theme:'이동',  theme_id:'view',  tip:'관광안내소에서 짐 찾아 택시 호출', enjoyTip:'나오기 20분 전, 장작집에 미리 전화 포장 주문!', photo:null, h:16.5,
-          transitTo:{ type:'taxi', icon:'🚕', desc:'택시 · 약 15분 · 약 1.3만원' } },
+          transitTo:{ type:'taxi', icon:'🚕', desc:'택시 · 약 15분 · 약 1.3만원' },
+          details:[ { icon:'⏰', label:'핵심 타이밍', value:'이진상회 나오기 20분 전, 장작집에 전화 포장 주문!' } ] },
         { id:'i1-5', time:'17:00', name:'이진상회',                theme:'카페',  theme_id:'cafe',  tip:'이천 쌀빵 전문 카페', enjoyTip:'쌀식빵·쌀크로플·계란프라이·가마솥 치즈케이크 + 도자기 그릇 GET', photo:null, h:17,
-          transitTo:{ type:'taxi', icon:'🚕', desc:'택시 · 약 7분' } },
+          transitTo:{ type:'taxi', icon:'🚕', desc:'택시 · 약 7분' },
+          details:[ { icon:'🕐', label:'운영 시간', value:'10:00–19:00 (화요일 휴무)' }, { icon:'🍞', label:'추천 메뉴', value:'쌀식빵·쌀크로플·계란프라이·가마솥 치즈케이크' }, { icon:'🏺', label:'쇼핑', value:'예쁜 도자기 그릇도 판매 중' } ] },
         { id:'i1-6', time:'18:30', name:'장작집 마장점',           theme:'식사',  theme_id:'food',  tip:'청양크림누룽지 포장 픽업. 맵찔이는 덜 맵게 요청!', enjoyTip:'근처 편의점에서 맥주와 주전부리 미리 사기 (호텔 근처 편의점 없음)', photo:null, h:18.5,
-          transitTo:{ type:'choice', icon:'🚕', desc:'도보 약 25분 또는 택시 5분 — 짐 있으면 택시 추천' } },
-        { id:'i1-7', time:'19:10', name:'에덴파라다이스 호텔',     theme:'숙소',  theme_id:'party', tip:'체크인 후 치맥 + 넷플릭스 파티!', enjoyTip:'호텔 근처에 편의점이 없으니 맥주는 장작집 근처에서 반드시 구입', photo:null, h:19.1 }
+          transitTo:{ type:'choice', icon:'🚕', desc:'도보 약 25분 또는 택시 5분 — 짐 있으면 택시 추천' },
+          details:[ { icon:'📞', label:'포장 주문', value:'방문 20분 전 전화 필수' }, { icon:'🌶️', label:'추천 메뉴', value:'청양크림누룽지+시금치·파스타 추가 / 맵찔이는 덜 맵게 요청' }, { icon:'🍺', label:'맥주 쇼핑', value:'근처 편의점에서 맥주 구입 필수 (호텔 근처에 없음)' } ] },
+        { id:'i1-7', time:'19:10', name:'에덴파라다이스 호텔',     theme:'숙소',  theme_id:'party', tip:'체크인 후 치맥 + 넷플릭스 파티!', enjoyTip:'호텔 근처에 편의점이 없으니 맥주는 장작집 근처에서 반드시 구입', photo:null, h:19.1,
+          details:[ { icon:'🕐', label:'체크인/아웃', value:'체크인 15:00 · 체크아웃 11:00' }, { icon:'🎬', label:'시설', value:'객실 내 넷플릭스 이용 가능' }, { icon:'🏪', label:'주의', value:'호텔 근처 편의점 없음 — 맥주는 미리 구입' } ] }
     ]},
     { places: [
         { id:'i2-1', time:'11:00', name:'나츠카페',                theme:'카페',  theme_id:'cafe',  tip:'호텔에서 택시 약 10분', enjoyTip:'시즌 한정 음료 확인. 분위기 좋은 야외 테라스 자리 추천!', photo:null, h:11,
-          transitTo:{ type:'choice', icon:'🚕', desc:'도보 약 30분 (설봉공원 산책 코스) 또는 택시 7분' } },
+          transitTo:{ type:'choice', icon:'🚕', desc:'도보 약 30분 (설봉공원 산책 코스) 또는 택시 7분' },
+          details:[ { icon:'🕐', label:'운영 시간', value:'10:00–21:00' }, { icon:'☕', label:'추천', value:'시즌 한정 음료 확인. 야외 테라스 자리 추천' } ] },
         { id:'i2-2', time:'12:30', name:'이천시립박물관',           theme:'관광',  theme_id:'view',  tip:'2층 도자기 기획전 위주 관람 (무료 입장)', enjoyTip:'설봉공원 코스로 도보 이동도 추천!', photo:null, h:12.5,
-          transitTo:{ type:'taxi', icon:'🚕', desc:'택시 · 약 10분' } },
+          transitTo:{ type:'taxi', icon:'🚕', desc:'택시 · 약 10분' },
+          details:[ { icon:'🕐', label:'운영 시간', value:'09:00–18:00 (월요일·공휴일 다음날 휴무)' }, { icon:'💰', label:'입장료', value:'무료' }, { icon:'🏺', label:'추천 코스', value:'2층 도자기 기획전 위주 관람' } ] },
         { id:'i2-3', time:'14:30', name:'부산얼크니샤브칼국수',    theme:'식사',  theme_id:'food',  tip:'칼국수에 미나리·버섯 추가', enjoyTip:'마지막은 볶음밥으로 마무리!', photo:null, h:14.5,
-          transitTo:{ type:'taxi', icon:'🚕', desc:'택시 · 약 10분' } },
+          transitTo:{ type:'taxi', icon:'🚕', desc:'택시 · 약 10분' },
+          details:[ { icon:'🍜', label:'추천 메뉴', value:'칼국수에 미나리·버섯 추가 / 마지막은 볶음밥으로 마무리' } ] },
         { id:'i2-4', time:'16:00', name:'티하우스에덴',             theme:'카페',  theme_id:'cafe',  tip:'호텔 정원에서 밀크티와 마카롱으로 당 충전', enjoyTip:'호텔 정원 산책 후 여유로운 오후 휴식', photo:null, h:16,
-          transitTo:{ type:'taxi', icon:'🚕', desc:'택시 · 약 8분' } },
-        { id:'i2-5', time:'20:30', name:'별빛정원 우주',            theme:'관광',  theme_id:'view',  tip:'야간 조명 테마파크', enjoyTip:'입장 후 분수쇼 시간 먼저 확인! 삼각대 지참 추천', photo:null, h:20.5 }
+          transitTo:{ type:'taxi', icon:'🚕', desc:'택시 · 약 8분' },
+          details:[ { icon:'🕐', label:'운영 시간', value:'10:00–21:00' }, { icon:'☕', label:'추천 메뉴', value:'밀크티+마카롱 조합' }, { icon:'🌿', label:'팁', value:'호텔 정원 산책 후 티타임 추천' } ] },
+        { id:'i2-5', time:'20:30', name:'별빛정원 우주',            theme:'관광',  theme_id:'view',  tip:'야간 조명 테마파크', enjoyTip:'입장 후 분수쇼 시간 먼저 확인! 삼각대 지참 추천', photo:null, h:20.5,
+          details:[ { icon:'🕐', label:'운영 시간', value:'일몰 후 입장 (계절마다 상이)' }, { icon:'💰', label:'입장료', value:'성인 15,000원 (네이버 예매 시 할인)' }, { icon:'📷', label:'포토 팁', value:'분수쇼 시간 먼저 확인! 삼각대 지참 강력 추천' } ] }
     ]},
     { places: [
         { id:'i3-1', time:'11:00', name:'호텔 체크아웃',            theme:'이동',  theme_id:'view',  tip:'테르메덴 대형 락커 이용 가능 — 짐 걱정 없음', enjoyTip:'짐 챙겨 체크아웃 후 택시 호출', photo:null, h:11,
-          transitTo:{ type:'taxi', icon:'🚕', desc:'택시 · 약 20분 · 약 1.8만원' } },
-        { id:'i3-2', time:'11:30', name:'테르메덴 스파',            theme:'체험',  theme_id:'spa',   tip:'네이버 예매로 할인. 수영복 필수, 짐은 락커 보관', enjoyTip:'평일 오전이 가장 한산!', photo:null, h:11.5 },
+          transitTo:{ type:'taxi', icon:'🚕', desc:'택시 · 약 20분 · 약 1.8만원' },
+          details:[ { icon:'🕐', label:'체크아웃', value:'11:00 전 완료' }, { icon:'🎒', label:'짐 보관', value:'테르메덴 대형 락커 이용 가능' } ] },
+        { id:'i3-2', time:'11:30', name:'테르메덴 스파',            theme:'체험',  theme_id:'spa',   tip:'네이버 예매로 할인. 수영복 필수, 짐은 락커 보관', enjoyTip:'평일 오전이 가장 한산!', photo:null, h:11.5,
+          details:[ { icon:'🕐', label:'운영 시간', value:'07:00–22:00 (연중무휴)' }, { icon:'💰', label:'할인', value:'네이버 예매 시 할인' }, { icon:'🩱', label:'준비물', value:'수영복 필수 · 짐은 대형 락커 보관 가능' }, { icon:'💡', label:'팁', value:'평일 오전이 가장 한산' } ] },
         { id:'i3-3', time:'15:30', name:'시몬스 테라스',            theme:'카페',  theme_id:'cafe',  tip:'도보 2분 — 테르메덴 바로 옆', enjoyTip:'블루베리 스무디 & 꾸덕 초코케이크 조합 추천. 포토존 사진 찍기', photo:null, h:15.5,
-          transitTo:{ type:'choice', icon:'🚕', desc:'도보 약 15분 또는 택시 3분' } },
+          transitTo:{ type:'choice', icon:'🚕', desc:'도보 약 15분 또는 택시 3분' },
+          details:[ { icon:'🕐', label:'운영 시간', value:'10:00–19:00 (월요일 휴무)' }, { icon:'☕', label:'추천 메뉴', value:'블루베리 스무디 & 꾸덕 초코케이크 조합' }, { icon:'📸', label:'포토존', value:'야외 포토존 인생샷 필수' } ] },
         { id:'i3-4', time:'18:00', name:'미솥지음 이천',            theme:'식사',  theme_id:'food',  tip:'버섯 솥밥 또는 소고기 솥밥으로 여행의 피날레!', enjoyTip:'천천히 음미하며 이천 여행 마무리', photo:null, h:18,
-          transitTo:{ type:'taxi', icon:'🚕', desc:'택시로 이천역 또는 터미널 이동 후 귀가' } },
+          transitTo:{ type:'taxi', icon:'🚕', desc:'택시로 이천역 또는 터미널 이동 후 귀가' },
+          details:[ { icon:'🕐', label:'운영 시간', value:'11:30–20:30 (브레이크타임 15:00–17:00)' }, { icon:'🍚', label:'추천 메뉴', value:'버섯 솥밥 또는 소고기 솥밥' } ] },
         { id:'i3-5', time:'19:30', name:'이천역 · 터미널 귀가',    theme:'복귀',  theme_id:'view',  tip:'이천 여행 완료 ✦', enjoyTip:'다음 이천 방문도 기대해요', photo:null, h:19.5 }
     ]}
     ]

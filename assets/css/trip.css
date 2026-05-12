@@ -100,9 +100,13 @@ body {
 .day-date { font-size: 11px; color: var(--ink-3); letter-spacing: 0.08em; }
 
 .place-row {
-    display: flex; align-items: flex-start; gap: 14px;
+    display: flex; flex-direction: column;
     padding: 15px 0; border-bottom: 1px solid var(--line);
     position: relative; transition: padding-left 0.2s;
+}
+.place-row-inner {
+    display: flex; align-items: flex-start; gap: 14px;
+    cursor: pointer;
 }
 .place-row.active { padding-left: 12px; }
 .place-row.active::before {
@@ -227,6 +231,36 @@ body {
 .tag-shop  { background: #eeeedf; color: #4a4a30; }
 .tag-exp   { background: #f0ece2; color: #5a4a28; }
 .tag-spa   { background: #edf0f5; color: #34486a; }
+
+/* ── ACCORDION EXPAND ── */
+.expand-chevron {
+    width: 13px; height: 13px; flex-shrink: 0; margin-top: 5px;
+    color: var(--ink-3); transition: transform 0.22s, color 0.15s;
+}
+.expand-chevron.open { transform: rotate(180deg); color: var(--lavender); }
+
+.place-expand {
+    max-height: 0; overflow: hidden; opacity: 0;
+    padding-left: 52px; /* 38px time + 14px gap — body와 정렬 */
+    transition: max-height 0.28s ease, opacity 0.2s, padding-bottom 0.28s;
+}
+.place-expand.open { max-height: 360px; opacity: 1; padding-bottom: 10px; }
+
+.expand-enjoy {
+    margin-top: 8px; font-size: 12px; color: var(--lavender-dark);
+    background: var(--lavender-light); line-height: 1.55;
+    border-left: 2px solid var(--lavender);
+    padding: 7px 10px; border-radius: 0 4px 4px 0;
+}
+.expand-details { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+.expand-item { display: flex; gap: 8px; align-items: flex-start; }
+.expand-item-icon { font-size: 12px; flex-shrink: 0; width: 16px; text-align: center; margin-top: 1px; }
+.expand-item-content { display: flex; flex-direction: column; gap: 1px; }
+.expand-item-label {
+    font-size: 9px; font-weight: 500; color: var(--ink-3);
+    text-transform: uppercase; letter-spacing: 0.1em;
+}
+.expand-item-value { font-size: 12px; color: var(--ink-2); line-height: 1.4; font-weight: 300; }
 
 /* ── TRANSIT ROW (이동 수단 표시) ── */
 .transit-row {

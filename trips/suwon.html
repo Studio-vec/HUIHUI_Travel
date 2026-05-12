@@ -60,21 +60,36 @@
                 <span class="day-date">{{ getFormattedDate(dIdx) }}</span>
             </div>
             <div v-for="p in day.places" :key="p.id" class="place-row" :class="{ active: currentPlace?.id === p.id }">
-                <span class="place-time">{{ p.time }}</span>
-                <div class="place-body">
-                    <div class="place-name-row">
-                        <span class="place-name">{{ p.name }}</span>
-                        <span class="place-tag" :class="'tag-' + p.theme_id">{{ p.theme }}</span>
+                <div class="place-row-inner" @click="toggleExpand(p.id)">
+                    <span class="place-time">{{ p.time }}</span>
+                    <div class="place-body">
+                        <div class="place-name-row">
+                            <span class="place-name">{{ p.name }}</span>
+                            <span class="place-tag" :class="'tag-' + p.theme_id">{{ p.theme }}</span>
+                        </div>
+                        <div class="place-tip">{{ p.tip }}</div>
                     </div>
-                    <div class="place-tip">{{ p.tip }}</div>
+                    <svg class="expand-chevron" :class="{ open: expandedId === p.id }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    <div class="photo-slot" :class="{ 'has-img': p.photo }" @click.stop="p.photo ? null : clickUpload(p.id)">
+                        <img v-if="p.photo" :src="p.photo" alt="" @touchstart.prevent="startPress(p.id)" @touchend="endPress()" @mousedown="startPress(p.id)" @mouseup="endPress()" @mouseleave="endPress()" @contextmenu.prevent>
+                        <svg v-else class="photo-slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                            <circle cx="12" cy="13" r="4"/>
+                        </svg>
+                        <input type="file" :id="'file-'+p.id" hidden accept="image/*" @change="uploadPhoto($event, p.id)">
+                    </div>
                 </div>
-                <div class="photo-slot" :class="{ 'has-img': p.photo }" @click="p.photo ? null : clickUpload(p.id)">
-                    <img v-if="p.photo" :src="p.photo" alt="" @touchstart.prevent="startPress(p.id)" @touchend="endPress()" @mousedown="startPress(p.id)" @mouseup="endPress()" @mouseleave="endPress()" @contextmenu.prevent>
-                    <svg v-else class="photo-slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                        <circle cx="12" cy="13" r="4"/>
-                    </svg>
-                    <input type="file" :id="'file-'+p.id" hidden accept="image/*" @change="uploadPhoto($event, p.id)">
+                <div class="place-expand" :class="{ open: expandedId === p.id }">
+                    <div v-if="p.enjoyTip" class="expand-enjoy">{{ p.enjoyTip }}</div>
+                    <div v-if="p.details && p.details.length" class="expand-details">
+                        <div v-for="d in p.details" :key="d.label" class="expand-item">
+                            <span class="expand-item-icon">{{ d.icon }}</span>
+                            <div class="expand-item-content">
+                                <span class="expand-item-label">{{ d.label }}</span>
+                                <span class="expand-item-value">{{ d.value }}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -18,6 +18,10 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
             const isVisited     = ref(_getVisitedSet().has(tripUrl));
             const schedule      = ref(initialSchedule);
             const tips          = ref(initialTips || []);
+            const expandedId    = ref(null);
+            const toggleExpand  = (id) => {
+                expandedId.value = expandedId.value === id ? null : id;
+            };
 
             const toggleVisited = () => {
                 if (!isVisited.value && allPhotos.value.length === 0) return;
@@ -150,7 +154,8 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
                 isArtPlaying, playArt, showReport, saveImage, collagePieces,
                 isVisited, toggleVisited,
                 tips, showTipModal, newTipAuthor, newTipText, upvoteTip, submitTip,
-                deleteConfirmId, startPress, endPress, cancelDelete, confirmDelete
+                deleteConfirmId, startPress, endPress, cancelDelete, confirmDelete,
+                expandedId, toggleExpand
             };
         }
     }).mount('#app');
