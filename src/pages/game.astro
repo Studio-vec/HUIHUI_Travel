@@ -32,6 +32,7 @@ import Navbar from '../components/Navbar.astro';
     <div class="detail-emoji" id="detailEmoji"></div>
     <div class="detail-title" id="detailTitle"></div>
     <div class="detail-sub" id="detailSub"></div>
+    <div class="detail-season-tag" id="detailSeason"></div>
     <div class="detail-section-lbl">✈️ 여행 힌트</div>
     <div class="detail-hints" id="detailHints"></div>
     <div class="detail-notice">
@@ -135,10 +136,16 @@ import Navbar from '../components/Navbar.astro';
     <div class="fill-label"><span id="resPctLbl">0% 채움</span><span id="resItemsLbl"></span></div>
   </div>
 
+  <div class="travel-tip-section" id="travelTipSection" style="display:none">
+    <div class="ttp-header">💡 다음엔 이것도 챙겨봐요!</div>
+    <div class="ttp-list" id="ttpList"></div>
+  </div>
+
   <div class="result-btns">
     <button class="btn-outline" onclick="showScreen('screen-start')">🗺️ 다른 여행 도전</button>
     <button class="btn-primary" onclick="startGame()">↺ 같은 여행 다시</button>
   </div>
+  <a class="btn-trip-link" id="resTripLink" href="#">📖 여행 코스 보기</a>
 </div>
 
 <div id="ghost"></div>
@@ -259,104 +266,154 @@ function renderItemDisplay(item, cells, cs, gap, rotation) {
 const SCENARIOS = [
   {
     id:'gangneung',
-    emoji:'🌊', title:'강릉 커플 여행', detail:'2박 3일 · 여름 · 바다', color:'#E8F6FD',
-    hints:['해수욕장 방문 예정 🏖️','카페 거리 투어 ☕','날씨 맑음 35°C ☀️'],
+    keyImg:'/assets/keys/gangneung.png',
+    emoji:'🌊', title:'강릉 힙플 나들이', detail:'2박 3일 · 여름 추천 · 카페 & 바다', color:'#E8F6FD',
+    season:'🌞 여름(7–8월)·봄(5–6월) 추천',
+    hints:['힙한 카페 거리 투어 ☕','강문해변 산책 & 물놀이 🏖️','무더운 여름 35°C ☀️'],
     itemPool:['sunscreen','swimsuit','camera','slippers','sunglasses','towel',
               'shirt','tshirt','jeans','notebook','shoes','pouch',
-              'scarf','jacket','medicine','charger','swim_tube','hair_dryer','hat','gloves'],
+              'scarf','jacket','medicine','charger','swim_tube','hair_dryer','hat','umbrella'],
     bonus:{
-      sunscreen: {points:25, reason:'여름 바다엔 필수! 뜨거운 태양을 막아요'},
-      swimsuit:  {points:25, reason:'해수욕장에서 꼭 필요하죠'},
-      camera:    {points:20, reason:'커플 여행엔 추억 사진이 최고!'},
-      slippers:  {points:20, reason:'강릉 해변 모래사장 산책용'},
+      sunscreen: {points:25, reason:'여름 해변엔 선크림이 1순위!'},
+      camera:    {points:25, reason:'힙한 카페·바다 사진은 필수'},
+      slippers:  {points:20, reason:'해변 모래사장 산책용으로 딱'},
+      swimsuit:  {points:20, reason:'강문해변 물놀이에 꼭 필요'},
       swim_tube: {points:15, reason:'해수욕장 물놀이 안전하게!'},
-      sunglasses:{points:15, reason:'눈부신 여름 바다에 필요해요'},
-      towel:     {points:10, reason:'바다에서 나올 때 꼭 필요!'},
+      sunglasses:{points:10, reason:'눈부신 여름 바다에 필요해요'},
+      towel:     {points:10, reason:'바다에서 나올 때 꼭 필요'},
     }
   },
   {
-    id:'jeju',
-    emoji:'🌺', title:'제주도 혼자 힐링', detail:'3박 4일 · 봄 · 자연', color:'#EAFAF1',
-    hints:['오름 트레킹 예정 🥾','카페 & 독서 힐링 📚','바람 많음 · 소나기 주의 🌬️'],
-    itemPool:['camera','book','hat','sunscreen','shoes','umbrella',
-              'shirt','tshirt','jeans','notebook','pouch','medicine',
-              'charger','snacks','towel','scarf','boots','tripod','slippers','swimsuit'],
+    id:'dongincheon',
+    keyImg:'/assets/keys/dongincheon.png',
+    emoji:'🏘️', title:'동인천 개항로 산책', detail:'당일치기 · 봄·가을 추천 · 레트로', color:'#FDF5EB',
+    season:'🌸 봄(4–5월)·가을(9–10월) 추천',
+    hints:['개항로 레트로 거리 산책 🏛️','빈티지 감성 카페 탐방 ☕','봄날 선선 18°C 🌸'],
+    itemPool:['camera','shoes','jacket','hat','scarf','notebook','pouch',
+              'tshirt','jeans','shirt','medicine','charger','snacks',
+              'sunglasses','umbrella','book','tripod','slippers','sunscreen','sweater'],
     bonus:{
-      camera:  {points:25, reason:'제주 자연 풍경을 꼭 담아요'},
-      book:    {points:20, reason:'힐링 여행엔 독서가 최고!'},
-      boots:   {points:20, reason:'오름 트레킹에 딱!'},
-      hat:     {points:15, reason:'트레킹할 때 햇빛 차단'},
-      tripod:  {points:15, reason:'혼자 여행, 셀카 삼각대 필수!'},
-      umbrella:{points:15, reason:'제주 바람과 소나기 대비'},
-      sunscreen:{points:10, reason:'봄 제주도도 자외선 강해요'},
+      camera:   {points:25, reason:'레트로 거리 인생샷은 필수!'},
+      shoes:    {points:20, reason:'골목골목 걸어다닐 편한 신발'},
+      jacket:   {points:20, reason:'봄·가을 일교차 대비'},
+      tripod:   {points:15, reason:'혼자여도 멋진 사진 찍기'},
+      hat:      {points:15, reason:'햇빛 차단 & 감성 스타일'},
+      notebook: {points:10, reason:'감성 기록도 여행의 일부'},
+      snacks:   {points:10, reason:'걷다 보면 배고프니까'},
     }
   },
   {
-    id:'busan',
-    emoji:'❄️', title:'부산 겨울 여행', detail:'2박 3일 · 겨울 · 친구들과', color:'#EEF2FF',
-    hints:['해운대 야경 감상 🌃','자갈치 시장 투어 🐟','기온 3°C 예상 🧊'],
-    itemPool:['sweater','jacket','scarf','gloves','shoes','umbrella',
-              'shirt','jeans','camera','medicine','pouch','charger',
-              'notebook','hat','snacks','boots','travel_pillow','tshirt','slippers','sunscreen'],
+    id:'icheon',
+    keyImg:'/assets/keys/icheon.png',
+    emoji:'🏺', title:'이천 도자기 & 온천', detail:'당일치기 · 가을·겨울 추천 · 힐링', color:'#F5EEE6',
+    season:'🍁 가을(10–11월)·겨울(12–2월) 추천',
+    hints:['도자기 공방 직접 만들기 🏺','온천 몸 녹이기 ♨️','단풍 드라이브 코스 🍂'],
+    itemPool:['towel','camera','shoes','sweater','jacket','scarf','medicine',
+              'notebook','shirt','jeans','pouch','hat','charger','snacks',
+              'book','slippers','tshirt','umbrella','hair_dryer','travel_pillow'],
     bonus:{
-      sweater:       {points:25, reason:'겨울 부산은 꽤 추워요!'},
-      jacket:        {points:25, reason:'해운대 바닷바람 막아줄 재킷'},
-      scarf:         {points:20, reason:'목 보온 필수템'},
-      boots:         {points:15, reason:'겨울 야외 활동, 발 보온 필수'},
-      travel_pillow: {points:15, reason:'이동 중 편안하게!'},
-      umbrella:      {points:10, reason:'겨울 부산은 비도 잦아요'},
-      camera:        {points:10, reason:'야경 사진 찍으려면 카메라!'},
+      towel:        {points:25, reason:'온천 필수! 개인 수건은 꼭'},
+      sweater:      {points:25, reason:'가을·겨울 이천은 쌀쌀해요'},
+      slippers:     {points:20, reason:'온천 시설 내 편한 이동'},
+      jacket:       {points:15, reason:'온천 후 체온 유지에 필수'},
+      camera:       {points:15, reason:'도자기 만드는 순간 기록'},
+      hair_dryer:   {points:10, reason:'온천 후 머리 말리기'},
+      travel_pillow:{points:10, reason:'귀가 중 숙면 도우미'},
     }
   },
   {
-    id:'seoul',
-    emoji:'💼', title:'서울 비즈니스 출장', detail:'1박 2일 · 가을 · 혼자', color:'#F5F0FF',
-    hints:['중요한 미팅 예정 🤝','정장 착용 필요 👔','호텔 숙박 🏨'],
-    itemPool:['shirt','jacket','jeans','notebook','pouch','medicine',
-              'charger','toothbrush','shoes','belt','camera','umbrella',
-              'snacks','scarf','sweater','hair_dryer','multi_adapter','tshirt','slippers','book'],
+    id:'nowon',
+    keyImg:'/assets/keys/nowon.png',
+    emoji:'🌿', title:'노원 철도&자연 나들이', detail:'당일치기 · 봄·가을 추천 · 산책', color:'#EDF7ED',
+    season:'🌿 봄(4–5월)·가을(9–10월) 추천',
+    hints:['경춘선숲길 피크닉 산책 🌿','불암산·노원 철도공원 📸','봄 햇살 맑음 20°C 🌸'],
+    itemPool:['shoes','hat','camera','snacks','notebook','jacket','tshirt',
+              'jeans','medicine','pouch','sunscreen','sunglasses','tripod',
+              'umbrella','scarf','shirt','slippers','book','towel','charger'],
     bonus:{
-      shirt:       {points:25, reason:'미팅엔 깔끔한 셔츠가 필수!'},
-      jacket:      {points:20, reason:'비즈니스 자리엔 재킷'},
-      notebook:    {points:20, reason:'회의 내용 메모는 기본'},
-      charger:     {points:20, reason:'출장 중 충전기는 필수'},
-      hair_dryer:  {points:15, reason:'호텔 드라이어 믿지 마세요!'},
-      multi_adapter:{points:15, reason:'멀티 충전 필수템'},
-      toothbrush:  {points:10, reason:'1박이라도 칫솔은 챙겨야죠'},
+      shoes:     {points:25, reason:'숲길 산책에 편한 운동화 필수'},
+      hat:       {points:20, reason:'야외 햇빛 차단 & 감성'},
+      camera:    {points:20, reason:'철도공원 포토스팟 기록'},
+      snacks:    {points:15, reason:'피크닉 간식은 필수템!'},
+      sunscreen: {points:15, reason:'봄 자외선도 강해요'},
+      tripod:    {points:10, reason:'혼자 온다면 셀카 삼각대'},
+      umbrella:  {points:10, reason:'갑작스런 봄비 대비'},
     }
   },
   {
-    id:'gapyeong',
-    emoji:'⛺', title:'가평 캠핑', detail:'1박 2일 · 여름 · 친구들과', color:'#F0FAF0',
-    hints:['야외 바베큐 🔥','계곡 물놀이 💦','밤 모닥불 🌙'],
-    itemPool:['hat','towel','medicine','snacks','shoes','sweater',
-              'shirt','tshirt','jeans','camera','slippers','sunscreen',
-              'notebook','scarf','book','pouch','charger','umbrella','swim_tube','boots'],
+    id:'paju',
+    keyImg:'/assets/keys/paju.png',
+    emoji:'🎨', title:'파주 트렌디 나들이', detail:'2박 3일 · 봄·가을 추천 · 아트&쇼핑', color:'#F0EFFC',
+    season:'🍂 봄(4–5월)·가을(9–10월) 추천',
+    hints:['헤이리 예술마을 갤러리 🎨','파주 프리미엄 아울렛 쇼핑 🛍️','임진각 역사 & 자연 🌳'],
+    itemPool:['camera','shoes','jacket','scarf','jeans','shirt','notebook',
+              'pouch','hat','medicine','charger','snacks','tripod','book',
+              'sweater','tshirt','umbrella','sunglasses','slippers','travel_pillow'],
     bonus:{
-      hat:       {points:25, reason:'야외 캠핑엔 모자가 필수!'},
-      towel:     {points:20, reason:'계곡 물놀이 후 꼭 필요'},
-      medicine:  {points:20, reason:'야외에선 상비약을 꼭 챙겨요'},
-      snacks:    {points:20, reason:'캠핑 간식은 필수템!'},
-      swim_tube: {points:15, reason:'계곡 물놀이 안전하게!'},
-      shoes:     {points:10, reason:'계곡 지형을 위한 튼튼한 신발'},
-      sweater:   {points:10, reason:'밤에 모닥불 앞이라도 쌀쌀해요'},
+      camera:       {points:25, reason:'헤이리 갤러리·가을 단풍 촬영'},
+      jacket:       {points:20, reason:'선선한 가을 파주 필수템'},
+      shoes:        {points:20, reason:'아울렛·예술마을 많이 걸어요'},
+      notebook:     {points:15, reason:'갤러리 감상 메모 & 일정 기록'},
+      tripod:       {points:15, reason:'2박3일 여행, 사진 퀄리티 UP'},
+      scarf:        {points:10, reason:'가을 일교차 목 보온'},
+      travel_pillow:{points:10, reason:'이동 많을 때 목 편안하게'},
+    }
+  },
+  {
+    id:'suwon',
+    keyImg:'/assets/keys/suwon.png',
+    emoji:'🏰', title:'수원 트렌디 나들이', detail:'당일치기 · 봄·가을 추천 · 역사&카페', color:'#FCEEE8',
+    season:'🌸 봄(4–5월)·가을(9–10월) 추천',
+    hints:['화성 성곽길 걷기 🏰','행리단길 감성 카페 투어 ☕','봄꽃 시즌 인증샷 📸'],
+    itemPool:['camera','shoes','hat','jacket','snacks','notebook','sunscreen',
+              'tshirt','jeans','shirt','pouch','medicine','tripod','charger',
+              'scarf','sunglasses','umbrella','slippers','boots','book'],
+    bonus:{
+      camera:    {points:25, reason:'화성 성곽·봄꽃 인생샷 필수'},
+      shoes:     {points:20, reason:'성곽길 걷기엔 편한 신발'},
+      hat:       {points:20, reason:'화성 야외 코스, 햇빛 차단'},
+      snacks:    {points:15, reason:'행리단길 간식 투어 즐기기'},
+      tripod:    {points:15, reason:'성곽 배경 인증샷 퀄리티 UP'},
+      jacket:    {points:10, reason:'봄 저녁 일교차 대비'},
+      sunscreen: {points:10, reason:'봄 야외 코스, 자외선 차단'},
     }
   },
   {
     id:'yeosu',
-    emoji:'🐟', title:'여수 가족 여행', detail:'2박 3일 · 가을 · 가족과', color:'#F0FBFC',
-    hints:['여수 밤바다 감상 🌊','해산물 식도락 🍤','아이들과 함께 👨‍👩‍👧'],
-    itemPool:['camera','umbrella','medicine','snacks','sweater','slippers',
-              'shirt','jeans','shoes','tshirt','hat','towel',
-              'charger','notebook','sunscreen','sunglasses','tripod','multi_adapter','book','pouch'],
+    keyImg:'/assets/keys/yeosu.png',
+    emoji:'🌊', title:'여수 밤바다 나들이', detail:'1박 2일 · 여름·가을 추천 · 밤바다', color:'#EEF8FC',
+    season:'🌊 여름(7–8월)·가을(9–10월) 추천',
+    hints:['여수 밤바다 & 낭만포차 🌃','오동도·돌산공원 일몰 🌅','해산물 식도락 🦞'],
+    itemPool:['camera','umbrella','sweater','slippers','sunglasses','shoes',
+              'medicine','snacks','charger','notebook','pouch','shirt',
+              'tshirt','jeans','sunscreen','hat','tripod','multi_adapter','swim_tube','jacket'],
     bonus:{
-      camera:       {points:25, reason:'가족 여행의 소중한 순간을!'},
-      umbrella:     {points:25, reason:'여수는 비 소식이 있어요'},
-      medicine:     {points:20, reason:'가족 중 아픈 사람 대비'},
-      snacks:       {points:20, reason:'아이들 간식은 필수!'},
-      tripod:       {points:15, reason:'가족사진 퀄리티 UP!'},
-      multi_adapter:{points:10, reason:'온 가족 충전 한 번에'},
-      sweater:      {points:10, reason:'가을 여수 밤바다는 쌀쌀해요'},
+      camera:       {points:25, reason:'밤바다·일몰 사진은 이 여행의 핵심'},
+      umbrella:     {points:20, reason:'여수는 비가 자주 와요'},
+      sweater:      {points:20, reason:'밤바다 해풍은 생각보다 쌀쌀'},
+      slippers:     {points:15, reason:'해변·포차 거리 편하게'},
+      tripod:       {points:15, reason:'밤바다 야경 장노출 촬영'},
+      sunglasses:   {points:10, reason:'낮 오동도·케이블카 햇빛 차단'},
+      snacks:       {points:10, reason:'낭만포차 전 간식으로 허기 달래기'},
+    }
+  },
+  {
+    id:'daejeon',
+    keyImg:'/assets/keys/daejeon.png',
+    emoji:'🥐', title:'대전 성심당 나들이', detail:'당일치기 · 사계절 OK · 빵&카페', color:'#FFF3F0',
+    season:'🥐 사계절 언제든! 봄·가을(4–5월, 9–10월) 특히 좋음',
+    hints:['성심당 튀김소보로 & 빵 쇼핑 🥐','대전 로컬 카페 투어 ☕','한밭수목원 산책 🌳'],
+    itemPool:['camera','shoes','hat','jacket','snacks','pouch','tshirt',
+              'jeans','shirt','notebook','medicine','charger','scarf',
+              'sunglasses','umbrella','book','tripod','slippers','sunscreen','sweater'],
+    bonus:{
+      pouch:    {points:25, reason:'성심당 빵 잔뜩 담을 에코백·파우치!'},
+      shoes:    {points:20, reason:'성심당·수목원 걸어다닐 편한 신발'},
+      camera:   {points:20, reason:'성심당 빵 & 카페 감성 사진'},
+      hat:      {points:15, reason:'수목원 야외 코스, 햇빛 차단'},
+      snacks:   {points:15, reason:'대전 로컬 간식 탐방 즐기기'},
+      jacket:   {points:10, reason:'봄·가을 일교차 대비'},
+      notebook: {points:10, reason:'카페에서 여행 일기 쓰기'},
     }
   },
 ];
@@ -793,19 +850,23 @@ function cellSize() {
 function renderScenarioGrid() {
   $('scenarioGrid').innerHTML = SCENARIOS.map((s, i) => `
     <div class="scenario-card" onclick="selectScenario(${i})" style="--sc-bg:${s.color}">
-      <div class="sc-emoji">${s.emoji}</div>
+      <div class="sc-key-wrap">
+        <img class="sc-key-img" src="${s.keyImg}" alt="${s.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <div class="sc-emoji-fallback" style="display:none">${s.emoji}</div>
+      </div>
       <div class="sc-title">${s.title}</div>
       <div class="sc-detail">${s.detail}</div>
-      <div class="sc-hints">${s.hints.slice(0,2).map(h=>`<div class="sc-hint">${h}</div>`).join('')}</div>
+      <div class="sc-season">${s.season}</div>
     </div>
   `).join('');
 }
 
 function selectScenario(idx) {
   currentScenario = SCENARIOS[idx];
-  $('detailEmoji').textContent = currentScenario.emoji;
+  $('detailEmoji').innerHTML = `<img class="detail-key-img" src="${currentScenario.keyImg}" alt="${currentScenario.title}" onerror="this.outerHTML='<span>${currentScenario.emoji}</span>'">`;
   $('detailTitle').textContent = currentScenario.title;
   $('detailSub').textContent   = currentScenario.detail;
+  $('detailSeason').textContent = currentScenario.season;
   $('detailHints').innerHTML   = currentScenario.hints.map(h=>`<div class="detail-hint">${h}</div>`).join('');
   showScreen('screen-detail');
 }
@@ -953,6 +1014,22 @@ function endGame() {
   $('resFinalScore').textContent = '0점';
   $('resPctLbl').textContent  = fillPct+'% 채움';
   $('resItemsLbl').textContent = placedCount+'개 아이템';
+
+  // 못 챙긴 보너스 아이템 → 여행 팁 섹션
+  const missedItems = bonusResults.filter(b => !b.packed);
+  if(missedItems.length > 0) {
+    $('ttpList').innerHTML = missedItems.map(b =>
+      `<div class="ttp-item"><span class="ttp-name">${b.name}</span><span class="ttp-reason">${b.reason}</span></div>`
+    ).join('');
+    $('travelTipSection').style.display = '';
+  } else {
+    $('travelTipSection').style.display = 'none';
+  }
+
+  // 여행 코스 페이지 링크
+  const tripLink = $('resTripLink');
+  tripLink.href = '/trips/' + currentScenario.id;
+  tripLink.style.display = '';
 
   showScreen('screen-result');
   requestAnimationFrame(()=>{ $('resFill').style.width = fillPct+'%'; });
@@ -1172,6 +1249,14 @@ function confirmCustomItem(){if(!pendingDataUrl)return;const name=$('itemNameInp
   renderScenarioGrid();
   const best = localStorage.getItem('hh_pack_best_v2');
   if(best){ $('bestTxt').textContent=best; $('bestBadge').style.display=''; }
+
+  // URL 파라미터로 여행지 직접 진입 (?trip=gangneung)
+  const params = new URLSearchParams(location.search);
+  const tripId = params.get('trip');
+  if(tripId) {
+    const idx = SCENARIOS.findIndex(s => s.id === tripId);
+    if(idx >= 0) selectScenario(idx);
+  }
 })();
 </script>
 
@@ -1220,14 +1305,20 @@ function confirmCustomItem(){if(!pendingDataUrl)return;const name=$('itemNameInp
   /* SCENARIO GRID */
   .scenario-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; max-width:520px; width:100%; }
   @media (max-width:480px) { .scenario-grid { grid-template-columns:1fr; max-width:340px; } }
-  .scenario-card { background:var(--sc-bg,#F8F5FF); border:1.5px solid rgba(0,0,0,0.07); border-radius:16px; padding:16px 14px; cursor:pointer; transition:transform .15s,box-shadow .15s; display:flex; flex-direction:column; gap:5px; }
+  .scenario-card { background:var(--sc-bg,#F8F5FF); border:1.5px solid rgba(0,0,0,0.07); border-radius:16px; padding:14px; cursor:pointer; transition:transform .15s,box-shadow .15s; display:flex; flex-direction:column; gap:5px; overflow:hidden; }
   .scenario-card:hover { transform:translateY(-4px); box-shadow:0 10px 28px rgba(0,0,0,0.12); }
   .scenario-card:active { transform:translateY(-1px); }
-  .sc-emoji { font-size:30px; line-height:1; margin-bottom:2px; }
-  .sc-title { font-size:15px; font-weight:700; color:var(--color-text-primary); }
-  .sc-detail { font-size:11px; color:var(--color-text-tertiary); font-weight:500; }
-  .sc-hints { display:flex; flex-direction:column; gap:2px; margin-top:4px; }
-  .sc-hint { font-size:11px; color:var(--color-text-secondary); line-height:1.4; }
+  .sc-key-wrap { width:100%; height:90px; display:flex; align-items:center; justify-content:center; margin-bottom:6px; }
+  .sc-key-img { max-width:100%; max-height:90px; object-fit:contain; filter:drop-shadow(0 4px 10px rgba(0,0,0,0.15)); transition:transform .2s; }
+  .scenario-card:hover .sc-key-img { transform:scale(1.06); }
+  .sc-emoji-fallback { font-size:36px; line-height:1; }
+  .sc-title { font-size:14px; font-weight:700; color:var(--color-text-primary); }
+  .sc-detail { font-size:10.5px; color:var(--color-text-tertiary); font-weight:500; }
+  .sc-season { font-size:10px; color:var(--color-text-secondary); background:rgba(0,0,0,0.05); border-radius:6px; padding:3px 7px; align-self:flex-start; margin-top:2px; }
+
+  /* DETAIL KEY IMAGE */
+  .detail-key-img { max-width:120px; max-height:120px; object-fit:contain; filter:drop-shadow(0 6px 18px rgba(0,0,0,0.18)); }
+  .detail-season-tag { display:inline-block; background:var(--lavender-50); color:var(--lavender-700); border:1px solid var(--lavender-200); border-radius:8px; padding:5px 12px; font-size:12px; font-weight:600; align-self:flex-start; }
 
   /* MY ITEMS */
   .my-items-section { max-width:520px; width:100%; display:flex; flex-direction:column; gap:12px; }
@@ -1371,6 +1462,19 @@ function confirmCustomItem(){if(!pendingDataUrl)return;const name=$('itemNameInp
   .fill-label { display:flex; justify-content:space-between; font-size:12px; color:var(--color-text-tertiary); margin-top:4px; }
   .result-btns { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
   .result-btns .btn-outline,.result-btns .btn-primary { flex:none; }
+
+  /* 여행 팁 섹션 */
+  .travel-tip-section { background:#FFFBE8; border:1.5px solid #F5C020; border-radius:14px; padding:16px; max-width:480px; width:100%; }
+  .ttp-header { font-size:13px; font-weight:700; color:#7A5C00; margin-bottom:10px; }
+  .ttp-list { display:flex; flex-direction:column; gap:8px; }
+  .ttp-item { display:flex; align-items:flex-start; gap:8px; background:rgba(255,255,255,0.7); border-radius:8px; padding:8px 10px; }
+  .ttp-name { font-size:13px; font-weight:700; color:var(--color-text-primary); white-space:nowrap; }
+  .ttp-reason { font-size:12px; color:var(--color-text-secondary); line-height:1.4; flex:1; }
+  .ttp-item::before { content:'📌'; font-size:14px; flex-shrink:0; }
+
+  /* 여행 코스 링크 버튼 */
+  .btn-trip-link { display:block; text-align:center; text-decoration:none; background:var(--sand-100); color:var(--color-text-secondary); border:1.5px solid var(--color-border); border-radius:12px; padding:11px 28px; font-size:13px; font-weight:600; font-family:inherit; transition:background .15s,color .15s; max-width:240px; width:100%; }
+  .btn-trip-link:hover { background:var(--lavender-50); color:var(--lavender-700); border-color:var(--lavender-200); }
 
   /* ══ MODAL ══ */
   .modal-backdrop { position:fixed; inset:0; z-index:200; background:rgba(30,15,5,.55); backdrop-filter:blur(6px); display:none; align-items:center; justify-content:center; padding:20px; }

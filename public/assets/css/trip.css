@@ -201,6 +201,8 @@ body {
 .nav-btn.complete:hover { background: var(--lavender-dark); border-color: var(--lavender-dark); }
 .nav-btn.done { background: var(--lavender-light); color: var(--lavender); border-color: var(--lavender-border); }
 .nav-btn.done:hover { background: var(--lavender-border); }
+.nav-btn.game-nav-link { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+.nav-btn.game-nav-link:hover { background: var(--lavender); color: #fff; border-color: var(--lavender); }
 
 .art-overlay {
     position: fixed; inset: 0; background: var(--bg);

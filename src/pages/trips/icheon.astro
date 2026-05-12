@@ -122,6 +122,7 @@ const _body = `
         </div>
     </div>
     <div class="bottom-nav">
+        <a href="/game?trip=icheon" class="nav-btn game-nav-link">🎒 짐 싸기</a>
         <button class="nav-btn" @click="playArt" :disabled="allPhotos.length === 0">모아보기</button>
         <button :class="['nav-btn', isVisited ? 'done' : (allPhotos.length > 0 ? 'complete' : '')]"
                 @click="toggleVisited">
