@@ -1,20 +1,17 @@
 /**
  * HUIHUI Travel — 공유 네브바 컴포넌트
  * 모든 페이지에서 <script src="...navbar.js"></script> 한 줄로 삽입됩니다.
- * 이 파일 하나만 수정하면 전 페이지에 즉시 반영됩니다.
  */
 (function () {
   'use strict';
 
-  /* ── 경로 감지 ─────────────────────────────────────────────
-     trips/ 하위 페이지인지 확인해 상대경로를 자동 조정합니다. */
   const inTrips = /\/trips\/[^/]*$/.test(window.location.pathname);
-  const base    = inTrips ? '../' : '';
+  const inAuth  = /\/auth\/[^/]*$/.test(window.location.pathname);
+  const base    = (inTrips || inAuth) ? '../' : '';
   const page    = window.location.pathname.split('/').pop() || 'index.html';
   const BLOG    = 'https://blog.naver.com/kty1297';
 
-  /* ── CSS 주입 ─────────────────────────────────────────────
-     literal 값을 사용해 tokens.css / trip.css 의존 없이 동작합니다. */
+  /* ── CSS ─────────────────────────────────────────────────── */
   const css = `
 .hh-navbar {
   position: sticky; top: 0; z-index: 500;
@@ -55,14 +52,47 @@
 .hh-navbar-search input:focus {
   background: rgba(255,255,255,0.95); border-color: rgba(139,111,208,0.5);
 }
+/* ── 유저 영역 ── */
+.hh-user-area {
+  display: flex; align-items: center; flex-shrink: 0; margin-left: 8px;
+}
+.hh-login-btn {
+  font-size: 12px; font-weight: 600; color: #8B6FD0;
+  text-decoration: none; padding: 7px 16px;
+  border: 1.5px solid rgba(139,111,208,0.4);
+  border-radius: 999px; white-space: nowrap;
+  transition: background .15s, border-color .15s;
+}
+.hh-login-btn:hover { background: rgba(139,111,208,0.08); border-color: rgba(139,111,208,0.7); }
+.hh-user-btn {
+  display: flex; align-items: center; gap: 7px;
+  text-decoration: none; padding: 5px 10px 5px 5px;
+  border-radius: 999px; border: 1.5px solid rgba(139,111,208,0.25);
+  transition: background .15s, border-color .15s;
+  max-width: 160px;
+}
+.hh-user-btn:hover { background: rgba(139,111,208,0.07); border-color: rgba(139,111,208,0.5); }
+.hh-avatar {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: linear-gradient(135deg, #C0A8FF, #8B6FD0);
+  color: white; font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.hh-user-nick {
+  font-size: 12px; font-weight: 600; color: #6B5E8A;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+/* ── 햄버거 ── */
 .hh-hamburger {
-  display: none; flex-shrink: 0; margin-left: auto;
+  display: none; flex-shrink: 0; margin-left: 4px;
   background: none; border: none; cursor: pointer;
   width: 36px; height: 36px; border-radius: 10px;
   align-items: center; justify-content: center;
   color: #8B6FD0; transition: background .15s;
 }
 .hh-hamburger:hover { background: rgba(139,111,208,0.08); }
+/* ── 모바일 메뉴 ── */
 .hh-mobile-menu {
   position: fixed; top: 56px; left: 0; right: 0; z-index: 499;
   background: rgba(255,248,235,0.97); backdrop-filter: blur(20px);
@@ -80,10 +110,18 @@
 }
 .hh-mm-item:hover  { color: #8B6FD0; background: rgba(139,111,208,0.08); }
 .hh-mm-item.active { color: #8B6FD0; font-weight: 600; }
+.hh-mm-divider { border: none; border-top: 1px solid rgba(139,111,208,0.12); margin: 6px 0; }
+.hh-mm-logout {
+  font-size: 13px; color: #9a8ab0; padding: 8px 14px; border-radius: 12px;
+  background: none; border: none; cursor: pointer; width: 100%; text-align: left;
+  transition: color .15s, background .15s;
+}
+.hh-mm-logout:hover { color: #c04040; background: rgba(200,80,80,0.06); }
 @media (max-width: 767px) {
   .hh-navbar-links  { display: none !important; }
   .hh-hamburger     { display: flex !important; }
   .hh-navbar-search { display: none; }
+  .hh-user-area     { display: none; }
 }`;
 
   const styleEl = document.createElement('style');
@@ -113,6 +151,9 @@
       <input id="hhNavSearch" type="text" placeholder="여행지 검색하기"/>
     </div>
   </div>
+  <div class="hh-user-area" id="hhUserArea">
+    <a href="${base}auth/login.html" class="hh-login-btn">로그인</a>
+  </div>
   <button class="hh-hamburger" id="hhHamburger" aria-label="메뉴">
     <svg width="20" height="15" viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
       <path d="M1 1.5h18M1 7.5h18M1 13.5h18"/>
@@ -126,16 +167,19 @@
   menu.innerHTML = `
   <a class="hh-mm-item" href="${BLOG}" target="_blank" rel="noopener">블로그</a>
   <a class="hh-mm-item${page === 'gallery.html' ? ' active' : ''}" href="${base}gallery.html">갤러리</a>
-  <a class="hh-mm-item${page === 'game.html'    ? ' active' : ''}" href="${base}game.html">게임</a>`;
+  <a class="hh-mm-item${page === 'game.html'    ? ' active' : ''}" href="${base}game.html">게임</a>
+  <hr class="hh-mm-divider"/>
+  <div id="hhMobileUser">
+    <a class="hh-mm-item" href="${base}auth/login.html">로그인 / 회원가입</a>
+  </div>`;
 
-  /* ── 삽입: 스크립트 태그 위치에 그대로 끼워넣기 ─────────── */
+  /* ── 삽입 ─────────────────────────────────────────────────── */
   const script = document.currentScript;
   script.parentNode.insertBefore(nav,  script);
   script.parentNode.insertBefore(menu, script);
 
   /* ── 이벤트: 햄버거 + 검색 ──────────────────────────────── */
   const hamBtn = nav.querySelector('#hhHamburger');
-
   hamBtn.addEventListener('click', function (e) {
     e.stopPropagation();
     menu.classList.toggle('open');
@@ -145,7 +189,6 @@
   });
 
   const si = nav.querySelector('#hhNavSearch');
-  // 갤러리 페이지: 타이핑 즉시 필터 / 다른 페이지: Enter로 갤러리 이동
   si.addEventListener('input', function () {
     if (typeof window.filterBySearch === 'function') window.filterBySearch(si.value);
   });
@@ -157,4 +200,60 @@
       window.location.href = base + 'gallery.html?q=' + encodeURIComponent(si.value.trim());
     }
   });
+
+  /* ── Supabase 인증 상태 반영 ─────────────────────────────── */
+  async function _updateUserBtn() {
+    if (typeof window._sb === 'undefined') return;
+    try {
+      const { data: { session } } = await window._sb.auth.getSession();
+      const userArea    = document.getElementById('hhUserArea');
+      const mobileUser  = document.getElementById('hhMobileUser');
+      if (!userArea) return;
+
+      if (session) {
+        const { data: profile } = await window._sb
+          .from('profiles')
+          .select('nickname, username')
+          .eq('id', session.user.id)
+          .single();
+
+        const nick    = profile?.nickname || '사용자';
+        const initial = nick.charAt(0).toUpperCase();
+
+        userArea.innerHTML = `
+          <a href="${base}auth/profile.html" class="hh-user-btn">
+            <span class="hh-avatar">${initial}</span>
+            <span class="hh-user-nick">${nick}</span>
+          </a>`;
+
+        if (mobileUser) {
+          mobileUser.innerHTML = `
+            <a class="hh-mm-item" href="${base}auth/profile.html">
+              <span class="hh-avatar" style="width:22px;height:22px;font-size:11px;">${initial}</span>
+              ${nick}님의 페이지
+            </a>
+            <button class="hh-mm-logout" id="hhMobileLogout">로그아웃</button>`;
+
+          document.getElementById('hhMobileLogout')?.addEventListener('click', _logout);
+        }
+
+        /* 로그인 상태를 전역으로 공유 (벨 팝업 등에서 사용) */
+        window._hhUser = { session, profile };
+      } else {
+        window._hhUser = null;
+      }
+    } catch (_) {
+      window._hhUser = null;
+    }
+  }
+
+  async function _logout() {
+    if (!window._sb) return;
+    await window._sb.auth.signOut();
+    window._hhUser = null;
+    window.location.reload();
+  }
+
+  /* load 이벤트: Supabase CDN이 모두 로드된 뒤 실행 */
+  window.addEventListener('load', _updateUserBtn);
 })();

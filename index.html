@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="assets/css/tokens.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-client.js"></script>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -416,6 +418,129 @@
     .footer-link:hover { color: var(--lavender-500); }
 
     /* ══════════════════════════════
+       RECOMMENDATION POPUP (벨)
+    ══════════════════════════════ */
+    .rec-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(42,31,72,0.45); backdrop-filter: blur(6px);
+      z-index: var(--z-modal); align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .rec-overlay.show { display: flex; }
+    .rec-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-8) var(--space-8) var(--space-6);
+      max-width: 360px; width: 100%;
+      box-shadow: var(--shadow-xl);
+      animation: slideUp 0.22s var(--ease-out);
+      position: relative;
+    }
+    .rec-close {
+      position: absolute; top: 14px; right: 16px;
+      background: none; border: none; cursor: pointer;
+      font-size: 1.2rem; color: var(--color-text-tertiary);
+      line-height: 1; padding: 4px; border-radius: 6px;
+      transition: color .15s, background .15s;
+    }
+    .rec-close:hover { color: var(--color-text-primary); background: rgba(139,111,208,0.08); }
+    .rec-header { text-align: center; margin-bottom: var(--space-6); }
+    .rec-icon-wrap {
+      width: 48px; height: 48px; background: var(--lavender-100);
+      border-radius: var(--radius-full);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto var(--space-3); font-size: 1.3rem;
+    }
+    .rec-title {
+      font-family: var(--font-display); font-style: italic;
+      font-size: var(--text-xl); color: var(--color-text-primary);
+      letter-spacing: var(--tracking-tight);
+    }
+    .rec-sub { font-size: var(--text-xs); color: var(--color-text-tertiary); margin-top: 4px; }
+    .rec-list { display: flex; flex-direction: column; gap: 10px; }
+    .rec-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 14px; border-radius: var(--radius-xl);
+      background: var(--lavender-50);
+      border: 1px solid rgba(139,111,208,0.12);
+      text-decoration: none; cursor: pointer;
+      transition: background .15s, border-color .15s, transform .15s;
+    }
+    .rec-item:hover { background: var(--lavender-100); border-color: rgba(139,111,208,0.28); transform: translateY(-1px); }
+    .rec-item-key {
+      width: 44px; height: 56px; flex-shrink: 0;
+      object-fit: contain; border-radius: 6px;
+    }
+    .rec-item-key-placeholder {
+      width: 44px; height: 56px; flex-shrink: 0; border-radius: 6px;
+      background: linear-gradient(160deg, var(--lavender-200), var(--lavender-400));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-style: italic;
+      font-size: 1rem; color: white; font-weight: 600;
+    }
+    .rec-item-info { flex: 1; min-width: 0; }
+    .rec-item-no { font-size: 10px; color: var(--color-text-tertiary); letter-spacing: .1em; margin-bottom: 2px; }
+    .rec-item-name { font-size: var(--text-base); font-weight: 600; color: var(--color-text-primary); }
+    .rec-item-desc { font-size: var(--text-xs); color: var(--color-text-secondary); margin-top: 2px; }
+    .rec-item-arrow { color: var(--lavender-400); font-size: 1rem; flex-shrink: 0; }
+
+    /* 로그인 유도 팝업 */
+    .login-req-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(42,31,72,0.45); backdrop-filter: blur(6px);
+      z-index: var(--z-modal); align-items: center; justify-content: center;
+    }
+    .login-req-overlay.show { display: flex; }
+    .login-req-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-10) var(--space-10) var(--space-8);
+      text-align: center; max-width: 300px; width: 88%;
+      box-shadow: var(--shadow-xl);
+      animation: slideUp 0.22s var(--ease-out);
+    }
+    .login-req-icon {
+      width: 52px; height: 52px; background: var(--lavender-100);
+      border-radius: var(--radius-full);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto var(--space-4); font-size: 1.4rem;
+    }
+    .login-req-title {
+      font-family: var(--font-display); font-style: italic;
+      font-size: var(--text-xl); color: var(--color-text-primary);
+      margin-bottom: var(--space-2);
+    }
+    .login-req-sub {
+      font-size: var(--text-sm); color: var(--color-text-secondary);
+      line-height: var(--leading-normal); margin-bottom: var(--space-6);
+    }
+    .login-req-btns { display: flex; flex-direction: column; gap: 8px; }
+    .login-req-btn-primary {
+      display: block; width: 100%; padding: var(--space-3) var(--space-6);
+      background: var(--lavender-300); color: var(--lavender-700);
+      border: none; border-radius: var(--radius-full);
+      font-family: var(--font-heading); font-size: var(--text-sm); font-weight: 600;
+      letter-spacing: var(--tracking-wide); cursor: pointer; text-decoration: none;
+      transition: background .15s, box-shadow .15s;
+    }
+    .login-req-btn-primary:hover { background: var(--lavender-400); color: #fff; box-shadow: var(--shadow-brand); }
+    .login-req-btn-secondary {
+      display: block; width: 100%; padding: var(--space-3) var(--space-6);
+      background: none; color: var(--color-text-tertiary);
+      border: 1px solid var(--color-border); border-radius: var(--radius-full);
+      font-family: var(--font-heading); font-size: var(--text-sm); font-weight: 500;
+      cursor: pointer; text-decoration: none;
+      transition: border-color .15s, color .15s;
+    }
+    .login-req-btn-secondary:hover { border-color: var(--lavender-300); color: var(--lavender-500); }
+    .login-req-close {
+      margin-top: 10px; background: none; border: none; cursor: pointer;
+      font-size: var(--text-xs); color: var(--color-text-tertiary);
+      font-family: var(--font-heading);
+    }
+    .login-req-close:hover { color: var(--color-text-secondary); }
+
+    /* ══════════════════════════════
        COMING SOON POPUP
     ══════════════════════════════ */
     .cs-overlay {
@@ -590,6 +715,33 @@
     </div>
   </footer>
 
+  <!-- ── RECOMMENDATION POPUP ── -->
+  <div class="rec-overlay" id="recOverlay" onclick="hideRecPopup(event)">
+    <div class="rec-card" onclick="event.stopPropagation()">
+      <button class="rec-close" onclick="hideRecPopup()" aria-label="닫기">×</button>
+      <div class="rec-header">
+        <div class="rec-icon-wrap">🔔</div>
+        <div class="rec-title">프런트 데스크</div>
+        <div class="rec-sub">오늘의 여행지 추천</div>
+      </div>
+      <div class="rec-list" id="recList"></div>
+    </div>
+  </div>
+
+  <!-- ── LOGIN REQUIRED POPUP ── -->
+  <div class="login-req-overlay" id="loginReqOverlay" onclick="hideLoginReqPopup(event)">
+    <div class="login-req-card" onclick="event.stopPropagation()">
+      <div class="login-req-icon">🔑</div>
+      <div class="login-req-title">로그인이 필요해요</div>
+      <p class="login-req-sub">프런트 데스크 서비스는<br>회원만 이용할 수 있어요.<br>지금 바로 가입해보세요!</p>
+      <div class="login-req-btns">
+        <a href="auth/register.html" class="login-req-btn-primary">회원가입하기</a>
+        <a href="auth/login.html" class="login-req-btn-secondary">로그인하기</a>
+      </div>
+      <button class="login-req-close" onclick="hideLoginReqPopup()">나중에 할게요</button>
+    </div>
+  </div>
+
   <!-- ── COMING SOON POPUP ── -->
   <div class="cs-overlay" id="csOverlay" onclick="hideComingSoonPopup(event)">
     <div class="cs-card" onclick="event.stopPropagation()">
@@ -697,7 +849,66 @@
       const top = document.getElementById('bellTop');
       top.classList.add('ringing');
       setTimeout(() => top.classList.remove('ringing'), 500);
-      showToast('딩동! 프런트 데스크입니다 🔔');
+
+      /* 로그인 여부 확인 */
+      if (window._hhUser) {
+        _showRecPopup();
+      } else {
+        document.getElementById('loginReqOverlay').classList.add('show');
+      }
+    }
+
+    /* ── 로그인 유도 팝업 ── */
+    function hideLoginReqPopup(e) {
+      if (e && e.target !== document.getElementById('loginReqOverlay')) return;
+      document.getElementById('loginReqOverlay').classList.remove('show');
+    }
+
+    /* ── 여행지 추천 팝업 ── */
+    const REC_DESCS = {
+      yeosu:       '바다와 밤바다의 도시',
+      icheon:      '도자기와 온천의 고장',
+      paju:        '책마을과 헤이리 예술',
+      dongincheon: '개항장의 레트로 감성',
+      gangneung:   '커피와 해변의 낭만',
+      nowon:       '수락산 자락 동네 여행',
+      suwon:       '수원화성과 행궁동',
+      daejeon:     '과학과 빵의 도시',
+    };
+
+    function _showRecPopup() {
+      const available = TRIPS.filter(t => t.status !== 'coming-soon');
+      if (!available.length) { showToast('아직 공개된 여행지가 없어요'); return; }
+
+      /* 3개 랜덤 선택 */
+      const shuffled = [...available].sort(() => Math.random() - 0.5).slice(0, 3);
+
+      const list = document.getElementById('recList');
+      list.innerHTML = shuffled.map(trip => {
+        const slug = trip.url.replace('trips/','').replace('.html','');
+        const desc = REC_DESCS[slug] || '';
+        const noStr = String(trip.no).padStart(2,'0');
+        const imgTag = trip.key
+          ? `<img class="rec-item-key" src="${trip.key}" alt="${trip.nameKo}" loading="lazy"/>`
+          : `<div class="rec-item-key-placeholder">${trip.nameKo[0]}</div>`;
+        return `
+          <a class="rec-item" href="${trip.url}">
+            ${imgTag}
+            <div class="rec-item-info">
+              <div class="rec-item-no">No.${noStr}</div>
+              <div class="rec-item-name">${trip.nameKo}</div>
+              <div class="rec-item-desc">${desc}</div>
+            </div>
+            <span class="rec-item-arrow">→</span>
+          </a>`;
+      }).join('');
+
+      document.getElementById('recOverlay').classList.add('show');
+    }
+
+    function hideRecPopup(e) {
+      if (e && e.target !== document.getElementById('recOverlay')) return;
+      document.getElementById('recOverlay').classList.remove('show');
     }
 
     /* ── TOAST ── */

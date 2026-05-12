@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>마이페이지 – HUIHUI Travel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --purple:       #7A57CD;
+      --purple-mid:   #946EEE;
+      --purple-light: #C8B1FF;
+      --purple-pale:  #EDE5FF;
+      --cream:        #FFF8EB;
+      --green:        #8F9D68;
+      --text:         #2a1a4a;
+      --text-mid:     #5a3e8a;
+      --text-dim:     #9a8ab0;
+      --error:        #c04040;
+      --ok:           #4a9a6a;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      min-height: 100vh;
+      font-family: 'Noto Sans KR', sans-serif;
+      background: linear-gradient(160deg, var(--cream) 0%, #e8dcff 50%, #c8b1ff 100%);
+      padding: 0 0 60px;
+    }
+
+    /* 네브바 영역 */
+    .page-wrap { padding: 32px 16px 0; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+
+    /* 헤더 카드 (영수증) */
+    .receipt {
+      width: min(400px, 94vw); background: var(--cream);
+      filter: drop-shadow(0 12px 32px rgba(122,87,205,0.18));
+    }
+    .receipt-top { width:100%; height:14px; background:var(--cream); position:relative; }
+    .receipt-top::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:14px;
+      background: radial-gradient(circle at 50% -1px, transparent 7px, var(--cream) 7px) -7px 0 / 14px 14px repeat-x;
+    }
+    .receipt-body { background:var(--cream); padding:16px 24px 20px; }
+    .receipt-bottom { width:100%; height:14px; background:var(--cream); position:relative; }
+    .receipt-bottom::after {
+      content:''; position:absolute; bottom:0; left:0; right:0; height:14px;
+      background: radial-gradient(circle at 50% calc(100% + 1px), transparent 7px, var(--cream) 7px) -7px 0 / 14px 14px repeat-x;
+    }
+
+    /* 유저 헤더 */
+    .user-header { display:flex; align-items:center; gap:16px; padding: 8px 0 16px; }
+    .user-avatar-lg {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: linear-gradient(135deg, #C0A8FF, #8B6FD0);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif; font-size: 1.6rem; color: white; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .user-info-wrap { flex: 1; min-width: 0; }
+    .user-nick { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--purple); }
+    .user-id { font-size: 0.72rem; color: var(--text-dim); margin-top: 3px; letter-spacing: 0.04em; }
+    .user-since { font-size: 0.65rem; color: var(--text-dim); font-family: 'Cormorant Garamond', serif; font-style: italic; }
+
+    .divider { border:none; border-top:1.5px dashed var(--purple-light); margin:12px 0; }
+    .divider-solid { border:none; border-top:1px solid rgba(139,111,208,0.2); margin:12px 0; }
+
+    /* 섹션 */
+    .section-card {
+      width: min(400px, 94vw); background: var(--cream);
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(122,87,205,0.1);
+      padding: 20px 24px;
+    }
+    .section-title {
+      font-size: 0.62rem; font-weight: 700; color: var(--green);
+      letter-spacing: 0.14em; margin-bottom: 14px;
+    }
+
+    .field { margin-bottom: 14px; }
+    .field:last-child { margin-bottom: 0; }
+    .field-label { font-size: 0.6rem; font-weight: 600; color: var(--text-dim); letter-spacing: 0.1em; margin-bottom: 5px; display: block; }
+    .field-label span { font-weight: 400; color: rgba(154,138,176,0.7); font-size: 0.56rem; margin-left: 4px; }
+    .input-box {
+      width: 100%; height: 40px; background: white;
+      border: 1.5px solid var(--purple-light); border-radius: 999px;
+      padding: 0 14px; font-size: 0.82rem;
+      font-family: 'Noto Sans KR', sans-serif; color: var(--text); outline: none;
+      transition: border-color 0.2s;
+    }
+    .input-box:focus { border-color: var(--purple); }
+    .input-box::placeholder { color: var(--text-dim); font-size: 0.75rem; }
+    .input-box:disabled { background: rgba(245,240,255,0.5); color: var(--text-dim); cursor: not-allowed; }
+    .hint { font-size: 0.6rem; margin-top: 3px; min-height: 14px; padding-left: 4px; color: var(--text-dim); }
+    .hint.ok    { color: var(--ok); }
+    .hint.error { color: var(--error); }
+
+    .pw-wrap { position: relative; }
+    .pw-toggle {
+      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; color: var(--text-dim);
+      font-size: 0.64rem; font-family: 'Noto Sans KR', sans-serif; padding: 4px;
+    }
+    .pw-toggle:hover { color: var(--purple); }
+
+    /* 마케팅 토글 */
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; }
+    .toggle-label { font-size: 0.78rem; color: var(--text-mid); }
+    .toggle-sub { font-size: 0.65rem; color: var(--text-dim); margin-top: 2px; }
+    .toggle-switch { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0; border-radius: 999px;
+      background: rgba(180,170,200,0.35); cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle-slider::after {
+      content: ''; position: absolute;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: white; top: 3px; left: 3px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: var(--purple); }
+    .toggle-switch input:checked + .toggle-slider::after { transform: translateX(18px); }
+
+    /* 버튼 */
+    .btn-save {
+      width: 100%; height: 42px; background: var(--purple);
+      border: none; border-radius: 999px;
+      font-size: 0.75rem; font-weight: 700; color: white; letter-spacing: 0.08em;
+      cursor: pointer; font-family: 'Noto Sans KR', sans-serif;
+      box-shadow: 0 4px 14px rgba(122,87,205,0.3);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-save:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(122,87,205,0.4); }
+    .btn-save:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+
+    .btn-logout {
+      width: 100%; height: 40px; background: none;
+      border: 1.5px solid rgba(200,80,80,0.3); border-radius: 999px;
+      font-size: 0.73rem; font-weight: 600; color: #c04040; letter-spacing: 0.06em;
+      cursor: pointer; font-family: 'Noto Sans KR', sans-serif;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-logout:hover { background: rgba(200,80,80,0.06); border-color: rgba(200,80,80,0.5); }
+
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.72rem; color: var(--text-dim); text-decoration: none;
+      padding: 6px 0; transition: color 0.15s;
+    }
+    .btn-back:hover { color: var(--purple); }
+
+    /* 토스트 */
+    .toast {
+      position: fixed; top: 24px; left: 50%;
+      transform: translateX(-50%) translateY(-80px);
+      background: var(--purple); color: white;
+      border-radius: 999px; padding: 10px 24px;
+      font-size: 0.82rem; font-weight: 500;
+      box-shadow: 0 8px 24px rgba(122,87,205,0.3);
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      white-space: nowrap; z-index: 999;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* 로딩 / 미로그인 */
+    .loading-state { text-align: center; padding: 60px 20px; color: var(--text-dim); font-size: 0.85rem; }
+    .loading-spinner {
+      display: inline-block; width: 24px; height: 24px;
+      border: 2.5px solid var(--purple-light); border-top-color: var(--purple);
+      border-radius: 50%; animation: spin 0.7s linear infinite; margin-bottom: 12px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/navbar.js"></script>
+
+  <div class="page-wrap" id="pageWrap">
+    <div class="loading-state">
+      <div class="loading-spinner"></div><br/>불러오는 중…
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+  async function loadProfile() {
+    if (!window._sb) {
+      renderNotLoggedIn();
+      return;
+    }
+
+    const { data: { session } } = await window._sb.auth.getSession();
+    if (!session) {
+      renderNotLoggedIn();
+      return;
+    }
+
+    const { data: profile, error } = await window._sb
+      .from('profiles')
+      .select('*')
+      .eq('id', session.user.id)
+      .single();
+
+    if (error || !profile) {
+      renderNotLoggedIn();
+      return;
+    }
+
+    renderProfile(session, profile);
+  }
+
+  function renderNotLoggedIn() {
+    document.getElementById('pageWrap').innerHTML = `
+      <a href="../index.html" class="btn-back">← 메인으로</a>
+      <div class="section-card" style="text-align:center;padding:40px 24px;">
+        <div style="font-size:2rem;margin-bottom:12px;">🔑</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#7A57CD;margin-bottom:8px;">로그인이 필요해요</div>
+        <p style="font-size:0.78rem;color:#9a8ab0;margin-bottom:20px;line-height:1.6;">마이페이지를 이용하려면<br>먼저 로그인해주세요.</p>
+        <a href="login.html" style="display:block;background:#7A57CD;color:white;border-radius:999px;padding:12px 24px;text-decoration:none;font-size:0.78rem;font-weight:700;letter-spacing:0.08em;">로그인하기</a>
+        <a href="register.html" style="display:block;margin-top:10px;font-size:0.7rem;color:#8F9D68;text-align:center;">아직 계정이 없으신가요? 회원가입 →</a>
+      </div>`;
+  }
+
+  function renderProfile(session, profile) {
+    const initial = (profile.nickname || '?').charAt(0).toUpperCase();
+    const joinDate = new Date(session.user.created_at);
+    const dateStr  = joinDate.getFullYear() + '.' +
+      String(joinDate.getMonth()+1).padStart(2,'0') + '.' +
+      String(joinDate.getDate()).padStart(2,'0');
+
+    document.getElementById('pageWrap').innerHTML = `
+      <a href="../index.html" class="btn-back">← 메인으로</a>
+
+      <!-- 회원 카드 -->
+      <div class="receipt">
+        <div class="receipt-top"></div>
+        <div class="receipt-body">
+          <div class="user-header">
+            <div class="user-avatar-lg" id="avatarLg">${initial}</div>
+            <div class="user-info-wrap">
+              <div class="user-nick" id="dispNick">${profile.nickname}</div>
+              <div class="user-id">@${profile.username} <span style="color:#C8B1FF">· 아이디 변경불가</span></div>
+              <div class="user-since">MEMBER SINCE ${dateStr}</div>
+            </div>
+          </div>
+        </div>
+        <div class="receipt-bottom"></div>
+      </div>
+
+      <!-- 프로필 수정 -->
+      <div class="section-card">
+        <div class="section-title">PROFILE EDIT</div>
+
+        <div class="field">
+          <label class="field-label">닉네임 <span>변경 가능</span></label>
+          <input class="input-box" type="text" id="editNick" value="${profile.nickname}" maxlength="20" oninput="onNickInput(this)"/>
+          <div class="hint" id="nickHint"></div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">아이디 <span>변경 불가</span></label>
+          <input class="input-box" type="text" value="${profile.username}" disabled/>
+        </div>
+
+        <div class="field">
+          <label class="field-label">이메일 <span>변경 가능</span></label>
+          <input class="input-box" type="email" id="editEmail" value="${session.user.email || ''}" oninput="onEmailInput(this)"/>
+          <div class="hint" id="emailHint"></div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">전화번호 <span>선택 · 변경 가능</span></label>
+          <input class="input-box" type="tel" id="editPhone" value="${profile.phone || ''}" placeholder="010-0000-0000" oninput="onPhoneInput(this)"/>
+          <div class="hint" id="phoneHint"></div>
+        </div>
+
+        <button class="btn-save" id="saveInfoBtn" onclick="saveProfile()">저장하기</button>
+      </div>
+
+      <!-- 비밀번호 변경 -->
+      <div class="section-card">
+        <div class="section-title">PASSWORD CHANGE</div>
+
+        <div class="field">
+          <label class="field-label">새 비밀번호</label>
+          <div class="pw-wrap">
+            <input class="input-box" type="password" id="newPw" placeholder="8자 이상 입력하세요" oninput="onPwInput(this)"/>
+            <button class="pw-toggle" type="button" onclick="togglePw('newPw',this)">보기</button>
+          </div>
+          <div class="hint" id="newPwHint"></div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">새 비밀번호 확인</label>
+          <div class="pw-wrap">
+            <input class="input-box" type="password" id="newPw2" placeholder="비밀번호를 다시 입력하세요" oninput="onPw2Input(this)"/>
+            <button class="pw-toggle" type="button" onclick="togglePw('newPw2',this)">보기</button>
+          </div>
+          <div class="hint" id="newPw2Hint"></div>
+        </div>
+
+        <button class="btn-save" id="savePwBtn" onclick="savePassword()">비밀번호 변경</button>
+      </div>
+
+      <!-- 광고 수신 -->
+      <div class="section-card">
+        <div class="section-title">MARKETING</div>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">이메일 수신</div>
+            <div class="toggle-sub">여행 정보 및 광고 이메일</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="mktEmail" ${profile.marketing_email ? 'checked' : ''} onchange="saveMarketing()"/>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <hr class="divider-solid" style="margin:4px 0"/>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">SMS 수신</div>
+            <div class="toggle-sub">여행 정보 및 광고 문자·카카오</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="mktSms" ${profile.marketing_sms ? 'checked' : ''} onchange="saveMarketing()"/>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 로그아웃 -->
+      <div class="section-card">
+        <button class="btn-logout" onclick="doLogout()">로그아웃</button>
+      </div>
+    `;
+  }
+
+  /* ── 유효성 ── */
+  function setHint(id, msg, state) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'hint ' + (state || '');
+  }
+
+  function onNickInput(el) {
+    if (!el.value.trim() || el.value.trim().length < 2) { setHint('nickHint','2자 이상 입력해주세요','error'); return; }
+    setHint('nickHint','','ok');
+  }
+  function onEmailInput(el) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim())) { setHint('emailHint','이메일 형식을 확인해주세요','error'); return; }
+    setHint('emailHint','','ok');
+  }
+  function onPhoneInput(el) {
+    if (!el.value.trim()) { setHint('phoneHint','',''); return; }
+    const d = el.value.replace(/\D/g,'');
+    if (d.length < 10) { setHint('phoneHint','올바른 전화번호를 입력해주세요','error'); return; }
+    setHint('phoneHint','','ok');
+  }
+  function onPwInput(el) {
+    if (el.value.length < 8) { setHint('newPwHint','8자 이상 입력해주세요','error'); return; }
+    setHint('newPwHint','','ok');
+  }
+  function onPw2Input(el) {
+    if (el.value !== document.getElementById('newPw').value) { setHint('newPw2Hint','비밀번호가 일치하지 않아요','error'); return; }
+    setHint('newPw2Hint','일치합니다','ok');
+  }
+  function togglePw(id, btn) {
+    const i = document.getElementById(id);
+    i.type = i.type === 'password' ? 'text' : 'password';
+    btn.textContent = i.type === 'password' ? '보기' : '숨기기';
+  }
+
+  /* ── 저장 ── */
+  async function saveProfile() {
+    const nick  = document.getElementById('editNick')?.value.trim();
+    const email = document.getElementById('editEmail')?.value.trim();
+    const phone = document.getElementById('editPhone')?.value.trim();
+    const btn   = document.getElementById('saveInfoBtn');
+
+    if (!nick || nick.length < 2) { showToast('닉네임을 2자 이상 입력해주세요'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast('이메일 형식을 확인해주세요'); return; }
+
+    btn.disabled = true;
+    btn.textContent = '저장 중…';
+
+    try {
+      const { data: { session } } = await window._sb.auth.getSession();
+
+      /* 프로필 업데이트 */
+      const { error: profErr } = await window._sb
+        .from('profiles')
+        .update({ nickname: nick, phone: phone || null, updated_at: new Date().toISOString() })
+        .eq('id', session.user.id);
+      if (profErr) throw profErr;
+
+      /* 이메일이 변경된 경우 auth 업데이트 */
+      if (email !== session.user.email) {
+        const { error: emailErr } = await window._sb.auth.updateUser({ email });
+        if (emailErr) throw emailErr;
+        showToast('저장 완료! 새 이메일로 확인 메일을 보냈어요');
+      } else {
+        showToast('프로필이 저장됐어요 ✓');
+      }
+
+      /* UI 즉시 반영 */
+      const dispNick = document.getElementById('dispNick');
+      const avatarLg = document.getElementById('avatarLg');
+      if (dispNick) dispNick.textContent = nick;
+      if (avatarLg) avatarLg.textContent = nick.charAt(0).toUpperCase();
+
+    } catch (e) {
+      showToast(e.message || '저장 중 오류가 발생했어요');
+    }
+
+    btn.disabled = false;
+    btn.textContent = '저장하기';
+  }
+
+  async function savePassword() {
+    const pw  = document.getElementById('newPw')?.value;
+    const pw2 = document.getElementById('newPw2')?.value;
+    const btn = document.getElementById('savePwBtn');
+
+    if (!pw || pw.length < 8) { showToast('비밀번호를 8자 이상 입력해주세요'); return; }
+    if (pw !== pw2) { showToast('비밀번호가 일치하지 않아요'); return; }
+
+    btn.disabled = true;
+    btn.textContent = '변경 중…';
+
+    try {
+      const { error } = await window._sb.auth.updateUser({ password: pw });
+      if (error) throw error;
+      showToast('비밀번호가 변경됐어요 ✓');
+      document.getElementById('newPw').value  = '';
+      document.getElementById('newPw2').value = '';
+    } catch (e) {
+      showToast(e.message || '변경 중 오류가 발생했어요');
+    }
+
+    btn.disabled = false;
+    btn.textContent = '비밀번호 변경';
+  }
+
+  async function saveMarketing() {
+    const mktEmail = document.getElementById('mktEmail')?.checked;
+    const mktSms   = document.getElementById('mktSms')?.checked;
+    if (!window._sb) return;
+
+    const { data: { session } } = await window._sb.auth.getSession();
+    await window._sb.from('profiles')
+      .update({ marketing_email: mktEmail, marketing_sms: mktSms })
+      .eq('id', session.user.id);
+  }
+
+  async function doLogout() {
+    await window._sb.auth.signOut();
+    window.location.href = '../index.html';
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  window.addEventListener('load', loadProfile);
+</script>
+</body>
+</html>
