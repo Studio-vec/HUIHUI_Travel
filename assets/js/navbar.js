@@ -5,10 +5,7 @@
 (function () {
   'use strict';
 
-  const inTrips = /\/trips\/[^/]*$/.test(window.location.pathname);
-  const inAuth  = /\/auth\/[^/]*$/.test(window.location.pathname);
-  const base    = (inTrips || inAuth) ? '../' : '';
-  const page    = window.location.pathname.split('/').pop() || 'index.html';
+  const page    = window.location.pathname.replace(/\/$/, '').split('/').pop() || '';
   const BLOG    = 'https://blog.naver.com/kty1297';
 
   /* ── CSS ─────────────────────────────────────────────────── */
@@ -176,17 +173,17 @@
   document.head.appendChild(styleEl);
 
   /* ── 네브바 HTML ─────────────────────────────────────────── */
-  const galleryActive = page === 'gallery.html' ? ' class="active"' : '';
-  const gameActive    = page === 'game.html'    ? ' class="active"' : '';
+  const galleryActive = page === 'gallery' ? ' class="active"' : '';
+  const gameActive    = page === 'game'    ? ' class="active"' : '';
 
   const nav = document.createElement('nav');
   nav.className = 'hh-navbar';
   nav.innerHTML = `
-  <a href="${base}index.html" class="hh-navbar-logo">HUIHUI Travel</a>
+  <a href="/" class="hh-navbar-logo">HUIHUI Travel</a>
   <ul class="hh-navbar-links">
     <li><a href="${BLOG}" target="_blank" rel="noopener">블로그</a></li>
-    <li><a href="${base}gallery.html"${galleryActive}>갤러리</a></li>
-    <li><a href="${base}game.html"${gameActive}>게임</a></li>
+    <li><a href="/gallery"${galleryActive}>갤러리</a></li>
+    <li><a href="/game"${gameActive}>게임</a></li>
   </ul>
   <div class="hh-navbar-search">
     <div class="hh-search-inner">
@@ -206,7 +203,7 @@
     <div class="hh-lang-dropdown" id="hhLangDropdown" role="listbox"></div>
   </div>
   <div class="hh-user-area" id="hhUserArea">
-    <a href="${base}auth/login.html" class="hh-login-btn">로그인</a>
+    <a href="/auth/login" class="hh-login-btn">로그인</a>
   </div>
   <button class="hh-hamburger" id="hhHamburger" aria-label="메뉴">
     <svg width="20" height="15" viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -220,13 +217,13 @@
   menu.id = 'hhMobileMenu';
   menu.innerHTML = `
   <a class="hh-mm-item" href="${BLOG}" target="_blank" rel="noopener">블로그</a>
-  <a class="hh-mm-item${page === 'gallery.html' ? ' active' : ''}" href="${base}gallery.html">갤러리</a>
-  <a class="hh-mm-item${page === 'game.html'    ? ' active' : ''}" href="${base}game.html">게임</a>
+  <a class="hh-mm-item${page === 'gallery' ? ' active' : ''}" href="/gallery">갤러리</a>
+  <a class="hh-mm-item${page === 'game'    ? ' active' : ''}" href="/game">게임</a>
   <hr class="hh-mm-divider"/>
   <div class="hh-mm-lang-row" id="hhMobileLangRow"></div>
   <hr class="hh-mm-divider"/>
   <div id="hhMobileUser">
-    <a class="hh-mm-item" href="${base}auth/login.html">로그인 / 회원가입</a>
+    <a class="hh-mm-item" href="/auth/login">로그인 / 회원가입</a>
   </div>`;
 
   /* ── 삽입 ─────────────────────────────────────────────────── */
@@ -349,14 +346,14 @@
         const initial = nick.charAt(0).toUpperCase();
 
         userArea.innerHTML = `
-          <a href="${base}auth/profile.html" class="hh-user-btn">
+          <a href="/auth/profile" class="hh-user-btn">
             <span class="hh-avatar">${initial}</span>
             <span class="hh-user-nick">${nick}</span>
           </a>`;
 
         if (mobileUser) {
           mobileUser.innerHTML = `
-            <a class="hh-mm-item" href="${base}auth/profile.html">
+            <a class="hh-mm-item" href="/auth/profile">
               <span class="hh-avatar" style="width:22px;height:22px;font-size:11px;">${initial}</span>
               ${nick}님의 페이지
             </a>

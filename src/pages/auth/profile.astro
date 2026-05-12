@@ -47,7 +47,7 @@ import Navbar from '../../components/Navbar.astro';
 
   function renderNotLoggedIn() {
     document.getElementById('pageWrap').innerHTML = `
-      <a href="/HUIHUI_Travel/index.html" class="btn-back">← 메인으로</a>
+      <a href="/" class="btn-back">← 메인으로</a>
       <div class="section-card" style="text-align:center;padding:40px 24px;">
         <div style="font-size:2rem;margin-bottom:12px;">🔑</div>
         <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#7A57CD;margin-bottom:8px;">로그인이 필요해요</div>
@@ -65,7 +65,7 @@ import Navbar from '../../components/Navbar.astro';
       String(joinDate.getDate()).padStart(2,'0');
 
     document.getElementById('pageWrap').innerHTML = `
-      <a href="/HUIHUI_Travel/index.html" class="btn-back">← 메인으로</a>
+      <a href="/" class="btn-back">← 메인으로</a>
 
       <!-- 회원 카드 -->
       <div class="receipt">

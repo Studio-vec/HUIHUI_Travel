@@ -51,12 +51,12 @@ function convert(srcPath, destPath, depth) {
   // navbar.js 스크립트 태그 제거
   body = body.replace(/\s*<script[^>]*navbar\.js[^>]*><\/script>/g, '');
 
-  // 상대 href → 절대경로 (base: /HUIHUI_Travel)
-  const base = '/HUIHUI_Travel';
-  body = body.replace(/href=["'](?:\.\.\/)?((trips|auth)\/[^"']+)["']/g, `href="${base}/$1"`);
-  body = body.replace(/href=["'](?:\.\.\/)?index\.html["']/g, `href="${base}/index.html"`);
-  body = body.replace(/href=["'](?:\.\.\/)?gallery\.html["']/g, `href="${base}/gallery.html"`);
-  body = body.replace(/href=["'](?:\.\.\/)?game\.html["']/g, `href="${base}/game.html"`);
+  // 상대 href → Astro 클린 URL 절대경로
+  body = body.replace(/href=["'](?:\.\.\/)?trips\/([^"'.]+)(?:\.html)?["']/g, 'href="/trips/$1"');
+  body = body.replace(/href=["'](?:\.\.\/)?auth\/([^"'.]+)(?:\.html)?["']/g, 'href="/auth/$1"');
+  body = body.replace(/href=["'](?:\.\.\/)?index\.html["']/g, 'href="/"');
+  body = body.replace(/href=["'](?:\.\.\/)?gallery(?:\.html)?["']/g, 'href="/gallery"');
+  body = body.replace(/href=["'](?:\.\.\/)?game(?:\.html)?["']/g, 'href="/game"');
 
   const up = '../'.repeat(depth);
   const relLayout = `${up}../layouts/BaseLayout.astro`;
