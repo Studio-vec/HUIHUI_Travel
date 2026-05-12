@@ -821,12 +821,6 @@
     let TRIPS = [];
 
     /* ── LANGUAGE ── */
-    const LANGS = [
-      { label:'한국어', code:'ko' },
-      { label:'English', code:'en' },
-      { label:'日本語',  code:'ja' },
-      { label:'中文',   code:'zh' },
-    ];
     const CHECKOUT_LABELS = {
       ko: (v,n) => `${v}/${n} 체크아웃 완료`,
       en: (v,n) => `${v}/${n} checkouts complete`,
@@ -859,7 +853,7 @@
         section: '旅游路线',
       },
     };
-    let langIdx = 0;
+    function _currentLang() { return window.hhLang || 'ko'; }
 
     function _updateHeroText(code = 'ko') {
       const t = HERO_TEXTS[code];
@@ -869,15 +863,13 @@
       document.getElementById('sectionLabel').textContent = t.section;
     }
 
-    function cycleLang() {
-      langIdx = (langIdx + 1) % LANGS.length;
-      const code = LANGS[langIdx].code;
-      document.getElementById('langLabel').textContent = LANGS[langIdx].label;
+    document.addEventListener('hh:langchange', function (e) {
+      const code = e.detail.code;
       _updateHeroText(code);
       _updateCheckoutUI(code);
       _renderGrid();
       _attachLongPress();
-    }
+    });
     function goTo(url) { window.location.href = url; }
 
     function showComingSoonPopup() {
@@ -1261,7 +1253,7 @@
     function _renderCard(trip, i) {
       const s       = _effectiveStatus(trip, i);
       const cl      = 'key-card' + (s !== 'visited' ? ' ' + s : '');
-      const isKo    = LANGS[langIdx].code === 'ko';
+      const isKo    = _currentLang() === 'ko';
       const label   = isKo ? trip.nameKo : trip.nameEn;
       const nameCls = s === 'coming-soon' ? 'card-name coming-soon' : 'card-name';
       let keyHTML   = '';
@@ -1337,7 +1329,7 @@
     function _renderGrid() {
       document.getElementById('keyGrid').innerHTML =
         TRIPS.map((t, i) => _renderCard(t, i)).join('');
-      _updateCheckoutUI(LANGS[langIdx].code);
+      _updateCheckoutUI(_currentLang());
       _attachCardClicks();
     }
 
