@@ -228,6 +228,42 @@ body {
 .tag-exp   { background: #f0ece2; color: #5a4a28; }
 .tag-spa   { background: #edf0f5; color: #34486a; }
 
+/* ── TRANSIT ROW (이동 수단 표시) ── */
+.transit-row {
+    display: flex; align-items: flex-start;
+    padding: 0 24px; gap: 14px;
+}
+.transit-track {
+    flex-shrink: 0; width: 38px;
+    display: flex; flex-direction: column; align-items: center;
+}
+.transit-vline {
+    width: 1px; height: 10px;
+    background: var(--lavender-border);
+}
+.transit-row.choice .transit-vline {
+    background: transparent;
+    border-left: 1px dashed var(--lavender-border);
+    width: 0;
+}
+.transit-node {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--lavender); flex-shrink: 0;
+}
+.transit-row.choice .transit-node {
+    background: var(--surface);
+    border: 1.5px solid var(--lavender);
+}
+.transit-info {
+    flex: 1; display: flex; align-items: center; gap: 5px;
+    padding: 6px 0 4px;
+}
+.transit-icon { font-size: 11px; flex-shrink: 0; }
+.transit-desc {
+    font-size: 11px; color: var(--ink-3);
+    line-height: 1.4; font-weight: 300;
+}
+
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
 
 .btn-home {
