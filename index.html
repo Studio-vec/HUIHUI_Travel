@@ -23,41 +23,25 @@
        NAVBAR
     ══════════════════════════════ */
     .navbar {
-      position: sticky; top: 0; z-index: var(--z-fixed);
-      background: rgba(255, 248, 235, 0.85);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--color-border);
-      padding: 0 clamp(var(--space-5), 5vw, var(--space-12));
-      height: 56px;
-      display: flex; align-items: center; gap: var(--space-8);
+      position:sticky; top:0; z-index:var(--z-fixed);
+      background:rgba(255,248,235,0.82); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+      border-bottom:1px solid rgba(139,111,208,0.15);
+      padding:0 clamp(20px,5vw,48px); height:56px;
+      display:flex; align-items:center; gap:24px;
     }
     .navbar-logo {
-      font-family: var(--font-display);
-      font-size: 22px;
-      font-style: italic;
-      font-weight: 600;
-      color: var(--lavender-600);
-      letter-spacing: 0.02em;
-      text-decoration: none;
-      flex-shrink: 0;
-      white-space: nowrap;
+      font-family:var(--font-display); font-size:20px;
+      font-style:italic; font-weight:600; color:var(--lavender-600);
+      text-decoration:none; flex-shrink:0;
     }
-    .navbar-links {
-      display: flex; gap: var(--space-6);
-      list-style: none;
-    }
+    .navbar-links { display:flex; gap:4px; list-style:none; }
     .navbar-links a {
-      font-family: var(--font-heading);
-      font-size: var(--text-sm);
-      font-weight: 500;
-      color: var(--color-text-secondary);
-      text-decoration: none;
-      letter-spacing: var(--tracking-wide);
-      transition: color var(--dur-fast) var(--ease-out);
-      white-space: nowrap;
+      font-family:var(--font-heading); font-size:13px; font-weight:500;
+      color:var(--color-text-secondary); text-decoration:none;
+      padding:8px 12px; border-radius:10px;
+      transition:color 150ms, background 150ms;
     }
-    .navbar-links a:hover { color: var(--lavender-600); }
+    .navbar-links a:hover, .navbar-links a.active { color:var(--lavender-600); background:var(--lavender-50); }
 
     /* ── NAVBAR CENTER SEARCH (모바일) ── */
     .navbar-center-search {
