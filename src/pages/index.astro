@@ -341,7 +341,7 @@ import Footer from '../components/Footer.astro';
       const today = new Date();
       const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
       const trip = available[dayOfYear % available.length];
-      const slug = trip.url.replace('trips/','').replace('.html','');
+      const slug = trip.url.replace('/trips/','');
       const noStr = String(trip.no).padStart(2,'0');
 
       /* 팝업 먼저 열기 (로딩 상태) */
@@ -640,9 +640,9 @@ import Footer from '../components/Footer.astro';
         nameEn:  slug.charAt(0).toUpperCase() + slug.slice(1),
         nameKo:  cfg.nameKo  || slug,
         status:  'not-visited',
-        url:     `trips/${slug}.html`,
+        url:     `/trips/${slug}`,
         no:      cfg.no      || (idx + 1),
-        key:     `assets/keys/${slug}.png`,
+        key:     `/assets/keys/${slug}.png`,
         tagline: cfg.tagline || '',
       }));
     }
