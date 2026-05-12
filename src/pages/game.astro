@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
-
 ---
 <BaseLayout title="짐 싸기 — HUIHUI Travel">
   <Fragment slot="head">
@@ -9,40 +8,53 @@ import Navbar from '../components/Navbar.astro';
   </Fragment>
   <Navbar />
 
-
-<!-- NAVBAR -->
-
-<!-- ══ START ══ -->
+<!-- ══ START: SCENARIO SELECTION ══ -->
 <div class="screen active" id="screen-start">
   <div class="start-icon">🧳</div>
   <h1 class="start-title">짐 싸기</h1>
-  <p class="start-sub">90초 안에 여행 가방을 최대한 꽉 채워보세요!</p>
-  <div class="rules-card">
-    <div class="rule"><span class="rule-ic">☝️</span><span>아이템을 드래그해서 가방 안에 놓으세요</span></div>
-    <div class="rule"><span class="rule-ic">📐</span><span>아이템끼리 겹칠 수 없어요</span></div>
-    <div class="rule"><span class="rule-ic">⏱</span><span>90초 안에 최대한 많이 채우세요</span></div>
-    <div class="rule"><span class="rule-ic">🏆</span><span>빈 공간 없이 채울수록 고득점!</span></div>
-  </div>
-
-  <!-- 나만의 아이템 -->
+  <p class="start-sub">어떤 여행을 떠나시나요?<br>힌트를 보고 딱 맞는 짐을 골라보세요!</p>
+  <div class="scenario-grid" id="scenarioGrid"></div>
   <div class="my-items-section">
     <div class="my-items-header">
       <span class="my-items-title">📷 나만의 여행 아이템</span>
-      <button class="btn-add-item" onclick="openModal()">
-        <span>+</span> 사진 추가
-      </button>
+      <button class="btn-add-item" onclick="openModal()"><span>+</span> 사진 추가</button>
     </div>
     <div class="my-items-grid" id="myItemsGrid">
       <p class="my-items-empty">여행지에서 찍은 사진을 누끼 따서<br>나만의 짐으로 만들어 보세요!</p>
     </div>
   </div>
+  <div class="best-badge" id="bestBadge" style="display:none">🏆 최고 기록: <span id="bestTxt"></span>점</div>
+</div>
 
-  <div class="best-badge" id="bestBadge" style="display:none">🏆 최고 기록: <span id="bestTxt"></span>%</div>
-  <button class="btn-primary" onclick="startGame()">짐 싸기 시작 →</button>
+<!-- ══ DETAIL: SCENARIO PREVIEW ══ -->
+<div class="screen" id="screen-detail">
+  <div class="detail-card">
+    <div class="detail-emoji" id="detailEmoji"></div>
+    <div class="detail-title" id="detailTitle"></div>
+    <div class="detail-sub" id="detailSub"></div>
+    <div class="detail-section-lbl">✈️ 여행 힌트</div>
+    <div class="detail-hints" id="detailHints"></div>
+    <div class="detail-notice">
+      💡 힌트를 잘 읽고, 이 여행에 꼭 필요한 짐을 골라보세요!<br>
+      <span>나중에 어떤 아이템이 추가 점수였는지 공개됩니다 😏</span>
+    </div>
+  </div>
+  <div class="detail-btns">
+    <button class="btn-outline" onclick="showScreen('screen-start')">← 돌아가기</button>
+    <button class="btn-primary" onclick="startGame()">짐 싸기 시작 →</button>
+  </div>
 </div>
 
 <!-- ══ GAME ══ -->
 <div class="screen" id="screen-game">
+  <div class="game-hint-bar">
+    <span class="ghb-emoji" id="ghbEmoji"></span>
+    <div class="ghb-info">
+      <span class="ghb-title" id="ghbTitle"></span>
+      <div class="ghb-chips" id="ghbChips"></div>
+    </div>
+  </div>
+
   <div class="stats-bar">
     <div class="stat-box">
       <span class="stat-lbl">남은 시간</span>
@@ -51,9 +63,17 @@ import Navbar from '../components/Navbar.astro';
     <div class="timer-track"><div class="timer-fill" id="timerFill"></div></div>
     <div class="stat-box">
       <span class="stat-lbl">아이템</span>
-      <span class="stat-val" id="itemVal">0/10</span>
+      <span class="stat-val" id="itemVal">0/20</span>
     </div>
   </div>
+
+  <!-- 실시간 채움 게이지 -->
+  <div class="fill-meter">
+    <span class="fm-lbl">채움</span>
+    <div class="fm-track"><div class="fm-fill" id="fmFill"></div></div>
+    <span class="fm-pct" id="fmPct">0%</span>
+  </div>
+
   <div class="suitcase-scene">
     <div class="handle"></div>
     <div class="suitcase-body">
@@ -68,38 +88,65 @@ import Navbar from '../components/Navbar.astro';
       </div>
     </div>
   </div>
+
   <p class="tray-lbl">아래 짐을 드래그해서 가방에 넣으세요</p>
   <div class="item-tray" id="itemTray"></div>
-  <button class="close-btn" onclick="endGame()">🔒 가방 닫기</button>
+
+  <div class="game-bottom-row">
+    <button class="close-btn" onclick="endGame()">🔒 가방 닫기</button>
+    <button class="rotate-mobile-btn" id="rotateBtnMobile" style="display:none" onclick="rotateItem()">🔄 회전</button>
+    <span class="rotate-hint-desk">R키로 회전</span>
+  </div>
 </div>
 
 <!-- ══ RESULT ══ -->
 <div class="screen" id="screen-result">
+  <div class="res-scenario-tag" id="resScenarioTag"></div>
   <div class="result-emoji" id="resEmoji">🎉</div>
   <h2 class="result-title" id="resTitle">잘 했어요!</h2>
-  <div class="result-score">
-    채운 공간 <strong id="resPct">0%</strong>
-    <span id="resItems"></span>
+
+  <div class="score-breakdown">
+    <div class="score-row">
+      <span>아이템 <span id="resItemCount">0</span>개 담기</span>
+      <span class="sb-val" id="resBase">+0점</span>
+    </div>
+    <div class="score-row">
+      <span>효율 보너스 (<span id="resPct">0</span>% 채움)</span>
+      <span class="sb-val" id="resEff">+0점</span>
+    </div>
   </div>
+
+  <div class="bonus-reveal">
+    <div class="bonus-header" id="bonusHeader"></div>
+    <div class="bonus-list" id="bonusList"></div>
+    <div class="bonus-footer">
+      <span>여행 보너스 합계</span>
+      <span class="bonus-total" id="resBonusTotal">+0점</span>
+    </div>
+  </div>
+
+  <div class="final-score-block">
+    <div class="fs-label">최종 점수</div>
+    <div class="fs-val" id="resFinalScore">0점</div>
+  </div>
+
   <div class="fill-bar-wrap">
     <div class="fill-bar-track"><div class="fill-bar-fill" id="resFill" style="width:0%"></div></div>
-    <div class="fill-label"><span>0%</span><span>100%</span></div>
+    <div class="fill-label"><span id="resPctLbl">0% 채움</span><span id="resItemsLbl"></span></div>
   </div>
+
   <div class="result-btns">
-    <button class="btn-outline" onclick="location.href="/"">🏠 홈으로</button>
-    <button class="btn-primary" onclick="startGame()">다시 도전 →</button>
+    <button class="btn-outline" onclick="showScreen('screen-start')">🗺️ 다른 여행 도전</button>
+    <button class="btn-primary" onclick="startGame()">↺ 같은 여행 다시</button>
   </div>
 </div>
 
-<!-- DRAG GHOST -->
 <div id="ghost"></div>
 
 <!-- ══ CUSTOM ITEM MODAL ══ -->
 <div class="modal-backdrop" id="modal">
   <div class="modal-box">
     <div class="modal-title">📷 나만의 아이템 추가</div>
-
-    <!-- STEP 1: Upload -->
     <div class="modal-step active" id="step-upload">
       <div class="drop-zone" id="dropZone" onclick="$('fileInput').click()">
         <div class="drop-zone-icon">🖼️</div>
@@ -111,17 +158,13 @@ import Navbar from '../components/Navbar.astro';
         <button class="btn-modal-cancel" onclick="closeModal()">취소</button>
       </div>
     </div>
-
-    <!-- STEP 2: Processing -->
     <div class="modal-step" id="step-processing">
       <div class="processing-wrap active">
         <div class="spinner"></div>
         <div class="processing-label" id="processingLabel">AI가 배경을 지우는 중...</div>
-        <div class="processing-sub">처음 사용 시 모델 로딩으로<br>약 10~20초 걸릴 수 있어요</div>
+        <div class="processing-sub">처음 사용 시 약 10~20초 걸릴 수 있어요</div>
       </div>
     </div>
-
-    <!-- STEP 3: Preview & name -->
     <div class="modal-step" id="step-preview">
       <div class="preview-wrap active">
         <div class="preview-canvas-wrap">
@@ -136,26 +179,10 @@ import Navbar from '../components/Navbar.astro';
       <div class="modal-field">
         <label>가방 안 크기 선택</label>
         <div class="size-picker">
-          <div class="size-opt selected" data-w="1" data-h="1" onclick="selectSize(this)">
-            <span class="size-opt-icon">🟫</span>
-            <span class="size-opt-lbl">1 × 1</span>
-            <span class="size-opt-sub">소형</span>
-          </div>
-          <div class="size-opt" data-w="2" data-h="1" onclick="selectSize(this)">
-            <span class="size-opt-icon">🟫🟫</span>
-            <span class="size-opt-lbl">2 × 1</span>
-            <span class="size-opt-sub">가로형</span>
-          </div>
-          <div class="size-opt" data-w="1" data-h="2" onclick="selectSize(this)">
-            <span class="size-opt-icon">📏</span>
-            <span class="size-opt-lbl">1 × 2</span>
-            <span class="size-opt-sub">세로형</span>
-          </div>
-          <div class="size-opt" data-w="2" data-h="2" onclick="selectSize(this)">
-            <span class="size-opt-icon">⬛</span>
-            <span class="size-opt-lbl">2 × 2</span>
-            <span class="size-opt-sub">대형</span>
-          </div>
+          <div class="size-opt selected" data-w="1" data-h="1" onclick="selectSize(this)"><span class="size-opt-icon">🟫</span><span class="size-opt-lbl">1×1</span><span class="size-opt-sub">소형</span></div>
+          <div class="size-opt" data-w="2" data-h="1" onclick="selectSize(this)"><span class="size-opt-icon">🟫🟫</span><span class="size-opt-lbl">2×1</span><span class="size-opt-sub">가로형</span></div>
+          <div class="size-opt" data-w="1" data-h="2" onclick="selectSize(this)"><span class="size-opt-icon">📏</span><span class="size-opt-lbl">1×2</span><span class="size-opt-sub">세로형</span></div>
+          <div class="size-opt" data-w="2" data-h="2" onclick="selectSize(this)"><span class="size-opt-icon">⬛</span><span class="size-opt-lbl">2×2</span><span class="size-opt-sub">대형</span></div>
         </div>
       </div>
       <div class="modal-btns">
@@ -173,18 +200,174 @@ import Navbar from '../components/Navbar.astro';
     window._removeBackground = removeBackground;
     window._bgRemoveReady = true;
   } catch(e) {
-    console.warn('background-removal 모듈 로드 실패:', e);
+    console.warn('background-removal 로드 실패:', e);
     window._bgRemoveReady = false;
   }
 </script>
 
 <script>
 // ══════════════════════════════════════
-//  BASE ITEMS (SVG flat design)
+//  HELPERS
+// ══════════════════════════════════════
+const $ = id => document.getElementById(id);
+
+// rect cells helper (used inline)
+const rc = (w, h) => {
+  const c = [];
+  for (let r = 0; r < h; r++) for (let col = 0; col < w; col++) c.push([r, col]);
+  return c;
+};
+
+// cell-based item renderer
+function renderCells(cells, color, lightColor, icon, cs, gap) {
+  const maxR = Math.max(...cells.map(c => c[0]));
+  const maxC = Math.max(...cells.map(c => c[1]));
+  const W = (maxC+1)*cs + maxC*gap;
+  const H = (maxR+1)*cs + maxR*gap;
+  const cellSet = new Set(cells.map(([r,c]) => `${r},${c}`));
+  let out = `<div style="position:relative;width:${W}px;height:${H}px">`;
+  for (let r = 0; r <= maxR; r++) {
+    for (let c = 0; c <= maxC; c++) {
+      if (!cellSet.has(`${r},${c}`)) continue;
+      const x = c*(cs+gap), y = r*(cs+gap);
+      const isFirst = cells[0][0]===r && cells[0][1]===c;
+      out += `<div style="position:absolute;left:${x}px;top:${y}px;width:${cs}px;height:${cs}px;background:${color};border-radius:5px;box-shadow:inset 2px 2px 5px ${lightColor},inset -2px -2px 4px rgba(0,0,0,0.22);display:flex;align-items:center;justify-content:center">${isFirst ? `<span style="font-size:${Math.max(11,Math.floor(cs*0.44))}px;line-height:1">${icon}</span>` : ''}</div>`;
+    }
+  }
+  out += '</div>';
+  return out;
+}
+
+// Render item for display (tray, ghost, placed)
+function renderItemDisplay(item, cells, cs, gap, rotation) {
+  if (item.color) return renderCells(cells, item.color, item.lightColor, item.icon, cs, gap);
+  const maxR = Math.max(...cells.map(c=>c[0]));
+  const maxC = Math.max(...cells.map(c=>c[1]));
+  const W = (maxC+1)*cs + maxC*gap;
+  const H = (maxR+1)*cs + maxR*gap;
+  if (!rotation) return item.render(W, H);
+  // SVG with CSS rotation
+  const origW = item.w*cs + (item.w-1)*gap;
+  const origH = item.h*cs + (item.h-1)*gap;
+  const deg = rotation * 90;
+  return `<div style="width:${W}px;height:${H}px;overflow:hidden;display:flex;align-items:center;justify-content:center"><div style="transform:rotate(${deg}deg);transform-origin:center;width:${origW}px;height:${origH}px;flex-shrink:0">${item.render(origW, origH)}</div></div>`;
+}
+
+// ══════════════════════════════════════
+//  SCENARIOS
+// ══════════════════════════════════════
+const SCENARIOS = [
+  {
+    id:'gangneung',
+    emoji:'🌊', title:'강릉 커플 여행', detail:'2박 3일 · 여름 · 바다', color:'#E8F6FD',
+    hints:['해수욕장 방문 예정 🏖️','카페 거리 투어 ☕','날씨 맑음 35°C ☀️'],
+    itemPool:['sunscreen','swimsuit','camera','slippers','sunglasses','towel',
+              'shirt','tshirt','jeans','notebook','shoes','pouch',
+              'scarf','jacket','medicine','charger','swim_tube','hair_dryer','hat','gloves'],
+    bonus:{
+      sunscreen: {points:25, reason:'여름 바다엔 필수! 뜨거운 태양을 막아요'},
+      swimsuit:  {points:25, reason:'해수욕장에서 꼭 필요하죠'},
+      camera:    {points:20, reason:'커플 여행엔 추억 사진이 최고!'},
+      slippers:  {points:20, reason:'강릉 해변 모래사장 산책용'},
+      swim_tube: {points:15, reason:'해수욕장 물놀이 안전하게!'},
+      sunglasses:{points:15, reason:'눈부신 여름 바다에 필요해요'},
+      towel:     {points:10, reason:'바다에서 나올 때 꼭 필요!'},
+    }
+  },
+  {
+    id:'jeju',
+    emoji:'🌺', title:'제주도 혼자 힐링', detail:'3박 4일 · 봄 · 자연', color:'#EAFAF1',
+    hints:['오름 트레킹 예정 🥾','카페 & 독서 힐링 📚','바람 많음 · 소나기 주의 🌬️'],
+    itemPool:['camera','book','hat','sunscreen','shoes','umbrella',
+              'shirt','tshirt','jeans','notebook','pouch','medicine',
+              'charger','snacks','towel','scarf','boots','tripod','slippers','swimsuit'],
+    bonus:{
+      camera:  {points:25, reason:'제주 자연 풍경을 꼭 담아요'},
+      book:    {points:20, reason:'힐링 여행엔 독서가 최고!'},
+      boots:   {points:20, reason:'오름 트레킹에 딱!'},
+      hat:     {points:15, reason:'트레킹할 때 햇빛 차단'},
+      tripod:  {points:15, reason:'혼자 여행, 셀카 삼각대 필수!'},
+      umbrella:{points:15, reason:'제주 바람과 소나기 대비'},
+      sunscreen:{points:10, reason:'봄 제주도도 자외선 강해요'},
+    }
+  },
+  {
+    id:'busan',
+    emoji:'❄️', title:'부산 겨울 여행', detail:'2박 3일 · 겨울 · 친구들과', color:'#EEF2FF',
+    hints:['해운대 야경 감상 🌃','자갈치 시장 투어 🐟','기온 3°C 예상 🧊'],
+    itemPool:['sweater','jacket','scarf','gloves','shoes','umbrella',
+              'shirt','jeans','camera','medicine','pouch','charger',
+              'notebook','hat','snacks','boots','travel_pillow','tshirt','slippers','sunscreen'],
+    bonus:{
+      sweater:       {points:25, reason:'겨울 부산은 꽤 추워요!'},
+      jacket:        {points:25, reason:'해운대 바닷바람 막아줄 재킷'},
+      scarf:         {points:20, reason:'목 보온 필수템'},
+      boots:         {points:15, reason:'겨울 야외 활동, 발 보온 필수'},
+      travel_pillow: {points:15, reason:'이동 중 편안하게!'},
+      umbrella:      {points:10, reason:'겨울 부산은 비도 잦아요'},
+      camera:        {points:10, reason:'야경 사진 찍으려면 카메라!'},
+    }
+  },
+  {
+    id:'seoul',
+    emoji:'💼', title:'서울 비즈니스 출장', detail:'1박 2일 · 가을 · 혼자', color:'#F5F0FF',
+    hints:['중요한 미팅 예정 🤝','정장 착용 필요 👔','호텔 숙박 🏨'],
+    itemPool:['shirt','jacket','jeans','notebook','pouch','medicine',
+              'charger','toothbrush','shoes','belt','camera','umbrella',
+              'snacks','scarf','sweater','hair_dryer','multi_adapter','tshirt','slippers','book'],
+    bonus:{
+      shirt:       {points:25, reason:'미팅엔 깔끔한 셔츠가 필수!'},
+      jacket:      {points:20, reason:'비즈니스 자리엔 재킷'},
+      notebook:    {points:20, reason:'회의 내용 메모는 기본'},
+      charger:     {points:20, reason:'출장 중 충전기는 필수'},
+      hair_dryer:  {points:15, reason:'호텔 드라이어 믿지 마세요!'},
+      multi_adapter:{points:15, reason:'멀티 충전 필수템'},
+      toothbrush:  {points:10, reason:'1박이라도 칫솔은 챙겨야죠'},
+    }
+  },
+  {
+    id:'gapyeong',
+    emoji:'⛺', title:'가평 캠핑', detail:'1박 2일 · 여름 · 친구들과', color:'#F0FAF0',
+    hints:['야외 바베큐 🔥','계곡 물놀이 💦','밤 모닥불 🌙'],
+    itemPool:['hat','towel','medicine','snacks','shoes','sweater',
+              'shirt','tshirt','jeans','camera','slippers','sunscreen',
+              'notebook','scarf','book','pouch','charger','umbrella','swim_tube','boots'],
+    bonus:{
+      hat:       {points:25, reason:'야외 캠핑엔 모자가 필수!'},
+      towel:     {points:20, reason:'계곡 물놀이 후 꼭 필요'},
+      medicine:  {points:20, reason:'야외에선 상비약을 꼭 챙겨요'},
+      snacks:    {points:20, reason:'캠핑 간식은 필수템!'},
+      swim_tube: {points:15, reason:'계곡 물놀이 안전하게!'},
+      shoes:     {points:10, reason:'계곡 지형을 위한 튼튼한 신발'},
+      sweater:   {points:10, reason:'밤에 모닥불 앞이라도 쌀쌀해요'},
+    }
+  },
+  {
+    id:'yeosu',
+    emoji:'🐟', title:'여수 가족 여행', detail:'2박 3일 · 가을 · 가족과', color:'#F0FBFC',
+    hints:['여수 밤바다 감상 🌊','해산물 식도락 🍤','아이들과 함께 👨‍👩‍👧'],
+    itemPool:['camera','umbrella','medicine','snacks','sweater','slippers',
+              'shirt','jeans','shoes','tshirt','hat','towel',
+              'charger','notebook','sunscreen','sunglasses','tripod','multi_adapter','book','pouch'],
+    bonus:{
+      camera:       {points:25, reason:'가족 여행의 소중한 순간을!'},
+      umbrella:     {points:25, reason:'여수는 비 소식이 있어요'},
+      medicine:     {points:20, reason:'가족 중 아픈 사람 대비'},
+      snacks:       {points:20, reason:'아이들 간식은 필수!'},
+      tripod:       {points:15, reason:'가족사진 퀄리티 UP!'},
+      multi_adapter:{points:10, reason:'온 가족 충전 한 번에'},
+      sweater:      {points:10, reason:'가을 여수 밤바다는 쌀쌀해요'},
+    }
+  },
+];
+
+// ══════════════════════════════════════
+//  BASE ITEMS
 // ══════════════════════════════════════
 const BASE_ITEMS = [
+  // ── 직사각형 SVG 아이템 ──
   {
-    id:'shirt', name:'셔츠', w:2, h:2,
+    id:'shirt', name:'셔츠', w:2, h:2, cells:rc(2,2),
     render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 100 100">
       <rect width="100" height="100" fill="#6B9EC5" rx="5"/>
       <rect x="18" y="24" width="64" height="72" rx="4" fill="#5A8DB5"/>
@@ -197,7 +380,7 @@ const BASE_ITEMS = [
     </svg>`
   },
   {
-    id:'sweater', name:'스웨터', w:2, h:2,
+    id:'sweater', name:'스웨터', w:2, h:2, cells:rc(2,2),
     render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 100 100">
       <rect width="100" height="100" fill="#C8BA98" rx="5"/>
       <polygon points="18,30 2,40 2,64 18,56" fill="#B8AA88"/>
@@ -211,22 +394,18 @@ const BASE_ITEMS = [
     </svg>`
   },
   {
-    id:'jeans', name:'청바지', w:2, h:2,
+    id:'jeans', name:'청바지', w:2, h:2, cells:rc(2,2),
     render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 100 100">
       <rect width="100" height="100" fill="#4A6882" rx="5"/>
       <rect x="10" y="10" width="80" height="14" rx="3" fill="#3A5872"/>
       <rect x="10" y="24" width="36" height="70" rx="3" fill="#3A5872"/>
       <rect x="54" y="24" width="36" height="70" rx="3" fill="#3A5872"/>
       <line x1="50" y1="24" x2="50" y2="94" stroke="#2A4862" stroke-width="2.5" opacity=".5"/>
-      <rect x="56" y="16" width="30" height="22" rx="3" fill="#3A5872" opacity=".7"/>
-      <path d="M58,18 L84,18 L84,36 L58,36" stroke="#5A7892" stroke-width="1.5" fill="none" stroke-dasharray="3,2"/>
       <rect x="56" y="12" width="12" height="8" rx="2" fill="#C8A870" opacity=".7"/>
-      <rect x="20" y="8" width="7" height="16" rx="2" fill="#2A4862"/>
-      <rect x="73" y="8" width="7" height="16" rx="2" fill="#2A4862"/>
     </svg>`
   },
   {
-    id:'camera', name:'카메라', w:2, h:1,
+    id:'camera', name:'카메라', w:2, h:1, cells:rc(2,1),
     render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 200 100">
       <rect width="200" height="100" fill="#7A7870" rx="10"/>
       <rect x="5" y="5" width="190" height="90" rx="8" fill="#6A6860"/>
@@ -236,52 +415,40 @@ const BASE_ITEMS = [
       <circle cx="82" cy="56" r="22" fill="#2A2820"/>
       <circle cx="82" cy="56" r="14" fill="#181810"/>
       <circle cx="72" cy="46" r="6" fill="white" opacity=".12"/>
-      <circle cx="82" cy="56" r="36" fill="none" stroke="#8A8880" stroke-width="2"/>
       <rect x="136" y="14" width="46" height="28" rx="4" fill="#3A3830"/>
-      <rect x="139" y="17" width="40" height="22" rx="2" fill="#4A4848"/>
       <circle cx="152" cy="20" r="6" fill="#D84040"/>
-      <rect x="126" y="10" width="18" height="8" rx="3" fill="#5A5850"/>
-      <rect x="108" y="10" width="14" height="8" rx="3" fill="#5A5850"/>
     </svg>`
   },
   {
-    id:'shoes', name:'운동화', w:2, h:1,
+    id:'shoes', name:'운동화', w:2, h:1, cells:rc(2,1),
     render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 200 100">
       <rect width="200" height="100" fill="#C8A870" rx="10"/>
       <path d="M8,82 L8,42 Q8,24 30,20 L62,18 Q74,18 78,28 L82,52 L82,82 Z" fill="#E8D8B0"/>
       <path d="M8,80 L82,80 L82,88 Q46,95 8,88 Z" fill="#8B6040"/>
       <line x1="28" y1="34" x2="66" y2="34" stroke="white" stroke-width="2.5"/>
       <line x1="26" y1="44" x2="64" y2="44" stroke="white" stroke-width="2.5"/>
-      <line x1="24" y1="54" x2="62" y2="54" stroke="white" stroke-width="2.5"/>
-      <ellipse cx="74" cy="66" rx="10" ry="17" fill="#1A1818" opacity=".85"/>
       <path d="M118,82 L118,42 Q118,24 140,20 L172,18 Q184,18 188,28 L192,52 L192,82 Z" fill="#E8D8B0"/>
       <path d="M118,80 L192,80 L192,88 Q156,95 118,88 Z" fill="#8B6040"/>
       <line x1="138" y1="34" x2="176" y2="34" stroke="white" stroke-width="2.5"/>
       <line x1="136" y1="44" x2="174" y2="44" stroke="white" stroke-width="2.5"/>
-      <line x1="134" y1="54" x2="172" y2="54" stroke="white" stroke-width="2.5"/>
-      <ellipse cx="184" cy="66" rx="10" ry="17" fill="#1A1818" opacity=".85"/>
     </svg>`
   },
   {
-    id:'belt', name:'벨트', w:4, h:1,
+    id:'belt', name:'벨트', w:4, h:1, cells:rc(4,1),
     render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 400 100">
       <rect width="400" height="100" fill="#6A3E1C" rx="10"/>
       <rect x="78" y="18" width="314" height="64" rx="8" fill="#8B5E3C"/>
-      <rect x="82" y="22" width="306" height="56" rx="6" fill="none" stroke="#A07050" stroke-width="2" stroke-dasharray="8,4"/>
       <circle cx="160" cy="50" r="5.5" fill="#5A3A1C"/>
-      <circle cx="188" cy="50" r="5.5" fill="#5A3A1C"/>
-      <circle cx="216" cy="50" r="5.5" fill="#5A3A1C"/>
-      <circle cx="244" cy="50" r="5.5" fill="#5A3A1C"/>
-      <circle cx="272" cy="50" r="5.5" fill="#5A3A1C"/>
+      <circle cx="200" cy="50" r="5.5" fill="#5A3A1C"/>
+      <circle cx="240" cy="50" r="5.5" fill="#5A3A1C"/>
+      <circle cx="280" cy="50" r="5.5" fill="#5A3A1C"/>
       <rect x="6" y="14" width="70" height="72" rx="10" fill="#C8A030"/>
       <rect x="12" y="20" width="58" height="60" rx="7" fill="#D4A830"/>
-      <rect x="16" y="24" width="50" height="52" rx="5" fill="none" stroke="#B08020" stroke-width="3"/>
       <rect x="36" y="18" width="6" height="64" rx="3" fill="#9A7018"/>
-      <rect x="18" y="26" width="14" height="7" rx="2" fill="rgba(255,230,120,.35)"/>
     </svg>`
   },
   {
-    id:'jacket', name:'재킷', w:2, h:2,
+    id:'jacket', name:'재킷', w:2, h:2, cells:rc(2,2),
     render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 100 100">
       <rect width="100" height="100" fill="#C85028" rx="5"/>
       <polygon points="18,22 2,32 2,64 18,56" fill="#B84018"/>
@@ -291,13 +458,11 @@ const BASE_ITEMS = [
       <polygon points="82,22 50,38 82,46" fill="#A83008" opacity=".9"/>
       <rect x="47" y="38" width="6" height="54" rx="2" fill="#882808" opacity=".7"/>
       <rect x="46" y="44" width="8" height="5" rx="1.5" fill="#E0C060"/>
-      <rect x="47" y="38" width="6" height="9" rx="2" fill="#E0C060"/>
       <rect x="20" y="58" width="22" height="18" rx="3" fill="#A03010" opacity=".7"/>
-      <rect x="82" y="58" width="16" height="7" rx="2" fill="#882808" opacity=".55"/>
     </svg>`
   },
   {
-    id:'tshirt', name:'티셔츠', w:2, h:2,
+    id:'tshirt', name:'티셔츠', w:2, h:2, cells:rc(2,2),
     render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 100 100">
       <rect width="100" height="100" fill="#D4A820" rx="5"/>
       <polygon points="20,32 2,24 2,48 20,44" fill="#C09810"/>
@@ -308,7 +473,7 @@ const BASE_ITEMS = [
     </svg>`
   },
   {
-    id:'notebook', name:'수첩', w:1, h:2,
+    id:'notebook', name:'수첩', w:1, h:2, cells:rc(1,2),
     render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 100 200">
       <rect width="100" height="200" fill="#5B7840" rx="8"/>
       <rect x="8" y="8" width="84" height="184" rx="6" fill="#6B8850"/>
@@ -320,13 +485,11 @@ const BASE_ITEMS = [
       <circle cx="20" cy="146" r="6" fill="#3B5820" stroke="#2B4810" stroke-width="2"/>
       <line x1="34" y1="58" x2="86" y2="58" stroke="#4B6830" stroke-width="1.5" opacity=".5"/>
       <line x1="34" y1="74" x2="86" y2="74" stroke="#4B6830" stroke-width="1.5" opacity=".5"/>
-      <line x1="34" y1="90" x2="86" y2="90" stroke="#4B6830" stroke-width="1.5" opacity=".5"/>
       <line x1="34" y1="106" x2="86" y2="106" stroke="#4B6830" stroke-width="1.5" opacity=".5"/>
-      <rect x="78" y="8" width="5" height="184" rx="2" fill="#3B5820" opacity=".65"/>
     </svg>`
   },
   {
-    id:'pouch', name:'파우치', w:1, h:1,
+    id:'pouch', name:'파우치', w:1, h:1, cells:rc(1,1),
     render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 100 100">
       <rect width="100" height="100" fill="#3B5B3B" rx="8"/>
       <rect x="8" y="26" width="84" height="68" rx="6" fill="#4B6B4B"/>
@@ -334,28 +497,249 @@ const BASE_ITEMS = [
       <rect x="30" y="28" width="40" height="18" rx="5" fill="#C8A030"/>
       <rect x="34" y="32" width="32" height="10" rx="3" fill="#D4A830"/>
       <rect x="45" y="24" width="10" height="26" rx="3" fill="#9A7020"/>
-      <rect x="10" y="28" width="80" height="66" rx="5" fill="none" stroke="#5B7B5B" stroke-width="1.5" stroke-dasharray="5,3"/>
     </svg>`
+  },
+  {
+    id:'sunscreen', name:'선크림', w:1, h:1, cells:rc(1,1),
+    render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#FFF3CC" rx="8"/>
+      <rect x="33" y="22" width="34" height="54" rx="6" fill="white" stroke="#E8D060" stroke-width="2"/>
+      <rect x="37" y="12" width="26" height="15" rx="5" fill="#E8D888"/>
+      <circle cx="50" cy="52" r="11" fill="#F5C020"/>
+      <line x1="50" y1="35" x2="50" y2="31" stroke="#F5C020" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="50" y1="73" x2="50" y2="69" stroke="#F5C020" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="32" y1="52" x2="28" y2="52" stroke="#F5C020" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="72" y1="52" x2="68" y2="52" stroke="#F5C020" stroke-width="2.5" stroke-linecap="round"/>
+      <rect x="37" y="66" width="26" height="7" rx="2" fill="#70C8F0" opacity=".8"/>
+    </svg>`
+  },
+  {
+    id:'sunglasses', name:'선글라스', w:2, h:1, cells:rc(2,1),
+    render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 200 100">
+      <rect width="200" height="100" fill="#F5E8D0" rx="8"/>
+      <rect x="10" y="44" width="58" height="4" rx="2" fill="#2A2020"/>
+      <rect x="132" y="44" width="58" height="4" rx="2" fill="#2A2020"/>
+      <rect x="88" y="41" width="24" height="8" rx="4" fill="#2A2020"/>
+      <rect x="18" y="28" width="50" height="38" rx="14" fill="#1A1010" opacity=".88"/>
+      <rect x="132" y="28" width="50" height="38" rx="14" fill="#1A1010" opacity=".88"/>
+      <rect x="18" y="28" width="22" height="16" rx="8" fill="white" opacity=".07"/>
+      <rect x="132" y="28" width="22" height="16" rx="8" fill="white" opacity=".07"/>
+    </svg>`
+  },
+  {
+    id:'swimsuit', name:'수영복', w:2, h:1, cells:rc(2,1),
+    render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 200 100">
+      <rect width="200" height="100" fill="#D0E8F8" rx="8"/>
+      <path d="M50,18 Q100,8 150,18 L150,46 Q100,56 50,46 Z" fill="#2E8FD8"/>
+      <line x1="82" y1="18" x2="72" y2="4" stroke="#2E8FD8" stroke-width="5" stroke-linecap="round"/>
+      <line x1="118" y1="18" x2="128" y2="4" stroke="#2E8FD8" stroke-width="5" stroke-linecap="round"/>
+      <path d="M46,56 Q100,70 154,56 L148,94 Q100,100 52,94 Z" fill="#2E8FD8"/>
+      <rect x="46" y="54" width="108" height="6" rx="3" fill="#1D6FAA"/>
+    </svg>`
+  },
+  {
+    id:'slippers', name:'슬리퍼', w:2, h:1, cells:rc(2,1),
+    render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 200 100">
+      <rect width="200" height="100" fill="#FFF0E0" rx="8"/>
+      <path d="M10,72 Q10,40 28,36 L64,36 Q76,36 78,48 L78,72 Q44,82 10,72 Z" fill="#E87840"/>
+      <path d="M10,70 L78,70 L78,78 Q44,86 10,78 Z" fill="#C05820"/>
+      <path d="M30,36 Q40,26 52,26 Q62,26 64,36" fill="none" stroke="#E87840" stroke-width="7" stroke-linecap="round"/>
+      <path d="M122,72 Q122,40 140,36 L176,36 Q188,36 188,48 L188,72 Q154,82 122,72 Z" fill="#E87840"/>
+      <path d="M122,70 L188,70 L188,78 Q154,86 122,78 Z" fill="#C05820"/>
+      <path d="M142,36 Q152,26 164,26 Q174,26 176,36" fill="none" stroke="#E87840" stroke-width="7" stroke-linecap="round"/>
+    </svg>`
+  },
+  {
+    id:'umbrella', name:'우산', w:1, h:2, cells:rc(1,2),
+    render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 100 200">
+      <rect width="100" height="200" fill="#E8F0F8" rx="8"/>
+      <path d="M50,18 Q88,18 88,58 L50,58 L12,58 Q12,18 50,18 Z" fill="#4878C8"/>
+      <path d="M50,18 Q69,18 69,58 L50,58 Z" fill="#3868B8"/>
+      <path d="M50,18 Q31,18 31,58 L50,58 Z" fill="#5888D8"/>
+      <path d="M12,58 Q21,70 31,58 Q40,70 50,58 Q60,70 69,58 Q79,70 88,58" fill="none" stroke="#4878C8" stroke-width="4" stroke-linecap="round"/>
+      <rect x="47" y="58" width="6" height="104" rx="3" fill="#3A3020"/>
+      <path d="M50,162 Q50,184 32,184" fill="none" stroke="#3A3020" stroke-width="6" stroke-linecap="round"/>
+    </svg>`
+  },
+  {
+    id:'medicine', name:'상비약', w:1, h:1, cells:rc(1,1),
+    render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#FFF0F0" rx="8"/>
+      <rect x="12" y="16" width="76" height="68" rx="8" fill="white" stroke="#E0C0C0" stroke-width="2"/>
+      <rect x="41" y="28" width="18" height="46" rx="4" fill="#E03030"/>
+      <rect x="27" y="42" width="46" height="18" rx="4" fill="#E03030"/>
+    </svg>`
+  },
+  {
+    id:'charger', name:'충전기', w:1, h:1, cells:rc(1,1),
+    render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#F0F0F0" rx="8"/>
+      <rect x="24" y="16" width="52" height="44" rx="8" fill="#404040"/>
+      <rect x="30" y="22" width="40" height="32" rx="5" fill="#505050"/>
+      <rect x="34" y="58" width="10" height="18" rx="4" fill="#888"/>
+      <rect x="56" y="58" width="10" height="18" rx="4" fill="#888"/>
+      <circle cx="50" cy="38" r="7" fill="#60D060" opacity=".9"/>
+      <path d="M50,76 Q50,86 50,90" fill="none" stroke="#333" stroke-width="5" stroke-linecap="round"/>
+      <rect x="38" y="88" width="24" height="8" rx="3" fill="#303030"/>
+    </svg>`
+  },
+  {
+    id:'toothbrush', name:'칫솔', w:1, h:2, cells:rc(1,2),
+    render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 100 200">
+      <rect width="100" height="200" fill="#E8F8F0" rx="8"/>
+      <rect x="43" y="78" width="14" height="110" rx="7" fill="#40B880"/>
+      <rect x="44" y="48" width="12" height="36" rx="6" fill="#38A870"/>
+      <rect x="29" y="16" width="42" height="38" rx="8" fill="#38A870"/>
+      <rect x="32" y="12" width="6" height="20" rx="3" fill="white" opacity=".9"/>
+      <rect x="41" y="12" width="6" height="20" rx="3" fill="white" opacity=".9"/>
+      <rect x="50" y="12" width="6" height="20" rx="3" fill="white" opacity=".9"/>
+      <rect x="59" y="12" width="6" height="20" rx="3" fill="white" opacity=".9"/>
+    </svg>`
+  },
+  {
+    id:'towel', name:'수건', w:2, h:1, cells:rc(2,1),
+    render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 200 100">
+      <rect width="200" height="100" fill="#FDF0E8" rx="8"/>
+      <ellipse cx="100" cy="50" rx="80" ry="35" fill="#F0C89A"/>
+      <ellipse cx="100" cy="50" rx="68" ry="27" fill="#F8D8B0"/>
+      <ellipse cx="100" cy="50" rx="56" ry="19" fill="#F0C89A"/>
+      <ellipse cx="100" cy="50" rx="44" ry="13" fill="#F8D8B0"/>
+      <path d="M20,38 Q100,24 180,38" fill="none" stroke="#C8906A" stroke-width="7" stroke-linecap="round" opacity=".6"/>
+    </svg>`
+  },
+  {
+    id:'hat', name:'모자', w:2, h:1, cells:rc(2,1),
+    render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 200 100">
+      <rect width="200" height="100" fill="#FFF0D8" rx="8"/>
+      <ellipse cx="100" cy="72" rx="84" ry="20" fill="#C87820"/>
+      <path d="M36,72 Q36,18 100,18 Q164,18 164,72 Z" fill="#E89030"/>
+      <path d="M36,72 Q100,60 164,72" fill="none" stroke="#A86010" stroke-width="7"/>
+      <circle cx="100" cy="20" r="7" fill="#C87820"/>
+    </svg>`
+  },
+  {
+    id:'scarf', name:'스카프', w:2, h:1, cells:rc(2,1),
+    render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 200 100">
+      <rect width="200" height="100" fill="#F8E8F8" rx="8"/>
+      <path d="M18,28 Q60,16 100,22 Q140,28 182,20 L182,48 Q140,56 100,50 Q60,44 18,56 Z" fill="#B050B0"/>
+      <ellipse cx="100" cy="37" rx="24" ry="17" fill="#902090"/>
+      <path d="M80,50 Q68,74 60,90" fill="none" stroke="#B050B0" stroke-width="17" stroke-linecap="round"/>
+      <path d="M120,50 Q130,74 136,92" fill="none" stroke="#902090" stroke-width="15" stroke-linecap="round"/>
+    </svg>`
+  },
+  {
+    id:'gloves', name:'장갑', w:2, h:1, cells:rc(2,1),
+    render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 200 100">
+      <rect width="200" height="100" fill="#FCEAEA" rx="8"/>
+      <path d="M14,84 L14,46 Q14,28 32,28 L54,28 Q66,28 68,38 L68,84 Z" fill="#D84040"/>
+      <rect x="18" y="18" width="11" height="16" rx="5.5" fill="#D84040"/>
+      <rect x="31" y="10" width="11" height="24" rx="5.5" fill="#D84040"/>
+      <rect x="44" y="10" width="11" height="24" rx="5.5" fill="#D84040"/>
+      <rect x="56" y="16" width="10" height="18" rx="5" fill="#D84040"/>
+      <rect x="6" y="42" width="8" height="22" rx="4" fill="#D84040"/>
+      <rect x="14" y="80" width="54" height="8" rx="4" fill="#B83030"/>
+      <path d="M132,84 L132,46 Q132,28 150,28 L172,28 Q184,28 186,38 L186,84 Z" fill="#E05050"/>
+      <rect x="136" y="18" width="11" height="16" rx="5.5" fill="#E05050"/>
+      <rect x="149" y="10" width="11" height="24" rx="5.5" fill="#E05050"/>
+      <rect x="162" y="10" width="11" height="24" rx="5.5" fill="#E05050"/>
+      <rect x="174" y="16" width="10" height="18" rx="5" fill="#E05050"/>
+      <rect x="186" y="42" width="8" height="22" rx="4" fill="#E05050"/>
+      <rect x="132" y="80" width="54" height="8" rx="4" fill="#C04040"/>
+    </svg>`
+  },
+  {
+    id:'book', name:'책', w:1, h:2, cells:rc(1,2),
+    render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 100 200">
+      <rect width="100" height="200" fill="#F8F0E8" rx="8"/>
+      <rect x="10" y="10" width="80" height="180" rx="6" fill="#D86030"/>
+      <rect x="10" y="10" width="20" height="180" rx="5" fill="#B84020"/>
+      <rect x="30" y="10" width="60" height="180" rx="3" fill="#FFF8F0"/>
+      <line x1="38" y1="48" x2="82" y2="48" stroke="#D0C0A0" stroke-width="2"/>
+      <line x1="38" y1="60" x2="82" y2="60" stroke="#D0C0A0" stroke-width="2"/>
+      <line x1="38" y1="72" x2="70" y2="72" stroke="#D0C0A0" stroke-width="2"/>
+      <line x1="38" y1="92" x2="82" y2="92" stroke="#D0C0A0" stroke-width="2"/>
+      <line x1="38" y1="104" x2="82" y2="104" stroke="#D0C0A0" stroke-width="2"/>
+      <rect x="72" y="8" width="9" height="30" fill="#F0C020"/>
+      <polygon points="72,38 76.5,31 81,38" fill="#F0C020"/>
+    </svg>`
+  },
+  {
+    id:'snacks', name:'간식', w:1, h:1, cells:rc(1,1),
+    render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#FFF8E0" rx="8"/>
+      <path d="M28,82 L28,36 Q28,22 40,22 L60,22 Q72,22 72,36 L72,82 Q50,90 28,82 Z" fill="#F5D020"/>
+      <rect x="26" y="18" width="48" height="12" rx="3" fill="#E0B810"/>
+      <rect x="34" y="38" width="32" height="26" rx="4" fill="#E8A810"/>
+      <rect x="26" y="74" width="48" height="8" rx="3" fill="#E0B810"/>
+    </svg>`
+  },
+
+  // ── 비직사각형 블록 아이템 ──
+  // 등산화: L자 (바닥이 긴)
+  // X . .
+  // X X X
+  {
+    id:'boots', name:'등산화', w:3, h:2,
+    cells:[[0,0],[1,0],[1,1],[1,2]],
+    color:'#7A5230', lightColor:'rgba(200,150,90,0.35)', icon:'🥾'
+  },
+  // 수영 튜브: T자
+  // X X X
+  // . X .
+  {
+    id:'swim_tube', name:'수영 튜브', w:3, h:2,
+    cells:[[0,0],[0,1],[0,2],[1,1]],
+    color:'#D84E6A', lightColor:'rgba(255,140,160,0.35)', icon:'🏊'
+  },
+  // 여행 베개: S자
+  // . X X
+  // X X .
+  {
+    id:'travel_pillow', name:'여행 베개', w:3, h:2,
+    cells:[[0,1],[0,2],[1,0],[1,1]],
+    color:'#8B60C8', lightColor:'rgba(180,140,230,0.35)', icon:'😴'
+  },
+  // 멀티 어댑터: Z자
+  // X X .
+  // . X X
+  {
+    id:'multi_adapter', name:'멀티 어댑터', w:3, h:2,
+    cells:[[0,0],[0,1],[1,1],[1,2]],
+    color:'#485060', lightColor:'rgba(110,130,160,0.35)', icon:'🔌'
+  },
+  // 드라이어: ㄱ자 (3칸)
+  // X .
+  // X X
+  {
+    id:'hair_dryer', name:'드라이어', w:2, h:2,
+    cells:[[0,0],[1,0],[1,1]],
+    color:'#C85890', lightColor:'rgba(240,150,200,0.35)', icon:'💨'
+  },
+  // 삼각대: J자
+  // . X
+  // X X
+  // X .
+  {
+    id:'tripod', name:'삼각대', w:2, h:3,
+    cells:[[0,1],[1,0],[1,1],[2,0]],
+    color:'#2E3640', lightColor:'rgba(90,110,130,0.35)', icon:'📸'
   },
 ];
 
 // ══════════════════════════════════════
-//  CUSTOM ITEMS (from localStorage)
+//  CUSTOM ITEMS
 // ══════════════════════════════════════
 let customItems = [];
 const LS_KEY = 'hh_custom_items';
 
 function loadCustomItems() {
-  try {
-    customItems = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
-  } catch { customItems = []; }
+  try { customItems = JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch { customItems = []; }
 }
 function saveCustomItems() {
   try { localStorage.setItem(LS_KEY, JSON.stringify(customItems)); } catch {}
 }
 function makeCustomRender(dataUrl) {
-  return (W, H) =>
-    `<img class="custom-item-img" src="${dataUrl}" width="${W}" height="${H}" style="width:${W}px;height:${H}px"/>`;
+  return (W, H) => `<img class="custom-item-img" src="${dataUrl}" width="${W}" height="${H}" style="width:${W}px;height:${H}px"/>`;
 }
 function renderMyItemsGrid() {
   const grid = $('myItemsGrid');
@@ -367,12 +751,7 @@ function renderMyItemsGrid() {
   customItems.forEach((ci, idx) => {
     const chip = document.createElement('div');
     chip.className = 'my-item-chip';
-    chip.innerHTML = `
-      <img class="my-item-thumb" src="${ci.dataUrl}" alt="${ci.name}"/>
-      <span>${ci.name}</span>
-      <span style="font-size:10px;color:var(--color-text-tertiary)">(${ci.w}×${ci.h})</span>
-      <button class="my-item-del" onclick="deleteCustomItem(${idx})" title="삭제">✕</button>
-    `;
+    chip.innerHTML = `<img class="my-item-thumb" src="${ci.dataUrl}" alt="${ci.name}"/><span>${ci.name}</span><span style="font-size:10px;color:var(--color-text-tertiary)">(${ci.w}×${ci.h})</span><button class="my-item-del" onclick="deleteCustomItem(${idx})" title="삭제">✕</button>`;
     grid.appendChild(chip);
   });
 }
@@ -381,15 +760,12 @@ function deleteCustomItem(idx) {
   saveCustomItems();
   renderMyItemsGrid();
 }
-
-// ══════════════════════════════════════
-//  ALL ITEMS = base + custom
-// ══════════════════════════════════════
 function getAllItems() {
   const customs = customItems.map(ci => ({
-    id: ci.id, name: ci.name, w: ci.w, h: ci.h,
-    isCustom: true,
-    render: makeCustomRender(ci.dataUrl)
+    id:ci.id, name:ci.name, w:ci.w, h:ci.h,
+    cells:rc(ci.w, ci.h),
+    isCustom:true,
+    render:makeCustomRender(ci.dataUrl)
   }));
   return [...BASE_ITEMS, ...customs];
 }
@@ -401,9 +777,8 @@ const COLS = 8, ROWS = 6, TOTAL_SEC = 90, GAP = 2;
 let CS = 52;
 let grid = [], placedCount = 0, timeLeft = 0, timerID = null;
 let dragSt = null, gameOn = false;
-let activeItems = [];
+let activeItems = [], currentScenario = null, placedItemIds = new Set();
 
-const $ = id => document.getElementById(id);
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   $(id).classList.add('active');
@@ -414,17 +789,55 @@ function cellSize() {
   if (vw < 640) return 46; return 52;
 }
 
+// ── SCENARIO GRID ──
+function renderScenarioGrid() {
+  $('scenarioGrid').innerHTML = SCENARIOS.map((s, i) => `
+    <div class="scenario-card" onclick="selectScenario(${i})" style="--sc-bg:${s.color}">
+      <div class="sc-emoji">${s.emoji}</div>
+      <div class="sc-title">${s.title}</div>
+      <div class="sc-detail">${s.detail}</div>
+      <div class="sc-hints">${s.hints.slice(0,2).map(h=>`<div class="sc-hint">${h}</div>`).join('')}</div>
+    </div>
+  `).join('');
+}
+
+function selectScenario(idx) {
+  currentScenario = SCENARIOS[idx];
+  $('detailEmoji').textContent = currentScenario.emoji;
+  $('detailTitle').textContent = currentScenario.title;
+  $('detailSub').textContent   = currentScenario.detail;
+  $('detailHints').innerHTML   = currentScenario.hints.map(h=>`<div class="detail-hint">${h}</div>`).join('');
+  showScreen('screen-detail');
+}
+
 // ── START ──
 function startGame() {
+  if (!currentScenario) return;
   CS = cellSize();
-  activeItems = getAllItems();
-  grid = Array.from({length:ROWS}, ()=>Array(COLS).fill(null));
-  placedCount = 0; timeLeft = TOTAL_SEC; gameOn = true;
-  $('timerVal').textContent = TOTAL_SEC;
+
+  const allItems = getAllItems();
+  const poolIds  = currentScenario.itemPool;
+  const poolItems = poolIds.map(id => allItems.find(i => i.id === id)).filter(Boolean);
+  const customs   = allItems.filter(i => i.isCustom);
+  activeItems = [...poolItems, ...customs];
+
+  grid         = Array.from({length:ROWS}, () => Array(COLS).fill(null));
+  placedCount  = 0;
+  placedItemIds = new Set();
+  timeLeft     = TOTAL_SEC;
+  gameOn       = true;
+
+  $('ghbEmoji').textContent  = currentScenario.emoji;
+  $('ghbTitle').textContent  = currentScenario.title + ' · ' + currentScenario.detail;
+  $('ghbChips').innerHTML    = currentScenario.hints.map(h=>`<span class="ghb-chip">${h}</span>`).join('');
+  $('timerVal').textContent  = TOTAL_SEC;
   $('timerVal').classList.remove('urgent');
   $('timerFill').style.width = '100%';
   $('timerFill').style.background = 'var(--lavender-400)';
-  $('itemVal').textContent = `0/${activeItems.length}`;
+  $('itemVal').textContent   = `0/${activeItems.length}`;
+  $('fmPct').textContent     = '0%';
+  $('fmFill').style.width    = '0%';
+
   buildGrid(); buildTray();
   showScreen('screen-game');
   startTimer();
@@ -437,7 +850,8 @@ function buildGrid() {
   g.style.gap = GAP+'px'; g.innerHTML = '';
   for (let r=0;r<ROWS;r++) for (let c=0;c<COLS;c++) {
     const cell = document.createElement('div');
-    cell.className='grid-cell'; cell.style.width=CS+'px'; cell.style.height=CS+'px';
+    cell.className = 'grid-cell';
+    cell.style.width = CS+'px'; cell.style.height = CS+'px';
     g.appendChild(cell);
   }
   const pl = $('placedLayer'); pl.innerHTML = '';
@@ -448,14 +862,16 @@ function buildGrid() {
 function buildTray() {
   const tray = $('itemTray'); tray.innerHTML = '';
   activeItems.forEach(item => {
-    const iW = item.w*CS+(item.w-1)*GAP;
-    const iH = item.h*CS+(item.h-1)*GAP;
+    const maxR = Math.max(...item.cells.map(c=>c[0]));
+    const maxC = Math.max(...item.cells.map(c=>c[1]));
+    const iW = (maxC+1)*CS + maxC*GAP;
+    const iH = (maxR+1)*CS + maxR*GAP;
     const el = document.createElement('div');
-    el.className='tray-item'; el.id='ti-'+item.id;
-    el.style.width=iW+'px'; el.style.height=iH+'px';
-    el.innerHTML = item.render(iW,iH) + `<div class="item-lbl">${item.name}</div>`;
-    el.addEventListener('mousedown', e=>beginDrag(e,item));
-    el.addEventListener('touchstart', e=>beginDrag(e,item), {passive:false});
+    el.className = 'tray-item'; el.id = 'ti-'+item.id;
+    el.style.width = iW+'px'; el.style.height = iH+'px';
+    el.innerHTML = renderItemDisplay(item, item.cells, CS, GAP, 0) + `<div class="item-lbl">${item.name}</div>`;
+    el.addEventListener('mousedown', e => beginDrag(e, item));
+    el.addEventListener('touchstart', e => beginDrag(e, item), {passive:false});
     tray.appendChild(el);
   });
 }
@@ -463,114 +879,238 @@ function buildTray() {
 // ── TIMER ──
 function startTimer() {
   clearInterval(timerID);
-  timerID = setInterval(()=>{
+  timerID = setInterval(() => {
     timeLeft--;
     $('timerVal').textContent = timeLeft;
     $('timerFill').style.width = (timeLeft/TOTAL_SEC*100)+'%';
-    if (timeLeft<=15){ $('timerVal').classList.add('urgent'); $('timerFill').style.background='#D94040'; }
-    else if (timeLeft<=35){ $('timerFill').style.background='#E0A020'; }
+    if (timeLeft<=15) { $('timerVal').classList.add('urgent'); $('timerFill').style.background='#D94040'; }
+    else if (timeLeft<=35) { $('timerFill').style.background='#E0A020'; }
     if (timeLeft<=0) endGame();
   }, 1000);
+}
+
+// ── FILL METER ──
+function updateFillMeter() {
+  let used = 0;
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++) if(grid[r][c]) used++;
+  const pct = Math.round(used/(COLS*ROWS)*100);
+  $('fmPct').textContent = pct+'%';
+  $('fmFill').style.width = pct+'%';
+  const color = pct < 40 ? 'var(--lavender-400)' : pct < 70 ? '#4CAF90' : '#F5A020';
+  $('fmFill').style.background = color;
 }
 
 // ── END ──
 function endGame() {
   clearInterval(timerID); gameOn = false;
-  let used=0;
-  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++) if(grid[r][c]) used++;
-  const pct = Math.round(used/(COLS*ROWS)*100);
-  const prev = parseInt(localStorage.getItem('hh_pack_best')||'0');
-  const best = Math.max(prev,pct);
-  localStorage.setItem('hh_pack_best', best);
-  $('bestTxt').textContent=best; $('bestBadge').style.display='';
+
+  let usedCells = 0;
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++) if(grid[r][c]) usedCells++;
+  const fillPct = Math.round(usedCells/(COLS*ROWS)*100);
+
+  const basePoints = placedCount * 5;
+  const effBonus   = Math.round(fillPct * 0.2);
+
+  const allItems = getAllItems();
+  let bonusPoints = 0;
+  const bonusResults = [];
+  for(const [itemId, info] of Object.entries(currentScenario.bonus)) {
+    const packed = placedItemIds.has(itemId);
+    const pts    = packed ? info.points : 0;
+    bonusResults.push({ packed, pts, reason:info.reason, name:allItems.find(i=>i.id===itemId)?.name||itemId });
+    bonusPoints += pts;
+  }
+
+  const total = basePoints + effBonus + bonusPoints;
+
+  const bestKey = 'hh_pack_best_v2';
+  const prev = parseInt(localStorage.getItem(bestKey)||'0');
+  if(total > prev) localStorage.setItem(bestKey, total);
+  $('bestTxt').textContent = Math.max(prev,total);
+  $('bestBadge').style.display = '';
+
   let emoji='😅', title='아직 연습이 필요해요!';
-  if(pct>=85){emoji='🏆';title='완벽한 짐싸기!';}
-  else if(pct>=65){emoji='🎉';title='잘 했어요!';}
-  else if(pct>=45){emoji='👍';title='꽤 잘 쌌네요!';}
-  $('resEmoji').textContent=emoji; $('resTitle').textContent=title;
-  $('resPct').textContent=pct+'%';
-  $('resItems').textContent=`(${placedCount}개 아이템 완료)`;
+  if(total>=180){emoji='🏆';title='짐 싸기 달인!';}
+  else if(total>=120){emoji='🎉';title='훌륭한 짐 싸기!';}
+  else if(total>=70) {emoji='👍';title='잘 했어요!';}
+
+  $('resScenarioTag').innerHTML = `<span>${currentScenario.emoji}</span>&nbsp;${currentScenario.title} · ${currentScenario.detail}`;
+  $('resEmoji').textContent   = emoji;
+  $('resTitle').textContent   = title;
+  $('resItemCount').textContent = placedCount;
+  $('resBase').textContent    = `+${basePoints}점`;
+  $('resPct').textContent     = fillPct;
+  $('resEff').textContent     = `+${effBonus}점`;
+  $('bonusHeader').textContent = `${currentScenario.emoji} 이 여행이라서 특별 점수!`;
+  $('bonusList').innerHTML    = bonusResults.map((b, i) => `
+    <div class="bonus-item ${b.packed?'packed':'missed'}" style="animation-delay:${0.35+i*0.10}s">
+      <span class="bi-icon">${b.packed?'✅':'❌'}</span>
+      <div class="bi-main"><span class="bi-name">${b.name}</span><span class="bi-reason">${b.packed?b.reason:'못 챙겼어요...'}</span></div>
+      <span class="bi-pts">${b.packed?'+'+b.pts+'점':'+0점'}</span>
+    </div>
+  `).join('');
+  $('resBonusTotal').textContent = `+${bonusPoints}점`;
+  $('resFinalScore').textContent = '0점';
+  $('resPctLbl').textContent  = fillPct+'% 채움';
+  $('resItemsLbl').textContent = placedCount+'개 아이템';
+
   showScreen('screen-result');
-  requestAnimationFrame(()=>{ $('resFill').style.width=pct+'%'; });
+  requestAnimationFrame(()=>{ $('resFill').style.width = fillPct+'%'; });
+  setTimeout(() => animateScore(total), 300);
+}
+
+// ── SCORE ANIMATION ──
+function animateScore(target) {
+  const el = $('resFinalScore');
+  const start = Date.now(), dur = 900;
+  function tick() {
+    const t = Math.min((Date.now()-start)/dur, 1);
+    const eased = 1 - Math.pow(1-t, 3);
+    el.textContent = Math.round(eased*target)+'점';
+    if (t < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
 }
 
 // ── DRAG ──
-function beginDrag(e,item) {
+function beginDrag(e, item) {
   if(!gameOn) return;
-  const tEl=$('ti-'+item.id);
+  const tEl = $('ti-'+item.id);
   if(tEl.classList.contains('placed')) return;
   e.preventDefault();
-  const touch=e.type==='touchstart';
-  const cx=touch?e.touches[0].clientX:e.clientX;
-  const cy=touch?e.touches[0].clientY:e.clientY;
-  const iW=item.w*CS+(item.w-1)*GAP, iH=item.h*CS+(item.h-1)*GAP;
-  const ghost=$('ghost');
+  const touch = e.type==='touchstart';
+  const cx = touch?e.touches[0].clientX:e.clientX;
+  const cy = touch?e.touches[0].clientY:e.clientY;
+
+  const maxR = Math.max(...item.cells.map(c=>c[0]));
+  const maxC = Math.max(...item.cells.map(c=>c[1]));
+  const iW = (maxC+1)*CS + maxC*GAP;
+  const iH = (maxR+1)*CS + maxR*GAP;
+
+  const ghost = $('ghost');
   ghost.style.display='block'; ghost.style.width=iW+'px'; ghost.style.height=iH+'px';
-  ghost.innerHTML = item.render(iW,iH);
-  const ox=iW/2, oy=touch?iH+20:iH/2;
+  ghost.innerHTML = renderItemDisplay(item, item.cells, CS, GAP, 0);
+  const ox = iW/2, oy = touch?iH+20:iH/2;
   ghost.style.left=(cx-ox)+'px'; ghost.style.top=(cy-oy)+'px';
   tEl.classList.add('dragging');
-  dragSt={item,tEl,ghost,ox,oy};
-  if(touch){ document.addEventListener('touchmove',onMove,{passive:false}); document.addEventListener('touchend',onDrop); }
+
+  dragSt = {
+    item, tEl, ghost, ox, oy,
+    currentCells: item.cells.map(c=>[...c]),
+    rotation: 0
+  };
+
+  $('rotateBtnMobile').style.display = '';
+
+  if(touch) { document.addEventListener('touchmove',onMove,{passive:false}); document.addEventListener('touchend',onDrop); }
   else { document.addEventListener('mousemove',onMove); document.addEventListener('mouseup',onDrop); }
 }
+
 function onMove(e) {
   if(!dragSt) return; e.preventDefault();
-  const touch=e.type==='touchmove';
-  const cx=touch?e.touches[0].clientX:e.clientX;
-  const cy=touch?e.touches[0].clientY:e.clientY;
+  const touch = e.type==='touchmove';
+  const cx = touch?e.touches[0].clientX:e.clientX;
+  const cy = touch?e.touches[0].clientY:e.clientY;
   dragSt.ghost.style.left=(cx-dragSt.ox)+'px';
   dragSt.ghost.style.top=(cy-dragSt.oy)+'px';
   highlightAt(cx,cy);
 }
+
 function onDrop(e) {
   if(!dragSt) return;
-  const touch=e.type==='touchend';
-  const cx=touch?e.changedTouches[0].clientX:e.clientX;
-  const cy=touch?e.changedTouches[0].clientY:e.clientY;
-  const placed=tryPlace(cx,cy);
+  const touch = e.type==='touchend';
+  const cx = touch?e.changedTouches[0].clientX:e.clientX;
+  const cy = touch?e.changedTouches[0].clientY:e.clientY;
+  const placed = tryPlace(cx,cy);
   dragSt.ghost.style.display='none'; clearHL();
   if(!placed) dragSt.tEl.classList.remove('dragging');
-  dragSt=null;
+  $('rotateBtnMobile').style.display='none';
+  dragSt = null;
   document.removeEventListener('touchmove',onMove); document.removeEventListener('touchend',onDrop);
   document.removeEventListener('mousemove',onMove); document.removeEventListener('mouseup',onDrop);
 }
+
+// ── ROTATION ──
+function rotateItem() {
+  if(!dragSt) return;
+  dragSt.rotation = (dragSt.rotation+1) % 4;
+
+  const cells = dragSt.currentCells;
+  const maxR  = Math.max(...cells.map(c=>c[0]));
+  const rotated = cells.map(([r,c]) => [c, maxR-r]);
+  const minR = Math.min(...rotated.map(c=>c[0]));
+  const minC = Math.min(...rotated.map(c=>c[1]));
+  dragSt.currentCells = rotated.map(([r,c]) => [r-minR, c-minC]);
+
+  const maxRC = Math.max(...dragSt.currentCells.map(c=>c[0]));
+  const maxCC = Math.max(...dragSt.currentCells.map(c=>c[1]));
+  const iW = (maxCC+1)*CS + maxCC*GAP;
+  const iH = (maxRC+1)*CS + maxRC*GAP;
+  dragSt.ox = iW/2; dragSt.oy = iH/2;
+
+  dragSt.ghost.style.width=iW+'px'; dragSt.ghost.style.height=iH+'px';
+  dragSt.ghost.innerHTML = renderItemDisplay(dragSt.item, dragSt.currentCells, CS, GAP, dragSt.rotation);
+}
+
+document.addEventListener('keydown', e => {
+  if((e.key==='r'||e.key==='R') && dragSt && gameOn) rotateItem();
+});
+
 function getSnap(cx,cy) {
-  const rect=$('suitcaseGrid').getBoundingClientRect();
-  const {item,ox,oy}=dragSt;
-  const col=Math.round((cx-ox-rect.left)/(CS+GAP));
-  const row=Math.round((cy-oy-rect.top)/(CS+GAP));
+  const rect = $('suitcaseGrid').getBoundingClientRect();
+  const col = Math.round((cx-dragSt.ox-rect.left)/(CS+GAP));
+  const row = Math.round((cy-dragSt.oy-rect.top)/(CS+GAP));
   return {row,col};
 }
-function canPlace(row,col,w,h) {
-  if(row<0||col<0||row+h>ROWS||col+w>COLS) return false;
-  for(let r=row;r<row+h;r++) for(let c=col;c<col+w;c++) if(grid[r][c]) return false;
+function canPlace(row, col, cells) {
+  for(const [dr,dc] of cells) {
+    const r=row+dr, c=col+dc;
+    if(r<0||c<0||r>=ROWS||c>=COLS) return false;
+    if(grid[r][c]) return false;
+  }
   return true;
 }
 function highlightAt(cx,cy) {
   clearHL(); if(!dragSt) return;
-  const {row,col}=getSnap(cx,cy); const {item}=dragSt;
-  const valid=canPlace(row,col,item.w,item.h);
-  const cells=$('suitcaseGrid').querySelectorAll('.grid-cell');
-  for(let r=row;r<row+item.h;r++) for(let c=col;c<col+item.w;c++) {
-    if(r>=0&&r<ROWS&&c>=0&&c<COLS) { const idx=r*COLS+c; if(cells[idx]) cells[idx].classList.add(valid?'hv':'hi'); }
+  const {row,col} = getSnap(cx,cy);
+  const cells = dragSt.currentCells;
+  const valid = canPlace(row,col,cells);
+  const gridCells = $('suitcaseGrid').querySelectorAll('.grid-cell');
+  for(const [dr,dc] of cells) {
+    const r=row+dr, c=col+dc;
+    if(r>=0&&r<ROWS&&c>=0&&c<COLS) {
+      const el = gridCells[r*COLS+c];
+      if(el) el.classList.add(valid?'hv':'hi');
+    }
   }
 }
 function clearHL() { $('suitcaseGrid').querySelectorAll('.grid-cell').forEach(c=>c.classList.remove('hv','hi')); }
 function tryPlace(cx,cy) {
-  const {item,tEl}=dragSt; const {row,col}=getSnap(cx,cy);
-  if(!canPlace(row,col,item.w,item.h)) return false;
-  for(let r=row;r<row+item.h;r++) for(let c=col;c<col+item.w;c++) grid[r][c]=item.id;
-  const iW=item.w*CS+(item.w-1)*GAP, iH=item.h*CS+(item.h-1)*GAP;
-  const div=document.createElement('div');
-  div.className='placed-item';
-  div.style.left=(col*(CS+GAP))+'px'; div.style.top=(row*(CS+GAP))+'px';
-  div.style.width=iW+'px'; div.style.height=iH+'px';
-  div.innerHTML=item.render(iW,iH);
+  const {item,tEl,currentCells,rotation} = dragSt;
+  const {row,col} = getSnap(cx,cy);
+  if(!canPlace(row,col,currentCells)) return false;
+
+  for(const [dr,dc] of currentCells) grid[row+dr][col+dc] = item.id;
+
+  const maxR = Math.max(...currentCells.map(c=>c[0]));
+  const maxC = Math.max(...currentCells.map(c=>c[1]));
+  const iW = (maxC+1)*CS+maxC*GAP;
+  const iH = (maxR+1)*CS+maxR*GAP;
+
+  const div = document.createElement('div');
+  div.className = 'placed-item';
+  div.style.left   = (col*(CS+GAP))+'px';
+  div.style.top    = (row*(CS+GAP))+'px';
+  div.style.width  = iW+'px';
+  div.style.height = iH+'px';
+  div.innerHTML    = renderItemDisplay(item, currentCells, CS, GAP, rotation);
   $('placedLayer').appendChild(div);
+
   tEl.classList.remove('dragging'); tEl.classList.add('placed');
+  placedItemIds.add(item.id);
   placedCount++;
-  $('itemVal').textContent=`${placedCount}/${activeItems.length}`;
+  $('itemVal').textContent = `${placedCount}/${activeItems.length}`;
+  updateFillMeter();
   if(placedCount===activeItems.length) setTimeout(endGame,300);
   return true;
 }
@@ -578,153 +1118,50 @@ function tryPlace(cx,cy) {
 // ══════════════════════════════════════
 //  CUSTOM ITEM MODAL
 // ══════════════════════════════════════
-let pendingDataUrl = null;
-let selectedW = 1, selectedH = 1;
-
+let pendingDataUrl = null, selectedW = 1, selectedH = 1;
 function openModal() {
-  pendingDataUrl = null; selectedW=1; selectedH=1;
-  goStep('upload');
-  $('itemNameInput').value = '';
-  $('previewImg').removeAttribute('src');
+  pendingDataUrl=null; selectedW=1; selectedH=1;
+  goStep('upload'); $('itemNameInput').value=''; $('previewImg').removeAttribute('src');
   document.querySelectorAll('.size-opt').forEach(o=>o.classList.remove('selected'));
   document.querySelector('.size-opt[data-w="1"][data-h="1"]').classList.add('selected');
   $('modal').classList.add('open');
 }
 function closeModal() { $('modal').classList.remove('open'); }
-function goStep(name) {
-  document.querySelectorAll('.modal-step').forEach(s=>s.classList.remove('active'));
-  $('step-'+name).classList.add('active');
-}
+function goStep(name) { document.querySelectorAll('.modal-step').forEach(s=>s.classList.remove('active')); $('step-'+name).classList.add('active'); }
 function selectSize(el) {
   document.querySelectorAll('.size-opt').forEach(o=>o.classList.remove('selected'));
   el.classList.add('selected');
-  selectedW = parseInt(el.dataset.w);
-  selectedH = parseInt(el.dataset.h);
+  selectedW=parseInt(el.dataset.w); selectedH=parseInt(el.dataset.h);
 }
-
-// file input
-$('fileInput').addEventListener('change', e => {
-  const file = e.target.files[0]; if (!file) return;
-  $('fileInput').value = '';
-  processImage(file);
-});
-
-// drag-drop onto drop zone
-const dz = $('dropZone');
-dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
-dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
-dz.addEventListener('drop', e => {
-  e.preventDefault(); dz.classList.remove('dragover');
-  const file = e.dataTransfer.files[0];
-  if (file && file.type.startsWith('image/')) processImage(file);
-});
-
+$('fileInput').addEventListener('change', e=>{const f=e.target.files[0];if(!f)return;$('fileInput').value='';processImage(f);});
+const dz=$('dropZone');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('dragover');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('dragover'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('dragover');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))processImage(f);});
 async function processImage(file) {
-  goStep('processing');
-  $('processingLabel').textContent = 'AI 모듈 로딩 중...';
-
+  goStep('processing'); $('processingLabel').textContent='AI 모듈 로딩 중...';
   try {
-    // 1. resize to max 800px for speed
-    const resized = await resizeImage(file, 800);
-
-    // 2. wait for module, then remove background
-    const removeBg = await waitForRemoveBg();
-    $('processingLabel').textContent = '누끼 따는 중... ✂️';
-
-    const resultBlob = await removeBg(resized, {
-      publicPath: 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/'
-    });
-
-    // 3. compact for storage
-    const dataUrl = await blobToDataUrl(resultBlob);
-    const smallUrl = await compactDataUrl(dataUrl, 240);
-
-    pendingDataUrl = smallUrl;
-    $('previewImg').src = smallUrl;
-    $('step-preview').querySelector('.preview-label').textContent = '배경이 자동으로 제거됐어요 ✨';
+    const resized=await resizeImage(file,800);
+    const removeBg=await waitForRemoveBg();
+    $('processingLabel').textContent='누끼 따는 중... ✂️';
+    const resultBlob=await removeBg(resized,{publicPath:'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/'});
+    const dataUrl=await blobToDataUrl(resultBlob);
+    const smallUrl=await compactDataUrl(dataUrl,240);
+    pendingDataUrl=smallUrl; $('previewImg').src=smallUrl;
+    $('step-preview').querySelector('.preview-label').textContent='배경이 자동으로 제거됐어요 ✨';
     goStep('preview');
-
-  } catch (err) {
-    console.warn('배경 제거 실패, 원본 사용:', err.message);
-    // fallback: original image, no bg removal
-    $('processingLabel').textContent = '원본 이미지로 진행합니다...';
-    const reader = new FileReader();
-    reader.onload = async (ev) => {
-      const small = await compactDataUrl(ev.target.result, 240);
-      pendingDataUrl = small;
-      $('previewImg').src = small;
-      $('step-preview').querySelector('.preview-label').textContent = '📌 배경 제거 없이 원본 이미지로 추가됩니다';
-      goStep('preview');
-    };
+  } catch(err) {
+    console.warn('배경 제거 실패:',err.message);
+    const reader=new FileReader();
+    reader.onload=async ev=>{const small=await compactDataUrl(ev.target.result,240);pendingDataUrl=small;$('previewImg').src=small;$('step-preview').querySelector('.preview-label').textContent='📌 원본 이미지로 추가됩니다';goStep('preview');};
     reader.readAsDataURL(file);
   }
 }
-
-function waitForRemoveBg(timeout=12000) {
-  return new Promise((resolve, reject) => {
-    // 모듈이 이미 로드됐거나 실패 확정된 경우
-    if (window._bgRemoveReady === true)  { resolve(window._removeBackground); return; }
-    if (window._bgRemoveReady === false) { reject(new Error('모듈 로드 실패')); return; }
-    const start = Date.now();
-    const check = () => {
-      if (window._bgRemoveReady === true)  { resolve(window._removeBackground); return; }
-      if (window._bgRemoveReady === false) { reject(new Error('모듈 로드 실패')); return; }
-      if (Date.now()-start > timeout) { reject(new Error('모듈 로드 시간 초과')); return; }
-      setTimeout(check, 300);
-    };
-    setTimeout(check, 300);
-  });
-}
-
-function resizeImage(file, maxPx) {
-  return new Promise(resolve => {
-    const url = URL.createObjectURL(file);
-    const img = new Image();
-    img.onload = () => {
-      const scale = Math.min(1, maxPx/Math.max(img.width, img.height));
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.round(img.width*scale);
-      canvas.height= Math.round(img.height*scale);
-      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-      URL.revokeObjectURL(url);
-      canvas.toBlob(resolve, 'image/jpeg', 0.9);
-    };
-    img.src = url;
-  });
-}
-
-function blobToDataUrl(blob) {
-  return new Promise(resolve => {
-    const r = new FileReader(); r.onload = e => resolve(e.target.result); r.readAsDataURL(blob);
-  });
-}
-
-function compactDataUrl(dataUrl, maxPx) {
-  return new Promise(resolve => {
-    const img = new Image();
-    img.onload = () => {
-      const scale = Math.min(1, maxPx/Math.max(img.width, img.height));
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.round(img.width*scale);
-      canvas.height= Math.round(img.height*scale);
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      ctx.drawImage(img,0,0,canvas.width,canvas.height);
-      resolve(canvas.toDataURL('image/png'));
-    };
-    img.src = dataUrl;
-  });
-}
-
-function confirmCustomItem() {
-  if (!pendingDataUrl) return;
-  const name = $('itemNameInput').value.trim() || '내 아이템';
-  const id = 'custom_' + Date.now();
-  customItems.push({ id, name, w:selectedW, h:selectedH, dataUrl:pendingDataUrl });
-  saveCustomItems();
-  renderMyItemsGrid();
-  closeModal();
-}
+function waitForRemoveBg(timeout=12000){return new Promise((resolve,reject)=>{if(window._bgRemoveReady===true){resolve(window._removeBackground);return;}if(window._bgRemoveReady===false){reject(new Error('모듈 로드 실패'));return;}const start=Date.now();const check=()=>{if(window._bgRemoveReady===true){resolve(window._removeBackground);return;}if(window._bgRemoveReady===false){reject(new Error('모듈 로드 실패'));return;}if(Date.now()-start>timeout){reject(new Error('시간 초과'));return;}setTimeout(check,300);};setTimeout(check,300);});}
+function resizeImage(file,maxPx){return new Promise(resolve=>{const url=URL.createObjectURL(file);const img=new Image();img.onload=()=>{const scale=Math.min(1,maxPx/Math.max(img.width,img.height));const canvas=document.createElement('canvas');canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);URL.revokeObjectURL(url);canvas.toBlob(resolve,'image/jpeg',0.9);};img.src=url;});}
+function blobToDataUrl(blob){return new Promise(resolve=>{const r=new FileReader();r.onload=e=>resolve(e.target.result);r.readAsDataURL(blob);});}
+function compactDataUrl(dataUrl,maxPx){return new Promise(resolve=>{const img=new Image();img.onload=()=>{const scale=Math.min(1,maxPx/Math.max(img.width,img.height));const canvas=document.createElement('canvas');canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);resolve(canvas.toDataURL('image/png'));};img.src=dataUrl;});}
+function confirmCustomItem(){if(!pendingDataUrl)return;const name=$('itemNameInput').value.trim()||'내 아이템';const id='custom_'+Date.now();customItems.push({id,name,w:selectedW,h:selectedH,dataUrl:pendingDataUrl});saveCustomItems();renderMyItemsGrid();closeModal();}
 
 // ══════════════════════════════════════
 //  INIT
@@ -732,432 +1169,249 @@ function confirmCustomItem() {
 (function init() {
   loadCustomItems();
   renderMyItemsGrid();
-  const best = localStorage.getItem('hh_pack_best');
-  if (best) { $('bestTxt').textContent=best; $('bestBadge').style.display=''; }
+  renderScenarioGrid();
+  const best = localStorage.getItem('hh_pack_best_v2');
+  if(best){ $('bestTxt').textContent=best; $('bestBadge').style.display=''; }
 })();
-
 </script>
 
 
 <style is:global>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html { height:100%; }
+  body {
+    background:var(--color-bg); color:var(--color-text-primary);
+    font-family:'DM Sans','Noto Sans KR',sans-serif;
+    min-height:100vh; user-select:none; -webkit-user-select:none; overflow-x:hidden;
+  }
 
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-    html { height:100%; }
-    body {
-      background:var(--color-bg); color:var(--color-text-primary);
-      font-family:'DM Sans','Noto Sans KR',sans-serif;
-      min-height:100vh; user-select:none; -webkit-user-select:none;
-      overflow-x:hidden;
-    }
+  /* ── NAVBAR ── */
+  .navbar { position:sticky; top:0; z-index:50; background:rgba(255,248,235,0.82); backdrop-filter:blur(16px); border-bottom:1px solid rgba(139,111,208,0.15); height:56px; padding:0 clamp(20px,5vw,48px); display:flex; align-items:center; gap:24px; }
+  .navbar-logo { font-family:'Cormorant Garamond',serif; font-size:20px; font-style:italic; font-weight:600; color:var(--lavender-600); text-decoration:none; }
+  .navbar-links { display:flex; list-style:none; gap:4px; }
+  .navbar-links a { font-size:13px; font-weight:500; color:var(--color-text-secondary); text-decoration:none; padding:8px 12px; border-radius:10px; transition:color .15s,background .15s; }
+  .navbar-links a:hover,.navbar-links a.active { color:var(--lavender-600); background:var(--lavender-50); }
+  .navbar-center-search { display:none; flex:1; justify-content:center; align-items:center; }
+  .navbar-center-search .cs-inner { position:relative; display:inline-flex; align-items:center; }
+  .navbar-center-search .cs-icon { position:absolute; left:13px; pointer-events:none; color:var(--lavender-600); display:flex; align-items:center; }
+  .navbar-center-search input { font-family:var(--font-heading); font-size:12px; color:var(--color-text-secondary); background:rgba(255,255,255,0.7); backdrop-filter:blur(8px); border:1px solid rgba(139,111,208,0.25); border-radius:999px; padding:7px 18px 7px 34px; outline:none; width:clamp(130px,28vw,180px); transition:border-color .2s,background .2s; }
+  .navbar-center-search input::placeholder { color:var(--color-text-tertiary); }
+  .navbar-center-search input:focus { background:rgba(255,255,255,.95); border-color:rgba(139,111,208,.5); }
+  .hamburger-btn { display:none; flex-shrink:0; margin-left:auto; background:none; border:none; cursor:pointer; width:36px; height:36px; border-radius:10px; align-items:center; justify-content:center; color:var(--lavender-600); transition:background .15s; }
+  .hamburger-btn:hover { background:var(--lavender-50); }
+  .mobile-menu { position:fixed; top:56px; left:0; right:0; z-index:49; background:rgba(255,248,235,0.97); backdrop-filter:blur(20px); border-bottom:1px solid rgba(139,111,208,0.12); padding:8px 12px 14px; display:none; flex-direction:column; box-shadow:0 8px 32px rgba(80,40,160,0.1); }
+  .mobile-menu.open { display:flex; }
+  .mm-item { font-family:var(--font-heading); font-size:15px; font-weight:500; color:var(--color-text-secondary); text-decoration:none; padding:11px 14px; border-radius:12px; display:flex; align-items:center; gap:10px; transition:color .15s,background .15s; background:none; border:none; cursor:pointer; width:100%; text-align:left; }
+  .mm-item:hover { color:var(--lavender-600); background:rgba(139,111,208,0.08); }
+  .mm-item.active { color:var(--lavender-600); font-weight:600; }
+  @media (max-width:767px) { .navbar-links{display:none!important;} .hamburger-btn{display:flex;} .navbar-center-search{display:flex;} }
 
-    /* ── NAVBAR ── */
-    .navbar {
-      position:sticky; top:0; z-index:50;
-      background:rgba(255,248,235,0.82); backdrop-filter:blur(16px);
-      border-bottom:1px solid rgba(139,111,208,0.15);
-      height:56px; padding:0 clamp(20px,5vw,48px);
-      display:flex; align-items:center; gap:24px;
-    }
-    .navbar-logo {
-      font-family:'Cormorant Garamond',serif; font-size:20px;
-      font-style:italic; font-weight:600; color:var(--lavender-600); text-decoration:none;
-    }
-    .navbar-links { display:flex; list-style:none; gap:4px; }
-    .navbar-links a {
-      font-size:13px; font-weight:500; color:var(--color-text-secondary);
-      text-decoration:none; padding:8px 12px; border-radius:10px;
-      transition:color .15s, background .15s;
-    }
-    .navbar-links a:hover, .navbar-links a.active { color:var(--lavender-600); background:var(--lavender-50); }
+  /* ── SCREENS ── */
+  .screen { display:none; }
+  .screen.active { display:flex; flex-direction:column; align-items:center; }
 
-    /* ── NAVBAR CENTER SEARCH (모바일) ── */
-    .navbar-center-search {
-      display:none; flex:1; justify-content:center; align-items:center;
-    }
-    .navbar-center-search .cs-inner { position:relative; display:inline-flex; align-items:center; }
-    .navbar-center-search .cs-icon {
-      position:absolute; left:13px; pointer-events:none;
-      color:var(--lavender-600); display:flex; align-items:center;
-    }
-    .navbar-center-search input {
-      font-family:var(--font-heading); font-size:12px; color:var(--color-text-secondary);
-      background:rgba(255,255,255,0.7); backdrop-filter:blur(8px);
-      border:1px solid rgba(139,111,208,0.25); border-radius:999px;
-      padding:7px 18px 7px 34px; outline:none; width:clamp(130px,28vw,180px);
-      transition:border-color 0.2s,background 0.2s;
-    }
-    .navbar-center-search input::placeholder { color:var(--color-text-tertiary); }
-    .navbar-center-search input:focus { background:rgba(255,255,255,0.95); border-color:rgba(139,111,208,0.5); }
+  /* ══ START ══ */
+  #screen-start { min-height:calc(100vh - 56px); justify-content:center; gap:22px; padding:36px 20px 60px; }
+  .start-icon { font-size:72px; line-height:1; animation:float 3s ease-in-out infinite; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  .start-title { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:clamp(30px,6vw,50px); text-align:center; }
+  .start-sub { font-size:15px; color:var(--color-text-secondary); text-align:center; max-width:340px; line-height:1.6; }
 
-    /* ── HAMBURGER & MOBILE MENU ── */
-    .hamburger-btn {
-      display:none; flex-shrink:0; margin-left:auto; margin-right:0;
-      background:none; border:none; cursor:pointer;
-      width:36px; height:36px; border-radius:10px;
-      align-items:center; justify-content:center;
-      color:var(--lavender-600); transition:background 0.15s;
-    }
-    .hamburger-btn:hover { background:var(--lavender-50); }
-    .mobile-menu {
-      position:fixed; top:56px; left:0; right:0; z-index:49;
-      background:rgba(255,248,235,0.97); backdrop-filter:blur(20px);
-      border-bottom:1px solid rgba(139,111,208,0.12);
-      padding:8px 12px 14px; display:none; flex-direction:column;
-      box-shadow:0 8px 32px rgba(80,40,160,0.1);
-    }
-    .mobile-menu.open { display:flex; }
-    .mm-item {
-      font-family:var(--font-heading); font-size:15px; font-weight:500;
-      color:var(--color-text-secondary); text-decoration:none;
-      padding:11px 14px; border-radius:12px;
-      display:flex; align-items:center; gap:10px;
-      transition:color 0.15s,background 0.15s;
-      background:none; border:none; cursor:pointer; width:100%; text-align:left;
-    }
-    .mm-item:hover { color:var(--lavender-600); background:rgba(139,111,208,0.08); }
-    .mm-item.active { color:var(--lavender-600); font-weight:600; }
-    @media (max-width:767px) {
-      .navbar-links { display:none !important; }
-      .hamburger-btn { display:flex; }
-      .navbar-center-search { display:flex; }
-    }
+  /* SCENARIO GRID */
+  .scenario-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; max-width:520px; width:100%; }
+  @media (max-width:480px) { .scenario-grid { grid-template-columns:1fr; max-width:340px; } }
+  .scenario-card { background:var(--sc-bg,#F8F5FF); border:1.5px solid rgba(0,0,0,0.07); border-radius:16px; padding:16px 14px; cursor:pointer; transition:transform .15s,box-shadow .15s; display:flex; flex-direction:column; gap:5px; }
+  .scenario-card:hover { transform:translateY(-4px); box-shadow:0 10px 28px rgba(0,0,0,0.12); }
+  .scenario-card:active { transform:translateY(-1px); }
+  .sc-emoji { font-size:30px; line-height:1; margin-bottom:2px; }
+  .sc-title { font-size:15px; font-weight:700; color:var(--color-text-primary); }
+  .sc-detail { font-size:11px; color:var(--color-text-tertiary); font-weight:500; }
+  .sc-hints { display:flex; flex-direction:column; gap:2px; margin-top:4px; }
+  .sc-hint { font-size:11px; color:var(--color-text-secondary); line-height:1.4; }
 
-    /* ── SCREENS ── */
-    .screen { display:none; }
-    .screen.active { display:flex; flex-direction:column; align-items:center; }
+  /* MY ITEMS */
+  .my-items-section { max-width:520px; width:100%; display:flex; flex-direction:column; gap:12px; }
+  .my-items-header { display:flex; align-items:center; justify-content:space-between; }
+  .my-items-title { font-size:12px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--color-text-tertiary); }
+  .btn-add-item { display:flex; align-items:center; gap:6px; background:var(--lavender-50); color:var(--lavender-600); border:1.5px dashed var(--lavender-300); border-radius:10px; padding:7px 14px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; transition:background .15s,border-color .15s; }
+  .btn-add-item:hover { background:var(--lavender-100); border-color:var(--lavender-400); }
+  .my-items-grid { display:flex; flex-wrap:wrap; gap:8px; }
+  .my-item-chip { display:flex; align-items:center; gap:6px; background:#fff; border:1px solid var(--color-border); border-radius:10px; padding:5px 8px; font-size:12px; font-weight:500; color:var(--color-text-secondary); }
+  .my-item-thumb { width:32px; height:32px; border-radius:6px; object-fit:contain; background:var(--sand-100); }
+  .my-item-del { background:none; border:none; cursor:pointer; color:var(--color-text-tertiary); font-size:14px; padding:0 2px; line-height:1; transition:color .1s; }
+  .my-item-del:hover { color:#D94040; }
+  .my-items-empty { font-size:13px; color:var(--color-text-tertiary); text-align:center; padding:8px; line-height:1.5; }
+  .best-badge { background:var(--lavender-100); color:var(--lavender-700); border-radius:99px; padding:5px 16px; font-size:13px; font-weight:600; }
 
-    /* ══ START SCREEN ══ */
-    #screen-start {
-      min-height:calc(100vh - 56px); justify-content:center;
-      gap:24px; padding:40px 20px;
-    }
-    .start-icon { font-size:72px; line-height:1; animation:float 3s ease-in-out infinite; }
-    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-    .start-title {
-      font-family:'Cormorant Garamond',serif; font-style:italic;
-      font-size:clamp(32px,6vw,52px); color:var(--color-text-primary); text-align:center;
-      line-height:1.1;
-    }
-    .start-sub {
-      font-size:15px; color:var(--color-text-secondary); text-align:center;
-      max-width:320px; line-height:1.6;
-    }
-    .rules-card {
-      background:#fff; border-radius:16px; padding:20px 24px;
-      max-width:340px; width:100%; box-shadow:0 4px 20px rgba(0,0,0,0.08);
-      display:flex; flex-direction:column; gap:12px;
-    }
-    .rule { display:flex; align-items:center; gap:12px; font-size:14px; color:var(--color-text-secondary); }
-    .rule-ic { font-size:18px; flex-shrink:0; }
-    .best-badge {
-      background:var(--lavender-100); color:var(--lavender-700);
-      border-radius:99px; padding:5px 16px; font-size:13px; font-weight:600;
-    }
-    .btn-primary {
-      background:var(--lavender-600); color:#fff;
-      border:none; border-radius:12px; padding:14px 40px;
-      font-size:16px; font-weight:600; cursor:pointer;
-      font-family:inherit; transition:transform .1s, background .15s;
-    }
-    .btn-primary:hover { background:var(--lavender-700); transform:translateY(-2px); }
-    .btn-primary:active { transform:translateY(0); }
+  /* ══ DETAIL ══ */
+  #screen-detail { min-height:calc(100vh - 56px); justify-content:center; gap:24px; padding:40px 20px; }
+  .detail-card { background:#fff; border-radius:20px; padding:28px 24px; max-width:400px; width:100%; box-shadow:0 4px 24px rgba(0,0,0,0.10); display:flex; flex-direction:column; gap:14px; }
+  .detail-emoji { font-size:48px; line-height:1; }
+  .detail-title { font-size:24px; font-weight:800; color:var(--color-text-primary); }
+  .detail-sub { display:inline-block; background:var(--lavender-100); color:var(--lavender-700); border-radius:99px; padding:4px 14px; font-size:12px; font-weight:600; align-self:flex-start; }
+  .detail-section-lbl { font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--color-text-tertiary); margin-top:4px; }
+  .detail-hints { display:flex; flex-direction:column; gap:8px; }
+  .detail-hint { background:var(--sand-100); border-radius:10px; padding:10px 14px; font-size:14px; color:var(--color-text-secondary); }
+  .detail-notice { background:#FFFBE8; border-left:3px solid #F5C020; border-radius:0 10px 10px 0; padding:12px 14px; font-size:13px; color:var(--color-text-secondary); line-height:1.6; }
+  .detail-notice span { display:block; font-size:12px; color:var(--color-text-tertiary); margin-top:4px; }
+  .detail-btns { display:flex; gap:12px; max-width:400px; width:100%; }
 
-    /* ── MY ITEMS SECTION (start screen) ── */
-    .my-items-section {
-      max-width:340px; width:100%;
-      display:flex; flex-direction:column; gap:12px;
-    }
-    .my-items-header {
-      display:flex; align-items:center; justify-content:space-between;
-    }
-    .my-items-title {
-      font-size:12px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
-      color:var(--color-text-tertiary);
-    }
-    .btn-add-item {
-      display:flex; align-items:center; gap:6px;
-      background:var(--lavender-50); color:var(--lavender-600);
-      border:1.5px dashed var(--lavender-300); border-radius:10px;
-      padding:7px 14px; font-size:13px; font-weight:600;
-      cursor:pointer; font-family:inherit; transition:background .15s, border-color .15s;
-    }
-    .btn-add-item:hover { background:var(--lavender-100); border-color:var(--lavender-400); }
-    .my-items-grid {
-      display:flex; flex-wrap:wrap; gap:8px;
-    }
-    .my-item-chip {
-      display:flex; align-items:center; gap:6px;
-      background:#fff; border:1px solid var(--color-border); border-radius:10px;
-      padding:5px 8px; font-size:12px; font-weight:500; color:var(--color-text-secondary);
-    }
-    .my-item-thumb {
-      width:32px; height:32px; border-radius:6px; object-fit:contain;
-      background:var(--sand-100);
-    }
-    .my-item-del {
-      background:none; border:none; cursor:pointer;
-      color:var(--color-text-tertiary); font-size:14px; padding:0 2px;
-      line-height:1; transition:color .1s;
-    }
-    .my-item-del:hover { color:#D94040; }
-    .my-items-empty {
-      font-size:13px; color:var(--color-text-tertiary); text-align:center;
-      padding:8px; line-height:1.5;
-    }
+  /* BUTTONS */
+  .btn-primary { background:var(--lavender-600); color:#fff; border:none; border-radius:12px; padding:14px 32px; font-size:15px; font-weight:600; cursor:pointer; font-family:inherit; transition:transform .1s,background .15s; flex:1; }
+  .btn-primary:hover { background:var(--lavender-700); transform:translateY(-2px); }
+  .btn-primary:active { transform:translateY(0); }
+  .btn-outline { background:#fff; color:var(--lavender-600); border:2px solid var(--lavender-200); border-radius:12px; padding:12px 24px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; transition:background .15s; flex:1; }
+  .btn-outline:hover { background:var(--lavender-50); }
 
-    /* ══ GAME SCREEN ══ */
-    #screen-game { padding:14px 16px 48px; gap:14px; }
+  /* ══ GAME ══ */
+  #screen-game { padding:12px 16px 48px; gap:10px; }
 
-    .stats-bar {
-      display:flex; align-items:center; justify-content:space-between;
-      width:100%; max-width:620px; gap:12px;
-    }
-    .stat-box { display:flex; flex-direction:column; align-items:center; gap:1px; min-width:60px; }
-    .stat-lbl { font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--color-text-tertiary); }
-    .stat-val { font-size:22px; font-weight:700; color:var(--color-text-primary); font-variant-numeric:tabular-nums; }
-    .stat-val.urgent { color:#D94040; animation:pulse .5s ease-in-out infinite alternate; }
-    @keyframes pulse { from{opacity:1} to{opacity:.6} }
-    .timer-track { flex:1; background:var(--sand-200); border-radius:99px; height:7px; overflow:hidden; }
-    .timer-fill { height:100%; border-radius:99px; background:var(--lavender-400); transition:width 1s linear, background .5s; }
+  .game-hint-bar { display:flex; align-items:center; gap:12px; background:#fff; border-radius:14px; padding:10px 16px; max-width:640px; width:100%; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
+  .ghb-emoji { font-size:22px; flex-shrink:0; }
+  .ghb-info { display:flex; flex-direction:column; gap:4px; flex:1; min-width:0; }
+  .ghb-title { font-size:13px; font-weight:700; color:var(--color-text-primary); }
+  .ghb-chips { display:flex; flex-wrap:wrap; gap:4px; }
+  .ghb-chip { background:var(--sand-100); border-radius:99px; padding:2px 8px; font-size:10px; color:var(--color-text-secondary); white-space:nowrap; }
 
-    /* SUITCASE */
-    .suitcase-scene { position:relative; filter:drop-shadow(0 14px 36px rgba(50,20,5,.22)); }
-    .handle {
-      position:absolute; top:-22px; left:50%; transform:translateX(-50%);
-      width:60px; height:20px;
-      border:6px solid #5A2D0C; border-bottom:none; border-radius:14px 14px 0 0;
-    }
-    .clasp {
-      position:absolute; z-index:2; width:22px; height:15px;
-      background:linear-gradient(135deg,#E8CC4A,#B89010);
-      border-radius:4px; box-shadow:0 2px 4px rgba(0,0,0,.3);
-    }
-    .clasp::after {
-      content:''; position:absolute; inset:3px;
-      border:1.5px solid rgba(255,220,80,.5); border-radius:2px;
-    }
-    .clasp-tl { top:-5px; left:28px; }
-    .clasp-tr { top:-5px; right:28px; }
-    .clasp-bl { bottom:-5px; left:28px; }
-    .clasp-br { bottom:-5px; right:28px; }
-    .clasp-mc { bottom:-5px; left:50%; transform:translateX(-50%); width:30px; height:17px; }
-    .suitcase-body {
-      background:linear-gradient(160deg,#7B4A2D 0%,#5A2D0C 100%);
-      border-radius:18px; padding:10px; position:relative;
-      border:1px solid rgba(255,255,255,.08);
-    }
-    .suitcase-body::before {
-      content:''; position:absolute; inset:0; border-radius:18px;
-      background:repeating-linear-gradient(45deg,transparent,transparent 8px,rgba(255,255,255,.015) 8px,rgba(255,255,255,.015) 16px);
-      pointer-events:none;
-    }
-    .grid-wrap {
-      background:linear-gradient(160deg,#CFA870 0%,#B89050 100%);
-      border-radius:10px; padding:6px; position:relative;
-    }
-    .grid-wrap::before {
-      content:''; position:absolute; inset:0; border-radius:10px;
-      box-shadow:inset 0 2px 8px rgba(0,0,0,.3); pointer-events:none;
-    }
-    .grid-inner { position:relative; }
-    .suitcase-grid { display:grid; gap:2px; position:relative; }
-    .grid-cell { background:rgba(255,248,225,.42); border-radius:3px; transition:background .07s; }
-    .grid-cell.hv { background:rgba(90,180,90,.55); }
-    .grid-cell.hi { background:rgba(210,70,70,.45); }
-    .placed-layer { position:absolute; top:0; left:0; pointer-events:none; }
-    .placed-item {
-      position:absolute; border-radius:7px; overflow:hidden;
-      box-shadow:0 3px 12px rgba(0,0,0,.22);
-      animation:pop .18s cubic-bezier(.175,.885,.32,1.275);
-    }
-    @keyframes pop { from{transform:scale(.7);opacity:.5} to{transform:scale(1);opacity:1} }
+  .stats-bar { display:flex; align-items:center; justify-content:space-between; width:100%; max-width:640px; gap:12px; }
+  .stat-box { display:flex; flex-direction:column; align-items:center; gap:1px; min-width:60px; }
+  .stat-lbl { font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--color-text-tertiary); }
+  .stat-val { font-size:22px; font-weight:700; color:var(--color-text-primary); font-variant-numeric:tabular-nums; }
+  .stat-val.urgent { color:#D94040; animation:pulse .5s ease-in-out infinite alternate; }
+  @keyframes pulse { from{opacity:1} to{opacity:.6} }
+  .timer-track { flex:1; background:var(--sand-200); border-radius:99px; height:7px; overflow:hidden; }
+  .timer-fill { height:100%; border-radius:99px; background:var(--lavender-400); transition:width 1s linear,background .5s; }
 
-    /* TRAY */
-    .tray-lbl {
-      font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
-      color:var(--color-text-tertiary);
-    }
-    .item-tray { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; max-width:620px; width:100%; }
-    .tray-item {
-      cursor:grab; border-radius:9px; overflow:hidden; flex-shrink:0;
-      box-shadow:0 4px 16px rgba(0,0,0,.16);
-      transition:transform .15s, box-shadow .15s, opacity .2s; position:relative;
-    }
-    .tray-item:hover { transform:translateY(-3px) scale(1.04); box-shadow:0 8px 22px rgba(0,0,0,.22); }
-    .tray-item.dragging { opacity:.18; transform:none !important; box-shadow:none; }
-    .tray-item.placed   { display:none; }
-    .tray-item svg, .tray-item img { display:block; }
-    .item-lbl {
-      position:absolute; bottom:0; left:0; right:0;
-      background:rgba(0,0,0,.36); color:#fff;
-      font-size:9px; font-weight:600; text-align:center;
-      padding:3px 4px; letter-spacing:.05em;
-    }
+  /* FILL METER */
+  .fill-meter { display:flex; align-items:center; gap:10px; max-width:640px; width:100%; }
+  .fm-lbl { font-size:11px; font-weight:600; color:var(--color-text-tertiary); letter-spacing:.06em; text-transform:uppercase; white-space:nowrap; }
+  .fm-track { flex:1; background:var(--sand-200); border-radius:99px; height:8px; overflow:hidden; }
+  .fm-fill { height:100%; border-radius:99px; background:var(--lavender-400); transition:width .4s ease,background .4s; }
+  .fm-pct { font-size:12px; font-weight:700; color:var(--color-text-secondary); min-width:32px; text-align:right; font-variant-numeric:tabular-nums; }
 
-    /* custom image item */
-    .custom-item-img {
-      width:100%; height:100%; object-fit:contain;
-      background: linear-gradient(135deg, #f0ebe0 0%, #e8e0d0 100%);
-    }
+  /* SUITCASE */
+  .suitcase-scene { position:relative; filter:drop-shadow(0 14px 36px rgba(50,20,5,.22)); }
+  .handle { position:absolute; top:-22px; left:50%; transform:translateX(-50%); width:60px; height:20px; border:6px solid #5A2D0C; border-bottom:none; border-radius:14px 14px 0 0; }
+  .clasp { position:absolute; z-index:2; width:22px; height:15px; background:linear-gradient(135deg,#E8CC4A,#B89010); border-radius:4px; box-shadow:0 2px 4px rgba(0,0,0,.3); }
+  .clasp::after { content:''; position:absolute; inset:3px; border:1.5px solid rgba(255,220,80,.5); border-radius:2px; }
+  .clasp-tl{top:-5px;left:28px;} .clasp-tr{top:-5px;right:28px;} .clasp-bl{bottom:-5px;left:28px;} .clasp-br{bottom:-5px;right:28px;} .clasp-mc{bottom:-5px;left:50%;transform:translateX(-50%);width:30px;height:17px;}
+  .suitcase-body { background:linear-gradient(160deg,#7B4A2D 0%,#5A2D0C 100%); border-radius:18px; padding:10px; position:relative; border:1px solid rgba(255,255,255,.08); }
+  .suitcase-body::before { content:''; position:absolute; inset:0; border-radius:18px; background:repeating-linear-gradient(45deg,transparent,transparent 8px,rgba(255,255,255,.015) 8px,rgba(255,255,255,.015) 16px); pointer-events:none; }
+  .grid-wrap { background:linear-gradient(160deg,#CFA870 0%,#B89050 100%); border-radius:10px; padding:6px; position:relative; }
+  .grid-wrap::before { content:''; position:absolute; inset:0; border-radius:10px; box-shadow:inset 0 2px 8px rgba(0,0,0,.3); pointer-events:none; }
+  .grid-inner { position:relative; }
+  .suitcase-grid { display:grid; gap:2px; position:relative; }
+  .grid-cell { background:rgba(255,248,225,.42); border-radius:3px; transition:background .07s; }
+  .grid-cell.hv { background:rgba(90,180,90,.55); }
+  .grid-cell.hi { background:rgba(210,70,70,.45); }
+  .placed-layer { position:absolute; top:0; left:0; pointer-events:none; }
+  .placed-item { position:absolute; border-radius:7px; overflow:hidden; box-shadow:0 3px 12px rgba(0,0,0,.22); animation:pop .18s cubic-bezier(.175,.885,.32,1.275); }
+  @keyframes pop { from{transform:scale(.7);opacity:.5} to{transform:scale(1);opacity:1} }
 
-    /* DRAG GHOST */
-    #ghost {
-      position:fixed; pointer-events:none; z-index:9999;
-      border-radius:9px; overflow:hidden;
-      box-shadow:0 14px 36px rgba(0,0,0,.32);
-      opacity:.9; transform:scale(1.06); transform-origin:top left; display:none;
-    }
-    #ghost svg, #ghost img { display:block; }
+  /* TRAY */
+  .tray-lbl { font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--color-text-tertiary); }
+  .item-tray { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; max-width:640px; width:100%; }
+  .tray-item { cursor:grab; border-radius:9px; overflow:hidden; flex-shrink:0; box-shadow:0 4px 16px rgba(0,0,0,.16); transition:transform .15s,box-shadow .15s,opacity .2s; position:relative; }
+  .tray-item:hover { transform:translateY(-3px) scale(1.04); box-shadow:0 8px 22px rgba(0,0,0,.22); }
+  .tray-item.dragging { opacity:.18; transform:none!important; box-shadow:none; }
+  .tray-item.placed { display:none; }
+  .tray-item svg,.tray-item img { display:block; }
+  .item-lbl { position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,.36); color:#fff; font-size:9px; font-weight:600; text-align:center; padding:3px 4px; letter-spacing:.05em; }
+  .custom-item-img { width:100%; height:100%; object-fit:contain; background:linear-gradient(135deg,#f0ebe0,#e8e0d0); }
 
-    /* CLOSE BTN */
-    .close-btn {
-      background:#3B5B38; color:#fff;
-      border:none; border-radius:12px; padding:13px 32px;
-      font-size:15px; font-weight:600; cursor:pointer;
-      font-family:inherit; transition:transform .1s, background .15s;
-      display:flex; align-items:center; gap:8px;
-    }
-    .close-btn:hover { background:#2A4A28; transform:translateY(-2px); }
+  /* GAME BOTTOM ROW */
+  .game-bottom-row { display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:center; }
+  .close-btn { background:#3B5B38; color:#fff; border:none; border-radius:12px; padding:13px 32px; font-size:15px; font-weight:600; cursor:pointer; font-family:inherit; transition:transform .1s,background .15s; display:flex; align-items:center; gap:8px; }
+  .close-btn:hover { background:#2A4A28; transform:translateY(-2px); }
+  .rotate-mobile-btn { background:var(--lavender-600); color:#fff; border:none; border-radius:12px; padding:13px 22px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; transition:background .15s,transform .1s; }
+  .rotate-mobile-btn:hover { background:var(--lavender-700); }
+  .rotate-mobile-btn:active { transform:scale(.95); }
+  .rotate-hint-desk { font-size:12px; color:var(--color-text-tertiary); background:var(--sand-100); border-radius:8px; padding:5px 10px; }
+  .rotate-hint-desk kbd { background:#fff; border:1px solid var(--color-border); border-radius:4px; padding:1px 5px; font-size:11px; font-family:monospace; }
 
-    /* ══ RESULT SCREEN ══ */
-    #screen-result {
-      min-height:calc(100vh - 56px); justify-content:center;
-      gap:22px; padding:40px 20px;
-    }
-    .result-emoji { font-size:68px; }
-    .result-title {
-      font-family:'Cormorant Garamond',serif; font-style:italic;
-      font-size:36px; text-align:center;
-    }
-    .result-score { text-align:center; color:var(--color-text-secondary); line-height:1.7; }
-    .result-score strong { display:block; font-size:48px; color:var(--color-text-primary); font-weight:700; }
-    .result-btns { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
-    .btn-outline {
-      background:#fff; color:var(--lavender-600);
-      border:2px solid var(--lavender-200); border-radius:12px;
-      padding:12px 28px; font-size:15px; font-weight:600;
-      cursor:pointer; font-family:inherit; transition:background .15s;
-    }
-    .btn-outline:hover { background:var(--lavender-50); }
-    .fill-bar-wrap { width:220px; }
-    .fill-bar-track { background:var(--sand-200); border-radius:99px; height:10px; overflow:hidden; }
-    .fill-bar-fill { height:100%; border-radius:99px; background:var(--lavender-400); transition:width 1s .3s; }
-    .fill-label { display:flex; justify-content:space-between; font-size:12px; color:var(--color-text-tertiary); margin-top:4px; }
+  /* DRAG GHOST */
+  #ghost { position:fixed; pointer-events:none; z-index:9999; border-radius:9px; overflow:hidden; box-shadow:0 14px 36px rgba(0,0,0,.32); opacity:.9; transform:scale(1.06); transform-origin:top left; display:none; }
+  #ghost svg,#ghost img { display:block; }
 
-    /* ══ CUSTOM ITEM MODAL ══ */
-    .modal-backdrop {
-      position:fixed; inset:0; z-index:200;
-      background:rgba(30,15,5,.55); backdrop-filter:blur(6px);
-      display:none; align-items:center; justify-content:center; padding:20px;
-    }
-    .modal-backdrop.open { display:flex; }
-    .modal-box {
-      background:#fff; border-radius:24px; padding:28px 24px;
-      max-width:400px; width:100%;
-      box-shadow:0 24px 64px rgba(0,0,0,.25);
-      display:flex; flex-direction:column; gap:20px;
-      max-height:90vh; overflow-y:auto;
-    }
-    .modal-title {
-      font-family:'Cormorant Garamond',serif; font-style:italic;
-      font-size:22px; color:var(--color-text-primary);
-      display:flex; align-items:center; gap:10px;
-    }
-    .modal-step {
-      display:none; flex-direction:column; gap:16px;
-    }
-    .modal-step.active { display:flex; }
+  /* ══ RESULT ══ */
+  #screen-result { min-height:calc(100vh - 56px); justify-content:center; gap:18px; padding:40px 20px 60px; }
+  .res-scenario-tag { display:flex; align-items:center; gap:6px; background:var(--lavender-100); color:var(--lavender-700); border-radius:99px; padding:6px 16px; font-size:12px; font-weight:600; }
+  .result-emoji { font-size:64px; }
+  .result-title { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:32px; text-align:center; }
 
-    /* upload drop zone */
-    .drop-zone {
-      border:2px dashed var(--color-border); border-radius:16px;
-      padding:32px 20px; text-align:center;
-      cursor:pointer; transition:border-color .15s, background .15s;
-      display:flex; flex-direction:column; align-items:center; gap:10px;
-    }
-    .drop-zone:hover, .drop-zone.dragover { border-color:var(--lavender-400); background:var(--lavender-50); }
-    .drop-zone-icon { font-size:36px; }
-    .drop-zone-title { font-size:15px; font-weight:600; color:var(--color-text-primary); }
-    .drop-zone-sub   { font-size:13px; color:var(--color-text-tertiary); }
-    #fileInput { display:none; }
+  .score-breakdown { background:#fff; border-radius:14px; padding:16px 20px; max-width:360px; width:100%; box-shadow:0 2px 12px rgba(0,0,0,0.06); display:flex; flex-direction:column; gap:8px; }
+  .score-row { display:flex; justify-content:space-between; align-items:center; font-size:14px; color:var(--color-text-secondary); }
+  .sb-val { font-weight:700; color:var(--color-text-primary); }
 
-    /* processing state */
-    .processing-wrap {
-      display:none; flex-direction:column; align-items:center; gap:14px; padding:20px;
-    }
-    .processing-wrap.active { display:flex; }
-    .spinner {
-      width:44px; height:44px; border:4px solid var(--lavender-100);
-      border-top-color:var(--lavender-500); border-radius:50%;
-      animation:spin 0.8s linear infinite;
-    }
-    @keyframes spin { to{transform:rotate(360deg)} }
-    .processing-label { font-size:14px; color:var(--color-text-secondary); font-weight:500; }
-    .processing-sub   { font-size:12px; color:var(--color-text-tertiary); text-align:center; }
+  /* BONUS REVEAL */
+  .bonus-reveal { background:#fff; border-radius:16px; padding:20px; max-width:360px; width:100%; box-shadow:0 4px 24px rgba(0,0,0,0.10); display:flex; flex-direction:column; gap:12px; }
+  .bonus-header { font-size:15px; font-weight:700; color:var(--color-text-primary); }
+  .bonus-list { display:flex; flex-direction:column; gap:8px; }
+  .bonus-item { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; font-size:13px; opacity:0; animation:slideUp .3s ease forwards; }
+  @keyframes slideUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  .bonus-item.packed { background:#F0FAF0; }
+  .bonus-item.missed { background:#FFF5F5; }
+  .bi-icon { font-size:16px; flex-shrink:0; }
+  .bi-main { display:flex; flex-direction:column; gap:2px; flex:1; min-width:0; }
+  .bi-name { font-weight:700; color:var(--color-text-primary); font-size:13px; }
+  .bi-reason { font-size:11px; color:var(--color-text-tertiary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .bi-pts { font-weight:700; font-size:13px; flex-shrink:0; }
+  .bonus-item.packed .bi-pts { color:#228B40; }
+  .bonus-item.missed .bi-pts { color:var(--color-text-tertiary); opacity:.6; }
+  .bonus-footer { display:flex; justify-content:space-between; align-items:center; padding-top:10px; border-top:1px solid var(--color-border); font-size:14px; color:var(--color-text-secondary); }
+  .bonus-total { font-size:18px; font-weight:800; color:#228B40; }
 
-    /* preview */
-    .preview-wrap {
-      display:none; flex-direction:column; gap:14px;
-    }
-    .preview-wrap.active { display:flex; }
-    .preview-canvas-wrap {
-      position:relative; border-radius:12px; overflow:hidden;
-      background:repeating-conic-gradient(#e0d8c8 0% 25%, #f5ede0 0% 50%) 0 0 / 16px 16px;
-      display:flex; align-items:center; justify-content:center;
-      min-height:160px;
-    }
-    #previewImg {
-      max-width:100%; max-height:200px; object-fit:contain;
-      display:block;
-    }
-    .preview-label {
-      font-size:12px; color:var(--color-text-tertiary); text-align:center;
-    }
+  .final-score-block { text-align:center; }
+  .fs-label { font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--color-text-tertiary); }
+  .fs-val { font-size:58px; font-weight:800; color:var(--color-text-primary); font-variant-numeric:tabular-nums; line-height:1.1; }
 
-    /* name input */
-    .modal-field { display:flex; flex-direction:column; gap:6px; }
-    .modal-field label { font-size:12px; font-weight:600; color:var(--color-text-secondary); letter-spacing:.05em; }
-    .modal-input {
-      border:1.5px solid var(--color-border); border-radius:10px;
-      padding:10px 14px; font-size:15px; font-family:inherit;
-      outline:none; transition:border-color .15s;
-      color:var(--color-text-primary);
-    }
-    .modal-input:focus { border-color:var(--lavender-400); }
+  .fill-bar-wrap { width:240px; }
+  .fill-bar-track { background:var(--sand-200); border-radius:99px; height:10px; overflow:hidden; }
+  .fill-bar-fill { height:100%; border-radius:99px; background:var(--lavender-400); transition:width 1s .3s; }
+  .fill-label { display:flex; justify-content:space-between; font-size:12px; color:var(--color-text-tertiary); margin-top:4px; }
+  .result-btns { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+  .result-btns .btn-outline,.result-btns .btn-primary { flex:none; }
 
-    /* size picker */
-    .size-picker { display:flex; gap:8px; flex-wrap:wrap; }
-    .size-opt {
-      flex:1; min-width:60px;
-      border:2px solid var(--color-border); border-radius:10px;
-      padding:8px 4px; text-align:center; cursor:pointer;
-      transition:border-color .15s, background .15s;
-      display:flex; flex-direction:column; align-items:center; gap:3px;
-    }
-    .size-opt:hover { border-color:var(--lavender-300); background:var(--lavender-50); }
-    .size-opt.selected { border-color:var(--lavender-500); background:var(--lavender-100); }
-    .size-opt-icon { font-size:18px; }
-    .size-opt-lbl { font-size:11px; font-weight:600; color:var(--color-text-secondary); }
-    .size-opt-sub  { font-size:10px; color:var(--color-text-tertiary); }
-
-    /* modal buttons */
-    .modal-btns { display:flex; gap:10px; }
-    .btn-modal-cancel {
-      flex:1; background:var(--sand-100); color:var(--color-text-secondary);
-      border:1.5px solid var(--color-border); border-radius:10px;
-      padding:11px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit;
-      transition:background .15s;
-    }
-    .btn-modal-cancel:hover { background:var(--sand-200); }
-    .btn-modal-confirm {
-      flex:2; background:var(--lavender-600); color:#fff;
-      border:none; border-radius:10px;
-      padding:11px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit;
-      transition:background .15s, transform .1s;
-    }
-    .btn-modal-confirm:hover { background:var(--lavender-700); }
-    .btn-modal-confirm:disabled { background:var(--lavender-200); cursor:not-allowed; }
-  
+  /* ══ MODAL ══ */
+  .modal-backdrop { position:fixed; inset:0; z-index:200; background:rgba(30,15,5,.55); backdrop-filter:blur(6px); display:none; align-items:center; justify-content:center; padding:20px; }
+  .modal-backdrop.open { display:flex; }
+  .modal-box { background:#fff; border-radius:24px; padding:28px 24px; max-width:400px; width:100%; box-shadow:0 24px 64px rgba(0,0,0,.25); display:flex; flex-direction:column; gap:20px; max-height:90vh; overflow-y:auto; }
+  .modal-title { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:22px; color:var(--color-text-primary); }
+  .modal-step { display:none; flex-direction:column; gap:16px; }
+  .modal-step.active { display:flex; }
+  .drop-zone { border:2px dashed var(--color-border); border-radius:16px; padding:32px 20px; text-align:center; cursor:pointer; transition:border-color .15s,background .15s; display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .drop-zone:hover,.drop-zone.dragover { border-color:var(--lavender-400); background:var(--lavender-50); }
+  .drop-zone-icon { font-size:36px; }
+  .drop-zone-title { font-size:15px; font-weight:600; color:var(--color-text-primary); }
+  .drop-zone-sub { font-size:13px; color:var(--color-text-tertiary); }
+  #fileInput { display:none; }
+  .processing-wrap { display:none; flex-direction:column; align-items:center; gap:14px; padding:20px; }
+  .processing-wrap.active { display:flex; }
+  .spinner { width:44px; height:44px; border:4px solid var(--lavender-100); border-top-color:var(--lavender-500); border-radius:50%; animation:spin .8s linear infinite; }
+  @keyframes spin { to{transform:rotate(360deg)} }
+  .processing-label { font-size:14px; color:var(--color-text-secondary); font-weight:500; }
+  .processing-sub { font-size:12px; color:var(--color-text-tertiary); text-align:center; }
+  .preview-wrap { display:none; flex-direction:column; gap:14px; }
+  .preview-wrap.active { display:flex; }
+  .preview-canvas-wrap { position:relative; border-radius:12px; overflow:hidden; background:repeating-conic-gradient(#e0d8c8 0% 25%,#f5ede0 0% 50%) 0 0/16px 16px; display:flex; align-items:center; justify-content:center; min-height:160px; }
+  #previewImg { max-width:100%; max-height:200px; object-fit:contain; display:block; }
+  .preview-label { font-size:12px; color:var(--color-text-tertiary); text-align:center; }
+  .modal-field { display:flex; flex-direction:column; gap:6px; }
+  .modal-field label { font-size:12px; font-weight:600; color:var(--color-text-secondary); letter-spacing:.05em; }
+  .modal-input { border:1.5px solid var(--color-border); border-radius:10px; padding:10px 14px; font-size:15px; font-family:inherit; outline:none; transition:border-color .15s; color:var(--color-text-primary); }
+  .modal-input:focus { border-color:var(--lavender-400); }
+  .size-picker { display:flex; gap:8px; flex-wrap:wrap; }
+  .size-opt { flex:1; min-width:60px; border:2px solid var(--color-border); border-radius:10px; padding:8px 4px; text-align:center; cursor:pointer; transition:border-color .15s,background .15s; display:flex; flex-direction:column; align-items:center; gap:3px; }
+  .size-opt:hover { border-color:var(--lavender-300); background:var(--lavender-50); }
+  .size-opt.selected { border-color:var(--lavender-500); background:var(--lavender-100); }
+  .size-opt-icon { font-size:18px; }
+  .size-opt-lbl { font-size:11px; font-weight:600; color:var(--color-text-secondary); }
+  .size-opt-sub { font-size:10px; color:var(--color-text-tertiary); }
+  .modal-btns { display:flex; gap:10px; }
+  .btn-modal-cancel { flex:1; background:var(--sand-100); color:var(--color-text-secondary); border:1.5px solid var(--color-border); border-radius:10px; padding:11px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; transition:background .15s; }
+  .btn-modal-cancel:hover { background:var(--sand-200); }
+  .btn-modal-confirm { flex:2; background:var(--lavender-600); color:#fff; border:none; border-radius:10px; padding:11px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; transition:background .15s; }
+  .btn-modal-confirm:hover { background:var(--lavender-700); }
 </style>
 
 </BaseLayout>
