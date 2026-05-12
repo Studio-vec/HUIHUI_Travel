@@ -23,8 +23,30 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
                 expandedId.value = expandedId.value === id ? null : id;
             };
 
+            const _showPhotoAlert = () => {
+                const existing = document.getElementById('_photo-alert-overlay');
+                if (existing) return;
+                const overlay = document.createElement('div');
+                overlay.id = '_photo-alert-overlay';
+                overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(42,31,72,0.45);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px';
+                overlay.innerHTML = `
+                  <div style="background:#fff;border-radius:20px;padding:32px 28px 24px;max-width:300px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(107,79,180,0.18);animation:_paSlide 0.22s ease">
+                    <div style="width:48px;height:48px;background:#EDE5FF;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.4rem">📷</div>
+                    <div style="font-family:'DM Serif Display',serif;font-style:italic;font-size:1.2rem;color:#2a1f48;margin-bottom:8px">사진을 등록해주세요</div>
+                    <p style="font-size:13px;color:#7a6a9a;line-height:1.6;margin-bottom:20px">최소 한 장 이상의 사진을 등록해야<br>여행 완료로 기록할 수 있어요</p>
+                    <button id="_photo-alert-btn" style="width:100%;padding:12px;background:#C0A8FF;color:#4E3490;border:none;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:0.04em">확인</button>
+                  </div>`;
+                const style = document.createElement('style');
+                style.textContent = '@keyframes _paSlide{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}';
+                document.head.appendChild(style);
+                document.body.appendChild(overlay);
+                const close = () => { overlay.remove(); style.remove(); };
+                document.getElementById('_photo-alert-btn').addEventListener('click', close);
+                overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+            };
+
             const toggleVisited = () => {
-                if (!isVisited.value && allPhotos.value.length === 0) return;
+                if (!isVisited.value && allPhotos.value.length === 0) { _showPhotoAlert(); return; }
                 const s = _getVisitedSet();
                 if (s.has(tripUrl)) s.delete(tripUrl); else s.add(tripUrl);
                 localStorage.setItem(VISITED_KEY, JSON.stringify([...s]));
