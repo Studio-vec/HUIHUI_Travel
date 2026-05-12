@@ -13,7 +13,20 @@ function extractTitle(html) {
 
 function extractHeadStyles(html) {
   const matches = [...html.matchAll(/<style>([\s\S]*?)<\/style>/g)];
-  return matches.map(m => m[1]).join('\n');
+  let combined = matches.map(m => m[1]).join('\n');
+  // 구 navbar CSS 제거 (navbar.js가 .hh-navbar* 로 대체)
+  combined = combined.replace(/\/\*[^*]*NAVBAR[\s\S]*?(?=\/\*[^*]*(?:HERO|FOOTER|$))/i, '');
+  return combined;
+}
+
+function extractHeadStyleLinks(html) {
+  const headM = html.match(/<head>([\s\S]*?)<\/head>/);
+  if (!headM) return [];
+  const links = [...headM[1].matchAll(/<link[^>]+rel=["']stylesheet["'][^>]*>/g)];
+  return links
+    .map(m => m[0])
+    .filter(tag => /assets\/css\//.test(tag))
+    .map(tag => tag.replace(/href=["'](?:\.\.\/)?assets\//, 'href="/assets/'));
 }
 
 function extractBody(html) {
@@ -37,6 +50,7 @@ function convert(srcPath, destPath, depth) {
   const title = extractTitle(html);
   const styles = extractHeadStyles(html);
   const headScripts = extractHeadInlineScripts(html);
+  const headLinks = extractHeadStyleLinks(html);
   let body = extractBody(html);
 
   // assets 경로를 절대경로로 통일
@@ -50,6 +64,11 @@ function convert(srcPath, destPath, depth) {
 
   // navbar.js 스크립트 태그 제거
   body = body.replace(/\s*<script[^>]*navbar\.js[^>]*><\/script>/g, '');
+
+  // auth 페이지 redirect: ../index.html → /
+  body = body.replace(/(['"`])\.\.\/index\.html\1/g, "$1/$1");
+  // reset-password 이메일 redirectTo URL: .html 확장자 제거
+  body = body.replace(/(redirectTo:\s*['"`][^'"`]*\/auth\/reset-password)\.html(['"`])/g, '$1$2');
 
   // 상대 href → Astro 클린 URL 절대경로
   body = body.replace(/href=["'](?:\.\.\/)?trips\/([^"'.]+)(?:\.html)?["']/g, 'href="/trips/$1"');
@@ -68,8 +87,9 @@ function convert(srcPath, destPath, depth) {
   const hasVueTemplate = body.includes('{{');
 
   let out;
+  const headLinkTags = headLinks.map(l => `  ${l}`).join('\n');
+
   if (hasVueTemplate) {
-    // body를 프론트매터 raw 문자열로 보내고 set:html로 렌더링
     const escaped = body.replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
     out = `---
 import BaseLayout from '${relLayout}';
@@ -78,6 +98,7 @@ ${hasFooter ? `import Footer from '${relFooter}';` : ''}
 const _body = \`${escaped}\`;
 ---
 <BaseLayout title="${title}">
+${headLinkTags ? `  <Fragment slot="head">\n${headLinkTags}\n  </Fragment>` : ''}
   <Navbar />
   <Fragment set:html={_body} />
 ${hasFooter ? '  <Footer />' : ''}
@@ -92,6 +113,7 @@ import Navbar from '${relNavbar}';
 ${hasFooter ? `import Footer from '${relFooter}';` : ''}
 ---
 <BaseLayout title="${title}">
+${headLinkTags ? `  <Fragment slot="head">\n${headLinkTags}\n  </Fragment>` : ''}
   <Navbar />
 ${body.trimEnd()}
 ${hasFooter ? '  <Footer />' : ''}

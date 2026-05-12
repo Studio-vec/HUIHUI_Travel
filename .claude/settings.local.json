@@ -10,7 +10,13 @@
       "Bash(where node *)",
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\kty12\\\\HUIHUI_Travel\" -Recurse -Filter \"*.html\")",
       "Bash(Select-Object FullName)",
-      "Bash(ls /mnt/c/Users/kty12/HUIHUI_Travel/)"
+      "Bash(ls /mnt/c/Users/kty12/HUIHUI_Travel/)",
+      "Bash(npm --version)",
+      "Bash(nvm use *)",
+      "PowerShell(node --version)",
+      "PowerShell(npm --version)",
+      "PowerShell($env:PATH = $env:PATH + \";C:\\\\Program Files\\\\nodejs\"; node --version; npm --version)",
+      "Bash(grep -n \"\\\\${base}\" /c/Users/kty12/HUIHUI_Travel/assets/js/navbar.js)"
     ]
   }
 }

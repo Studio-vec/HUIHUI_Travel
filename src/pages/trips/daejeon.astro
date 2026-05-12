@@ -175,6 +175,9 @@ createTripApp({
 `;
 ---
 <BaseLayout title="대전 성심당 로그">
+  <Fragment slot="head">
+  <link rel="stylesheet" href="/assets/css/trip.css">
+  </Fragment>
   <Navbar />
   <Fragment set:html={_body} />
 

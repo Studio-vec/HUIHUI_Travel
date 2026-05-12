@@ -4,6 +4,7 @@ import Navbar from '../../components/Navbar.astro';
 
 ---
 <BaseLayout title="회원가입 – HUIHUI Travel">
+
   <Navbar />
 
 
@@ -248,7 +249,7 @@ import Navbar from '../../components/Navbar.astro';
       if (error) throw error;
 
       document.getElementById('toast').classList.add('show');
-      setTimeout(() => window.location.href = '../index.html', 1600);
+      setTimeout(() => window.location.href = '/', 1600);
     } catch (e) {
       btn.disabled = false;
       btn.querySelector('.btn-checkin-label').textContent = '회원가입 완료';

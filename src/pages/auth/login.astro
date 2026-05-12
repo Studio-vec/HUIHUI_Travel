@@ -4,6 +4,7 @@ import Navbar from '../../components/Navbar.astro';
 
 ---
 <BaseLayout title="로그인 – HUIHUI Travel">
+
   <Navbar />
 
 
@@ -115,7 +116,7 @@ import Navbar from '../../components/Navbar.astro';
       document.getElementById('toast').classList.add('show');
 
       /* 로그인 전 페이지로 돌아가거나 홈으로 */
-      const redirect = new URLSearchParams(location.search).get('redirect') || '../index.html';
+      const redirect = new URLSearchParams(location.search).get('redirect') || '/';
       setTimeout(() => window.location.href = redirect, 1400);
 
     } catch (e) {

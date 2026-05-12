@@ -195,6 +195,9 @@ createTripApp({
 `;
 ---
 <BaseLayout title="파주 트렌디 라이프스타일 로그">
+  <Fragment slot="head">
+  <link rel="stylesheet" href="/assets/css/trip.css">
+  </Fragment>
   <Navbar />
   <Fragment set:html={_body} />
 

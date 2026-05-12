@@ -4,6 +4,7 @@ import Navbar from '../../components/Navbar.astro';
 
 ---
 <BaseLayout title="마이페이지 – HUIHUI Travel">
+
   <Navbar />
 
 
@@ -291,7 +292,7 @@ import Navbar from '../../components/Navbar.astro';
 
   async function doLogout() {
     await window._sb.auth.signOut();
-    window.location.href = '../index.html';
+    window.location.href = '/';
   }
 
   function showToast(msg) {

@@ -179,6 +179,9 @@ createTripApp({
 `;
 ---
 <BaseLayout title="강릉 힙플 로그">
+  <Fragment slot="head">
+  <link rel="stylesheet" href="/assets/css/trip.css">
+  </Fragment>
   <Navbar />
   <Fragment set:html={_body} />
 

@@ -224,6 +224,9 @@ createTripApp({
 `;
 ---
 <BaseLayout title="이천 도자기 & 온천 나들이 로그">
+  <Fragment slot="head">
+  <link rel="stylesheet" href="/assets/css/trip.css">
+  </Fragment>
   <Navbar />
   <Fragment set:html={_body} />
 

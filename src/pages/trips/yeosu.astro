@@ -181,6 +181,9 @@ createTripApp({
 `;
 ---
 <BaseLayout title="여수 밤바다 로그">
+  <Fragment slot="head">
+  <link rel="stylesheet" href="/assets/css/trip.css">
+  </Fragment>
   <Navbar />
   <Fragment set:html={_body} />
 
