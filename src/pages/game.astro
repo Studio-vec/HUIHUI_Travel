@@ -30,13 +30,13 @@ import Navbar from '../components/Navbar.astro';
   <div class="detail-card">
     <div class="detail-emoji" id="detailEmoji"></div>
     <div class="detail-title" id="detailTitle"></div>
-    <div class="detail-sub" id="detailSub"></div>
-    <div class="detail-season-tag" id="detailSeason"></div>
-    <div class="detail-section-lbl">✈️ 여행 힌트</div>
+    <div class="detail-tags">
+      <div class="detail-sub" id="detailSub"></div>
+      <div class="detail-season-tag" id="detailSeason"></div>
+    </div>
     <div class="detail-hints" id="detailHints"></div>
     <div class="detail-notice">
-      💡 힌트를 잘 읽고, 이 여행에 꼭 필요한 짐을 골라보세요!<br>
-      <span>나중에 어떤 아이템이 추가 점수였는지 공개됩니다 😏</span>
+      💡 힌트를 보고 꼭 필요한 짐을 골라보세요 <span>나중에 어떤 아이템이 추가 점수였는지 공개됩니다 😏</span>
     </div>
   </div>
   <div class="detail-btns">
@@ -107,22 +107,19 @@ import Navbar from '../components/Navbar.astro';
 
   <div class="score-breakdown">
     <div class="score-row">
-      <span>아이템 <span id="resItemCount">0</span>개 담기</span>
-      <span class="sb-val" id="resBase">+0점</span>
-    </div>
-    <div class="score-row">
-      <span>효율 보너스 (<span id="resPct">0</span>% 채움)</span>
+      <span>짐 채우기 효율 (<span id="resPct">0</span>% 채움)</span>
       <span class="sb-val" id="resEff">+0점</span>
     </div>
+    <div class="score-row">
+      <span>핵심 아이템 보너스</span>
+      <span class="sb-val" id="resBonusTotal">+0점</span>
+    </div>
   </div>
+  <div class="score-max-hint">/ 100점 만점 · 아이템 <span id="resItemCount">0</span>개 담음</div>
 
   <div class="bonus-reveal">
     <div class="bonus-header" id="bonusHeader"></div>
     <div class="bonus-list" id="bonusList"></div>
-    <div class="bonus-footer">
-      <span>여행 보너스 합계</span>
-      <span class="bonus-total" id="resBonusTotal">+0점</span>
-    </div>
   </div>
 
   <div class="final-score-block">
@@ -274,12 +271,9 @@ const SCENARIOS = [
               'scarf','jacket','medicine','charger','swim_tube','hair_dryer','hat','umbrella'],
     bonus:{
       sunscreen: {points:25, reason:'여름 해변엔 선크림이 1순위!'},
-      camera:    {points:25, reason:'힙한 카페·바다 사진은 필수'},
-      slippers:  {points:20, reason:'해변 모래사장 산책용으로 딱'},
-      swimsuit:  {points:20, reason:'강문해변 물놀이에 꼭 필요'},
-      swim_tube: {points:15, reason:'해수욕장 물놀이 안전하게!'},
-      sunglasses:{points:10, reason:'눈부신 여름 바다에 필요해요'},
-      towel:     {points:10, reason:'바다에서 나올 때 꼭 필요'},
+      camera:    {points:20, reason:'힙한 카페·바다 사진은 필수'},
+      slippers:  {points:15, reason:'해변 모래사장 산책용으로 딱'},
+      swimsuit:  {points:10, reason:'강문해변 물놀이에 꼭 필요'},
     }
   },
   {
@@ -294,11 +288,8 @@ const SCENARIOS = [
     bonus:{
       camera:   {points:25, reason:'레트로 거리 인생샷은 필수!'},
       shoes:    {points:20, reason:'골목골목 걸어다닐 편한 신발'},
-      jacket:   {points:20, reason:'봄·가을 일교차 대비'},
-      tripod:   {points:15, reason:'혼자여도 멋진 사진 찍기'},
-      hat:      {points:15, reason:'햇빛 차단 & 감성 스타일'},
-      notebook: {points:10, reason:'감성 기록도 여행의 일부'},
-      snacks:   {points:10, reason:'걷다 보면 배고프니까'},
+      jacket:   {points:15, reason:'봄·가을 일교차 대비'},
+      tripod:   {points:10, reason:'혼자여도 멋진 사진 찍기'},
     }
   },
   {
@@ -311,13 +302,10 @@ const SCENARIOS = [
               'notebook','shirt','jeans','pouch','hat','charger','snacks',
               'book','slippers','tshirt','umbrella','hair_dryer','travel_pillow'],
     bonus:{
-      towel:        {points:25, reason:'온천 필수! 개인 수건은 꼭'},
-      sweater:      {points:25, reason:'가을·겨울 이천은 쌀쌀해요'},
-      slippers:     {points:20, reason:'온천 시설 내 편한 이동'},
-      jacket:       {points:15, reason:'온천 후 체온 유지에 필수'},
-      camera:       {points:15, reason:'도자기 만드는 순간 기록'},
-      hair_dryer:   {points:10, reason:'온천 후 머리 말리기'},
-      travel_pillow:{points:10, reason:'귀가 중 숙면 도우미'},
+      towel:    {points:25, reason:'온천 필수! 개인 수건은 꼭'},
+      sweater:  {points:20, reason:'가을·겨울 이천은 쌀쌀해요'},
+      slippers: {points:15, reason:'온천 시설 내 편한 이동'},
+      jacket:   {points:10, reason:'온천 후 체온 유지에 필수'},
     }
   },
   {
@@ -330,13 +318,10 @@ const SCENARIOS = [
               'jeans','medicine','pouch','sunscreen','sunglasses','tripod',
               'umbrella','scarf','shirt','slippers','book','towel','charger'],
     bonus:{
-      shoes:     {points:25, reason:'숲길 산책에 편한 운동화 필수'},
-      hat:       {points:20, reason:'야외 햇빛 차단 & 감성'},
-      camera:    {points:20, reason:'철도공원 포토스팟 기록'},
-      snacks:    {points:15, reason:'피크닉 간식은 필수템!'},
-      sunscreen: {points:15, reason:'봄 자외선도 강해요'},
-      tripod:    {points:10, reason:'혼자 온다면 셀카 삼각대'},
-      umbrella:  {points:10, reason:'갑작스런 봄비 대비'},
+      shoes:   {points:25, reason:'숲길 산책에 편한 운동화 필수'},
+      hat:     {points:20, reason:'야외 햇빛 차단 & 감성'},
+      camera:  {points:15, reason:'철도공원 포토스팟 기록'},
+      snacks:  {points:10, reason:'피크닉 간식은 필수템!'},
     }
   },
   {
@@ -349,13 +334,10 @@ const SCENARIOS = [
               'pouch','hat','medicine','charger','snacks','tripod','book',
               'sweater','tshirt','umbrella','sunglasses','slippers','travel_pillow'],
     bonus:{
-      camera:       {points:25, reason:'헤이리 갤러리·가을 단풍 촬영'},
-      jacket:       {points:20, reason:'선선한 가을 파주 필수템'},
-      shoes:        {points:20, reason:'아울렛·예술마을 많이 걸어요'},
-      notebook:     {points:15, reason:'갤러리 감상 메모 & 일정 기록'},
-      tripod:       {points:15, reason:'2박3일 여행, 사진 퀄리티 UP'},
-      scarf:        {points:10, reason:'가을 일교차 목 보온'},
-      travel_pillow:{points:10, reason:'이동 많을 때 목 편안하게'},
+      camera:   {points:25, reason:'헤이리 갤러리·가을 단풍 촬영'},
+      jacket:   {points:20, reason:'선선한 가을 파주 필수템'},
+      shoes:    {points:15, reason:'아울렛·예술마을 많이 걸어요'},
+      notebook: {points:10, reason:'갤러리 감상 메모 & 일정 기록'},
     }
   },
   {
@@ -368,13 +350,10 @@ const SCENARIOS = [
               'tshirt','jeans','shirt','pouch','medicine','tripod','charger',
               'scarf','sunglasses','umbrella','slippers','boots','book'],
     bonus:{
-      camera:    {points:25, reason:'화성 성곽·봄꽃 인생샷 필수'},
-      shoes:     {points:20, reason:'성곽길 걷기엔 편한 신발'},
-      hat:       {points:20, reason:'화성 야외 코스, 햇빛 차단'},
-      snacks:    {points:15, reason:'행리단길 간식 투어 즐기기'},
-      tripod:    {points:15, reason:'성곽 배경 인증샷 퀄리티 UP'},
-      jacket:    {points:10, reason:'봄 저녁 일교차 대비'},
-      sunscreen: {points:10, reason:'봄 야외 코스, 자외선 차단'},
+      camera: {points:25, reason:'화성 성곽·봄꽃 인생샷 필수'},
+      shoes:  {points:20, reason:'성곽길 걷기엔 편한 신발'},
+      hat:    {points:15, reason:'화성 야외 코스, 햇빛 차단'},
+      snacks: {points:10, reason:'행리단길 간식 투어 즐기기'},
     }
   },
   {
@@ -387,13 +366,10 @@ const SCENARIOS = [
               'medicine','snacks','charger','notebook','pouch','shirt',
               'tshirt','jeans','sunscreen','hat','tripod','multi_adapter','swim_tube','jacket'],
     bonus:{
-      camera:       {points:25, reason:'밤바다·일몰 사진은 이 여행의 핵심'},
-      umbrella:     {points:20, reason:'여수는 비가 자주 와요'},
-      sweater:      {points:20, reason:'밤바다 해풍은 생각보다 쌀쌀'},
-      slippers:     {points:15, reason:'해변·포차 거리 편하게'},
-      tripod:       {points:15, reason:'밤바다 야경 장노출 촬영'},
-      sunglasses:   {points:10, reason:'낮 오동도·케이블카 햇빛 차단'},
-      snacks:       {points:10, reason:'낭만포차 전 간식으로 허기 달래기'},
+      camera:   {points:25, reason:'밤바다·일몰 사진은 이 여행의 핵심'},
+      umbrella: {points:20, reason:'여수는 비가 자주 와요'},
+      sweater:  {points:15, reason:'밤바다 해풍은 생각보다 쌀쌀'},
+      slippers: {points:10, reason:'해변·포차 거리 편하게'},
     }
   },
   {
@@ -406,13 +382,10 @@ const SCENARIOS = [
               'jeans','shirt','notebook','medicine','charger','scarf',
               'sunglasses','umbrella','book','tripod','slippers','sunscreen','sweater'],
     bonus:{
-      pouch:    {points:25, reason:'성심당 빵 잔뜩 담을 에코백·파우치!'},
-      shoes:    {points:20, reason:'성심당·수목원 걸어다닐 편한 신발'},
-      camera:   {points:20, reason:'성심당 빵 & 카페 감성 사진'},
-      hat:      {points:15, reason:'수목원 야외 코스, 햇빛 차단'},
-      snacks:   {points:15, reason:'대전 로컬 간식 탐방 즐기기'},
-      jacket:   {points:10, reason:'봄·가을 일교차 대비'},
-      notebook: {points:10, reason:'카페에서 여행 일기 쓰기'},
+      pouch:  {points:25, reason:'성심당 빵 잔뜩 담을 에코백·파우치!'},
+      shoes:  {points:20, reason:'성심당·수목원 걸어다닐 편한 신발'},
+      camera: {points:15, reason:'성심당 빵 & 카페 감성 사진'},
+      hat:    {points:10, reason:'수목원 야외 코스, 햇빛 차단'},
     }
   },
 ];
@@ -829,7 +802,7 @@ function getAllItems() {
 // ══════════════════════════════════════
 //  GAME STATE
 // ══════════════════════════════════════
-const COLS = 8, ROWS = 6, TOTAL_SEC = 90, GAP = 2;
+const COLS = 7, ROWS = 5, TOTAL_SEC = 90, GAP = 2;
 let CS = 52;
 let grid = [], placedCount = 0, timeLeft = 0, timerID = null;
 let dragSt = null, gameOn = false;
@@ -970,8 +943,7 @@ function endGame() {
   for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++) if(grid[r][c]) usedCells++;
   const fillPct = Math.round(usedCells/(COLS*ROWS)*100);
 
-  const basePoints = placedCount * 5;
-  const effBonus   = Math.round(fillPct * 0.2);
+  const fillScore  = Math.round(fillPct * 0.30);
 
   const allItems = getAllItems();
   let bonusPoints = 0;
@@ -983,26 +955,25 @@ function endGame() {
     bonusPoints += pts;
   }
 
-  const total = basePoints + effBonus + bonusPoints;
+  const total = Math.min(fillScore + bonusPoints, 100);
 
-  const bestKey = 'hh_pack_best_v2';
+  const bestKey = 'hh_pack_best_v3';
   const prev = parseInt(localStorage.getItem(bestKey)||'0');
   if(total > prev) localStorage.setItem(bestKey, total);
   $('bestTxt').textContent = Math.max(prev,total);
   $('bestBadge').style.display = '';
 
   let emoji='😅', title='아직 연습이 필요해요!';
-  if(total>=180){emoji='🏆';title='짐 싸기 달인!';}
-  else if(total>=120){emoji='🎉';title='훌륭한 짐 싸기!';}
-  else if(total>=70) {emoji='👍';title='잘 했어요!';}
+  if(total>=90){emoji='🏆';title='짐 싸기 달인!';}
+  else if(total>=70){emoji='🎉';title='훌륭한 짐 싸기!';}
+  else if(total>=50){emoji='👍';title='잘 했어요!';}
 
   $('resScenarioTag').innerHTML = `<span>${currentScenario.emoji}</span>&nbsp;${currentScenario.title} · ${currentScenario.detail}`;
   $('resEmoji').textContent   = emoji;
   $('resTitle').textContent   = title;
   $('resItemCount').textContent = placedCount;
-  $('resBase').textContent    = `+${basePoints}점`;
   $('resPct').textContent     = fillPct;
-  $('resEff').textContent     = `+${effBonus}점`;
+  $('resEff').textContent     = `+${fillScore}점`;
   $('bonusHeader').textContent = `${currentScenario.emoji} 이 여행이라서 특별 점수!`;
   $('bonusList').innerHTML    = bonusResults.map((b, i) => `
     <div class="bonus-item ${b.packed?'packed':'missed'}" style="animation-delay:${0.35+i*0.10}s">
@@ -1248,7 +1219,7 @@ function confirmCustomItem(){if(!pendingDataUrl)return;const name=$('itemNameInp
   loadCustomItems();
   renderMyItemsGrid();
   renderScenarioGrid();
-  const best = localStorage.getItem('hh_pack_best_v2');
+  const best = localStorage.getItem('hh_pack_best_v3');
   if(best){ $('bestTxt').textContent=best; $('bestBadge').style.display=''; }
 
   // URL 파라미터로 여행지 직접 진입 (?trip=gangneung)
@@ -1342,7 +1313,7 @@ function confirmCustomItem(){if(!pendingDataUrl)return;const name=$('itemNameInp
   .sc-season { font-size:9.5px; color:var(--color-text-secondary); margin-top:2px; }
 
   /* DETAIL KEY IMAGE */
-  .detail-key-img { max-width:110px; max-height:160px; object-fit:contain; filter:drop-shadow(0 6px 18px rgba(0,0,0,0.18)); }
+  .detail-key-img { max-width:90px; max-height:130px; object-fit:contain; filter:drop-shadow(0 4px 14px rgba(0,0,0,0.15)); }
   .detail-season-tag { display:inline-block; background:var(--lavender-50); color:var(--lavender-700); border:1px solid var(--lavender-200); border-radius:8px; padding:5px 12px; font-size:12px; font-weight:600; align-self:flex-start; }
 
   /* MY ITEMS */
@@ -1360,17 +1331,18 @@ function confirmCustomItem(){if(!pendingDataUrl)return;const name=$('itemNameInp
   .best-badge { background:var(--lavender-100); color:var(--lavender-700); border-radius:99px; padding:5px 16px; font-size:13px; font-weight:600; }
 
   /* ══ DETAIL ══ */
-  #screen-detail { min-height:calc(100vh - 56px); justify-content:center; gap:24px; padding:40px 20px; }
-  .detail-card { background:#fff; border-radius:20px; padding:28px 24px; max-width:400px; width:100%; box-shadow:0 4px 24px rgba(0,0,0,0.10); display:flex; flex-direction:column; gap:14px; }
-  .detail-emoji { font-size:48px; line-height:1; }
-  .detail-title { font-size:24px; font-weight:800; color:var(--color-text-primary); }
-  .detail-sub { display:inline-block; background:var(--lavender-100); color:var(--lavender-700); border-radius:99px; padding:4px 14px; font-size:12px; font-weight:600; align-self:flex-start; }
-  .detail-section-lbl { font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--color-text-tertiary); margin-top:4px; }
-  .detail-hints { display:flex; flex-direction:column; gap:8px; }
-  .detail-hint { background:var(--sand-100); border-radius:10px; padding:10px 14px; font-size:14px; color:var(--color-text-secondary); }
-  .detail-notice { background:#FFFBE8; border-left:3px solid #F5C020; border-radius:0 10px 10px 0; padding:12px 14px; font-size:13px; color:var(--color-text-secondary); line-height:1.6; }
-  .detail-notice span { display:block; font-size:12px; color:var(--color-text-tertiary); margin-top:4px; }
-  .detail-btns { display:flex; gap:12px; max-width:400px; width:100%; }
+  #screen-detail { min-height:calc(100vh - 56px); justify-content:center; gap:20px; padding:32px 20px; }
+  .detail-card { background:#fff; border-radius:24px; padding:26px 22px; max-width:380px; width:100%; box-shadow:0 2px 20px rgba(0,0,0,0.08); display:flex; flex-direction:column; gap:14px; }
+  .detail-emoji { display:flex; justify-content:center; padding:4px 0; }
+  .detail-title { font-size:22px; font-weight:800; color:var(--color-text-primary); }
+  .detail-tags { display:flex; flex-wrap:wrap; gap:6px; }
+  .detail-sub { display:inline-flex; align-items:center; background:var(--lavender-100); color:var(--lavender-700); border-radius:99px; padding:4px 12px; font-size:11.5px; font-weight:600; }
+  .detail-season-tag { display:inline-flex; align-items:center; background:var(--lavender-50); color:var(--lavender-700); border:1px solid var(--lavender-200); border-radius:99px; padding:4px 12px; font-size:11.5px; font-weight:600; }
+  .detail-hints { display:flex; flex-wrap:wrap; gap:8px; }
+  .detail-hint { background:var(--sand-50,#FAF8F4); border:1px solid var(--sand-200,#E8E0D4); border-radius:99px; padding:7px 15px; font-size:13px; color:var(--color-text-secondary); white-space:nowrap; }
+  .detail-notice { background:#FFFBE8; border-left:3px solid #F5C020; border-radius:0 10px 10px 0; padding:10px 14px; font-size:12.5px; color:var(--color-text-secondary); line-height:1.7; }
+  .detail-notice span { font-size:11.5px; color:var(--color-text-tertiary); }
+  .detail-btns { display:flex; gap:12px; max-width:380px; width:100%; }
 
   /* BUTTONS */
   .btn-primary { background:var(--lavender-600); color:#fff; border:none; border-radius:12px; padding:14px 32px; font-size:15px; font-weight:600; cursor:pointer; font-family:inherit; transition:transform .1s,background .15s; flex:1; }
@@ -1458,6 +1430,7 @@ function confirmCustomItem(){if(!pendingDataUrl)return;const name=$('itemNameInp
   .score-breakdown { background:#fff; border-radius:14px; padding:16px 20px; max-width:360px; width:100%; box-shadow:0 2px 12px rgba(0,0,0,0.06); display:flex; flex-direction:column; gap:8px; }
   .score-row { display:flex; justify-content:space-between; align-items:center; font-size:14px; color:var(--color-text-secondary); }
   .sb-val { font-weight:700; color:var(--color-text-primary); }
+  .score-max-hint { font-size:12px; color:var(--color-text-tertiary); max-width:360px; width:100%; text-align:right; margin-top:-4px; }
 
   /* BONUS REVEAL */
   .bonus-reveal { background:#fff; border-radius:16px; padding:20px; max-width:360px; width:100%; box-shadow:0 4px 24px rgba(0,0,0,0.10); display:flex; flex-direction:column; gap:12px; }
@@ -1474,7 +1447,6 @@ function confirmCustomItem(){if(!pendingDataUrl)return;const name=$('itemNameInp
   .bi-pts { font-weight:700; font-size:13px; flex-shrink:0; }
   .bonus-item.packed .bi-pts { color:#228B40; }
   .bonus-item.missed .bi-pts { color:var(--color-text-tertiary); opacity:.6; }
-  .bonus-footer { display:flex; justify-content:space-between; align-items:center; padding-top:10px; border-top:1px solid var(--color-border); font-size:14px; color:var(--color-text-secondary); }
   .bonus-total { font-size:18px; font-weight:800; color:#228B40; }
 
   .final-score-block { text-align:center; }
