@@ -100,9 +100,10 @@ import Navbar from '../../components/Navbar.astro';
 
   /* OAuth 콜백 URL 오류 감지 */
   const urlParams = new URLSearchParams(location.search);
-  if (urlParams.get('error')) {
+  const oauthError = urlParams.get('error_description') || urlParams.get('error');
+  if (oauthError) {
     const errEl = document.getElementById('errMsg');
-    errEl.textContent = '구글 로그인 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.';
+    errEl.textContent = oauthError;
     errEl.classList.add('show');
     history.replaceState(null, '', location.pathname);
   }
