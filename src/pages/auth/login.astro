@@ -176,23 +176,45 @@ import Navbar from '../../components/Navbar.astro';
 
   async function doGoogleLogin() {
     const btn = document.getElementById('googleBtn');
+    const err = document.getElementById('errMsg');
+    err.classList.remove('show');
+
+    if (!window._sb) {
+      err.textContent = '서버 연결을 확인해주세요.';
+      err.classList.add('show');
+      return;
+    }
+
     btn.disabled = true;
     btn.querySelector('span').textContent = '연결 중…';
 
     const redirect = new URLSearchParams(location.search).get('redirect') || '/';
+    /* redirectTo를 로그인 페이지로 설정해 세션 처리를 보장 */
     const { error } = await window._sb.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: location.origin + redirect }
+      options: {
+        redirectTo: location.origin + '/auth/login?redirect=' + encodeURIComponent(redirect)
+      }
     });
 
     if (error) {
       btn.disabled = false;
       btn.querySelector('span').textContent = 'Google로 계속하기';
-      const err = document.getElementById('errMsg');
-      err.textContent = '구글 로그인에 실패했어요. 다시 시도해주세요.';
+      err.textContent = error.message || '구글 로그인에 실패했어요.';
       err.classList.add('show');
     }
   }
+
+  /* OAuth 콜백 후 세션이 있으면 바로 이동 */
+  window.addEventListener('load', async () => {
+    if (!window._sb) return;
+    window._sb.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        const redirect = new URLSearchParams(location.search).get('redirect') || '/';
+        window.location.href = redirect;
+      }
+    });
+  });
 </script>
 
 
