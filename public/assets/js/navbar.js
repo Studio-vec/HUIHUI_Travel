@@ -383,5 +383,22 @@
   }
 
   /* load 이벤트: Supabase CDN이 모두 로드된 뒤 실행 */
-  window.addEventListener('load', _updateUserBtn);
+  window.addEventListener('load', async () => {
+    await _updateUserBtn();
+
+    /* OAuth 콜백 후 세션이 뒤늦게 확립될 때도 반영 */
+    if (window._sb) {
+      window._sb.auth.onAuthStateChange(async (event) => {
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          await _updateUserBtn();
+        } else if (event === 'SIGNED_OUT') {
+          const userArea   = document.getElementById('hhUserArea');
+          const mobileUser = document.getElementById('hhMobileUser');
+          if (userArea)   userArea.innerHTML   = `<a href="/auth/login" class="hh-login-btn">로그인</a>`;
+          if (mobileUser) mobileUser.innerHTML = `<a class="hh-mm-item" href="/auth/login">로그인 / 회원가입</a>`;
+          window._hhUser = null;
+        }
+      });
+    }
+  });
 })();
