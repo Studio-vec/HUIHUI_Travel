@@ -7,37 +7,47 @@ import Navbar from '../../components/Navbar.astro';
 
   <Navbar />
 
-
+<div class="login-stage">
 <div class="receipt">
   <div class="receipt-top"></div>
   <div class="receipt-body">
 
-    <div class="logo-wrap">
-      <div class="logo-circle"><span>HH</span></div>
-      <div class="receipt-title">MASIL</div>
-      <div class="receipt-sub">HUIHUI TRAVEL LOG</div>
+    <!-- 호텔 헤더 -->
+    <div class="receipt-hotel">
+      <div class="hotel-badge"><span>HH</span></div>
+      <div class="hotel-name">MASIL</div>
+      <div class="hotel-sub">HUIHUI TRAVEL LOG</div>
     </div>
 
-    <hr class="divider-solid"/>
-
-    <div class="meta-row">
-      <span class="meta-label">GUEST ID</span>
-      <span class="meta-value">—</span>
-    </div>
-    <div class="meta-row">
-      <span class="meta-label">CHECK IN</span>
-      <span class="meta-value" id="dateValue">—</span>
-    </div>
+    <!-- 예약 메타 -->
+    <table class="meta-table">
+      <tr>
+        <td class="meta-label">PROPERTY</td>
+        <td class="meta-value">HUIHUI TRAVEL</td>
+      </tr>
+      <tr>
+        <td class="meta-label">GUEST&nbsp;ID</td>
+        <td class="meta-value mono">—</td>
+      </tr>
+      <tr>
+        <td class="meta-label">CHECK&nbsp;IN</td>
+        <td class="meta-value mono" id="dateValue">—</td>
+      </tr>
+      <tr>
+        <td class="meta-label">ROOM&nbsp;TYPE</td>
+        <td class="meta-value">TRAVELER</td>
+      </tr>
+    </table>
 
     <hr class="divider"/>
 
     <div class="field">
-      <label class="field-label">아이디</label>
+      <label class="field-label">GUEST ID / 아이디</label>
       <input class="input-box" type="text" id="uid" placeholder="아이디를 입력하세요" autocomplete="username"/>
     </div>
 
     <div class="field">
-      <label class="field-label">PASSWORD</label>
+      <label class="field-label">PASS KEY / 비밀번호</label>
       <div class="pw-wrap">
         <input class="input-box" type="password" id="pw" placeholder="비밀번호를 입력하세요" autocomplete="current-password"/>
         <button class="pw-toggle" onclick="togglePw()" type="button">보기</button>
@@ -54,26 +64,31 @@ import Navbar from '../../components/Navbar.astro';
     </button>
 
     <div class="receipt-links">
-      <a href="find-account.html?mode=id">아이디 찾기</a>
+      <a href="/auth/find-account?mode=id">아이디 찾기</a>
       <span>·</span>
-      <a href="find-account.html?mode=pw">비밀번호 찾기</a>
+      <a href="/auth/find-account?mode=pw">비밀번호 찾기</a>
     </div>
-    <div class="receipt-links" style="margin-top:6px;">
-      <a href="register.html">처음이세요? 회원가입 →</a>
+    <div class="receipt-links" style="margin-top:5px;">
+      <a href="/auth/register">처음이세요? 회원가입 →</a>
     </div>
 
-    <div class="divider-or">
-      <span>또는</span>
-    </div>
+    <div class="divider-or"><span>OR</span></div>
 
     <button class="btn-google" id="googleBtn" onclick="doGoogleLogin()">
-      <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      <svg width="15" height="15" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       <span>Google로 계속하기</span>
     </button>
 
+    <!-- 바코드 -->
+    <div class="barcode-wrap">
+      <div class="barcode" id="barcodeEl"></div>
+      <div class="barcode-num" id="barcodeNum">0000 0000 0000 0000</div>
+    </div>
+
   </div>
   <div class="receipt-bottom"></div>
-  <div class="stamp">CHECKED</div>
+  <div class="stamp">CHECK<br>IN</div>
+</div>
 </div>
 
 <div class="toast" id="toast">✓ 체크인 완료! 어서오세요 🗝️</div>
@@ -84,6 +99,22 @@ import Navbar from '../../components/Navbar.astro';
   const t = new Date();
   document.getElementById('dateValue').textContent =
     t.getFullYear() + '.' + String(t.getMonth()+1).padStart(2,'0') + '.' + String(t.getDate()).padStart(2,'0');
+
+  /* 바코드 장식 생성 */
+  (function() {
+    const el = document.getElementById('barcodeEl');
+    const num = document.getElementById('barcodeNum');
+    if (!el) return;
+    const widths = [1,2,1,3,1,2,3,1,2,1,3,2,1,2,1,3,1,2,1,2,3,1,2,1,3,1,2,3,1,2,1,3,2,1,2,1,3,1,2,1,2,3,1,2,1];
+    widths.forEach(w => {
+      const bar = document.createElement('span');
+      bar.style.width = w + 'px';
+      bar.style.height = (14 + Math.random() * 14) + 'px';
+      el.appendChild(bar);
+    });
+    const code = Array.from({length:4}, () => Math.floor(Math.random()*9000+1000)).join(' ');
+    num.textContent = code;
+  })();
 
   function togglePw() {
     const i = document.getElementById('pw');
@@ -177,116 +208,199 @@ import Navbar from '../../components/Navbar.astro';
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
       min-height: 100vh;
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
       font-family: 'Noto Sans KR', sans-serif;
-      background: linear-gradient(160deg, var(--cream) 0%, #e8dcff 50%, #c8b1ff 100%);
-      padding: 24px 16px;
+      background: linear-gradient(160deg, #f5eeff 0%, #e8dcff 55%, #c8b1ff 100%);
     }
+    /* 네브바 아래 영역을 채워서 receipt를 중앙 정렬 */
+    .login-stage {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px 48px;
+    }
+
+    /* ── 영수증 ── */
     .receipt {
-      width: min(299px, 92vw);
+      width: min(316px, 94vw);
       background: var(--cream);
-      padding: 0; position: relative;
-      filter: drop-shadow(0 20px 40px rgba(122,87,205,0.22));
+      position: relative;
+      filter: drop-shadow(0 24px 48px rgba(90,50,180,0.28));
     }
-    .receipt-top { width:100%; height:14px; background:var(--cream); position:relative; }
+
+    /* 위 톱니 */
+    .receipt-top { width:100%; height:16px; background:var(--cream); position:relative; }
     .receipt-top::before {
-      content:''; position:absolute; top:0; left:0; right:0; height:14px;
-      background: radial-gradient(circle at 50% -1px, transparent 7px, var(--cream) 7px) -7px 0 / 14px 14px repeat-x;
+      content:''; position:absolute; top:0; left:0; right:0; height:16px;
+      background: radial-gradient(circle at 50% -1px, transparent 8px, var(--cream) 8px) -8px 0 / 16px 16px repeat-x;
     }
-    .receipt-body { background:var(--cream); padding:10px 24px 20px; }
-    .receipt-bottom { width:100%; height:14px; background:var(--cream); position:relative; }
+
+    /* 아래 톱니 */
+    .receipt-bottom { width:100%; height:16px; background:var(--cream); position:relative; }
     .receipt-bottom::after {
-      content:''; position:absolute; bottom:0; left:0; right:0; height:14px;
-      background: radial-gradient(circle at 50% calc(100% + 1px), transparent 7px, var(--cream) 7px) -7px 0 / 14px 14px repeat-x;
+      content:''; position:absolute; bottom:0; left:0; right:0; height:16px;
+      background: radial-gradient(circle at 50% calc(100% + 1px), transparent 8px, var(--cream) 8px) -8px 0 / 16px 16px repeat-x;
     }
-    .logo-wrap { display:flex; flex-direction:column; align-items:center; padding:20px 0 14px; }
-    .logo-circle {
-      width:68px; height:68px; border-radius:50%;
-      background: radial-gradient(circle at 38% 32%, #C8B1FF, #AB88FF 55%, #7A57CD);
-      box-shadow: 2px 4px 8px rgba(0,0,0,0.12), inset -2px -4px 8px rgba(80,0,200,0.25);
-      display:flex; align-items:center; justify-content:center; margin-bottom:10px;
+
+    /* 바디 */
+    .receipt-body { background:var(--cream); padding:6px 26px 22px; }
+
+    /* 헤더 */
+    .receipt-hotel {
+      text-align: center;
+      padding: 18px 0 12px;
+      border-bottom: 1px solid rgba(122,87,205,0.15);
+      margin-bottom: 12px;
     }
-    .logo-circle span { font-family:'Playfair Display',serif; font-size:1rem; font-weight:900; color:white; letter-spacing:0.05em; }
-    .receipt-title { font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:900; color:var(--purple); letter-spacing:-0.01em; }
-    .receipt-sub { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.7rem; color:var(--text-dim); letter-spacing:0.15em; margin-top:2px; }
-    .divider { border:none; border-top:1.5px dashed var(--purple-light); margin:12px 0; }
-    .divider-solid { border:none; border-top:1px solid var(--purple-light); margin:12px 0; }
-    .meta-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px; }
-    .meta-label { font-size:0.62rem; font-weight:600; color:var(--green); letter-spacing:0.12em; }
-    .meta-value { font-size:0.68rem; color:var(--text-dim); font-family:'Cormorant Garamond',serif; }
-    .field-label { font-size:0.62rem; font-weight:600; color:var(--green); letter-spacing:0.12em; margin-bottom:6px; display:block; }
-    .field { margin-bottom:12px; }
+    .hotel-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: linear-gradient(135deg, #b094f0 0%, #7A57CD 100%);
+      box-shadow: 0 4px 16px rgba(122,87,205,0.4), inset 0 -2px 6px rgba(40,0,120,0.2);
+      margin-bottom: 8px;
+    }
+    .hotel-badge span {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; font-weight: 700; color: white; letter-spacing: 0.06em;
+    }
+    .hotel-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.45rem; font-weight: 600;
+      color: var(--purple); letter-spacing: 0.18em; line-height: 1;
+    }
+    .hotel-sub {
+      font-size: 0.58rem; color: var(--text-dim);
+      letter-spacing: 0.22em; margin-top: 4px;
+      text-transform: uppercase;
+    }
+
+    /* 메타 테이블 */
+    .meta-table { width: 100%; margin-bottom: 4px; }
+    .meta-table td { padding: 2px 0; vertical-align: baseline; }
+    .meta-label { font-size: 0.58rem; font-weight: 700; color: var(--green); letter-spacing: 0.14em; white-space: nowrap; }
+    .meta-value { font-size: 0.7rem; color: var(--text-dim); font-family: 'Cormorant Garamond', serif; text-align: right; }
+    .meta-value.mono { font-family: 'DM Sans', sans-serif; font-size: 0.65rem; letter-spacing: 0.04em; }
+
+    .divider       { border:none; border-top: 1.5px dashed rgba(122,87,205,0.25); margin: 11px 0; }
+    .divider-solid { border:none; border-top: 1px solid rgba(122,87,205,0.15);    margin: 10px 0; }
+
+    /* 폼 */
+    .field { margin-bottom: 10px; }
+    .field-label {
+      font-size: 0.58rem; font-weight: 700; color: var(--green);
+      letter-spacing: 0.14em; margin-bottom: 5px; display: block;
+    }
     .input-box {
-      width:100%; height:42px; background:white;
-      border:1.5px solid var(--purple-light); border-radius:999px;
-      padding:0 40px 0 16px; font-size:0.85rem;
-      font-family:'Noto Sans KR',sans-serif; color:var(--text); outline:none;
-      transition:border-color 0.2s, box-shadow 0.2s;
+      width: 100%; height: 40px; background: white;
+      border: 1.5px solid rgba(122,87,205,0.22); border-radius: 8px;
+      padding: 0 40px 0 14px; font-size: 0.84rem;
+      font-family: 'Noto Sans KR', sans-serif; color: var(--text); outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .input-box:focus { border-color:var(--purple); box-shadow:0 0 0 3px rgba(122,87,205,0.1); }
-    .input-box::placeholder { color:var(--text-dim); font-size:0.78rem; }
-    .pw-wrap { position:relative; }
+    .input-box:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(122,87,205,0.1); }
+    .input-box::placeholder { color: #c4b8d8; font-size: 0.76rem; }
+    .pw-wrap { position: relative; }
     .pw-toggle {
-      position:absolute; right:14px; top:50%; transform:translateY(-50%);
-      background:none; border:none; cursor:pointer; color:var(--text-dim);
-      font-size:0.68rem; font-family:'Noto Sans KR',sans-serif; padding:4px; z-index:1;
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; color: var(--text-dim);
+      font-size: 0.64rem; font-family: 'Noto Sans KR', sans-serif; padding: 4px; z-index: 1;
     }
-    .pw-toggle:hover { color:var(--purple); }
-    .error-msg { font-size:0.68rem; color:#c04040; text-align:center; min-height:16px; opacity:0; transition:opacity 0.2s; margin:4px 0 6px; }
-    .error-msg.show { opacity:1; }
+    .pw-toggle:hover { color: var(--purple); }
+    .error-msg {
+      font-size: 0.66rem; color: #c04040; text-align: center;
+      min-height: 14px; opacity: 0; transition: opacity 0.2s; margin: 2px 0 4px;
+    }
+    .error-msg.show { opacity: 1; }
+
+    /* 버튼 */
     .btn-checkin {
-      width:100%; height:46px; background:var(--purple); border:none; border-radius:999px;
-      display:flex; align-items:center; padding:0 20px; cursor:pointer;
-      box-shadow:0 4px 14px rgba(122,87,205,0.35);
-      transition:transform 0.15s, box-shadow 0.15s; margin-top:4px;
+      width: 100%; height: 44px; background: var(--purple); border: none; border-radius: 8px;
+      display: flex; align-items: center; padding: 0 18px; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(122,87,205,0.4);
+      transition: transform 0.15s, box-shadow 0.15s; margin-top: 2px;
     }
-    .btn-checkin:disabled { opacity:0.6; cursor:not-allowed; transform:none !important; }
-    .btn-checkin:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 8px 22px rgba(122,87,205,0.45); }
-    .btn-checkin:active { transform:translateY(0); }
-    .btn-checkin-label { font-size:0.72rem; font-weight:700; color:rgba(255,255,255,0.75); letter-spacing:0.14em; text-transform:uppercase; flex:1; font-family:'Noto Sans KR',sans-serif; }
-    .btn-checkin-arrow { font-family:'Playfair Display',serif; font-size:1rem; color:white; }
-    .receipt-links { display:flex; justify-content:center; gap:14px; margin-top:14px; }
-    .receipt-links a { font-size:0.68rem; color:var(--green); text-decoration:none; letter-spacing:0.04em; }
-    .receipt-links a:hover { color:var(--purple); text-decoration:underline; }
-    .receipt-links span { color:var(--purple-light); }
-    .stamp {
-      position:absolute; bottom:30px; right:14px;
-      width:44px; height:44px; border:2px solid var(--purple); border-radius:50%;
-      opacity:0.15; display:flex; align-items:center; justify-content:center;
-      font-size:0.42rem; font-weight:700; color:var(--purple);
-      letter-spacing:0.05em; transform:rotate(-15deg); pointer-events:none;
+    .btn-checkin:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+    .btn-checkin:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(122,87,205,0.5); }
+    .btn-checkin:active { transform: translateY(0); }
+    .btn-checkin-label {
+      font-size: 0.7rem; font-weight: 700; color: rgba(255,255,255,0.8);
+      letter-spacing: 0.16em; flex: 1;
+      font-family: 'DM Sans', sans-serif;
     }
-    .toast {
-      position:fixed; top:24px; left:50%;
-      transform:translateX(-50%) translateY(-80px);
-      background:var(--purple); color:white; border-radius:999px; padding:10px 24px;
-      font-size:0.82rem; font-weight:500; box-shadow:0 8px 24px rgba(122,87,205,0.3);
-      transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1); white-space:nowrap; z-index:999;
-    }
-    .toast.show { transform:translateX(-50%) translateY(0); }
-    .loading-spinner {
-      display:inline-block; width:12px; height:12px;
-      border:2px solid rgba(255,255,255,0.4); border-top-color:white;
-      border-radius:50%; animation:spin 0.6s linear infinite; margin-right:6px;
-    }
-    @keyframes spin { to { transform:rotate(360deg); } }
+    .btn-checkin-arrow { font-size: 1rem; color: white; }
+
+    /* 링크 */
+    .receipt-links { display: flex; justify-content: center; gap: 14px; margin-top: 12px; }
+    .receipt-links a { font-size: 0.65rem; color: var(--green); text-decoration: none; letter-spacing: 0.04em; }
+    .receipt-links a:hover { color: var(--purple); text-decoration: underline; }
+    .receipt-links span { color: var(--purple-light); }
+
+    /* 구분선 또는 */
     .divider-or {
-      display:flex; align-items:center; gap:10px; margin:14px 0 10px;
-      color:var(--text-dim); font-size:0.65rem; letter-spacing:0.08em;
+      display: flex; align-items: center; gap: 10px; margin: 12px 0 10px;
+      color: var(--text-dim); font-size: 0.62rem; letter-spacing: 0.1em;
     }
     .divider-or::before, .divider-or::after {
-      content:''; flex:1; height:1px; background:var(--purple-light);
+      content: ''; flex: 1; height: 1px; background: rgba(122,87,205,0.18);
     }
+
+    /* 구글 버튼 */
     .btn-google {
-      width:100%; height:42px; background:white;
-      border:1.5px solid var(--purple-light); border-radius:999px;
-      display:flex; align-items:center; justify-content:center; gap:8px;
-      cursor:pointer; font-size:0.78rem; font-weight:500;
-      font-family:'Noto Sans KR',sans-serif; color:var(--text);
-      transition:border-color 0.2s, box-shadow 0.2s;
+      width: 100%; height: 40px; background: white;
+      border: 1.5px solid rgba(122,87,205,0.22); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      cursor: pointer; font-size: 0.76rem; font-weight: 500;
+      font-family: 'Noto Sans KR', sans-serif; color: var(--text);
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .btn-google:hover:not(:disabled) { border-color:var(--purple); box-shadow:0 2px 10px rgba(122,87,205,0.15); }
-    .btn-google:disabled { opacity:0.6; cursor:not-allowed; }
+    .btn-google:hover:not(:disabled) { border-color: var(--purple); box-shadow: 0 2px 10px rgba(122,87,205,0.15); }
+    .btn-google:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* 바코드 */
+    .barcode-wrap {
+      display: flex; flex-direction: column; align-items: center; padding: 14px 0 6px; gap: 4px;
+    }
+    .barcode {
+      display: flex; gap: 1.5px; height: 28px; align-items: flex-end;
+    }
+    .barcode span {
+      display: inline-block; background: var(--purple); border-radius: 1px;
+      opacity: 0.35;
+    }
+    .barcode-num {
+      font-family: 'DM Sans', monospace; font-size: 0.55rem;
+      color: var(--text-dim); letter-spacing: 0.18em;
+    }
+
+    /* 스탬프 */
+    .stamp {
+      position: absolute; bottom: 42px; right: 16px;
+      width: 48px; height: 48px;
+      border: 2.5px solid var(--purple); border-radius: 50%;
+      opacity: 0.12; display: flex; align-items: center; justify-content: center;
+      font-size: 0.4rem; font-weight: 800; color: var(--purple);
+      letter-spacing: 0.06em; transform: rotate(-18deg); pointer-events: none;
+      text-align: center; line-height: 1.3;
+    }
+
+    /* 토스트 */
+    .toast {
+      position: fixed; top: 24px; left: 50%;
+      transform: translateX(-50%) translateY(-80px);
+      background: var(--purple); color: white; border-radius: 999px; padding: 10px 24px;
+      font-size: 0.82rem; font-weight: 500; box-shadow: 0 8px 24px rgba(122,87,205,0.3);
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1); white-space: nowrap; z-index: 999;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .loading-spinner {
+      display: inline-block; width: 12px; height: 12px;
+      border: 2px solid rgba(255,255,255,0.4); border-top-color: white;
+      border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
 </style>
 
