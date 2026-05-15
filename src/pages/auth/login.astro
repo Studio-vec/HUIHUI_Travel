@@ -98,6 +98,15 @@ import Navbar from '../../components/Navbar.astro';
   document.getElementById('dateValue').textContent =
     t.getFullYear() + '.' + String(t.getMonth()+1).padStart(2,'0') + '.' + String(t.getDate()).padStart(2,'0');
 
+  /* OAuth 콜백 URL 오류 감지 */
+  const urlParams = new URLSearchParams(location.search);
+  if (urlParams.get('error')) {
+    const errEl = document.getElementById('errMsg');
+    errEl.textContent = '구글 로그인 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.';
+    errEl.classList.add('show');
+    history.replaceState(null, '', location.pathname);
+  }
+
   /* 바코드 장식 생성 */
   (function() {
     const el = document.getElementById('barcodeEl');
