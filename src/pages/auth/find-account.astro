@@ -7,7 +7,7 @@ import Navbar from '../../components/Navbar.astro';
 
   <Navbar />
 
-
+<div class="login-stage">
 <div class="receipt">
   <div class="receipt-top"></div>
   <div class="receipt-body">
@@ -61,6 +61,7 @@ import Navbar from '../../components/Navbar.astro';
 
   </div>
   <div class="receipt-bottom"></div>
+</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" is:inline></script>
@@ -148,6 +149,10 @@ import Navbar from '../../components/Navbar.astro';
     const mode = new URLSearchParams(location.search).get('mode') || 'id';
     if (mode === 'id') findId(); else findPw();
   });
+
+  window.switchTab = switchTab;
+  window.findId    = findId;
+  window.findPw    = findPw;
 </script>
 
 
@@ -168,10 +173,13 @@ import Navbar from '../../components/Navbar.astro';
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
       min-height: 100vh;
-      display: flex; align-items: center; justify-content: center;
+      display: flex; flex-direction: column; align-items: stretch;
       font-family: 'Noto Sans KR', sans-serif;
       background: linear-gradient(160deg, var(--cream) 0%, #e8dcff 50%, #c8b1ff 100%);
-      padding: 24px 16px;
+    }
+    .login-stage {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 32px 16px 48px;
     }
     .receipt {
       width: min(320px, 92vw); background: var(--cream);

@@ -7,7 +7,7 @@ import Navbar from '../../components/Navbar.astro';
 
   <Navbar />
 
-
+<div class="login-stage">
 <div class="receipt">
   <div class="receipt-top"></div>
   <div class="receipt-body">
@@ -108,6 +108,7 @@ import Navbar from '../../components/Navbar.astro';
 
   </div>
   <div class="receipt-bottom"></div>
+</div>
 </div>
 
 <div class="toast" id="toast">✓ 가입 완료! 어서오세요 🗝️</div>
@@ -262,6 +263,17 @@ import Navbar from '../../components/Navbar.astro';
     el.textContent = msg;
     el.classList.add('show');
   }
+
+  window.togglePw       = togglePw;
+  window.checkNickname  = checkNickname;
+  window.checkUsername  = checkUsername;
+  window.checkPw        = checkPw;
+  window.checkPw2       = checkPw2;
+  window.checkEmail     = checkEmail;
+  window.checkPhone     = checkPhone;
+  window.toggleAll      = toggleAll;
+  window.syncAll        = syncAll;
+  window.doRegister     = doRegister;
 </script>
 
 
@@ -283,10 +295,13 @@ import Navbar from '../../components/Navbar.astro';
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
       min-height: 100vh;
-      display: flex; align-items: flex-start; justify-content: center;
+      display: flex; flex-direction: column; align-items: stretch;
       font-family: 'Noto Sans KR', sans-serif;
       background: linear-gradient(160deg, var(--cream) 0%, #e8dcff 50%, #c8b1ff 100%);
-      padding: 40px 16px 60px;
+    }
+    .login-stage {
+      flex: 1; display: flex; align-items: flex-start; justify-content: center;
+      padding: 32px 16px 60px;
     }
     .receipt {
       width: min(360px, 94vw);
