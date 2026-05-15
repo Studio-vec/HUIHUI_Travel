@@ -160,10 +160,12 @@
 }
 .hh-mm-lang-chip:hover { color: #8B6FD0; background: rgba(139,111,208,0.08); }
 .hh-mm-lang-chip.selected { color: #8B6FD0; background: rgba(139,111,208,0.1); border-color: rgba(139,111,208,0.6); font-weight: 700; }
+@media (max-width: 960px) {
+  .hh-navbar-search { display: none; }
+}
 @media (max-width: 767px) {
   .hh-navbar-links  { display: none !important; }
   .hh-hamburger     { display: flex !important; }
-  .hh-navbar-search { display: none; }
   .hh-user-area     { display: none; }
   .hh-lang-wrap     { display: none; }
 }`;
