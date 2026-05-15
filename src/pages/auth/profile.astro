@@ -302,6 +302,18 @@ import Navbar from '../../components/Navbar.astro';
     setTimeout(() => t.classList.remove('show'), 2800);
   }
 
+  /* onclick 인라인 핸들러에서 접근할 수 있도록 window에 등록 */
+  window.doLogout      = doLogout;
+  window.saveProfile   = saveProfile;
+  window.savePassword  = savePassword;
+  window.saveMarketing = saveMarketing;
+  window.togglePw      = togglePw;
+  window.onNickInput   = onNickInput;
+  window.onEmailInput  = onEmailInput;
+  window.onPhoneInput  = onPhoneInput;
+  window.onPwInput     = onPwInput;
+  window.onPw2Input    = onPw2Input;
+
   window.addEventListener('load', loadProfile);
 </script>
 
