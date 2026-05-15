@@ -205,16 +205,23 @@ import Navbar from '../../components/Navbar.astro';
     }
   }
 
-  /* OAuth 콜백 후 세션이 있으면 바로 이동 */
-  window.addEventListener('load', async () => {
+  /* OAuth 콜백 처리: 세션 확립되면 바로 이동 */
+  (async function handleOAuthCallback() {
     if (!window._sb) return;
-    window._sb.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        const redirect = new URLSearchParams(location.search).get('redirect') || '/';
-        window.location.href = redirect;
+    const redirectTo = new URLSearchParams(location.search).get('redirect') || '/';
+
+    /* 이미 세션이 있으면 즉시 이동 */
+    const { data: { session } } = await window._sb.auth.getSession();
+    if (session) { window.location.href = redirectTo; return; }
+
+    /* 세션 교환이 진행 중인 경우 이벤트로 대기 */
+    const { data: { subscription } } = window._sb.auth.onAuthStateChange((event, s) => {
+      if (event === 'SIGNED_IN' && s) {
+        subscription.unsubscribe();
+        window.location.href = redirectTo;
       }
     });
-  });
+  })();
 </script>
 
 
