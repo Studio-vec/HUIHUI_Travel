@@ -170,6 +170,10 @@ import Navbar from '../../components/Navbar.astro';
 
   document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 
+  window.doLogin       = doLogin;
+  window.togglePw      = togglePw;
+  window.doGoogleLogin = doGoogleLogin;
+
   async function doGoogleLogin() {
     const btn = document.getElementById('googleBtn');
     btn.disabled = true;
