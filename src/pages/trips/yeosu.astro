@@ -153,27 +153,106 @@ createTripApp({
     tips: [],
     schedule: [
     { places: [
-        { id:'y1-1', time:'13:00', name:'PS 파스타',        theme:'식사',   theme_id:'food',  tip:'여수에서의 첫 끼',            enjoyTip:'추천 파스타와 시그니처 메뉴 확인', photo:null, h:13 },
-        { id:'y1-2', time:'14:30', name:'낭반 게스트하우스', theme:'숙소',   theme_id:'party', tip:'체크인 및 파티 준비',        enjoyTip:'짐 풀고 옷 갈아입기', photo:null, h:14.5 },
-        { id:'y1-3', time:'15:20', name:'해상케이블카',      theme:'체험',   theme_id:'view',  tip:'바다 위 스릴, 사진 명소',      enjoyTip:'크리스탈 캐빈 이용 추천', photo:null, h:15.3 },
-        { id:'y1-4', time:'16:10', name:'무슬목 해변',      theme:'산책',   theme_id:'view',  tip:'모이핀 근처 아름다운 해변',    enjoyTip:'해변 산책하며 인생샷 남기기', photo:null, h:16.1 },
-        { id:'y1-5', time:'17:00', name:'모이핀 스카이',    theme:'카페',   theme_id:'cafe',  tip:'오션뷰 카페, 인생샷 타임',      enjoyTip:'노을 시간대 창가 자리 확보', photo:null, h:17 },
-        { id:'y1-6', time:'18:00', name:'낭반 게하 파티',    theme:'이벤트', theme_id:'party', tip:'여행의 핵심, 설레는 교류',      enjoyTip:'새로운 사람들과 즐거운 대화', photo:null, h:18 },
-        { id:'y1-7', time:'21:20', name:'낭만포차 거리',    theme:'술상',   theme_id:'food',  tip:'해산물 안주와 밤바다 감성',    enjoyTip:'여수 밤바다 야경과 함께 한 잔', photo:null, h:21.3 }
+        { id:'y1-1', time:'13:00', name:'PS 파스타', theme:'식사', theme_id:'food', tip:'여수에서의 첫 끼', enjoyTip:'추천 파스타와 시그니처 메뉴 확인', photo:null, h:13,
+          details:[
+            { icon:'📍', label:'주소', value:'여수시 통제영3길 10-15 1층' },
+            { icon:'🕐', label:'운영시간', value:'11:00 - 20:00 (브레이크 16:00~17:00, 첫째주 수요일 휴무)' },
+            { icon:'🍝', label:'추천 메뉴', value:'PS찹스테이크, 갑오징어 토마토 파스타, 치즈 리조또, 엔초비 피자' }
+          ]},
+        { id:'y1-2', time:'14:30', name:'낭반 게스트하우스', theme:'숙소', theme_id:'party', tip:'체크인 및 파티 준비', enjoyTip:'짐 풀고 옷 갈아입기', photo:null, h:14.5,
+          details:[
+            { icon:'🕐', label:'체크인', value:'15:00 (입실 전 짐 보관 요청 가능)' },
+            { icon:'💡', label:'팁', value:'파티 전 편의점에서 간식·음료 미리 준비' }
+          ]},
+        { id:'y1-3', time:'15:20', name:'해상케이블카', theme:'체험', theme_id:'view', tip:'바다 위 스릴, 사진 명소', enjoyTip:'크리스탈 캐빈 이용 추천', photo:null, h:15.3,
+          details:[
+            { icon:'📍', label:'주소', value:'돌산탑승장: 여수시 돌산읍 돌산로 3600-1' },
+            { icon:'🕐', label:'운영시간', value:'09:30 - 21:30 (당일 운행 여부 변동 가능)' },
+            { icon:'💰', label:'요금', value:'일반캐빈 왕복 17,000원 / 크리스탈캐빈 왕복 24,000원' },
+            { icon:'💡', label:'팁', value:'크리스탈 캐빈은 바닥이 유리 — 바다 뷰 극대화' }
+          ]},
+        { id:'y1-4', time:'16:10', name:'무슬목 해변', theme:'산책', theme_id:'view', tip:'모이핀 근처 아름다운 해변', enjoyTip:'해변 산책하며 인생샷 남기기', photo:null, h:16.1,
+          details:[
+            { icon:'📍', label:'주소', value:'여수시 돌산읍 돌산로 2876' },
+            { icon:'🕐', label:'운영시간', value:'상시 개방' },
+            { icon:'💰', label:'입장료', value:'무료' },
+            { icon:'🏖️', label:'특징', value:'약 700m 몽돌 해변 · 해돋이 명소 · 이순신 전적지' }
+          ]},
+        { id:'y1-5', time:'17:00', name:'모이핀 스카이', theme:'카페', theme_id:'cafe', tip:'오션뷰 카페, 인생샷 타임', enjoyTip:'노을 시간대 창가 자리 확보', photo:null, h:17,
+          details:[
+            { icon:'📍', label:'주소', value:'여수시 돌산읍 무술목길 59' },
+            { icon:'🕐', label:'운영시간', value:'09:30 - 21:00 (라스트오더 19:30)' },
+            { icon:'☕', label:'특징', value:'아시아 최대 규모 오션뷰 베이커리 카페 · 반려동물 불가' }
+          ]},
+        { id:'y1-6', time:'18:00', name:'낭반 게하 파티', theme:'이벤트', theme_id:'party', tip:'여행의 핵심, 설레는 교류', enjoyTip:'새로운 사람들과 즐거운 대화', photo:null, h:18 },
+        { id:'y1-7', time:'21:20', name:'낭만포차 거리', theme:'술상', theme_id:'food', tip:'해산물 안주와 밤바다 감성', enjoyTip:'여수 밤바다 야경과 함께 한 잔', photo:null, h:21.3,
+          details:[
+            { icon:'📍', label:'주소', value:'여수시 하멜로 102 (거북선대교 하부)' },
+            { icon:'🕐', label:'운영시간', value:'하절기(3~10월) 18:00~익일 01:00 / 동절기(11~2월) 17:00~24:00' },
+            { icon:'🦐', label:'추천', value:'해산물 포차, 여수 야경, 계절 특선 요리' }
+          ]}
     ]},
     { places: [
-        { id:'y2-1', time:'10:00', name:'녹테마레',        theme:'전시', theme_id:'view',  tip:'SNS 핫플, 미디어아트 공간',    enjoyTip:'조명 변화에 맞춰 사진 촬영', photo:null, h:10 },
-        { id:'y2-2', time:'12:00', name:'시내 식당',       theme:'식사', theme_id:'food',  tip:'갓김치찌개 로컬 맛 체험',      enjoyTip:'갓김치와 함께 든든한 백반', photo:null, h:12 },
-        { id:'y2-3', time:'13:20', name:'이순신광장',      theme:'쇼핑', theme_id:'shop',  tip:'디저트와 기념품 쇼핑',        enjoyTip:'딸기모찌 등 유명 간식 구매', photo:null, h:13.3 },
-        { id:'y2-4', time:'19:00', name:'진남옥',          theme:'식사', theme_id:'food',  tip:'여수 로컬 저녁 식사',          enjoyTip:'진남옥의 특색 있는 메뉴 맛보기', photo:null, h:19 },
-        { id:'y2-5', time:'20:00', name:'돌산대교',        theme:'야경', theme_id:'view',  tip:'여수 대표 야경 포인트',        enjoyTip:'돌산공원에서 전체 뷰 감상', photo:null, h:20 },
-        { id:'y2-6', time:'21:00', name:'해양공원',        theme:'산책', theme_id:'view',  tip:'밤 산책으로 감성 마무리',      enjoyTip:'조명 켜진 해안 산책로 걷기', photo:null, h:21 }
+        { id:'y2-1', time:'10:00', name:'녹테마레', theme:'전시', theme_id:'view', tip:'SNS 핫플, 미디어아트 공간', enjoyTip:'조명 변화에 맞춰 사진 촬영', photo:null, h:10,
+          details:[
+            { icon:'📍', label:'주소', value:'여수시 만성로 294 (만흥동)' },
+            { icon:'🕐', label:'운영시간', value:'10:00 - 19:00 (18:00 입장 마감)' },
+            { icon:'💰', label:'입장료', value:'성인 27,000원 / 청소년 23,000원 / 어린이 19,000원' },
+            { icon:'🎨', label:'추천', value:'미디어아트 파빌리온 · 초현실적 감각 체험' }
+          ]},
+        { id:'y2-2', time:'12:00', name:'시내 식당', theme:'식사', theme_id:'food', tip:'갓김치찌개 로컬 맛 체험', enjoyTip:'갓김치와 함께 든든한 백반', photo:null, h:12,
+          details:[
+            { icon:'📍', label:'위치', value:'여수 시내 (지도 검색 추천)' },
+            { icon:'🍚', label:'추천', value:'갓김치찌개, 백반 · 여수 갓김치 향이 특징' }
+          ]},
+        { id:'y2-3', time:'13:20', name:'이순신광장', theme:'쇼핑', theme_id:'shop', tip:'디저트와 기념품 쇼핑', enjoyTip:'딸기모찌 등 유명 간식 구매', photo:null, h:13.3,
+          details:[
+            { icon:'📍', label:'주소', value:'여수시 중앙동 선어시장길 6' },
+            { icon:'🕐', label:'운영시간', value:'상시 개방' },
+            { icon:'💰', label:'입장료', value:'무료' },
+            { icon:'🎁', label:'추천', value:'거북선 조형물, 분수, 딸기모찌·기념품 쇼핑' }
+          ]},
+        { id:'y2-4', time:'19:00', name:'진남옥', theme:'식사', theme_id:'food', tip:'여수 로컬 저녁 식사', enjoyTip:'진남옥의 특색 있는 메뉴 맛보기', photo:null, h:19,
+          details:[
+            { icon:'📍', label:'위치', value:'여수 시내 (지도 확인 추천)' },
+            { icon:'🍱', label:'추천 메뉴', value:'여수 로컬 저녁 특선 메뉴 · 방문 전 전화 확인 권장' }
+          ]},
+        { id:'y2-5', time:'20:00', name:'돌산대교', theme:'야경', theme_id:'view', tip:'여수 대표 야경 포인트', enjoyTip:'돌산공원에서 전체 뷰 감상', photo:null, h:20,
+          details:[
+            { icon:'📍', label:'주소', value:'여수시 돌산읍 돌산로 3617-7' },
+            { icon:'🕐', label:'운영시간', value:'상시 개방' },
+            { icon:'💰', label:'비용', value:'무료 (도보 통행 가능)' },
+            { icon:'✨', label:'볼거리', value:'길이 450m 사장교 · 야간 50가지 색 조명' }
+          ]},
+        { id:'y2-6', time:'21:00', name:'해양공원', theme:'산책', theme_id:'view', tip:'밤 산책으로 감성 마무리', enjoyTip:'조명 켜진 해안 산책로 걷기', photo:null, h:21,
+          details:[
+            { icon:'📍', label:'주소', value:'여수시 중앙동 246-1' },
+            { icon:'💰', label:'비용', value:'무료' },
+            { icon:'🚶', label:'특징', value:'해안 1.5km 산책로 · 놀이터·공연장 포함' }
+          ]}
     ]},
     { places: [
-        { id:'y3-1', time:'09:00', name:'바지락돼지국밥',   theme:'식사', theme_id:'food',  tip:'든든한 아침 식사',            enjoyTip:'뜨끈한 국물로 아침 시작', photo:null, h:9 },
-        { id:'y3-2', time:'11:00', name:'아쿠아플라넷',    theme:'체험', theme_id:'view',  tip:'여수 바다 생태계 관람',        enjoyTip:'수중 터널에서 마지막 사진', photo:null, h:11 },
-        { id:'y3-3', time:'14:00', name:'미가칼국수',       theme:'식사', theme_id:'food',  tip:'여수 로컬 칼국수 맛집',        enjoyTip:'해물 베이스의 시원한 국물 추천', photo:null, h:14 },
-        { id:'y3-4', time:'16:00', name:'여수 엑스포역',    theme:'복귀', theme_id:'view',  tip:'KTX 서울 출발',              enjoyTip:'출발 30분 전 역 도착', photo:null, h:16 }
+        { id:'y3-1', time:'09:00', name:'바지락돼지국밥', theme:'식사', theme_id:'food', tip:'든든한 아침 식사', enjoyTip:'뜨끈한 국물로 아침 시작', photo:null, h:9,
+          details:[
+            { icon:'📍', label:'위치', value:'이순신광장 인근 (지도 검색 추천)' },
+            { icon:'🕐', label:'운영시간', value:'아침 일찍 영업 (06:00~09:00부터)' },
+            { icon:'🍲', label:'추천 메뉴', value:'바지락돼지국밥 · 뜨끈한 국물로 하루 시작' }
+          ]},
+        { id:'y3-2', time:'11:00', name:'아쿠아플라넷', theme:'체험', theme_id:'view', tip:'여수 바다 생태계 관람', enjoyTip:'수중 터널에서 마지막 사진', photo:null, h:11,
+          details:[
+            { icon:'📍', label:'주소', value:'여수시 오동도로 61-11' },
+            { icon:'🕐', label:'운영시간', value:'09:30 - 19:00 (18:00 매표 마감, 연중무휴)' },
+            { icon:'💰', label:'입장료', value:'성인 36,400원 / 어린이 31,400원' },
+            { icon:'🐠', label:'추천', value:'수족관, 수중 터널, 오션시네마' }
+          ]},
+        { id:'y3-3', time:'14:00', name:'미가칼국수', theme:'식사', theme_id:'food', tip:'여수 로컬 칼국수 맛집', enjoyTip:'해물 베이스의 시원한 국물 추천', photo:null, h:14,
+          details:[
+            { icon:'📍', label:'주소', value:'여수시 박람회길 23-10 1층' },
+            { icon:'🕐', label:'운영시간', value:'10:00 - 20:00 (매달 2·4번째 일요일 휴무)' },
+            { icon:'💰', label:'비용', value:'해물칼국수 7,000원' },
+            { icon:'🍜', label:'추천 메뉴', value:'해물칼국수, 해물파전, 왕만두' }
+          ]},
+        { id:'y3-4', time:'16:00', name:'여수 엑스포역', theme:'복귀', theme_id:'view', tip:'KTX 서울 출발', enjoyTip:'출발 30분 전 역 도착', photo:null, h:16 }
     ]}
 ]});
 </script>

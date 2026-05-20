@@ -172,30 +172,124 @@ createTripApp({
     tips: [],
     schedule: [
     { places: [
-        { id:'s1-1', time:'11:00', name:'몽상가옥',                theme:'식사', theme_id:'food', tip:'빈티지 공간에서 양식 미식',                                enjoyTip:'분위기 좋은 곳에서 파스타/리조또 즐기기 (화 휴무)',          photo:null, h:11 },
-        { id:'s1-2', time:'12:30', name:'포동 푸딩',               theme:'디저트',theme_id:'cafe', tip:'시그니처 푸딩 구매',                                       enjoyTip:'포장해서 행궁동 산책하며 달콤하게 즐기기',                   photo:null, h:12.5 },
-        { id:'s1-3', time:'13:00', name:'널담은공간 화홍문점',      theme:'카페', theme_id:'cafe', tip:'미래의 나에게 편지 쓰기',                                  enjoyTip:'실링왁스로 직접 편지 봉투 봉인해보기',                       photo:null, h:13 },
-        { id:'s1-4', time:'14:30', name:'행궁동 소품샵 투어',      theme:'쇼핑', theme_id:'exp',  tip:'감각적인 굿즈 및 편집샵 쇼핑',                             enjoyTip:'골목길 숨은 소품샵에서 인생 굿즈 득템',                      photo:null, h:14.5 },
-        { id:'s1-5', time:'16:00', name:'행궁동 골목 탐방',        theme:'관광', theme_id:'view', tip:'트렌디한 거리 및 브랜딩 공간 구경',                         enjoyTip:'수원 화성 성곽길 따라 예쁜 배경으로 사진 남기기',            photo:null, h:16 },
-        { id:'s1-6', time:'17:30', name:'에그궁',                  theme:'식사', theme_id:'food', tip:'행궁동 감성 오믈렛 미식',                                  enjoyTip:'부드러운 시그니처 오믈렛으로 저녁 식사',                     photo:null, h:17.5 },
-        { id:'s1-7', time:'19:00', name:'방화수류정 일대',          theme:'관광', theme_id:'view', tip:'야경 사진 촬영 및 산책',                                   enjoyTip:'연못에 비친 화려한 정자와 성곽 야경 감상',                   photo:null, h:19 }
+        { id:'s1-1', time:'11:00', name:'몽상가옥', theme:'식사', theme_id:'food', tip:'빈티지 공간에서 양식 미식', enjoyTip:'분위기 좋은 곳에서 파스타/리조또 즐기기 (화 휴무)', photo:null, h:11,
+          details:[
+            { icon:'📍', label:'주소', value:'수원시 팔달구 화서문로32번길 13-8 (행궁동)' },
+            { icon:'🕐', label:'운영시간', value:'11:00 - 21:00, 라스트오더 20:30 (화요일 휴무)' },
+            { icon:'🍝', label:'추천 메뉴', value:'떡갈비 웰링턴, 파스타, 리조또' }
+          ]},
+        { id:'s1-2', time:'12:30', name:'포동 푸딩', theme:'디저트', theme_id:'cafe', tip:'시그니처 푸딩 구매', enjoyTip:'포장해서 행궁동 산책하며 달콤하게 즐기기', photo:null, h:12.5,
+          details:[
+            { icon:'📍', label:'주소', value:'수원시 팔달구 화서문로 79 (행궁동)' },
+            { icon:'🕐', label:'운영시간', value:'10:30 - 22:00' },
+            { icon:'🍮', label:'추천', value:'시그니처 푸딩 · 행궁동 대표 디저트 명소' }
+          ]},
+        { id:'s1-3', time:'13:00', name:'널담은공간 화홍문점', theme:'카페', theme_id:'cafe', tip:'미래의 나에게 편지 쓰기', enjoyTip:'실링왁스로 직접 편지 봉투 봉인해보기', photo:null, h:13,
+          details:[
+            { icon:'📍', label:'주소', value:'수원시 팔달구 정조로886번길 14' },
+            { icon:'🕐', label:'운영시간', value:'12:00 - 19:30' },
+            { icon:'💌', label:'추천', value:'1년 후 엽서 발송 서비스 · 실링왁스 체험' },
+            { icon:'💰', label:'비용', value:'편지지·엽서 유료 / 체험 별도' }
+          ]},
+        { id:'s1-4', time:'14:30', name:'행궁동 소품샵 투어', theme:'쇼핑', theme_id:'exp', tip:'감각적인 굿즈 및 편집샵 쇼핑', enjoyTip:'골목길 숨은 소품샵에서 인생 굿즈 득템', photo:null, h:14.5,
+          details:[
+            { icon:'📍', label:'위치', value:'수원시 팔달구 행궁동 골목 일대' },
+            { icon:'🕐', label:'운영시간', value:'점포별 상이 (보통 11:00 - 19:00)' },
+            { icon:'🛍️', label:'추천', value:'공방, 편집샵, 포토부스 골목 탐방' }
+          ]},
+        { id:'s1-5', time:'16:00', name:'행궁동 골목 탐방', theme:'관광', theme_id:'view', tip:'트렌디한 거리 및 브랜딩 공간 구경', enjoyTip:'수원 화성 성곽길 따라 예쁜 배경으로 사진 남기기', photo:null, h:16,
+          details:[
+            { icon:'📍', label:'위치', value:'수원화성 성곽길 일대 (화서문 ~ 화홍문)' },
+            { icon:'💰', label:'입장료', value:'수원화성 무료 (2022년 4월부터)' },
+            { icon:'📸', label:'볼거리', value:'화서문, 화홍문, 성곽길 포토존' }
+          ]},
+        { id:'s1-6', time:'17:30', name:'에그궁', theme:'식사', theme_id:'food', tip:'행궁동 감성 오믈렛 미식', enjoyTip:'부드러운 시그니처 오믈렛으로 저녁 식사', photo:null, h:17.5,
+          details:[
+            { icon:'📍', label:'주소', value:'수원시 팔달구 화서문로17번길 6-4 1층' },
+            { icon:'🕐', label:'운영시간', value:'11:00 - 21:00 (브레이크 15:30~16:30, 5번째 월요일 휴무)' },
+            { icon:'🍳', label:'추천 메뉴', value:'갈릭 오믈렛, 명란 오믈렛, 살치살 스테이크 투움바 파스타' }
+          ]},
+        { id:'s1-7', time:'19:00', name:'방화수류정 일대', theme:'관광', theme_id:'view', tip:'야경 사진 촬영 및 산책', enjoyTip:'연못에 비친 화려한 정자와 성곽 야경 감상', photo:null, h:19,
+          details:[
+            { icon:'📍', label:'주소', value:'수원시 팔달구 수원천로392번길 44-6' },
+            { icon:'🕐', label:'운영시간', value:'연중무휴 상시 개방' },
+            { icon:'💰', label:'입장료', value:'무료' },
+            { icon:'📷', label:'포토 팁', value:'연못에 반영된 정자 야경 · 삼각대 추천' }
+          ]}
     ]},
     { places: [
-        { id:'s2-1', time:'10:00', name:'일월수목원',              theme:'관광', theme_id:'view', tip:'온실 큐레이션 및 사진 촬영',                                enjoyTip:'트렌디한 대형 온실 포토존에서 인생샷 (월 휴무)',             photo:null, h:10 },
-        { id:'s2-2', time:'11:30', name:'나니스 쇼콜라',            theme:'식사', theme_id:'cafe', tip:'초콜릿 디저트 및 브런치',                                  enjoyTip:'수제 초콜릿과 커피로 여유로운 브런치 (월,화 휴무)',          photo:null, h:11.5 },
-        { id:'s2-3', time:'13:00', name:'광교 앨리웨이',            theme:'쇼핑', theme_id:'exp',  tip:'큐레이션 서점 및 편집샵 투어',                             enjoyTip:'책발전소 및 감각적인 라이프스타일 샵 구경',                  photo:null, h:13 },
-        { id:'s2-4', time:'14:30', name:'수원시립아트스페이스',      theme:'관광', theme_id:'view', tip:'현대 미술 전시 관람',                                      enjoyTip:'광교호수공원 옆에서 즐기는 무료 팝업 전시 (월 휴무)',        photo:null, h:14.5 },
-        { id:'s2-5', time:'16:00', name:'광교 호수공원',            theme:'관광', theme_id:'view', tip:'현대적 야경 및 도시 공간 감상',                             enjoyTip:'해 질 녘 원천호수 산책로 걷기',                              photo:null, h:16 },
-        { id:'s2-6', time:'18:00', name:'도산분식(광교)',           theme:'식사', theme_id:'food', tip:'뉴트로 감성 분식 미식',                                    enjoyTip:'돈까스 샌드와 떡볶이의 완벽한 조화',                         photo:null, h:18 },
-        { id:'s2-7', time:'19:30', name:'광교 갤러리아',            theme:'쇼핑', theme_id:'exp',  tip:'현대 건축물 및 야간 쇼핑',                                 enjoyTip:'독특한 외관 감상 및 투명한 유리 통로(루프) 걸어보기',        photo:null, h:19.5 }
+        { id:'s2-1', time:'10:00', name:'일월수목원', theme:'관광', theme_id:'view', tip:'온실 큐레이션 및 사진 촬영', enjoyTip:'트렌디한 대형 온실 포토존에서 인생샷 (월 휴무)', photo:null, h:10,
+          details:[
+            { icon:'📍', label:'주소', value:'수원시 장안구 일월로 61 (천천동)' },
+            { icon:'🕐', label:'운영시간', value:'09:30 - 17:30 (17:00 매표 마감, 월요일 휴무)' },
+            { icon:'💰', label:'입장료', value:'성인 4,000원 / 65세 이상 무료' },
+            { icon:'🌿', label:'추천', value:'다산정원, 침엽수원, 생태관찰원 등 16종 정원' }
+          ]},
+        { id:'s2-2', time:'11:30', name:'나니스 쇼콜라', theme:'식사', theme_id:'cafe', tip:'초콜릿 디저트 및 브런치', enjoyTip:'수제 초콜릿과 커피로 여유로운 브런치 (월,화 휴무)', photo:null, h:11.5,
+          details:[
+            { icon:'📍', label:'주소', value:'수원시 팔달구 매산로2가 40-34' },
+            { icon:'🕐', label:'운영시간', value:'화~금 14:00~21:00 / 토~일 11:00~21:00 (월요일 휴무)' },
+            { icon:'🍫', label:'추천 메뉴', value:'꾸덕브라우니, 리얼초콜릿음료 · 수제 초콜릿 전문점' }
+          ]},
+        { id:'s2-3', time:'13:00', name:'광교 앨리웨이', theme:'쇼핑', theme_id:'exp', tip:'큐레이션 서점 및 편집샵 투어', enjoyTip:'책발전소 및 감각적인 라이프스타일 샵 구경', photo:null, h:13,
+          details:[
+            { icon:'📍', label:'주소', value:'수원시 영통구 광교호수공원로 80 (원천동)' },
+            { icon:'🕐', label:'운영시간', value:'점포별 상이 (보통 11:00 - 21:00)' },
+            { icon:'💰', label:'입장', value:'무료 (입점 매장 별도)' },
+            { icon:'📚', label:'추천', value:'책발전소 (서점), 국내외 다양한 F&B·라이프스타일 샵' }
+          ]},
+        { id:'s2-4', time:'14:30', name:'수원시립아트스페이스', theme:'관광', theme_id:'view', tip:'현대 미술 전시 관람', enjoyTip:'광교호수공원 옆에서 즐기는 무료 팝업 전시 (월 휴무)', photo:null, h:14.5,
+          details:[
+            { icon:'📍', label:'위치', value:'신분당선 광교중앙역 4번 출구 도보 10분' },
+            { icon:'🕐', label:'운영시간', value:'10:00 - 18:00 (17:00까지 입장, 월요일 휴무)' },
+            { icon:'💰', label:'입장료', value:'무료' },
+            { icon:'🎨', label:'추천', value:'미디어아트·현대미술 전시, 기획전 수시 변경' }
+          ]},
+        { id:'s2-5', time:'16:00', name:'광교 호수공원', theme:'관광', theme_id:'view', tip:'현대적 야경 및 도시 공간 감상', enjoyTip:'해 질 녘 원천호수 산책로 걷기', photo:null, h:16,
+          details:[
+            { icon:'📍', label:'주소', value:'수원시 영통구 광교호수로 57 (원천동)' },
+            { icon:'🕐', label:'운영시간', value:'06:00 - 22:00 (계절별 상이, 연중 무료 개방)' },
+            { icon:'💰', label:'비용', value:'무료 (주차 3시간 1,000원)' },
+            { icon:'🚶', label:'추천', value:'원천호수 산책로, 프라이부르크 전망대' }
+          ]},
+        { id:'s2-6', time:'18:00', name:'도산분식(광교)', theme:'식사', theme_id:'food', tip:'뉴트로 감성 분식 미식', enjoyTip:'돈까스 샌드와 떡볶이의 완벽한 조화', photo:null, h:18,
+          details:[
+            { icon:'📍', label:'위치', value:'광교 지역 (지도 확인 추천)' },
+            { icon:'🍱', label:'추천 메뉴', value:'돈까스 샌드, 떡볶이 · 뉴트로 감성 분식' }
+          ]},
+        { id:'s2-7', time:'19:30', name:'광교 갤러리아', theme:'쇼핑', theme_id:'exp', tip:'현대 건축물 및 야간 쇼핑', enjoyTip:'독특한 외관 감상 및 투명한 유리 통로(루프) 걸어보기', photo:null, h:19.5,
+          details:[
+            { icon:'📍', label:'주소', value:'수원시 영통구 광교중앙로 124' },
+            { icon:'🕐', label:'운영시간', value:'평일 10:30 - 20:00 / 주말 10:30 - 20:30' },
+            { icon:'👀', label:'볼거리', value:'조약돌 형태 외관, 5~6층 루프 유리 통로, 명품 브랜드' }
+          ]}
     ]},
     { places: [
-        { id:'s3-1', time:'10:00', name:'수원 스타필드',           theme:'식사', theme_id:'food', tip:'팝업 및 F&B 미식 투어',                                    enjoyTip:'오픈런으로 핫한 F&B 브랜드 팝업 먼저 섭렵하기',             photo:null, h:10 },
-        { id:'s3-2', time:'11:30', name:'별마당 도서관',            theme:'카페', theme_id:'cafe', tip:'공간 감상 및 인증샷',                                      enjoyTip:'웅장한 서가를 배경으로 대표 인증샷 남기기',                  photo:null, h:11.5 },
-        { id:'s3-3', time:'13:00', name:'스타필드 내부 투어',       theme:'쇼핑', theme_id:'exp',  tip:'트렌디한 브랜드 및 팝업 탐방',                             enjoyTip:'최신 라이프스타일 브랜드 굿즈 쇼핑',                         photo:null, h:13 },
-        { id:'s3-4', time:'14:30', name:'수원역 이동',              theme:'이동', theme_id:'view', tip:'택시 이동(10분 내외)',                                      enjoyTip:'카카오T 활용하여 수원역으로 편하게 이동',                    photo:null, h:14.5 },
-        { id:'s3-5', time:'15:00', name:'동그라미 수원역점',        theme:'식사', theme_id:'food', tip:'노포 감성 로컬 미식',                                      enjoyTip:'잔치국수와 곱창 볶음으로 여행의 완벽한 마무리',             photo:null, h:15 },
-        { id:'s3-6', time:'16:30', name:'수원역',                  theme:'마무리',theme_id:'view', tip:'여행 마무리 및 귀가 준비',                                 enjoyTip:'서울 복귀 전 편안하게 기차/지하철 탑승 준비',               photo:null, h:16.5 }
+        { id:'s3-1', time:'10:00', name:'수원 스타필드', theme:'식사', theme_id:'food', tip:'팝업 및 F&B 미식 투어', enjoyTip:'오픈런으로 핫한 F&B 브랜드 팝업 먼저 섭렵하기', photo:null, h:10,
+          details:[
+            { icon:'📍', label:'주소', value:'수원시 장안구 수성로 175' },
+            { icon:'🕐', label:'운영시간', value:'10:00 - 22:00' },
+            { icon:'💰', label:'입장', value:'무료' },
+            { icon:'🍽️', label:'추천', value:'각종 F&B 팝업 · 최신 라이프스타일 브랜드' }
+          ]},
+        { id:'s3-2', time:'11:30', name:'별마당 도서관', theme:'카페', theme_id:'cafe', tip:'공간 감상 및 인증샷', enjoyTip:'웅장한 서가를 배경으로 대표 인증샷 남기기', photo:null, h:11.5,
+          details:[
+            { icon:'📍', label:'위치', value:'수원 스타필드 4~7층' },
+            { icon:'🕐', label:'운영시간', value:'10:00 - 22:00' },
+            { icon:'💰', label:'입장료', value:'무료' },
+            { icon:'📚', label:'볼거리', value:'높이 22m 대형 서가 · 도심 속 독서 공간' }
+          ]},
+        { id:'s3-3', time:'13:00', name:'스타필드 내부 투어', theme:'쇼핑', theme_id:'exp', tip:'트렌디한 브랜드 및 팝업 탐방', enjoyTip:'최신 라이프스타일 브랜드 굿즈 쇼핑', photo:null, h:13,
+          details:[
+            { icon:'🛍️', label:'추천', value:'시즌 한정 팝업 · 최신 라이프스타일·스포츠 브랜드 매장' }
+          ]},
+        { id:'s3-4', time:'14:30', name:'수원역 이동', theme:'이동', theme_id:'view', tip:'택시 이동(10분 내외)', enjoyTip:'카카오T 활용하여 수원역으로 편하게 이동', photo:null, h:14.5 },
+        { id:'s3-5', time:'15:00', name:'동그라미 수원역점', theme:'식사', theme_id:'food', tip:'노포 감성 로컬 미식', enjoyTip:'잔치국수와 곱창 볶음으로 여행의 완벽한 마무리', photo:null, h:15,
+          details:[
+            { icon:'📍', label:'위치', value:'수원역 인근 (지도 확인 추천)' },
+            { icon:'🍜', label:'추천 메뉴', value:'잔치국수, 곱창 볶음 · 노포 감성 로컬 맛집' }
+          ]},
+        { id:'s3-6', time:'16:30', name:'수원역', theme:'마무리', theme_id:'view', tip:'여행 마무리 및 귀가 준비', enjoyTip:'서울 복귀 전 편안하게 기차/지하철 탑승 준비', photo:null, h:16.5 }
     ]}
 ]});
 </script>
