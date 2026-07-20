@@ -16,7 +16,9 @@
       "PowerShell(node --version)",
       "PowerShell(npm --version)",
       "PowerShell($env:PATH = $env:PATH + \";C:\\\\Program Files\\\\nodejs\"; node --version; npm --version)",
-      "Bash(grep -n \"\\\\${base}\" /c/Users/kty12/HUIHUI_Travel/assets/js/navbar.js)"
+      "Bash(grep -n \"\\\\${base}\" /c/Users/kty12/HUIHUI_Travel/assets/js/navbar.js)",
+      "Bash(npm install *)",
+      "Bash(.claude)"
     ]
   }
 }
