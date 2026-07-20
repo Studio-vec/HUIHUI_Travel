@@ -2,6 +2,23 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import type { TripData } from '../lib/tripData';
+
+const tripModules = import.meta.glob('/trips/data/*.json', { eager: true }) as Record<
+  string,
+  { default: TripData }
+>;
+const allTrips = Object.values(tripModules)
+  .map((mod) => mod.default)
+  .sort((a, b) => (a.no ?? 0) - (b.no ?? 0));
+
+const tripConfig = Object.fromEntries(
+  allTrips.map((t, idx) => [
+    t.id,
+    { no: t.no ?? idx + 1, nameKo: t.shortNameKo || t.title, tagline: t.tagline || '' },
+  ])
+);
+const tripsCount = allTrips.length;
 ---
 <BaseLayout title="HUIHUI Travel — 국내 여행 안내서">
   <Fragment slot="head">
@@ -26,7 +43,7 @@ import Footer from '../components/Footer.astro';
       <div class="hero-meta fade-up">
         <div class="checkout-pill">
           <span class="checkout-pill-dot"></span>
-          <span class="checkout-pill-text" id="checkoutStatus">0/8 체크아웃 완료</span>
+          <span class="checkout-pill-text" id="checkoutStatus">0/{tripsCount} 체크아웃 완료</span>
         </div>
         <div class="checkout-track">
           <div class="checkout-fill" id="checkoutFill" style="width:0%"></div>
@@ -265,22 +282,18 @@ import Footer from '../components/Footer.astro';
   <!-- ── TOAST CONTAINER ── -->
   <div class="toast-container" id="toastContainer"></div>
 
+  <script define:vars={{ tripConfig }}>
+    /* trips/data/*.json에서 빌드타임에 생성된 트립 목록.
+       새 여행지는 이 파일을 건드릴 필요 없이 JSON 추가만으로 반영됨. */
+    window.__TRIP_CONFIG__ = tripConfig;
+  </script>
   <script is:inline>
     /* ════════════════════════════════════════════
        TRIP CONFIG
        키 이미지(assets/keys/[slug].png)가 존재하면 → 오픈
        키 이미지가 없으면 → 자동으로 준비중 처리
     ════════════════════════════════════════════ */
-    const TRIP_CONFIG = {
-      'yeosu':       { no:1, nameKo:'여수' },
-      'icheon':      { no:2, nameKo:'이천' },
-      'paju':        { no:3, nameKo:'파주' },
-      'dongincheon': { no:4, nameKo:'동인천' },
-      'gangneung':   { no:5, nameKo:'강릉' },
-      'nowon':       { no:6, nameKo:'노원' },
-      'suwon':       { no:7, nameKo:'수원' },
-      'daejeon':     { no:8, nameKo:'대전' },
-    };
+    const TRIP_CONFIG = window.__TRIP_CONFIG__;
 
     let TRIPS = [];
 

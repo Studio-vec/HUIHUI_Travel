@@ -1,0 +1,183 @@
+/* ============================================================
+   Trip Article — desktop blog-style reading view
+   Reuses design tokens from tokens.css and .tag-* / .place-tag
+   from trip.css (both already loaded on trip pages).
+   ============================================================ */
+
+.trip-article {
+  display: none;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-16) var(--space-6) var(--space-24);
+  font-family: var(--font-body);
+  color: var(--color-text-primary);
+  background: var(--color-bg);
+}
+
+.ta-eyebrow {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-widest);
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.ta-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-5xl);
+  line-height: var(--leading-tight);
+  margin: var(--space-3) 0 var(--space-5);
+  color: var(--color-text-primary);
+}
+
+.ta-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-10);
+}
+
+.ta-chip {
+  font-size: var(--text-sm);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-tint);
+  color: var(--color-brand-dark);
+  border: 1px solid var(--color-border-brand);
+}
+
+.ta-chip-meta {
+  background: var(--color-bg-subtle);
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+}
+
+.ta-note {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+  background: var(--color-surface);
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin: 0 0 var(--space-16);
+  box-shadow: var(--shadow-sm);
+}
+
+.ta-note-avatar {
+  font-size: var(--text-2xl);
+  line-height: 1;
+}
+
+.ta-note-text {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--text-lg);
+  line-height: var(--leading-loose);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-2);
+}
+
+.ta-note-name {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.ta-day {
+  margin-bottom: var(--space-20);
+}
+
+.ta-day-title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: var(--text-2xl);
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-brand-dark);
+  padding-bottom: var(--space-3);
+  margin: 0 0 var(--space-8);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.ta-place {
+  padding: var(--space-8) 0;
+  border-bottom: 1px dashed var(--color-border);
+}
+
+.ta-place:last-child {
+  border-bottom: none;
+}
+
+.ta-place-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-3);
+}
+
+.ta-place-time {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+}
+
+.ta-place-name {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  margin: 0;
+  color: var(--color-text-primary);
+}
+
+.ta-place-desc {
+  font-size: var(--text-md);
+  line-height: var(--leading-loose);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-4);
+}
+
+.ta-place-details {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-4);
+  background: var(--color-bg-subtle);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ta-place-details li {
+  display: flex;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.ta-detail-label {
+  font-weight: 500;
+  color: var(--color-text-primary);
+  flex-shrink: 0;
+}
+
+.ta-detail-value {
+  color: var(--color-text-secondary);
+}
+
+@media (min-width: 768px) {
+  .trip-article {
+    display: block;
+  }
+  #app {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .ta-title {
+    font-size: var(--text-3xl);
+  }
+}

@@ -1,0 +1,62 @@
+---
+import type { TripData } from '../lib/tripData';
+
+export interface Props {
+  data: TripData;
+}
+
+const { data } = Astro.props;
+const dayCount = Math.max(...data.places.map((p) => p.day));
+const days = Array.from({ length: dayCount }, (_, i) => i + 1).map((day) => ({
+  day,
+  places: data.places.filter((p) => p.day === day),
+}));
+---
+
+<article class="trip-article">
+  <header class="ta-hero">
+    <p class="ta-eyebrow">{data.headerEyebrow}</p>
+    <h1 class="ta-title" set:html={data.headerTitleHtml} />
+    <div class="ta-chips">
+      {data.tags.map((t) => <span class="ta-chip">{t}</span>)}
+      {data.meta.map((m) => <span class="ta-chip ta-chip-meta">{m}</span>)}
+    </div>
+  </header>
+
+  {data.operatorNote && (
+    <blockquote class="ta-note">
+      <span class="ta-note-avatar">{data.operatorNote.avatar}</span>
+      <div>
+        <p class="ta-note-text">{data.operatorNote.text}</p>
+        <p class="ta-note-name">— {data.operatorNote.name}</p>
+      </div>
+    </blockquote>
+  )}
+
+  {days.map(({ day, places }) => (
+    <section class="ta-day">
+      <h2 class="ta-day-title">Day {day}</h2>
+      {places.map((p) => (
+        <div class="ta-place">
+          <div class="ta-place-head">
+            <span class="ta-place-time">{p.time}</span>
+            <h3 class="ta-place-name">{p.name}</h3>
+            <span class={`place-tag tag-${p.theme_id}`}>{p.theme}</span>
+          </div>
+          {p.desc && <p class="ta-place-desc">{p.desc}</p>}
+          {p.details && p.details.length > 0 && (
+            <ul class="ta-place-details">
+              {p.details.map((d) => (
+                <li>
+                  <span class="ta-detail-icon">{d.icon}</span>
+                  <span class="ta-detail-label">{d.label}</span>
+                  <span class="ta-detail-value">{d.value}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      ))}
+    </section>
+  ))}
+</article>
