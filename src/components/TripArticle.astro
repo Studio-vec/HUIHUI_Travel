@@ -43,17 +43,21 @@ const days = Array.from({ length: dayCount }, (_, i) => i + 1).map((day) => ({
             <h3 class="ta-place-name">{p.name}</h3>
             <span class={`place-tag tag-${p.theme_id}`}>{p.theme}</span>
           </div>
-          {p.desc && <p class="ta-place-desc">{p.desc}</p>}
+          {p.desc && p.desc.map((para) => <p class="ta-place-desc">{para}</p>)}
           {p.details && p.details.length > 0 && (
-            <ul class="ta-place-details">
-              {p.details.map((d) => (
-                <li>
-                  <span class="ta-detail-icon">{d.icon}</span>
-                  <span class="ta-detail-label">{d.label}</span>
-                  <span class="ta-detail-value">{d.value}</span>
-                </li>
-              ))}
-            </ul>
+            <table class="ta-place-details">
+              <tbody>
+                {p.details.map((d) => (
+                  <tr>
+                    <th>
+                      <span class="ta-detail-icon">{d.icon}</span>
+                      {d.label}
+                    </th>
+                    <td>{d.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
         </div>
       ))}

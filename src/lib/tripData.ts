@@ -39,7 +39,8 @@ export interface TripPlace {
   tags: TripPlaceTag[];
   tip: string;
   enjoyTip: string;
-  desc: string;
+  /** Blog paragraphs — one string per paragraph, rendered as separate <p> tags */
+  desc: string[];
   details: TripPlaceDetail[];
   tips: TripTip[];
   transitTo?: TripTransit;
