@@ -33,23 +33,31 @@ body {
     color: var(--ink); line-height: 1.2; margin-bottom: 22px;
 }
 
-.header-dates { display: flex; align-items: flex-end; margin-bottom: 20px; }
-.date-item { display: flex; flex-direction: column; gap: 5px; }
+.header-dates { display: flex; align-items: center; margin-bottom: 20px; }
+.date-item { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
 .date-label {
     font-size: 9px; font-weight: 500;
     letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3);
 }
 .header-date-input {
     font-family: 'DM Sans', sans-serif;
-    font-size: 14px; font-weight: 400; color: var(--ink-2);
+    font-size: 16px; font-weight: 400; color: var(--ink-2);
     border: none; background: transparent; cursor: pointer;
-    padding: 0 0 4px; outline: none;
-    border-bottom: 1px solid var(--line-strong); width: 128px;
+    padding: 0 4px 4px 0; outline: none;
+    border-bottom: 1px solid var(--line-strong);
+    width: 140px; max-width: 42vw; min-width: 0;
+    -webkit-appearance: none; appearance: none;
+    color-scheme: light;
+}
+.header-date-input::-webkit-calendar-picker-indicator {
+    opacity: 0.55;
+    margin-left: 4px;
 }
 .date-arrow { font-size: 11px; color: var(--ink-3); padding: 0 10px 5px; flex-shrink: 0; }
 .date-static {
-    font-size: 14px; font-weight: 400; color: var(--ink-3);
+    font-size: 16px; font-weight: 400; color: var(--ink-3);
     padding-bottom: 4px; border-bottom: 1px solid var(--line);
+    white-space: nowrap;
 }
 
 .now-card {

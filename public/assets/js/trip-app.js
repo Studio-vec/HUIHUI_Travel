@@ -157,7 +157,11 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
             };
 
             const dateKey = storageKey + '_date';
-            watch(startDate, val => localStorage.setItem(dateKey, val));
+            const GLOBAL_DATE_KEY = 'huihui_start_date';
+            watch(startDate, val => {
+                localStorage.setItem(dateKey, val);
+                localStorage.setItem(GLOBAL_DATE_KEY, val);
+            });
 
             onMounted(() => {
                 const saved = localStorage.getItem(storageKey);
@@ -166,7 +170,8 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
                     const savedTips = localStorage.getItem(tipsKey);
                     if (savedTips) tips.value = JSON.parse(savedTips);
                 }
-                const savedDate = localStorage.getItem(dateKey);
+                // 이 여행에 저장된 날짜가 있으면 우선 사용, 없으면 다른 여행에서 마지막으로 입력한 날짜를 기본값으로 사용
+                const savedDate = localStorage.getItem(dateKey) || localStorage.getItem(GLOBAL_DATE_KEY);
                 if (savedDate) startDate.value = savedDate;
             });
 
