@@ -394,14 +394,14 @@ const SCENARIOS = [
     emoji:'🏞️', title:'철원·포천 폭포 나들이', detail:'1박 2일 · 폭포 & 막국수', color:'#FFFFFF',
     season:'🌊 여름(6–8월)·가을(9–10월) 추천',
     hints:['삼부연폭포 시원한 물줄기 관람 💦','철원막국수·단풍도넛 포장해 숙소서 야식 🍜','평강랜드 실내 체험관 관람 🦌'],
-    itemPool:['camera','pouch','shoes','travel_pillow','sunscreen','sunglasses',
-              'jacket','scarf','tshirt','jeans','shirt','notebook','medicine',
-              'charger','snacks','umbrella','hat','slippers','book','sweater'],
+    itemPool:['tumbler','shorts','mini_speaker','camera','pouch','shoes',
+              'travel_pillow','sunscreen','sunglasses','jacket','tshirt','jeans',
+              'shirt','notebook','medicine','charger','snacks','umbrella','hat','slippers'],
     bonus:{
-      camera:        {points:25, reason:'삼부연폭포 시원한 물줄기는 사진 필수!'},
-      pouch:         {points:20, reason:'막국수·수육 포장 음식 담아가기 딱'},
-      shoes:         {points:15, reason:'평강랜드 넓은 부지 걸어다니기 편하게'},
-      travel_pillow: {points:10, reason:'왕복 3시간, 편안한 드라이브를 위해'},
+      tumbler:      {points:25, reason:'포장한 간식을 담아 다니기 좋아요'},
+      shorts:       {points:20, reason:'한낮 기온이 높을 때 시원하게 입기 좋아요'},
+      mini_speaker: {points:15, reason:'장거리 운전 구간에서 음악 듣기 좋아요'},
+      camera:       {points:10, reason:'삼부연폭포 풍경을 사진으로 남기기 좋아요'},
     }
   },
 ];
@@ -716,6 +716,37 @@ const BASE_ITEMS = [
       <rect x="26" y="18" width="48" height="12" rx="3" fill="#E0B810"/>
       <rect x="34" y="38" width="32" height="26" rx="4" fill="#E8A810"/>
       <rect x="26" y="74" width="48" height="8" rx="3" fill="#E0B810"/>
+    </svg>`
+  },
+  {
+    id:'tumbler', name:'텀블러', w:1, h:2, cells:rc(1,2),
+    render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 100 200">
+      <rect width="100" height="200" fill="#DCEEF5" rx="8"/>
+      <rect x="26" y="20" width="48" height="150" rx="20" fill="#3AA8C4"/>
+      <rect x="26" y="20" width="48" height="40" rx="20" fill="#2E8FA8"/>
+      <ellipse cx="50" cy="20" rx="24" ry="8" fill="#1E7690"/>
+      <rect x="40" y="4" width="20" height="18" rx="6" fill="#1E7690"/>
+      <rect x="34" y="90" width="10" height="50" rx="5" fill="white" opacity=".25"/>
+    </svg>`
+  },
+  {
+    id:'shorts', name:'반바지', w:2, h:1, cells:rc(2,1),
+    render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 200 100">
+      <rect width="200" height="100" fill="#EAF3E0" rx="8"/>
+      <rect x="20" y="10" width="160" height="24" rx="4" fill="#5A9640"/>
+      <rect x="20" y="34" width="70" height="56" rx="6" fill="#5A9640"/>
+      <rect x="110" y="34" width="70" height="56" rx="6" fill="#5A9640"/>
+      <line x1="100" y1="34" x2="100" y2="90" stroke="#4A8630" stroke-width="2" opacity=".6"/>
+    </svg>`
+  },
+  {
+    id:'mini_speaker', name:'미니 스피커', w:1, h:1, cells:rc(1,1),
+    render:(W,H)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#EFEAF7" rx="8"/>
+      <rect x="20" y="20" width="60" height="60" rx="14" fill="#6C5CE7"/>
+      <circle cx="50" cy="50" r="22" fill="#4A3AC0"/>
+      <circle cx="50" cy="50" r="13" fill="#2E2280"/>
+      <circle cx="68" cy="30" r="4" fill="#8C7CF0"/>
     </svg>`
   },
 
