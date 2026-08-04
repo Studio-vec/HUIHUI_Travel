@@ -2,8 +2,21 @@
 export interface Props {
   title: string;
   description?: string;
+  /** 로그인/회원가입 등 색인할 콘텐츠가 없는 기능성 페이지에 true */
+  noindex?: boolean;
+  ogImage?: string;
 }
-const { title, description = 'HUIHUI Travel — 국내 여행 안내서' } = Astro.props;
+const {
+  title,
+  description = 'HUIHUI Travel — 직접 다녀온 국내 여행 코스를 일자별 동선, 장소별 운영시간·비용·팁까지 정리한 국내 여행 안내서.',
+  noindex = false,
+  ogImage,
+} = Astro.props;
+
+const canonical = Astro.site
+  ? new URL(Astro.url.pathname.replace(/\/index\.html$/, ''), Astro.site).href
+  : undefined;
+const ogImageUrl = ogImage && Astro.site ? new URL(ogImage, Astro.site).href : ogImage;
 ---
 <!DOCTYPE html>
 <html lang="ko">
@@ -12,6 +25,20 @@ const { title, description = 'HUIHUI Travel — 국내 여행 안내서' } = Ast
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title}</title>
   {description && <meta name="description" content={description} />}
+  {canonical && <link rel="canonical" href={canonical} />}
+  {noindex
+    ? <meta name="robots" content="noindex, follow" />
+    : <meta name="robots" content="index, follow, max-image-preview:large" />}
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="HUIHUI Travel" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:title" content={title} />
+  {description && <meta property="og:description" content={description} />}
+  {canonical && <meta property="og:url" content={canonical} />}
+  {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+  <meta name="twitter:card" content={ogImageUrl ? 'summary_large_image' : 'summary'} />
 
   <!-- Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3271578034191442" crossorigin="anonymous"></script>

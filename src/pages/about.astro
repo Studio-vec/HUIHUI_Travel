@@ -1,0 +1,205 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import TripIndex from '../components/TripIndex.astro';
+import type { TripData } from '../lib/tripData';
+import { dayCountOf } from '../lib/tripData';
+
+const tripModules = import.meta.glob('/trips/data/*.json', { eager: true }) as Record<
+  string,
+  { default: TripData }
+>;
+const allTrips = Object.values(tripModules)
+  .map((mod) => mod.default)
+  .sort((a, b) => (a.no ?? 0) - (b.no ?? 0));
+
+const totalPlaces = allTrips.reduce((sum, t) => sum + t.places.length, 0);
+const totalDays = allTrips.reduce((sum, t) => sum + dayCountOf(t), 0);
+const regions = [...new Set(allTrips.map((t) => t.locationLabel))];
+---
+<BaseLayout
+  title="사이트 소개 — HUIHUI Travel"
+  description="HUIHUI Travel은 직접 다녀온 국내 여행 코스를 일자별 동선과 장소별 실측 정보로 정리해 공개하는 개인 여행 기록 사이트입니다. 코스를 만드는 기준과 정보 검증 방식, 문의 방법을 안내합니다."
+>
+  <Fragment slot="head">
+  <link rel="stylesheet" href="/assets/css/tokens.css"/>
+  </Fragment>
+  <Navbar />
+
+  <div class="pp-page">
+    <div class="pp-header">
+      <p class="pp-eyebrow">About</p>
+      <h1 class="pp-title">사이트 소개</h1>
+      <p class="pp-updated">최종 업데이트: 2026년 8월 4일</p>
+    </div>
+
+    <div class="pp-body">
+      <p class="pp-lead">
+        HUIHUI Travel은 직접 다녀온 국내 여행을 코스 단위로 기록하고 공개하는 개인 여행 기록
+        사이트입니다. 검색으로 흩어진 정보를 하나씩 모으는 대신, 아침에 출발해서 저녁에 숙소로
+        돌아오기까지의 하루를 그대로 따라갈 수 있는 형태로 정리합니다. 현재 {regions.length}개 지역,
+        {allTrips.length}개 코스, {totalPlaces}곳의 장소 기록이 공개되어 있습니다.
+      </p>
+
+      <section class="pp-section">
+        <h2>1. 누가 만드나요</h2>
+        <p>
+          디자인 스튜디오 <strong>Studio.Vec</strong>을 운영하는 태희가 기획과 답사, 사진, 글, 웹사이트
+          제작까지 직접 담당합니다. 여행사나 지자체의 의뢰를 받아 만든 홍보용 코스가 아니라, 개인이
+          주말과 휴가를 써서 실제로 다녀온 일정을 정리한 기록입니다.
+        </p>
+      </section>
+
+      <section class="pp-section">
+        <h2>2. 코스를 만드는 기준</h2>
+        <ul>
+          <li><strong>직접 방문한 곳만 씁니다.</strong> 가보지 않은 장소는 코스에 넣지 않습니다.</li>
+          <li><strong>이동 가능한 동선으로 묶습니다.</strong> 평이 좋은 곳을 나열하는 대신, 실제 이동 시간을 재서 하루에 소화할 수 있는 순서로 배치합니다.</li>
+          <li><strong>시간대를 지정합니다.</strong> 같은 장소도 오전과 해질 무렵의 경험이 다르기 때문에, 방문을 권하는 시간대를 함께 적습니다.</li>
+          <li><strong>실패한 선택도 남깁니다.</strong> 웨이팅이 길었거나 기대에 못 미친 곳은 그 사실을 그대로 적습니다.</li>
+        </ul>
+      </section>
+
+      <section class="pp-section">
+        <h2>3. 각 코스에 담기는 정보</h2>
+        <ul>
+          <li>일자별 방문 순서와 권장 시간대</li>
+          <li>장소별 운영시간, 휴무일, 주차 여부, 대략적인 비용대</li>
+          <li>장소 간 이동 수단과 소요 시간</li>
+          <li>대표 메뉴나 꼭 봐야 할 지점 등 현장에서 알게 된 정보</li>
+          <li>날씨·계절·요일에 따라 달라지는 주의사항</li>
+        </ul>
+        <p>
+          현재까지 정리된 분량은 총 {totalDays}일치 일정이며, 코스마다 20~40분 정도면 전체를 읽고
+          자신의 일정에 맞게 조정할 수 있도록 구성했습니다.
+        </p>
+      </section>
+
+      <section class="pp-section">
+        <h2>4. 정보 검증과 업데이트</h2>
+        <p>
+          운영시간이나 메뉴처럼 자주 바뀌는 정보는 방문 당시 기록을 기준으로 적고, 확인한 시점을 함께
+          남깁니다. 다만 폐업이나 운영시간 변경은 예고 없이 일어나므로, <strong>방문 전 전화나 공식
+          채널로 한 번 더 확인하시길 권합니다.</strong> 잘못된 정보를 발견하셨다면 아래 문의 채널로
+          알려주시면 확인 후 수정합니다.
+        </p>
+      </section>
+
+      <section class="pp-section">
+        <h2>5. 광고 및 제휴 정책</h2>
+        <p>
+          사이트 운영비를 충당하기 위해 Google AdSense 광고를 게재합니다. 광고는 콘텐츠와 명확히
+          구분되는 위치에 배치하며, <strong>광고 수익이 코스 구성이나 장소 평가에 영향을 주지
+          않습니다.</strong> 현재 특정 업체로부터 대가를 받고 작성한 협찬 콘텐츠는 없으며, 향후
+          협찬이나 제휴가 있을 경우 해당 글에 반드시 표기합니다.
+        </p>
+      </section>
+
+      <section class="pp-section">
+        <h2>6. 저작권</h2>
+        <p>
+          사이트에 게시된 글과 사진은 별도 표기가 없는 한 운영자에게 저작권이 있습니다. 출처를 밝힌
+          인용은 자유롭게 하실 수 있으나, 무단 전재나 재배포는 삼가주시기 바랍니다.
+        </p>
+      </section>
+
+      <section class="pp-section">
+        <h2>7. 문의</h2>
+        <ul>
+          <li>정보 수정 요청, 제휴 문의 — <a href="http://pf.kakao.com/_xipUhX/chat" target="_blank" rel="noopener">카카오톡 채널</a></li>
+          <li>운영 스튜디오 — <a href="https://studiovec.framer.website/" target="_blank" rel="noopener">Studio.Vec</a></li>
+          <li>개인정보 관련 문의 — <a href="/privacy">개인정보처리방침</a> 참고</li>
+        </ul>
+      </section>
+    </div>
+  </div>
+
+  <TripIndex
+    trips={allTrips}
+    title="공개된 여행 코스"
+    desc="위의 기준으로 정리한 코스 목록입니다. 각 코스를 눌러 전체 일정과 장소별 상세 정보를 확인하실 수 있습니다."
+  />
+
+  <Footer />
+</BaseLayout>
+
+<style is:global>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--color-bg);
+    color: var(--color-text-primary);
+    font-family: var(--font-body);
+    min-height: 100vh;
+  }
+  .pp-page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: clamp(40px, 7vw, 72px) clamp(20px, 5vw, 48px) clamp(48px, 8vw, 64px);
+  }
+  .pp-header { margin-bottom: 40px; }
+  .pp-eyebrow {
+    font-family: var(--font-heading);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--lavender-500);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .pp-title {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(28px, 5vw, 40px);
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+  }
+  .pp-updated {
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+    margin-top: 10px;
+  }
+  .pp-lead {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-normal);
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 32px;
+  }
+  .pp-section { margin-bottom: 32px; }
+  .pp-section h2 {
+    font-family: var(--font-heading);
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 12px;
+  }
+  .pp-section p {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-normal);
+    margin-bottom: 10px;
+  }
+  .pp-section ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .pp-section li {
+    position: relative;
+    padding-left: 16px;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-normal);
+  }
+  .pp-section li::before {
+    content: '';
+    position: absolute; left: 0; top: 0.55em;
+    width: 5px; height: 5px; border-radius: var(--radius-full);
+    background: var(--lavender-300);
+  }
+  .pp-section a { color: var(--lavender-500); text-decoration: underline; }
+</style>

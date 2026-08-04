@@ -1,8 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
 ---
-<BaseLayout title="짐 싸기 — HUIHUI Travel">
+<BaseLayout
+  title="여행 짐 싸기 게임 — HUIHUI Travel"
+  description="여행지와 계절에 맞는 준비물을 골라보는 미니 게임입니다. 실제 코스를 떠나기 전 무엇을 챙겨야 하는지 가볍게 점검해볼 수 있습니다."
+>
   <Fragment slot="head">
   <link rel="stylesheet" href="/assets/css/tokens.css"/>
   </Fragment>
@@ -23,6 +27,32 @@ import Navbar from '../components/Navbar.astro';
     </div>
   </div>
   <div class="best-badge" id="bestBadge" style="display:none">🏆 최고 기록: <span id="bestTxt"></span>점</div>
+
+  <section class="game-about">
+    <h2>짐 싸기는 어떤 게임인가요</h2>
+    <p>
+      여행지와 계절, 숙박 일수가 주어지면 그에 맞는 준비물을 제한된 가방 용량 안에 골라 담는
+      미니 게임입니다. 각 시나리오는 <a href="/gallery">실제로 다녀온 여행 코스</a>를 바탕으로
+      구성했습니다. 예를 들어 겨울 철원 코스에는 한탄강 주상절리길을 걷기 위한 방한 장비가,
+      여름 여수 코스에는 해상 케이블카와 바다 일정에 맞는 짐이 정답으로 설정되어 있습니다.
+    </p>
+
+    <h2>플레이 방법</h2>
+    <ul>
+      <li>여행 시나리오를 고르면 목적지, 계절, 일정 힌트가 표시됩니다.</li>
+      <li>힌트를 참고해 필요한 물건을 가방에 담습니다. 가방 용량에는 한계가 있습니다.</li>
+      <li>제출하면 꼭 필요했던 물건, 있으면 좋았을 물건, 불필요했던 물건으로 나뉘어 채점됩니다.</li>
+      <li>여행지에서 찍은 사진을 잘라내 나만의 아이템으로 추가할 수도 있습니다.</li>
+    </ul>
+
+    <h2>왜 만들었나요</h2>
+    <p>
+      코스를 정리하다 보면 “무엇을 볼지”만큼 “무엇을 챙길지”가 여행의 만족도를 크게 좌우한다는
+      걸 알게 됩니다. 강릉 해변의 바람, 파주 야외 전시의 햇볕, 철원의 이른 아침 추위처럼 코스마다
+      필요한 준비물이 다릅니다. 이 게임은 그 차이를 짧게 체험해보는 장치입니다. 실제 준비물 목록은
+      각 코스 페이지의 장소별 설명에 함께 적어두었습니다.
+    </p>
+  </section>
 </div>
 
 <!-- ══ DETAIL: SCENARIO PREVIEW ══ -->
@@ -1576,6 +1606,30 @@ function confirmCustomItem(){if(!pendingDataUrl)return;const name=$('itemNameInp
   .btn-modal-cancel:hover { background:var(--sand-200); }
   .btn-modal-confirm { flex:2; background:var(--lavender-600); color:#fff; border:none; border-radius:10px; padding:11px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; transition:background .15s; }
   .btn-modal-confirm:hover { background:var(--lavender-700); }
+
+  /* ══ ABOUT THIS GAME ══ */
+  .game-about {
+    max-width: 640px; width: 100%; margin-top: 24px;
+    padding-top: 28px; border-top: 1px solid var(--color-border);
+    text-align: left;
+  }
+  .game-about h2 {
+    font-family: var(--font-heading); font-size: 15px; font-weight: 600;
+    color: var(--color-text-primary); margin: 22px 0 10px;
+  }
+  .game-about h2:first-child { margin-top: 0; }
+  .game-about p, .game-about li {
+    font-size: 13.5px; line-height: 1.85; color: var(--color-text-secondary);
+  }
+  .game-about p { margin-bottom: 10px; }
+  .game-about ul { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+  .game-about li { position: relative; padding-left: 15px; }
+  .game-about li::before {
+    content: ''; position: absolute; left: 0; top: 0.62em;
+    width: 5px; height: 5px; border-radius: var(--radius-full); background: var(--lavender-300);
+  }
+  .game-about a { color: var(--lavender-500); text-decoration: underline; }
 </style>
 
+  <Footer />
 </BaseLayout>

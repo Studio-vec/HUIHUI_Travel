@@ -2,6 +2,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Navbar from '../../components/Navbar.astro';
 import TripArticle from '../../components/TripArticle.astro';
+import TripIndex from '../../components/TripIndex.astro';
+import Footer from '../../components/Footer.astro';
 import { toMobileSchedule, toMobileTips, dayCountOf } from '../../lib/tripData';
 import type { TripData } from '../../lib/tripData';
 
@@ -10,17 +12,22 @@ export async function getStaticPaths() {
     string,
     { default: TripData }
   >;
-  return Object.values(modules).map((mod) => ({
-    params: { id: mod.default.id },
-    props: { tripData: mod.default },
+  const all = Object.values(modules)
+    .map((m) => m.default)
+    .sort((a, b) => (a.no ?? 0) - (b.no ?? 0));
+
+  return all.map((trip) => ({
+    params: { id: trip.id },
+    props: { tripData: trip, otherTrips: all.filter((t) => t.id !== trip.id) },
   }));
 }
 
 interface Props {
   tripData: TripData;
+  otherTrips: TripData[];
 }
 
-const { tripData } = Astro.props;
+const { tripData, otherTrips } = Astro.props;
 
 const scheduleJson = JSON.stringify(toMobileSchedule(tripData));
 const tipsJson = JSON.stringify(toMobileTips(tripData));
@@ -30,6 +37,15 @@ const storageKey = `trip_${tripData.id}_${tripData.scheduleVersion || 'v1'}`;
 const tipsKey = `trip_${tripData.id}_tips_v1`;
 const tripUrl = `/trips/${tripData.id}`;
 const momentLabel = tripData.id.charAt(0).toUpperCase() + tripData.id.slice(1);
+
+const tripDescription = [
+  `${tripData.locationLabel} ${dayCount}일 여행 코스.`,
+  `${tripData.places.length}곳의 장소를 일자별 동선으로 정리했습니다.`,
+  tripData.places
+    .slice(0, 5)
+    .map((p) => p.name)
+    .join(', ') + ' 등 방문 순서, 운영시간, 이동 방법과 현장 팁을 담았습니다.',
+].join(' ').slice(0, 300);
 
 const infoBannerHtml = tripData.infoBanner
   ? `
@@ -233,7 +249,7 @@ createTripApp({
 </script>
 `;
 ---
-<BaseLayout title={tripData.pageTitle}>
+<BaseLayout title={`${tripData.title} — HUIHUI Travel`} description={tripDescription}>
   <Fragment slot="head">
   <link rel="stylesheet" href="/assets/css/trip.css">
   <link rel="stylesheet" href="/assets/css/trip-article.css">
@@ -241,4 +257,12 @@ createTripApp({
   <Navbar />
   <TripArticle data={tripData} />
   <Fragment set:html={_body} />
+
+  <TripIndex
+    trips={otherTrips}
+    compact
+    title="다른 여행 코스"
+    desc={`${tripData.locationLabel} 코스를 보셨다면, 같은 방식으로 정리한 다른 지역 코스도 함께 살펴보세요.`}
+  />
+  <Footer />
 </BaseLayout>

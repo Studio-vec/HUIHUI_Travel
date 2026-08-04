@@ -1,0 +1,141 @@
+---
+/**
+ * 서버에서 렌더링되는 여행 코스 목록.
+ * 홈/갤러리의 카드는 클라이언트 JS로 그려지기 때문에 크롤러가 개별 코스 페이지를
+ * 발견할 수 없다. 이 섹션이 정적 HTML 안의 실제 <a href> 진입점 역할을 한다.
+ */
+import type { TripData } from '../lib/tripData';
+import { dayCountOf } from '../lib/tripData';
+
+export interface Props {
+  trips: TripData[];
+  title?: string;
+  desc?: string;
+  /** 코스 상세 페이지 하단처럼 목록이 본문이 아닌 곳에서는 운영자 노트를 생략한다. */
+  compact?: boolean;
+}
+
+const {
+  trips,
+  title = '전체 여행 코스',
+  desc = '직접 다녀온 국내 여행 코스입니다. 코스별로 방문 순서, 이동 시간, 장소별 상세 정보와 팁을 정리했습니다.',
+  compact = false,
+} = Astro.props;
+
+const entries = trips.map((t) => ({
+  href: `/trips/${t.id}`,
+  title: t.title,
+  eyebrow: t.locationLabel,
+  days: dayCountOf(t),
+  placeCount: t.places.length,
+  tags: t.tags.slice(0, 3),
+  note: t.operatorNote?.text ?? '',
+}));
+---
+
+<section class="trip-index" id="trip-index" aria-labelledby="trip-index-title">
+  <div class="ti-head">
+    <h2 class="ti-title" id="trip-index-title">{title}</h2>
+    <p class="ti-desc">{desc}</p>
+  </div>
+
+  <ul class="ti-list">
+    {entries.map((e) => (
+      <li class="ti-item">
+        <a class="ti-link" href={e.href}>
+          <span class="ti-item-loc">{e.eyebrow}</span>
+          <h3 class="ti-item-title">{e.title}</h3>
+        </a>
+        <p class="ti-item-meta">
+          {e.days}일 코스 · 장소 {e.placeCount}곳
+          {e.tags.length > 0 && <> · {e.tags.join(' · ')}</>}
+        </p>
+        {!compact && e.note && <p class="ti-item-note">{e.note}</p>}
+        {!compact && <a class="ti-more" href={e.href}>코스 자세히 보기 →</a>}
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+.trip-index {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 64px clamp(20px, 5vw, 48px) 72px;
+}
+.ti-head {
+  border-bottom: 1px solid rgba(139, 111, 208, 0.16);
+  padding-bottom: 20px;
+  margin-bottom: 8px;
+}
+.ti-title {
+  font-family: 'DM Serif Display', 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(24px, 3.4vw, 32px);
+  font-weight: 600;
+  color: #4A3A6B;
+  margin: 0 0 10px;
+  letter-spacing: -0.01em;
+}
+.ti-desc {
+  font-size: 14px;
+  line-height: 1.75;
+  color: #6f6580;
+  margin: 0;
+  max-width: 62ch;
+}
+.ti-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ti-item {
+  padding: 26px 0;
+  border-bottom: 1px solid rgba(139, 111, 208, 0.1);
+}
+.ti-link {
+  text-decoration: none;
+  display: inline-block;
+}
+.ti-item-loc {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a394c4;
+  margin-bottom: 6px;
+}
+.ti-item-title {
+  font-family: 'DM Serif Display', 'Cormorant Garamond', Georgia, serif;
+  font-size: 21px;
+  font-weight: 600;
+  color: #4A3A6B;
+  margin: 0 0 8px;
+  transition: color 0.18s;
+}
+.ti-link:hover .ti-item-title { color: #8B6FD0; }
+.ti-item-meta {
+  font-size: 12.5px;
+  color: #9a8ab0;
+  margin: 0 0 10px;
+}
+.ti-item-note {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #5c5468;
+  margin: 0 0 12px;
+  max-width: 70ch;
+}
+.ti-more {
+  font-size: 13px;
+  font-weight: 500;
+  color: #8B6FD0;
+  text-decoration: none;
+}
+.ti-more:hover { text-decoration: underline; }
+
+@media (max-width: 600px) {
+  .trip-index { padding: 44px 20px 56px; }
+  .ti-item-title { font-size: 19px; }
+}
+</style>
