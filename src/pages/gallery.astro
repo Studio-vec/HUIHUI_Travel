@@ -540,8 +540,10 @@ renderKeyRack();
 
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     html { scroll-behavior:smooth; height:100%; }
+    /* 열쇠 랙은 첫 화면을 그대로 채우고, 코스 목록은 그 아래로 스크롤된다.
+       (예전에는 height:100vh + overflow:hidden 이라 아래 콘텐츠가 잘렸다) */
     body {
-      font-family:var(--font-body); height:100vh; overflow:hidden;
+      font-family:var(--font-body); min-height:100vh; overflow-x:hidden;
       display:flex; flex-direction:column;
       /* 크림 → 딥 퍼플 그라데이션 */
       background: linear-gradient(
@@ -555,6 +557,10 @@ renderKeyRack();
       );
       background-attachment: fixed;
     }
+    /* 열쇠구멍/미방문 팝업이 열려 있는 동안에는 뒤쪽 목록이 스크롤되지 않게 잠근다.
+       (예전에는 body 가 항상 overflow:hidden 이라 따로 필요 없었다) */
+    body:has(#khDim.show),
+    body:has(.unv-overlay.show) { overflow:hidden; }
 
     /* NAVBAR */
     .navbar {
@@ -591,7 +597,11 @@ renderKeyRack();
 
     /* KEY RACK */
     .key-rack-section {
-      flex: 1; min-height: 0;
+      /* flex:1 로 두면 아래 콘텐츠에 밀려 높이가 0이 된다. 첫 화면 높이를 직접 잡는다.
+         .key-item 이 height:100% 라서 min-height 가 아닌 확정 height 여야 한다. */
+      flex: 0 0 auto;
+      height: calc(100vh - 250px);
+      min-height: 320px;
       display: flex; align-items: stretch;
     }
     .key-rack {
@@ -932,13 +942,22 @@ renderKeyRack();
     @media (max-width:767px) {
       .navbar-links { display:none !important; }
       .hamburger-btn { display:flex; }
-      .key-rack-section { position:relative; }
+      /* 모바일은 .page-header 가 숨겨지므로 그만큼 높이를 돌려준다 */
+      .key-rack-section { position:relative; height: calc(100vh - 70px); }
       .mobile-nav-btn { display:flex; }
       .page-header { display:none; }
       .navbar-search-wrap { display:flex; }
       .key-item { min-width:100vw; width:100vw; }
       .key-img-wrap { width:clamp(220px,76vw,340px); }
       .key-item:hover { transform:none; }
+    }
+
+    /* ── TRIP INDEX (열쇠 랙 아래 코스 목록) ── */
+    .gallery-trip-index {
+      flex: 0 0 auto;
+      width: 100%;
+      background: #FFF8EB;
+      border-top: 1px solid rgba(139,111,208,0.15);
     }
 
     /* ── UNVISITED POPUP ── */
@@ -982,11 +1001,14 @@ renderKeyRack();
 
 </style>
 
-  <TripIndex
-    trips={allTrips}
-    title="여행 코스 전체 목록"
-    desc="갤러리의 열쇠는 아래 코스와 연결됩니다. 각 코스에는 일자별 동선, 장소별 운영시간·메뉴·주차 정보, 그리고 직접 다녀오며 남긴 팁이 담겨 있습니다."
-  />
-  <Footer />
+  <!-- 페이지 배경이 아래로 갈수록 딥퍼플이라, 목록은 자체 배경 위에 올린다 -->
+  <div class="gallery-trip-index">
+    <TripIndex
+      trips={allTrips}
+      title="여행 코스 전체 목록"
+      desc="갤러리의 열쇠는 아래 코스와 연결됩니다. 각 코스에는 일자별 동선, 장소별 운영시간·메뉴·주차 정보, 그리고 직접 다녀오며 남긴 팁이 담겨 있습니다."
+    />
+    <Footer />
+  </div>
 
 </BaseLayout>
