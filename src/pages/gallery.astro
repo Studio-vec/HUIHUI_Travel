@@ -12,6 +12,14 @@ const tripModules = import.meta.glob('/trips/data/*.json', { eager: true }) as R
 const allTrips = Object.values(tripModules)
   .map((mod) => mod.default)
   .sort((a, b) => (a.no ?? 0) - (b.no ?? 0));
+
+const galleryDestinations = allTrips.map((t) => ({
+  id: t.id,
+  nameKo: t.shortNameKo || t.title,
+  tagline: t.tagline || '',
+  storageKey: `trip_${t.id}_${t.scheduleVersion || 'v1'}`,
+  url: `/trips/${t.id}`,
+}));
 ---
 <BaseLayout
   title="여행 코스 갤러리 — HUIHUI Travel"
@@ -82,17 +90,24 @@ const allTrips = Object.values(tripModules)
   </div>
 </div>
 
+<script define:vars={{ galleryDestinations }}>
+  /* trips/data/*.json에서 빌드타임에 생성된 목록.
+     새 여행지는 이 파일을 건드릴 필요 없이 JSON 추가만으로 반영됨. */
+  window.__GALLERY_DESTINATIONS__ = galleryDestinations;
+</script>
 <script is:inline>
-const DESTINATIONS = [
-  { id:'yeosu',       nameKo:'여수',   tagline:'남해의 빛과 바다',     storageKey:'trip_yeosu_v3',       url:'/trips/yeosu',       particle:'을' },
-  { id:'icheon',      nameKo:'이천',   tagline:'도자기와 온천의 고장',  storageKey:'trip_icheon_v3',      url:'/trips/icheon',      particle:'을' },
-  { id:'paju',        nameKo:'파주',   tagline:'트렌디 아트 나들이',    storageKey:'trip_paju_v1',        url:'/trips/paju',        particle:'를' },
-  { id:'dongincheon', nameKo:'동인천', tagline:'레트로 감성 골목',      storageKey:'trip_dongincheon_v1', url:'/trips/dongincheon', particle:'을' },
-  { id:'gangneung',   nameKo:'강릉',   tagline:'커피향 가득한 해변',    storageKey:'trip_gangneung_v1',   url:'/trips/gangneung',   particle:'을' },
-  { id:'nowon',       nameKo:'노원',   tagline:'노원 나들이',           storageKey:'trip_nowon_v1',       url:'/trips/nowon',       particle:'을' },
-  { id:'suwon',       nameKo:'수원',   tagline:'역사가 살아있는 도시',  storageKey:'trip_suwon_v1',       url:'/trips/suwon',       particle:'을' },
-  { id:'daejeon',     nameKo:'대전',   tagline:'대전 여행',             storageKey:'trip_daejeon_v1',     url:'/trips/daejeon',     particle:'을' },
-];
+/* 받침 유무로 을/를 판별 (한글이 아니면 '을(를)') */
+function _eulReul(name) {
+  const last = (name || '').trim().slice(-1);
+  const code = last.charCodeAt(0);
+  if (!code || code < 0xac00 || code > 0xd7a3) return '을(를)';
+  return (code - 0xac00) % 28 ? '을' : '를';
+}
+
+const DESTINATIONS = (window.__GALLERY_DESTINATIONS__ || []).map(d => ({
+  ...d,
+  particle: _eulReul(d.nameKo),
+}));
 
 /* ── DATA ── */
 function getVisitedSet() {
@@ -493,8 +508,8 @@ document.addEventListener('keydown', e=>{
 
 /* ── UNVISITED POPUP ── */
 function showUnvisited(dest) {
-  const particle = dest.particle || '을';
-  document.getElementById('unvMsg').innerHTML = `아직 <em>${dest.nameKo}</em>${particle}(를) 여행하지 않았어요!`;
+  const particle = dest.particle || '을(를)';
+  document.getElementById('unvMsg').innerHTML = `아직 <em>${dest.nameKo}</em>${particle} 여행하지 않았어요!`;
   document.getElementById('unvGo').href = dest.url;
   document.getElementById('unvOverlay').classList.add('show');
 }
