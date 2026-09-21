@@ -18,7 +18,7 @@ export async function getStaticPaths() {
 
   return all.map((trip) => ({
     params: { id: trip.id },
-    props: { tripData: trip, otherTrips: all.filter((t) => t.id !== trip.id) },
+    props: { tripData: trip, otherTrips: all.filter((t) => t.id !== trip.id && !t.secretCode) },
   }));
 }
 
@@ -258,7 +258,7 @@ createTripApp({
 </script>
 `;
 ---
-<BaseLayout title={`${tripData.title} — HUIHUI Travel`} description={tripDescription} app>
+<BaseLayout title={`${tripData.title} — HUIHUI Travel`} description={tripDescription} noindex={!!tripData.secretCode} app>
   <Fragment slot="head">
   <link rel="stylesheet" href="/assets/css/trip.css">
   <link rel="stylesheet" href="/assets/css/trip-article.css">

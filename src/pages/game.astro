@@ -5,6 +5,7 @@ import Footer from '../components/Footer.astro';
 const _tripModules = import.meta.glob('/trips/data/*.json', { eager: true }) as Record<string, { default: any }>;
 const tripList = Object.values(_tripModules)
   .map((m) => m.default)
+  .filter((t) => !t.secretCode)
   .sort((a, b) => (a.no ?? 0) - (b.no ?? 0))
   .map((t) => ({
     id: t.id,

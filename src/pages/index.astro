@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import TripIndex from '../components/TripIndex.astro';
 import type { TripData } from '../lib/tripData';
+import { createHash } from 'node:crypto';
 
 const tripModules = import.meta.glob('/trips/data/*.json', { eager: true }) as Record<
   string,
@@ -11,6 +12,7 @@ const tripModules = import.meta.glob('/trips/data/*.json', { eager: true }) as R
 >;
 const allTrips = Object.values(tripModules)
   .map((mod) => mod.default)
+  .filter((t) => !t.secretCode)
   .sort((a, b) => (a.no ?? 0) - (b.no ?? 0));
 
 /* 도·시 단위 태그가 제각각이라 필터용 큰 권역으로 묶는다 */
@@ -23,6 +25,17 @@ function regionOf(tag: string): string {
   if (/제주/.test(tag)) return '제주';
   return tag;
 }
+
+/* 비밀코드 여행지: 코드 원문은 페이지에 싣지 않고 SHA-256 해시 → 여행지 id만 내려보낸다.
+   클라이언트는 입력값을 같은 방식으로 정규화·해시해 맞춰 본다 (정규화: 공백 제거 + 소문자). */
+const normalizeCode = (v: string) => v.trim().toLowerCase().replace(/\s+/g, '');
+const hashCode = (v: string) => createHash('sha256').update('huihui-secret:' + normalizeCode(v)).digest('hex');
+const secretMap: Record<string, string> = Object.fromEntries(
+  Object.values(tripModules)
+    .map((mod) => mod.default)
+    .filter((t) => t.secretCode)
+    .map((t) => [hashCode(t.secretCode as string), t.id])
+);
 
 const tripConfig = Object.fromEntries(
   allTrips.map((t, idx) => [
@@ -302,13 +315,33 @@ const tripConfig = Object.fromEntries(
     </div>
   </div>
 
+  <!-- ── SECRET CODE POPUP ── -->
+  <div class="cs-overlay" id="secretOverlay" onclick="hideSecretPopup()">
+    <form class="cs-card" id="secretForm" onclick="event.stopPropagation()" autocomplete="off" novalidate role="dialog" aria-modal="true" aria-labelledby="secretTitle">
+      <div class="cs-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="5" y="10.5" width="14" height="9.5" rx="2.2" stroke="var(--lavender-500)" stroke-width="1.8"/>
+          <path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" stroke="var(--lavender-500)" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="12" cy="15" r="1.3" fill="var(--lavender-500)"/>
+        </svg>
+      </div>
+      <div class="cs-title" id="secretTitle">비밀코드</div>
+      <p class="cs-sub">받은 코드를 입력하면<br>숨겨진 여행지가 열려요.</p>
+      <input class="secret-input" id="secretInput" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="32" placeholder="코드 입력" aria-label="비밀코드" aria-describedby="secretMsg" />
+      <p class="secret-msg" id="secretMsg" role="alert"></p>
+      <button class="cs-btn" type="submit" id="secretSubmit">열기</button>
+      <button class="login-req-close" type="button" onclick="hideSecretPopup()">닫기</button>
+    </form>
+  </div>
+
   <!-- ── TOAST CONTAINER ── -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <script define:vars={{ tripConfig }}>
+  <script define:vars={{ tripConfig, secretMap }}>
     /* trips/data/*.json에서 빌드타임에 생성된 트립 목록.
        새 여행지는 이 파일을 건드릴 필요 없이 JSON 추가만으로 반영됨. */
     window.__TRIP_CONFIG__ = tripConfig;
+    window.__SECRET_MAP__ = secretMap;
   </script>
   <script is:inline>
     /* ════════════════════════════════════════════
@@ -848,15 +881,69 @@ const tripConfig = Object.fromEntries(
     /* 내비게이션 검색창이 홈에서도 코스를 걸러 준다 */
     window.filterBySearch = function (v) { FILTER.q = (v || '').trim(); _renderGrid(); };
 
+    /* ── 비밀코드 카드 (그리드 맨 끝, 필터·추천 대상 아님) ── */
+    function _renderSecretCard() {
+      const i = TRIPS.length; // 다른 카드와 SVG 그라데이션 id가 겹치지 않게
+      return `<div class="key-card secret" id="secretCard" role="button" tabindex="0" aria-label="비밀코드 입력"><div class="card-3d">${_cardBgSVG(i)}<div class="card-name">${_nameTagSVG(i)}<span>비밀코드</span></div><div class="card-key-img"><img src="/assets/keys/secret.webp" width="416" height="1077" style="margin-top:35px" alt="비밀코드 열쇠" onerror="_onKeyImgError(this)" /></div></div><div class="card-meta">코드를 입력하세요</div></div>`;
+    }
+
     function _renderGrid() {
       const rows = TRIPS.map((t, i) => ({ t, i })).filter(({ t }) => _matches(t));
-      document.getElementById('keyGrid').innerHTML = rows.length
+      document.getElementById('keyGrid').innerHTML = (rows.length
         ? rows.map(({ t, i }) => _renderCard(t, i)).join('')
-        : `<div class="filter-empty"><p>조건에 맞는 코스가 아직 없어요.</p><button type="button" class="fchip" onclick="resetFilters()">필터 초기화</button></div>`;
+        : `<div class="filter-empty"><p>조건에 맞는 코스가 아직 없어요.</p><button type="button" class="fchip" onclick="resetFilters()">필터 초기화</button></div>`)
+        + _renderSecretCard();
       const cnt = document.getElementById('filterCount');
       if (cnt) cnt.textContent = rows.length === TRIPS.length ? `전체 ${rows.length}개 코스` : `${TRIPS.length}개 중 ${rows.length}개 코스`;
       _attachCardClicks();
+      const sc = document.getElementById('secretCard');
+      sc.addEventListener('click', showSecretPopup);
+      sc.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showSecretPopup(); } });
     }
+
+    /* ── 비밀코드 입력 ── */
+    const SECRET_MAP = window.__SECRET_MAP__ || {};
+    async function _hashSecret(v) {
+      const norm = v.trim().toLowerCase().replace(/\s+/g, '');
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('huihui-secret:' + norm));
+      return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+    function _secretMsg(text, ok) {
+      const m = document.getElementById('secretMsg');
+      m.textContent = text;
+      m.classList.toggle('ok', !!ok);
+    }
+    function showSecretPopup() {
+      _secretMsg('');
+      const input = document.getElementById('secretInput');
+      input.value = '';
+      input.classList.remove('shake');
+      document.getElementById('secretOverlay').classList.add('show');
+      input.focus();
+    }
+    function hideSecretPopup() {
+      document.getElementById('secretOverlay').classList.remove('show');
+      const sc = document.getElementById('secretCard');
+      if (sc) sc.focus();
+    }
+    document.getElementById('secretForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const input = document.getElementById('secretInput');
+      if (!input.value.trim()) { _secretMsg('코드를 입력해 주세요.'); input.focus(); return; }
+      if (!(window.crypto && crypto.subtle)) { _secretMsg('이 환경에서는 코드를 확인할 수 없어요. https 주소로 접속해 주세요.'); return; }
+      const id = SECRET_MAP[await _hashSecret(input.value)];
+      if (id) {
+        _secretMsg('열쇠가 맞았어요. 이동합니다…', true);
+        setTimeout(() => goTo('/trips/' + id), 350);
+      } else {
+        _secretMsg('맞지 않는 코드예요. 다시 확인해 주세요.');
+        input.classList.remove('shake'); void input.offsetWidth; input.classList.add('shake');
+        input.select();
+      }
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.getElementById('secretOverlay').classList.contains('show')) hideSecretPopup();
+    });
 
     /* 키 이미지가 실제로 로드되는지 확인 */
     function _probeImg(src) {
@@ -1607,6 +1694,32 @@ const tripConfig = Object.fromEntries(
       color: #fff;
       box-shadow: var(--shadow-brand);
     }
+
+    /* ══════════════════════════════
+       SECRET CODE
+    ══════════════════════════════ */
+    .key-card.secret:focus-visible { outline: 2px solid var(--lavender-500); outline-offset: 4px; }
+    .secret-input {
+      width: 100%; margin-top: var(--space-5);
+      padding: var(--space-3) var(--space-4);
+      border: 1.5px solid var(--lavender-300); border-radius: var(--radius-full);
+      background: var(--color-surface); color: var(--color-text-primary);
+      font-family: var(--font-heading); font-size: 16px; /* 16px 미만이면 iOS가 확대한다 */
+      text-align: center; letter-spacing: 0.08em;
+    }
+    .secret-input:focus { outline: none; border-color: var(--lavender-500); box-shadow: var(--shadow-brand); }
+    .secret-input.shake { animation: secretShake 0.32s ease-in-out; }
+    @keyframes secretShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+    .secret-msg {
+      min-height: 1.4em; margin-top: var(--space-2);
+      font-size: var(--text-xs); color: #B3261E; line-height: var(--leading-normal);
+    }
+    .secret-msg.ok { color: var(--lavender-600); }
+    @media (prefers-reduced-motion: reduce) { .secret-input.shake { animation: none; } }
 
     /* ══════════════════════════════
        TOAST

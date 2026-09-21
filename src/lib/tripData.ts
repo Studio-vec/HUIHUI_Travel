@@ -69,6 +69,11 @@ export interface TripData {
   operatorNote: { avatar: string; name: string; text: string };
   seedTips: TripTip[];
   places: TripPlace[];
+  /**
+   * 비밀코드 여행지. 값이 있으면 홈·갤러리·게임·사이트맵 목록에 나오지 않고 검색엔진에도 색인되지 않는다.
+   * 홈 맨 끝 "비밀코드" 카드에서 이 코드를 입력해야 /trips/<id>로 연결된다.
+   */
+  secretCode?: string;
   /** Homepage key-card display order (defaults to array order if omitted) */
   no?: number;
   /** Short Korean place name shown on the homepage key card */
