@@ -13,10 +13,29 @@ const allTrips = Object.values(tripModules)
   .map((mod) => mod.default)
   .sort((a, b) => (a.no ?? 0) - (b.no ?? 0));
 
+/* 도·시 단위 태그가 제각각이라 필터용 큰 권역으로 묶는다 */
+function regionOf(tag: string): string {
+  if (/강원/.test(tag)) return '강원';
+  if (/서울|경기|인천/.test(tag)) return '수도권';
+  if (/대전|세종|충/.test(tag)) return '충청';
+  if (/전라|광주|전북|전남/.test(tag)) return '전라';
+  if (/경상|부산|대구|울산|경북|경남/.test(tag)) return '경상';
+  if (/제주/.test(tag)) return '제주';
+  return tag;
+}
+
 const tripConfig = Object.fromEntries(
   allTrips.map((t, idx) => [
     t.id,
-    { no: t.no ?? idx + 1, nameKo: t.shortNameKo || t.title, tagline: t.tagline || '' },
+    {
+      no: t.no ?? idx + 1,
+      nameKo: t.shortNameKo || t.title,
+      tagline: t.tagline || '',
+      region: regionOf(t.tags[0] || ''),
+      nights: t.tags[t.tags.length - 1] || '',
+      theme: String(t.tags[1] || '').replace(/^\P{L}+/u, ''),
+      loc: t.locationLabel || '',
+    },
   ])
 );
 ---
@@ -41,6 +60,9 @@ const tripConfig = Object.fromEntries(
         직접 다녀온 국내 여행 코스를 공유합니다.<br>
         소소한 기억들
       </p>
+      <button class="hero-cta fade-up" type="button" onclick="ringBell()">
+        <span aria-hidden="true">🛎</span> 오늘의 여행지 추천 받기
+      </button>
     </div>
   </section>
 
@@ -49,6 +71,9 @@ const tripConfig = Object.fromEntries(
     <span class="section-label-text" id="sectionLabel">여행 코스</span>
     <div class="section-label-line"></div>
   </div>
+
+  <!-- ── FILTER ── -->
+  <div class="filter-bar" id="filterBar" role="group" aria-label="여행 코스 필터"></div>
 
   <!-- ── KEY GRID ── -->
   <section class="grid-section">
@@ -697,12 +722,13 @@ const tripConfig = Object.fromEntries(
       const cl      = 'key-card' + (s !== 'open' ? ' ' + s : '');
       const isKo    = _currentLang() === 'ko';
       const label   = isKo ? trip.nameKo : trip.nameEn;
-      const nameCls = s === 'coming-soon' ? 'card-name coming-soon' : 'card-name';
+      const nameCls = s === 'coming-soon' ? 'card-name coming-soon' : 'card-name' + (label.length > 5 ? ' long' : '');
+      const metaTxt = s === 'coming-soon' ? '준비 중' : [trip.loc, trip.nights].filter(Boolean).join(' · ');
       let keyHTML   = '';
       if      (s === 'open')        keyHTML = `<div class="card-key-img">${_keyImgHTML(trip, i)}</div>`;
       else if (s === 'reserved')    keyHTML = `<div class="card-key-img">${_reservedSVG(trip.no)}</div>`;
       else if (s === 'coming-soon') keyHTML = `<div class="card-key-img">${_comingSoonSVG(trip.no)}</div>`;
-      return `<div class="${cl}" data-trip-idx="${i}"><div class="card-3d">${_cardBgSVG(i)}<div class="${nameCls}">${_nameTagSVG(i)}<span>${label}</span></div>${keyHTML}</div></div>`;
+      return `<div class="${cl}" data-trip-idx="${i}"><div class="card-3d">${_cardBgSVG(i)}<div class="${nameCls}">${_nameTagSVG(i)}<span>${label}</span></div>${keyHTML}</div><div class="card-meta">${metaTxt}</div></div>`;
     }
 
     function _attachCardClicks() {
@@ -763,12 +789,66 @@ const tripConfig = Object.fromEntries(
         no:      cfg.no      || (idx + 1),
         key:     `/assets/keys/${slug}.webp`,
         tagline: cfg.tagline || '',
+        region:  cfg.region  || '',
+        nights:  cfg.nights  || '',
+        theme:   cfg.theme   || '',
+        loc:     cfg.loc     || '',
       }));
     }
 
+    /* ── FILTER (기간 · 지역 · 검색어) ── */
+    const FILTER = { nights: '', region: '', q: '' };
+    const REGION_ORDER = ['수도권', '강원', '충청', '전라', '경상', '제주'];
+
+    function _matches(t) {
+      if (FILTER.nights && t.nights !== FILTER.nights) return false;
+      if (FILTER.region && t.region !== FILTER.region) return false;
+      if (FILTER.q) {
+        const hay = (t.nameKo + ' ' + t.loc + ' ' + t.theme + ' ' + t.region + ' ' + t.nameEn).toLowerCase();
+        if (!hay.includes(FILTER.q.toLowerCase())) return false;
+      }
+      return true;
+    }
+
+    function _renderFilters() {
+      const bar = document.getElementById('filterBar');
+      const uniq = (arr) => [...new Set(arr.filter(Boolean))];
+      const group = (key, label, values) => `
+        <div class="filter-row" data-group="${key}">
+          <span class="filter-label">${label}</span>
+          <button type="button" class="fchip" data-v="" aria-pressed="${FILTER[key] === ''}">전체</button>
+          ${values.map(v => `<button type="button" class="fchip" data-v="${v}" aria-pressed="${FILTER[key] === v}">${v}</button>`).join('')}
+        </div>`;
+      bar.innerHTML =
+        group('nights', '기간', uniq(TRIPS.map(t => t.nights)).sort()) +
+        group('region', '지역', uniq(TRIPS.map(t => t.region)).sort((a, b) => (REGION_ORDER.indexOf(a) + 1 || 99) - (REGION_ORDER.indexOf(b) + 1 || 99))) +
+        '<p class="filter-count" id="filterCount" aria-live="polite"></p>';
+    }
+
+    document.addEventListener('click', (e) => {
+      const chip = e.target.closest('.fchip');
+      if (!chip) return;
+      const key = chip.closest('.filter-row').dataset.group;
+      FILTER[key] = chip.dataset.v;
+      _renderFilters();
+      _renderGrid();
+    });
+
+    function resetFilters() {
+      FILTER.nights = ''; FILTER.region = ''; FILTER.q = '';
+      const si = document.getElementById('hhNavSearch'); if (si) si.value = '';
+      _renderFilters(); _renderGrid();
+    }
+    /* 내비게이션 검색창이 홈에서도 코스를 걸러 준다 */
+    window.filterBySearch = function (v) { FILTER.q = (v || '').trim(); _renderGrid(); };
+
     function _renderGrid() {
-      document.getElementById('keyGrid').innerHTML =
-        TRIPS.map((t, i) => _renderCard(t, i)).join('');
+      const rows = TRIPS.map((t, i) => ({ t, i })).filter(({ t }) => _matches(t));
+      document.getElementById('keyGrid').innerHTML = rows.length
+        ? rows.map(({ t, i }) => _renderCard(t, i)).join('')
+        : `<div class="filter-empty"><p>조건에 맞는 코스가 아직 없어요.</p><button type="button" class="fchip" onclick="resetFilters()">필터 초기화</button></div>`;
+      const cnt = document.getElementById('filterCount');
+      if (cnt) cnt.textContent = rows.length === TRIPS.length ? `전체 ${rows.length}개 코스` : `${TRIPS.length}개 중 ${rows.length}개 코스`;
       _attachCardClicks();
     }
 
@@ -789,6 +869,7 @@ const tripConfig = Object.fromEntries(
         const exists = await _probeImg(trip.key);
         if (!exists) { trip.status = 'coming-soon'; trip.key = null; }
       }));
+      _renderFilters();
       _renderGrid();
       _attachLongPress();
     }
@@ -913,10 +994,13 @@ const tripConfig = Object.fromEntries(
     }
     .key-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: clamp(var(--space-3), 1.5vw, var(--space-5));
       max-width: 1148px;
       margin: 0 auto;
+    }
+    @media (min-width: 480px) {
+      .key-grid { grid-template-columns: repeat(3, 1fr); }
     }
     @media (min-width: 600px) {
       .key-grid { grid-template-columns: repeat(4, 1fr); }
@@ -924,6 +1008,55 @@ const tripConfig = Object.fromEntries(
     @media (min-width: 860px) {
       .key-grid { grid-template-columns: repeat(5, 1fr); }
     }
+
+    /* ── Filter ── */
+    .filter-bar {
+      max-width: 1148px; margin: 0 auto var(--space-5);
+      padding: 0 clamp(var(--space-5), 5vw, var(--space-12));
+      display: flex; flex-direction: column; gap: var(--space-2);
+    }
+    .filter-row {
+      display: flex; align-items: center; gap: var(--space-2);
+      overflow-x: auto; scrollbar-width: none; padding: 2px 0;
+    }
+    .filter-row::-webkit-scrollbar { display: none; }
+    .filter-label {
+      flex: none; min-width: 34px;
+      font-family: var(--font-heading); font-size: var(--text-xs); font-weight: 600;
+      letter-spacing: var(--tracking-wider); color: var(--color-text-tertiary);
+    }
+    .fchip {
+      flex: none; min-height: 44px; padding: 0 var(--space-4);
+      border-radius: var(--radius-full); border: 1.5px solid var(--color-border-brand);
+      background: rgba(255,255,255,0.7); color: var(--color-text-secondary);
+      font-family: var(--font-heading); font-size: var(--text-sm); font-weight: 500;
+      cursor: pointer; white-space: nowrap;
+      transition: background var(--dur-fast), color var(--dur-fast), border-color var(--dur-fast);
+    }
+    .fchip:hover { border-color: var(--lavender-400); color: var(--lavender-600); }
+    .fchip[aria-pressed="true"] { background: var(--lavender-500); border-color: var(--lavender-500); color: #fff; }
+    .filter-count {
+      font-size: var(--text-xs); color: var(--color-text-tertiary);
+      font-family: var(--font-heading); letter-spacing: var(--tracking-wide); margin-top: var(--space-1);
+    }
+    .filter-empty {
+      grid-column: 1 / -1; text-align: center; padding: var(--space-12) 0;
+      color: var(--color-text-secondary); display: flex; flex-direction: column; align-items: center; gap: var(--space-4);
+    }
+
+    /* ── hero CTA ── */
+    .hero-cta {
+      align-self: flex-start; width: fit-content;
+      margin-top: var(--space-6); min-height: 44px; padding: 0 var(--space-5);
+      display: inline-flex; align-items: center; gap: var(--space-2);
+      border-radius: var(--radius-full); border: 1.5px solid var(--lavender-300);
+      background: rgba(255,255,255,0.75); color: var(--lavender-600);
+      font-family: var(--font-heading); font-size: var(--text-sm); font-weight: 600;
+      cursor: pointer; box-shadow: var(--shadow-sm);
+      transition: background var(--dur-fast), transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast);
+    }
+    .hero-cta:hover { background: #fff; box-shadow: var(--shadow-brand); transform: translateY(-1px); }
+    .hero-cta:active { transform: scale(.98); }
 
     /* ── Key Card ── */
     .key-card {
@@ -954,6 +1087,13 @@ const tripConfig = Object.fromEntries(
       z-index: 3;
     }
     .card-name-img { display: block; width: 100%; height: auto; }
+    .card-name.long span { font-size: clamp(12px, 2.4vw, 17px); letter-spacing: 0; }
+    .card-meta {
+      margin-top: var(--space-2); text-align: center;
+      font-family: var(--font-heading); font-size: var(--text-xs); font-weight: 500;
+      color: var(--color-text-secondary); letter-spacing: var(--tracking-wide);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
     .card-name span {
       position: absolute; inset: 0;
       display: flex; align-items: center; justify-content: center;
@@ -1140,6 +1280,9 @@ const tripConfig = Object.fromEntries(
       align-items: center;
       justify-content: center;
       transition: box-shadow var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out);
+    }
+    @media (max-width: 599px) {
+      .bell-wrapper { width: 48px; height: 48px; bottom: 16px; right: 16px; }
     }
     .bell-wrapper:hover {
       background: rgba(255, 255, 255, 0.88);
