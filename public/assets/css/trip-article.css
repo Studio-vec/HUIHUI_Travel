@@ -189,3 +189,8 @@
     font-size: var(--text-3xl);
   }
 }
+
+.ta-closed {
+  font-size: var(--text-xs); font-weight: 600; padding: 2px 8px; border-radius: 999px;
+  color: #8A2A1B; background: #FFE4DF; border: 1px solid #F6C3BA; white-space: nowrap;
+}

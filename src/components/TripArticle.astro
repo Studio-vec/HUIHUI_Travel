@@ -42,6 +42,9 @@ const days = Array.from({ length: dayCount }, (_, i) => i + 1).map((day) => ({
             <span class="ta-place-time">{p.time}</span>
             <h3 class="ta-place-name">{p.name}</h3>
             <span class={`place-tag tag-${p.theme_id}`}>{p.theme}</span>
+            {p.closedDays && p.closedDays.length > 0 && (
+              <span class="ta-closed">휴무 {p.closedDays.map((d) => '일월화수목금토'[d]).join('·')}</span>
+            )}
           </div>
           {p.desc && p.desc.map((para) => <p class="ta-place-desc">{para}</p>)}
           {p.details && p.details.length > 0 && (

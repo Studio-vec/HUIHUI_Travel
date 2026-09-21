@@ -98,6 +98,14 @@ const _body = `
                     <span class="date-static">{{ endDate }}</span>
                 </div>
             </div>
+            <div v-if="closedList.length" class="closed-banner" role="status">
+                <div class="closed-banner-title">⚠ 이 날짜엔 쉬는 곳이 {{ closedList.length }}곳 있어요</div>
+                <ul class="closed-banner-list">
+                    <li v-for="c in closedList" :key="c.id">Day {{ c.day }} ({{ c.wd }}) · {{ c.name }}</li>
+                </ul>
+                <div class="closed-banner-hint">출발일을 바꾸면 바로 다시 확인해요.</div>
+            </div>
+            <div v-else-if="hasClosedData" class="closed-ok" role="status">✓ 확인된 휴무 정보 기준으로, 이 날짜엔 쉬는 곳이 없어요</div>
             <div v-if="currentPlace" class="now-card">
                 <div class="now-eyebrow"><span class="now-dot"></span>지금 여기</div>
                 <div>
@@ -137,6 +145,7 @@ const _body = `
                             <div class="place-name-row">
                                 <span class="place-name">{{ p.name }}</span>
                                 <span class="place-tag" :class="'tag-' + p.theme_id">{{ p.theme }}</span>
+                                <span v-if="isClosed(p, dIdx)" class="closed-badge">휴무일</span>
                             </div>
                             <div class="place-tip">{{ p.tip }}</div>
                         </div>

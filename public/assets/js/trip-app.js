@@ -59,6 +59,14 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
                 return d.format('MM.DD') + ' (' + DAY_LABELS[d.day()] + ')';
             });
 
+            /* 선택한 출발일 기준으로 쉬는 곳 찾기 */
+            const weekdayOf = (dIdx) => dayjs(startDate.value).add(dIdx, 'day').day();
+            const isClosed = (p, dIdx) => !!(p.closedDays && p.closedDays.includes(weekdayOf(dIdx)));
+            const closedList = computed(() => schedule.value.flatMap((d, i) =>
+                d.places.filter(p => isClosed(p, i)).map(p => ({ id: p.id, name: p.name, day: i + 1, wd: DAY_LABELS[weekdayOf(i)] }))
+            ));
+            const hasClosedData = computed(() => schedule.value.some(d => d.places.some(p => p.closedDays && p.closedDays.length)));
+
             const getFormattedDate = (offset) =>
                 dayjs(startDate.value).add(offset, 'day').format('MM.DD');
 
@@ -177,6 +185,7 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
 
             return {
                 startDate, endDate, schedule, getFormattedDate,
+                isClosed, closedList, hasClosedData,
                 currentPlace, allPhotos, clickUpload, uploadPhoto,
                 isArtPlaying, playArt, showReport, saveImage, collagePieces,
                 isVisited, toggleVisited,
