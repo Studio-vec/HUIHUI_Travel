@@ -10,7 +10,7 @@
   --lavender-200: #D8C8FF;
   --lavender-300: #C0A8FF;   /* main brand */
   --lavender-400: #A68EE8;
-  --lavender-500: #8B6FD0;
+  --lavender-500: #7B5CC4;   /* 텍스트·버튼 대비 4.5:1 확보를 위해 살짝 진하게 */
   --lavender-600: #6B4FB4;
   --lavender-700: #4E3490;
 
@@ -51,7 +51,7 @@
 
   --color-text-primary:   #2A1F48;
   --color-text-secondary: #6B5E8A;
-  --color-text-tertiary:  #9B90B4;
+  --color-text-tertiary:  #746A91;
   --color-text-inverse:   #FFFFFF;
 
   --color-success: #7AC97A;
@@ -59,11 +59,11 @@
   --color-error:   #E87878;
 
   /* ── TYPOGRAPHY ── */
-  --font-display:  'Cormorant Garamond', Georgia, serif;
+  --font-display:  'Cormorant Garamond', 'Noto Serif KR', Georgia, serif;
   --font-heading:  'DM Sans', 'Noto Sans KR', sans-serif;
   --font-body:     'Noto Sans KR', sans-serif;
 
-  --text-xs:   11px;
+  --text-xs:   12px;
   --text-sm:   13px;
   --text-base: 15px;
   --text-md:   17px;
@@ -133,3 +133,24 @@
   --z-toast:   300;
   --z-fixed:   400;
 }
+
+/* ============================================================
+   Global a11y / typography rules
+   ============================================================ */
+/* 영문 이탤릭은 유지하되, 이탤릭 폰트가 없는 한글은 억지로 기울이지 않는다 */
+html { font-synthesis-style: none; }
+
+/* 키보드 포커스는 항상 보이게 */
+:focus-visible { outline: 3px solid var(--lavender-500); outline-offset: 3px; }
+a:focus-visible, button:focus-visible, [role="button"]:focus-visible, summary:focus-visible {
+  outline: 3px solid var(--lavender-500) !important; outline-offset: 3px;
+}
+
+/* 본문 바로가기 */
+.skip-link {
+  position: fixed; left: 16px; top: -64px; z-index: 1000;
+  padding: 10px 16px; border-radius: var(--radius-full);
+  background: var(--lavender-600); color: #fff; font: 600 14px/1.2 var(--font-heading);
+  text-decoration: none; transition: top .15s var(--ease-out);
+}
+.skip-link:focus { top: 12px; }

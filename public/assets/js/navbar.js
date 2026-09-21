@@ -18,9 +18,10 @@
   display: flex; align-items: center; gap: 24px;
 }
 .hh-navbar-logo {
+  display: inline-flex; align-items: center; min-height: 44px;
   font-family: 'DM Serif Display','Cormorant Garamond',Georgia,serif;
   font-size: 20px; font-style: italic; font-weight: 600;
-  color: #8B6FD0; text-decoration: none; flex-shrink: 0;
+  color: #7B5CC4; text-decoration: none; flex-shrink: 0;
 }
 .hh-navbar-links { display: flex; list-style: none; gap: 4px; }
 .hh-navbar-links a {
@@ -29,14 +30,14 @@
   transition: color 150ms, background 150ms;
 }
 .hh-navbar-links a:hover,
-.hh-navbar-links a.active { color: #8B6FD0; background: rgba(139,111,208,0.08); }
+.hh-navbar-links a.active { color: #7B5CC4; background: rgba(139,111,208,0.08); }
 .hh-navbar-search {
   flex: 1; display: flex; justify-content: flex-end; align-items: center;
 }
 .hh-search-inner { position: relative; display: inline-flex; align-items: center; }
 .hh-search-icon {
   position: absolute; left: 13px; pointer-events: none;
-  color: #8B6FD0; display: flex; align-items: center;
+  color: #7B5CC4; display: flex; align-items: center;
 }
 .hh-navbar-search input {
   font-family: inherit; font-size: 12px; color: #6B5E8A;
@@ -45,7 +46,7 @@
   padding: 7px 18px 7px 34px; outline: none; width: clamp(130px,20vw,200px);
   transition: border-color .2s, background .2s;
 }
-.hh-navbar-search input::placeholder { color: #b0a8c0; }
+.hh-navbar-search input::placeholder { color: #746A91; }
 .hh-navbar-search input:focus {
   background: rgba(255,255,255,0.95); border-color: rgba(139,111,208,0.5);
 }
@@ -54,7 +55,7 @@
   display: flex; align-items: center; flex-shrink: 0; margin-left: 8px;
 }
 .hh-login-btn {
-  font-size: 12px; font-weight: 600; color: #8B6FD0;
+  font-size: 12px; font-weight: 600; color: #7B5CC4;
   text-decoration: none; padding: 7px 16px;
   border: 1.5px solid rgba(139,111,208,0.4);
   border-radius: 999px; white-space: nowrap;
@@ -71,8 +72,8 @@
 .hh-user-btn:hover { background: rgba(139,111,208,0.07); border-color: rgba(139,111,208,0.5); }
 .hh-avatar {
   width: 26px; height: 26px; border-radius: 50%;
-  background: linear-gradient(135deg, #C0A8FF, #8B6FD0);
-  color: white; font-size: 11px; font-weight: 700;
+  background: linear-gradient(135deg, #C0A8FF, #7B5CC4);
+  color: white; font-size: 12px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
@@ -84,9 +85,9 @@
 .hh-hamburger {
   display: none; flex-shrink: 0; margin-left: 4px;
   background: none; border: none; cursor: pointer;
-  width: 36px; height: 36px; border-radius: 10px;
+  width: 44px; height: 44px; border-radius: 12px;
   align-items: center; justify-content: center;
-  color: #8B6FD0; transition: background .15s;
+  color: #7B5CC4; transition: background .15s;
 }
 .hh-hamburger:hover { background: rgba(139,111,208,0.08); }
 /* ── 모바일 메뉴 ── */
@@ -105,11 +106,11 @@
   transition: color .15s, background .15s;
   background: none; border: none; cursor: pointer; width: 100%; text-align: left;
 }
-.hh-mm-item:hover  { color: #8B6FD0; background: rgba(139,111,208,0.08); }
-.hh-mm-item.active { color: #8B6FD0; font-weight: 600; }
+.hh-mm-item:hover  { color: #7B5CC4; background: rgba(139,111,208,0.08); }
+.hh-mm-item.active { color: #7B5CC4; font-weight: 600; }
 .hh-mm-divider { border: none; border-top: 1px solid rgba(139,111,208,0.12); margin: 6px 0; }
 .hh-mm-logout {
-  font-size: 13px; color: #9a8ab0; padding: 8px 14px; border-radius: 12px;
+  font-size: 13px; color: #746A91; padding: 8px 14px; border-radius: 12px;
   background: none; border: none; cursor: pointer; width: 100%; text-align: left;
   transition: color .15s, background .15s;
 }
@@ -117,7 +118,7 @@
 /* ── PC/모바일 화면 전환 ── */
 .hh-view-btn {
   display: flex; align-items: center; gap: 6px; flex-shrink: 0;
-  font-family: inherit; font-size: 12px; font-weight: 600; color: #8B6FD0;
+  font-family: inherit; font-size: 12px; font-weight: 600; color: #7B5CC4;
   background: none; border: 1.5px solid rgba(139,111,208,0.3);
   border-radius: 999px; padding: 6px 12px; cursor: pointer; white-space: nowrap;
   transition: background .15s, border-color .15s;
@@ -130,7 +131,7 @@
 }
 .hh-lang-btn {
   display: flex; align-items: center; gap: 5px;
-  font-size: 12px; font-weight: 600; color: #8B6FD0;
+  font-size: 12px; font-weight: 600; color: #7B5CC4;
   background: none; border: 1.5px solid rgba(139,111,208,0.3);
   border-radius: 999px; padding: 6px 12px; cursor: pointer;
   transition: background .15s, border-color .15s; white-space: nowrap;
@@ -156,8 +157,8 @@
   transition: color .13s, background .13s;
   border: none; background: none; width: 100%; text-align: left;
 }
-.hh-lang-opt:hover { color: #8B6FD0; background: rgba(139,111,208,0.08); }
-.hh-lang-opt.selected { color: #8B6FD0; font-weight: 700; }
+.hh-lang-opt:hover { color: #7B5CC4; background: rgba(139,111,208,0.08); }
+.hh-lang-opt.selected { color: #7B5CC4; font-weight: 700; }
 /* 모바일 메뉴 안 언어 선택 */
 .hh-mm-lang-row {
   display: flex; gap: 6px; padding: 8px 10px; flex-wrap: wrap;
@@ -168,8 +169,8 @@
   padding: 5px 14px; cursor: pointer; background: none;
   transition: color .13s, background .13s, border-color .13s;
 }
-.hh-mm-lang-chip:hover { color: #8B6FD0; background: rgba(139,111,208,0.08); }
-.hh-mm-lang-chip.selected { color: #8B6FD0; background: rgba(139,111,208,0.1); border-color: rgba(139,111,208,0.6); font-weight: 700; }
+.hh-mm-lang-chip:hover { color: #7B5CC4; background: rgba(139,111,208,0.08); }
+.hh-mm-lang-chip.selected { color: #7B5CC4; background: rgba(139,111,208,0.1); border-color: rgba(139,111,208,0.6); font-weight: 700; }
 @media (max-width: 960px) {
   .hh-navbar-search { display: none; }
 }
@@ -400,7 +401,7 @@
         if (mobileUser) {
           mobileUser.innerHTML = `
             <a class="hh-mm-item" href="/auth/profile">
-              <span class="hh-avatar" style="width:22px;height:22px;font-size:11px;">${initial}</span>
+              <span class="hh-avatar" style="width:22px;height:22px;font-size: 12px;">${initial}</span>
               ${nick}님의 페이지
             </a>
             <button class="hh-mm-logout" id="hhMobileLogout">로그아웃</button>`;

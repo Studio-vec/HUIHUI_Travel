@@ -72,9 +72,9 @@
 }
 
 .ta-note-text {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: var(--text-lg);
+  font-family: var(--font-body);
+  font-style: normal;
+  font-size: var(--text-md);
   line-height: var(--leading-loose);
   color: var(--color-text-primary);
   margin: 0 0 var(--space-2);

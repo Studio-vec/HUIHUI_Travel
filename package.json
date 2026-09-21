@@ -3,7 +3,9 @@
   "type": "module",
   "version": "0.1.0",
   "scripts": {
+    "predev": "node scripts/optimize_keys.mjs",
     "dev": "astro dev",
+    "prebuild": "node scripts/optimize_keys.mjs",
     "build": "astro build",
     "preview": "astro preview"
   },

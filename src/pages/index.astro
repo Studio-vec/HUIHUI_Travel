@@ -25,6 +25,7 @@ const tripConfig = Object.fromEntries(
   <link rel="stylesheet" href="/assets/css/tokens.css"/>
   </Fragment>
   <Navbar />
+  <main id="main">
 
 
   <!-- ── NAVBAR ── -->
@@ -281,7 +282,7 @@ const tripConfig = Object.fromEntries(
   <script is:inline>
     /* ════════════════════════════════════════════
        TRIP CONFIG
-       키 이미지(assets/keys/[slug].png)가 존재하면 → 오픈
+       키 이미지(assets/keys/[slug].png → 빌드 시 .webp 자동 생성)가 존재하면 → 오픈
        키 이미지가 없으면 → 자동으로 준비중 처리
     ════════════════════════════════════════════ */
     const TRIP_CONFIG = window.__TRIP_CONFIG__;
@@ -570,8 +571,8 @@ const tripConfig = Object.fromEntries(
 <g filter="url(#cb_f0_${i})">
   <g clip-path="url(#cb_cp_${i})"><rect x="38.6885" y="14.2175" width="123.805" height="41.2683" rx="20.6341" fill="url(#cb_g4_${i})"/></g>
 </g>
-<circle cx="49.0055" cy="34.8516" r="1.71951" fill="#8B6FD0"/>
-<circle cx="153.896" cy="34.8516" r="1.71951" fill="#8B6FD0"/>
+<circle cx="49.0055" cy="34.8516" r="1.71951" fill="#7B5CC4"/>
+<circle cx="153.896" cy="34.8516" r="1.71951" fill="#7B5CC4"/>
 <defs>
 <filter id="cb_f0_${i}" x="38.6885" y="14.2175" width="123.805" height="43.2683" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"/>
@@ -583,7 +584,7 @@ const tripConfig = Object.fromEntries(
 </filter>
 <clipPath id="cb_cp_${i}"><rect x="38.6885" y="14.2175" width="123.805" height="41.2683" rx="20.6341"/></clipPath>
 <linearGradient id="cb_g0_${i}" x1="299.154" y1="294.435" x2="299.154" y2="549.783" gradientUnits="userSpaceOnUse">
-<stop stop-color="#8B6FD0"/><stop offset="1" stop-color="#FFF8EB"/></linearGradient>
+<stop stop-color="#7B5CC4"/><stop offset="1" stop-color="#FFF8EB"/></linearGradient>
 <linearGradient id="cb_g1_${i}" x1="99.7733" y1="285.041" x2="99.7732" y2="254.949" gradientUnits="userSpaceOnUse">
 <stop stop-color="white"/><stop offset="1" stop-color="#A68EE8"/></linearGradient>
 <linearGradient id="cb_g2_${i}" x1="99.7317" y1="0" x2="99.7317" y2="254.488" gradientUnits="userSpaceOnUse">
@@ -599,8 +600,8 @@ const tripConfig = Object.fromEntries(
     function _nameTagSVG(i) {
       return `<svg class="card-name-img" viewBox="0 0 124 44" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g filter="url(#nt_f_${i})"><rect width="123.805" height="41.2683" rx="20.6341" fill="url(#nt_g_${i})"/></g>
-<circle cx="10.317" cy="20.6341" r="1.71951" fill="#8B6FD0"/>
-<circle cx="115.207" cy="20.6341" r="1.71951" fill="#8B6FD0"/>
+<circle cx="10.317" cy="20.6341" r="1.71951" fill="#7B5CC4"/>
+<circle cx="115.207" cy="20.6341" r="1.71951" fill="#7B5CC4"/>
 <defs>
 <filter id="nt_f_${i}" x="0" y="0" width="123.805" height="43.2683" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"/>
@@ -636,13 +637,13 @@ const tripConfig = Object.fromEntries(
       return `<svg style="width:74%;height:98%;transform:translateY(8%)" viewBox="0 0 276.91 392" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="res_g52_${no}" x1="137.66" y1="0" x2="137.66" y2="375.57" gradientTransform="translate(276.88) rotate(-180) scale(1 -1) skewX(-5.61)" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#F5EDD8"/><stop offset="1" stop-color="#8B6FD0"/>
+      <stop offset="0" stop-color="#F5EDD8"/><stop offset="1" stop-color="#7B5CC4"/>
     </linearGradient>
     <linearGradient id="res_g9_${no}" x1="100" y1="0" x2="100" y2="392" gradientTransform="translate(38.49) skewX(-5.61)" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#FFF8EB"/>
     </linearGradient>
     <linearGradient id="res_g18_${no}" x1="100.28" y1="86.91" x2="100.28" y2="255.43" gradientTransform="translate(38.49) skewX(-5.61)" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#fdf5ec"/><stop offset="1" stop-color="#8B6FD0"/>
+      <stop offset="0" stop-color="#fdf5ec"/><stop offset="1" stop-color="#7B5CC4"/>
     </linearGradient>
   </defs>
   <path fill="url(#res_g52_${no})" d="M238.41,0l38.49,375.57h-56.17c-2.38-23.19-23.93-41.99-48.13-41.99s-41.9,18.8-39.52,41.99h-56.17S38.41,0,38.41,0h200Z"/>
@@ -654,19 +655,20 @@ const tripConfig = Object.fromEntries(
     }
 
     const _placeholderKey = `<svg style="width:60%;height:70%" viewBox="0 0 80 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="40" cy="38" r="30" stroke="#8B6FD0" stroke-width="2.5" fill="rgba(192,168,255,0.15)"/>
+<circle cx="40" cy="38" r="30" stroke="#7B5CC4" stroke-width="2.5" fill="rgba(192,168,255,0.15)"/>
 <circle cx="40" cy="38" r="20" stroke="#A68EE8" stroke-width="1.8" fill="rgba(237,229,255,0.25)"/>
-<circle cx="40" cy="38" r="8" fill="rgba(139,111,208,0.25)" stroke="#8B6FD0" stroke-width="1.5"/>
-<rect x="37" y="68" width="6" height="100" rx="3" fill="rgba(139,111,208,0.35)" stroke="#8B6FD0" stroke-width="1.5"/>
-<rect x="43" y="110" width="12" height="8" rx="2" fill="rgba(139,111,208,0.45)" stroke="#8B6FD0" stroke-width="1.2"/>
-<rect x="43" y="126" width="8"  height="8" rx="2" fill="rgba(139,111,208,0.45)" stroke="#8B6FD0" stroke-width="1.2"/>
-<rect x="43" y="142" width="12" height="8" rx="2" fill="rgba(139,111,208,0.45)" stroke="#8B6FD0" stroke-width="1.2"/>
+<circle cx="40" cy="38" r="8" fill="rgba(139,111,208,0.25)" stroke="#7B5CC4" stroke-width="1.5"/>
+<rect x="37" y="68" width="6" height="100" rx="3" fill="rgba(139,111,208,0.35)" stroke="#7B5CC4" stroke-width="1.5"/>
+<rect x="43" y="110" width="12" height="8" rx="2" fill="rgba(139,111,208,0.45)" stroke="#7B5CC4" stroke-width="1.2"/>
+<rect x="43" y="126" width="8"  height="8" rx="2" fill="rgba(139,111,208,0.45)" stroke="#7B5CC4" stroke-width="1.2"/>
+<rect x="43" y="142" width="12" height="8" rx="2" fill="rgba(139,111,208,0.45)" stroke="#7B5CC4" stroke-width="1.2"/>
 </svg>`;
 
     function _onKeyImgError(img) { img.outerHTML = _placeholderKey; }
 
-    function _keyImgHTML(trip) {
-      if (trip.key) return `<img src="${trip.key}" style="margin-top:35px" alt="key" onerror="_onKeyImgError(this)" />`;
+    function _keyImgHTML(trip, i) {
+      const lazy = i >= 10 ? 'loading="lazy" ' : '';
+      if (trip.key) return `<img src="${trip.key}" ${lazy}width="416" height="1077" style="margin-top:35px" alt="${trip.nameKo} 열쇠" onerror="_onKeyImgError(this)" />`;
       return _placeholderKey;
     }
 
@@ -697,7 +699,7 @@ const tripConfig = Object.fromEntries(
       const label   = isKo ? trip.nameKo : trip.nameEn;
       const nameCls = s === 'coming-soon' ? 'card-name coming-soon' : 'card-name';
       let keyHTML   = '';
-      if      (s === 'open')        keyHTML = `<div class="card-key-img">${_keyImgHTML(trip)}</div>`;
+      if      (s === 'open')        keyHTML = `<div class="card-key-img">${_keyImgHTML(trip, i)}</div>`;
       else if (s === 'reserved')    keyHTML = `<div class="card-key-img">${_reservedSVG(trip.no)}</div>`;
       else if (s === 'coming-soon') keyHTML = `<div class="card-key-img">${_comingSoonSVG(trip.no)}</div>`;
       return `<div class="${cl}" data-trip-idx="${i}"><div class="card-3d">${_cardBgSVG(i)}<div class="${nameCls}">${_nameTagSVG(i)}<span>${label}</span></div>${keyHTML}</div></div>`;
@@ -759,7 +761,7 @@ const tripConfig = Object.fromEntries(
         status:  'open',
         url:     `/trips/${slug}`,
         no:      cfg.no      || (idx + 1),
-        key:     `/assets/keys/${slug}.png`,
+        key:     `/assets/keys/${slug}.webp`,
         tagline: cfg.tagline || '',
       }));
     }
@@ -804,6 +806,7 @@ const tripConfig = Object.fromEntries(
 
   <TripIndex trips={allTrips} />
 
+  </main>
   <Footer />
 
 <style is:global>
@@ -1229,7 +1232,7 @@ const tripConfig = Object.fromEntries(
       font-family: var(--font-display); font-style: italic; font-size: 1.4rem; color: white;
     }
     .rec-single-info { flex: 1; min-width: 0; }
-    .rec-single-no { font-size: 10px; color: var(--color-text-tertiary); letter-spacing: .12em; margin-bottom: 4px; }
+    .rec-single-no { font-size: 12px; color: var(--color-text-tertiary); letter-spacing: .12em; margin-bottom: 4px; }
     .rec-single-name {
       font-family: var(--font-display); font-style: italic;
       font-size: 2rem; color: var(--color-text-primary);

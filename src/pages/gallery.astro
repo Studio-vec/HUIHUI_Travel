@@ -29,6 +29,7 @@ const galleryDestinations = allTrips.map((t) => ({
   <link rel="stylesheet" href="/assets/css/tokens.css"/>
   </Fragment>
   <Navbar />
+  <main id="main">
 
 
 <div class="page-header">
@@ -233,7 +234,7 @@ async function renderKeyRack() {
 
   /* 키 이미지 존재 여부 병렬 체크 */
   const probeResults = await Promise.all(
-    DESTINATIONS.map(dest => _probeImg(`/assets/keys/${dest.id}.png`))
+    DESTINATIONS.map(dest => _probeImg(`/assets/keys/${dest.id}.webp`))
   );
 
   function makeKeyHtml(dest, i) {
@@ -252,7 +253,7 @@ async function renderKeyRack() {
       <div class="key-nametag">${dest.nameKo}</div>
       <div class="key-img-wrap">
         <div class="key-hook"></div>
-        <img class="key-img" src="/assets/keys/${dest.id}.png" alt="${dest.nameKo}">
+        <img class="key-img" src="/assets/keys/${dest.id}.webp" loading="lazy" alt="${dest.nameKo}">
       </div>
       <div class="key-status-dot"></div>
     </div>`;
@@ -598,7 +599,7 @@ renderKeyRack();
       text-align:center;
     }
     .page-eyebrow {
-      font-family:var(--font-heading); font-size:11px; font-weight:600;
+      font-family:var(--font-heading); font-size: 12px; font-weight:600;
       letter-spacing:0.16em; text-transform:uppercase;
       color:var(--lavender-500); margin-bottom:12px;
     }
@@ -651,7 +652,7 @@ renderKeyRack();
       display:flex; align-items:center; gap:6px;
     }
     .key-nametag::before, .key-nametag::after {
-      content:'·'; color:var(--lavender-400); font-size:10px;
+      content:'·'; color:var(--lavender-400); font-size: 12px;
     }
     .key-item.unvisited .key-nametag { color:var(--color-text-tertiary); }
 
@@ -1023,7 +1024,8 @@ renderKeyRack();
       title="여행 코스 전체 목록"
       desc="갤러리의 열쇠는 아래 코스와 연결됩니다. 각 코스에는 일자별 동선, 장소별 운영시간·메뉴·주차 정보, 그리고 직접 다녀오며 남긴 팁이 담겨 있습니다."
     />
-    <Footer />
+    </main>
+  <Footer />
   </div>
 
 </BaseLayout>

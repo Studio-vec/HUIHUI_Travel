@@ -3,9 +3,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Navbar from '../../components/Navbar.astro';
 
 ---
-<BaseLayout title="아이디 / 비밀번호 찾기 – HUIHUI Travel" noindex>
+<BaseLayout title="아이디 / 비밀번호 찾기 – HUIHUI Travel" noindex ads={false}>
 
   <Navbar />
+  <main id="main">
 
 <div class="login-stage">
 <div class="receipt">
@@ -278,4 +279,5 @@ import Navbar from '../../components/Navbar.astro';
   
 </style>
 
+</main>
 </BaseLayout>

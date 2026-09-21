@@ -22,10 +22,11 @@ const trips = Object.values(tripModules)
   title="404 — 없는 객실이에요 | HUIHUI Travel"
   description="찾으시는 페이지를 찾을 수 없습니다. 키카드를 태그하고 다른 여행지 객실로 이동해 보세요."
   noindex
+  ads={false}
 >
   <Navbar />
 
-  <main class="nf" id="nf" data-state="locked">
+  <main class="nf" id="main" data-state="locked">
     <!-- ───────── 호텔 복도 장면 ───────── -->
     <section class="stage" id="stage" role="group"
       aria-label="호텔 객실 문 일러스트. 키카드를 문 옆 리더기에 태그하면 문이 열립니다.">
@@ -47,7 +48,7 @@ const trips = Object.values(tripModules)
                 <div class="cloud c1"></div>
                 <div class="cloud c2"></div>
                 <svg class="plane" viewBox="0 0 48 24" aria-hidden="true">
-                  <path d="M2 14 L20 12 L34 2 L38 3 L30 12 L44 11 C47 11 47 14 44 14 L30 14 L38 22 L34 23 L20 14 Z" fill="#8B6FD0"/>
+                  <path d="M2 14 L20 12 L34 2 L38 3 L30 12 L44 11 C47 11 47 14 44 14 L30 14 L38 22 L34 23 L20 14 Z" fill="#7B5CC4"/>
                 </svg>
               </div>
               <div class="suitcase"><i></i><b></b></div>
@@ -482,9 +483,9 @@ const trips = Object.values(tripModules)
   }
   .tag::before { content: ''; position: absolute; left: 50%; top: -10px; width: 2px; height: 14px; background: var(--sand-500); transform: translateX(-50%); }
   .hole { position: absolute; left: 50%; top: 6px; width: 9px; height: 9px; border-radius: 50%; background: var(--sand-100); border: 2px solid var(--lavender-300); transform: translateX(-50%); }
-  .tno { display: block; font-family: var(--font-heading); font-size: 10px; font-weight: 600; letter-spacing: .12em; color: var(--lavender-500); }
+  .tno { display: block; font-family: var(--font-heading); font-size: 12px; font-weight: 600; letter-spacing: .12em; color: var(--lavender-500); }
   .tname { display: block; margin-top: 3px; font-size: var(--text-md); font-weight: 500; }
-  .tmeta { display: block; margin-top: 4px; font-size: 11px; color: var(--color-text-tertiary); }
+  .tmeta { display: block; margin-top: 4px; font-size: 12px; color: var(--color-text-tertiary); }
   .rack:not(.is-open) .tag { filter: grayscale(1); opacity: .45; }
   .rack.is-open .tag:hover { background: var(--lime-50); box-shadow: var(--shadow-lime); }
   .rack.is-open .tag {
@@ -524,7 +525,7 @@ const trips = Object.values(tripModules)
 
 <script>
   const $ = (id: string) => document.getElementById(id) as HTMLElement;
-  const nf = $('nf'), stage = $('stage'), card = $('card') as HTMLButtonElement, reader = $('reader'), slot = $('slot');
+  const nf = $('main'), stage = $('stage'), card = $('card') as HTMLButtonElement, reader = $('reader'), slot = $('slot');
   const rack = $('rack') as HTMLElement & { inert: boolean };
   const bell = $('bell'), say = $('say'), hint = $('hint'), reset = $('reset') as HTMLButtonElement, pathEl = $('req-path');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

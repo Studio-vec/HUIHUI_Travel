@@ -249,12 +249,13 @@ createTripApp({
 </script>
 `;
 ---
-<BaseLayout title={`${tripData.title} — HUIHUI Travel`} description={tripDescription}>
+<BaseLayout title={`${tripData.title} — HUIHUI Travel`} description={tripDescription} app>
   <Fragment slot="head">
   <link rel="stylesheet" href="/assets/css/trip.css">
   <link rel="stylesheet" href="/assets/css/trip-article.css">
   </Fragment>
   <Navbar />
+  <main id="main">
   <TripArticle data={tripData} />
   <Fragment set:html={_body} />
 
@@ -264,5 +265,6 @@ createTripApp({
     title="다른 여행 코스"
     desc={`${tripData.locationLabel} 코스를 보셨다면, 같은 방식으로 정리한 다른 지역 코스도 함께 살펴보세요.`}
   />
+  </main>
   <Footer />
 </BaseLayout>

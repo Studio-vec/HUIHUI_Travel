@@ -26,6 +26,7 @@ const regions = [...new Set(allTrips.map((t) => t.locationLabel))];
   <link rel="stylesheet" href="/assets/css/tokens.css"/>
   </Fragment>
   <Navbar />
+  <main id="main">
 
   <div class="pp-page">
     <div class="pp-header">
@@ -121,6 +122,7 @@ const regions = [...new Set(allTrips.map((t) => t.locationLabel))];
     desc="위의 기준으로 정리한 코스 목록입니다. 각 코스를 눌러 전체 일정과 장소별 상세 정보를 확인하실 수 있습니다."
   />
 
+  </main>
   <Footer />
 </BaseLayout>
 

@@ -3,9 +3,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Navbar from '../../components/Navbar.astro';
 
 ---
-<BaseLayout title="마이페이지 – HUIHUI Travel" noindex>
+<BaseLayout title="마이페이지 – HUIHUI Travel" noindex ads={false}>
 
   <Navbar />
+  <main id="main">
 
 
 
@@ -50,7 +51,7 @@ import Navbar from '../../components/Navbar.astro';
       <div class="section-card" style="text-align:center;padding:40px 24px;">
         <div style="font-size:2rem;margin-bottom:12px;">🔑</div>
         <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#7A57CD;margin-bottom:8px;">로그인이 필요해요</div>
-        <p style="font-size:0.78rem;color:#9a8ab0;margin-bottom:20px;line-height:1.6;">마이페이지를 이용하려면<br>먼저 로그인해주세요.</p>
+        <p style="font-size:0.78rem;color:#746A91;margin-bottom:20px;line-height:1.6;">마이페이지를 이용하려면<br>먼저 로그인해주세요.</p>
         <a href="/auth/login" style="display:block;background:#7A57CD;color:white;border-radius:999px;padding:12px 24px;text-decoration:none;font-size:0.78rem;font-weight:700;letter-spacing:0.08em;">로그인하기</a>
         <a href="/auth/register" style="display:block;margin-top:10px;font-size:0.7rem;color:#8F9D68;text-align:center;">아직 계정이 없으신가요? 회원가입 →</a>
       </div>`;
@@ -327,7 +328,7 @@ import Navbar from '../../components/Navbar.astro';
       --green:        #8F9D68;
       --text:         #2a1a4a;
       --text-mid:     #5a3e8a;
-      --text-dim:     #9a8ab0;
+      --text-dim:     #746A91;
       --error:        #c04040;
       --ok:           #4a9a6a;
     }
@@ -363,7 +364,7 @@ import Navbar from '../../components/Navbar.astro';
     .user-header { display:flex; align-items:center; gap:16px; padding: 8px 0 16px; }
     .user-avatar-lg {
       width: 64px; height: 64px; border-radius: 50%;
-      background: linear-gradient(135deg, #C0A8FF, #8B6FD0);
+      background: linear-gradient(135deg, #C0A8FF, #7B5CC4);
       display: flex; align-items: center; justify-content: center;
       font-family: 'Playfair Display', serif; font-size: 1.6rem; color: white; font-weight: 700;
       flex-shrink: 0;
@@ -487,4 +488,5 @@ import Navbar from '../../components/Navbar.astro';
   
 </style>
 
+</main>
 </BaseLayout>

@@ -5,12 +5,18 @@ export interface Props {
   /** 로그인/회원가입 등 색인할 콘텐츠가 없는 기능성 페이지에 true */
   noindex?: boolean;
   ogImage?: string;
+  /** 광고 스크립트 로드 여부. 콘텐츠가 없는 페이지(404·로그인 등)는 false */
+  ads?: boolean;
+  /** Vue·dayjs·html2canvas 로드 여부. 코스 상세 페이지 전용 */
+  app?: boolean;
 }
 const {
   title,
   description = 'HUIHUI Travel — 직접 다녀온 국내 여행 코스를 일자별 동선, 장소별 운영시간·비용·팁까지 정리한 국내 여행 안내서.',
   noindex = false,
   ogImage,
+  ads = true,
+  app = false,
 } = Astro.props;
 
 const canonical = Astro.site
@@ -43,20 +49,20 @@ const ogImageUrl = ogImage && Astro.site ? new URL(ogImage, Astro.site).href : o
   <meta name="twitter:card" content={ogImageUrl ? 'summary_large_image' : 'summary'} />
 
   <!-- Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3271578034191442" crossorigin="anonymous"></script>
+  {ads && <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3271578034191442" crossorigin="anonymous"></script>}
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet" />
 
   <!-- Design tokens -->
   <link rel="stylesheet" href="/assets/css/tokens.css" />
 
-  <!-- Vue 3 + utilities (used by trip pages) -->
-  <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js" is:inline></script>
-  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js" is:inline></script>
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1" is:inline></script>
+  <!-- Vue 3 + utilities (코스 상세 페이지에서만) -->
+  {app && <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js" is:inline></script>}
+  {app && <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js" is:inline></script>}
+  {app && <script src="https://cdn.jsdelivr.net/npm/html2canvas@1" is:inline></script>}
 
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" is:inline></script>
@@ -65,6 +71,7 @@ const ogImageUrl = ogImage && Astro.site ? new URL(ogImage, Astro.site).href : o
   <slot name="head" />
 </head>
 <body>
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
   <slot />
 </body>
 </html>
