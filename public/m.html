@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>HUIHUI Travel</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    display:flex;align-items:center;justify-content:center;gap:36px;padding:20px;
+    background:radial-gradient(circle at 20px 20px,rgba(192,168,255,.22) 2px,transparent 3px) 0 0/40px 40px,#FFF8EB;
+    font-family:"Noto Sans KR","DM Sans",sans-serif;color:#2A1F48;
+  }
+  .phone{
+    position:relative;flex:none;width:calc(var(--w,390px) + 20px);height:min(880px,calc(100vh - 40px));
+    padding:10px;border-radius:44px;background:#2A1F48;
+    box-shadow:0 24px 60px rgba(42,31,72,.28),inset 0 0 0 2px rgba(255,255,255,.08);
+    transition:width .35s cubic-bezier(.22,1,.36,1);
+  }
+  .phone::before{
+    content:"";position:absolute;left:50%;top:14px;width:84px;height:6px;border-radius:9px;
+    background:rgba(255,255,255,.18);transform:translateX(-50%);z-index:2;pointer-events:none;
+  }
+  iframe{display:block;width:100%;height:100%;border:0;border-radius:34px;background:#fff}
+  .ctl{flex:none;width:200px;display:flex;flex-direction:column;gap:14px}
+  .ctl h1{font-size:15px;font-weight:600;letter-spacing:-.01em;line-height:1.4}
+  .ctl p{font-size:12px;line-height:1.6;color:#6B5E8A}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{
+    font:inherit;font-size:12px;font-weight:600;color:#6B5E8A;background:rgba(255,255,255,.7);
+    border:1.5px solid rgba(139,111,208,.25);border-radius:999px;padding:5px 12px;cursor:pointer;transition:all .15s;
+  }
+  .chip:hover{color:#8B6FD0;border-color:rgba(139,111,208,.6)}
+  .chip[aria-pressed=true]{color:#fff;background:#8B6FD0;border-color:#8B6FD0}
+  .pc{
+    font:inherit;font-size:13px;font-weight:600;min-height:44px;padding:0 18px;border:0;border-radius:999px;cursor:pointer;
+    color:#fff;background:#8B6FD0;box-shadow:0 4px 20px rgba(192,168,255,.45);transition:background .15s,transform .15s;
+  }
+  .pc:hover{background:#6B4FB4}
+  .pc:active{transform:scale(.97)}
+  button:focus-visible{outline:3px solid #8B6FD0;outline-offset:3px}
+  @media (max-width:899px){.ctl{width:150px}body{gap:20px}}
+  @media (prefers-reduced-motion:reduce){.phone{transition:none}}
+</style>
+</head>
+<body>
+  <div class="phone" id="phone">
+    <iframe id="frame" name="hh-phone" title="모바일 화면 미리보기"></iframe>
+  </div>
+  <aside class="ctl">
+    <h1>모바일 화면으로<br>보는 중이에요</h1>
+    <p>폰에서 보이는 모습 그대로예요. 기기 너비를 바꿔 볼 수 있어요.</p>
+    <div class="chips" role="group" aria-label="기기 너비">
+      <button class="chip" type="button" data-w="360" aria-pressed="false">360</button>
+      <button class="chip" type="button" data-w="390" aria-pressed="true">390</button>
+      <button class="chip" type="button" data-w="430" aria-pressed="false">430</button>
+    </div>
+    <button class="pc" id="pc" type="button">PC 화면으로 보기</button>
+  </aside>
+
+<script>
+(function () {
+  var params = new URLSearchParams(location.search);
+  var u = params.get('u') || '/';
+  if (!/^\/(?!\/)/.test(u)) u = '/';           // 같은 사이트의 경로만 허용
+
+  var pref = null;
+  try { pref = localStorage.getItem('hh-view'); } catch (e) {}
+  // 모바일 보기가 꺼져 있거나 창이 좁으면 셸 없이 바로 원래 페이지로
+  if (pref !== 'mobile' || window.innerWidth < 700) { location.replace(u); return; }
+
+  var frame = document.getElementById('frame');
+  var phone = document.getElementById('phone');
+  frame.src = u;
+
+  var chips = document.querySelectorAll('.chip');
+  chips.forEach(function (c) {
+    c.addEventListener('click', function () {
+      phone.style.setProperty('--w', c.dataset.w + 'px');
+      chips.forEach(function (x) { x.setAttribute('aria-pressed', String(x === c)); });
+    });
+  });
+
+  document.getElementById('pc').addEventListener('click', function () {
+    try { localStorage.setItem('hh-view', 'desktop'); } catch (e) {}
+    location.reload();                            // 현재 주소(또는 m.html)에서 PC 보기로 복귀
+  });
+
+  // 폰 화면 안에서 이동해도 주소창·제목을 따라가게 한다
+  window.addEventListener('message', function (e) {
+    var d = e.data;
+    if (e.origin !== location.origin || e.source !== frame.contentWindow || !d || d.hh !== 'nav') return;
+    if (typeof d.href === 'string' && /^\/(?!\/)/.test(d.href)) {
+      try { history.replaceState(null, '', d.href); } catch (x) {}
+    }
+    if (typeof d.title === 'string' && d.title) document.title = d.title;
+  });
+})();
+</script>
+</body>
+</html>

@@ -198,12 +198,19 @@ import Navbar from '../../components/Navbar.astro';
 
     const redirect = new URLSearchParams(location.search).get('redirect') || '/';
     /* redirectTo를 로그인 페이지로 설정해 세션 처리를 보장 */
-    const { error } = await window._sb.auth.signInWithOAuth({
+    /* 모바일 화면 미리보기(iframe) 안에서는 구글이 프레임 표시를 막으므로 최상위 창으로 이동 */
+    const inPhoneFrame = window.name === 'hh-phone';
+    const { data, error } = await window._sb.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: location.origin + '/auth/login?redirect=' + encodeURIComponent(redirect)
+        redirectTo: location.origin + '/auth/login?redirect=' + encodeURIComponent(redirect),
+        ...(inPhoneFrame ? { skipBrowserRedirect: true } : {})
       }
     });
+    if (!error && inPhoneFrame && data && data.url) {
+      window.top.location.href = data.url;
+      return;
+    }
 
     if (error) {
       btn.disabled = false;

@@ -114,6 +114,16 @@
   transition: color .15s, background .15s;
 }
 .hh-mm-logout:hover { color: #c04040; background: rgba(200,80,80,0.06); }
+/* ── PC/모바일 화면 전환 ── */
+.hh-view-btn {
+  display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+  font-family: inherit; font-size: 12px; font-weight: 600; color: #8B6FD0;
+  background: none; border: 1.5px solid rgba(139,111,208,0.3);
+  border-radius: 999px; padding: 6px 12px; cursor: pointer; white-space: nowrap;
+  transition: background .15s, border-color .15s;
+}
+.hh-view-btn:hover { background: rgba(139,111,208,0.08); border-color: rgba(139,111,208,0.6); }
+.hh-view-btn svg, .hh-mm-item svg { flex-shrink: 0; }
 /* ── 언어 드롭다운 ── */
 .hh-lang-wrap {
   position: relative; flex-shrink: 0;
@@ -163,11 +173,16 @@
 @media (max-width: 960px) {
   .hh-navbar-search { display: none; }
 }
+@media (max-width: 1100px) {
+  .hh-view-txt { display: none; }
+  .hh-view-btn { padding: 6px 9px; }
+}
 @media (max-width: 767px) {
   .hh-navbar-links  { display: none !important; }
   .hh-hamburger     { display: flex !important; }
   .hh-user-area     { display: none; }
   .hh-lang-wrap     { display: none; }
+  .hh-view-btn      { display: none; }
 }`;
 
   const styleEl = document.createElement('style');
@@ -179,6 +194,10 @@
   const galleryActive = page === 'gallery' ? ' class="active"' : '';
   const gameActive    = page === 'game'    ? ' class="active"' : '';
   const aboutActive   = page === 'about'   ? ' class="active"' : '';
+
+  /* PC↔모바일 화면 전환 버튼: 폰 프레임 안이거나 이미 좁은 데스크톱 창이면 target이 null */
+  const V = window.hhView;
+  const showView = !!(V && V.target);
 
   const nav = document.createElement('nav');
   nav.className = 'hh-navbar';
@@ -201,6 +220,7 @@
       <input id="hhNavSearch" type="text" placeholder="여행지 검색하기"/>
     </div>
   </div>
+  ${showView ? '<button class="hh-view-btn" id="hhViewBtn" type="button"></button>' : ''}
   <div class="hh-lang-wrap" id="hhLangWrap">
     <button class="hh-lang-btn" id="hhLangBtn" aria-haspopup="listbox" aria-expanded="false">
       <span id="hhLangLabel">한국어</span>
@@ -230,6 +250,7 @@
   <hr class="hh-mm-divider"/>
   <div class="hh-mm-lang-row" id="hhMobileLangRow"></div>
   <hr class="hh-mm-divider"/>
+  ${showView ? '<button class="hh-mm-item" id="hhMobileView" type="button"></button><hr class="hh-mm-divider"/>' : ''}
   <div id="hhMobileUser">
     <a class="hh-mm-item" href="/auth/login">로그인 / 회원가입</a>
   </div>`;
@@ -238,6 +259,23 @@
   const script = document.currentScript;
   script.parentNode.insertBefore(nav,  script);
   script.parentNode.insertBefore(menu, script);
+
+  /* ── PC/모바일 화면 전환 버튼 ─────────────────────────── */
+  if (showView) {
+    const ICON = {
+      mobile: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg>',
+      desktop: '<svg width="15" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>',
+    };
+    const TXT = { mobile: '모바일 화면', desktop: 'PC 화면' };
+    const label = TXT[V.target] + '으로 보기';
+    const vb  = nav.querySelector('#hhViewBtn');
+    const mvb = menu.querySelector('#hhMobileView');
+    vb.innerHTML = ICON[V.target] + '<span class="hh-view-txt">' + TXT[V.target] + '</span>';
+    vb.title = label; vb.setAttribute('aria-label', label);
+    mvb.innerHTML = ICON[V.target] + '<span>' + label + '</span>';
+    vb.addEventListener('click', V.toggle);
+    mvb.addEventListener('click', V.toggle);
+  }
 
   /* ── 이벤트: 햄버거 + 검색 ──────────────────────────────── */
   const hamBtn = nav.querySelector('#hhHamburger');
