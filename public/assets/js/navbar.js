@@ -184,6 +184,10 @@
   .hh-user-area     { display: none; }
   .hh-lang-wrap     { display: none; }
   .hh-view-btn      { display: none; }
+}
+/* 햄버거가 없는 넓은 화면에서는 열려 있던 모바일 메뉴도 보이지 않게 */
+@media (min-width: 768px) {
+  .hh-mobile-menu { display: none !important; }
 }`;
 
   const styleEl = document.createElement('style');
@@ -232,8 +236,8 @@
   <div class="hh-user-area" id="hhUserArea">
     <a href="/auth/login" class="hh-login-btn">로그인</a>
   </div>
-  <button class="hh-hamburger" id="hhHamburger" aria-label="메뉴">
-    <svg width="20" height="15" viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+  <button class="hh-hamburger" id="hhHamburger" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="hhMobileMenu">
+    <svg width="20" height="15" viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
       <path d="M1 1.5h18M1 7.5h18M1 13.5h18"/>
     </svg>
   </button>`;
@@ -242,6 +246,8 @@
   const menu = document.createElement('div');
   menu.className = 'hh-mobile-menu';
   menu.id = 'hhMobileMenu';
+  menu.setAttribute('role', 'navigation');
+  menu.setAttribute('aria-label', '모바일 메뉴');
   menu.innerHTML = `
   <a class="hh-mm-item${(page === '' || page === 'index') ? ' active' : ''}" href="/">홈</a>
   <a class="hh-mm-item${page === 'gallery' ? ' active' : ''}" href="/gallery">갤러리</a>
@@ -280,13 +286,44 @@
 
   /* ── 이벤트: 햄버거 + 검색 ──────────────────────────────── */
   const hamBtn = nav.querySelector('#hhHamburger');
+
+  function _setMenu(open, opts) {
+    menu.classList.toggle('open', open);
+    hamBtn.setAttribute('aria-expanded', String(open));
+    hamBtn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+    if (open && opts && opts.focusFirst) {
+      const first = menu.querySelector('a, button');
+      if (first) first.focus();
+    }
+    if (!open && opts && opts.returnFocus) hamBtn.focus();
+  }
+  const _menuOpen = () => menu.classList.contains('open');
+
   hamBtn.addEventListener('click', function (e) {
     e.stopPropagation();
-    menu.classList.toggle('open');
+    /* 키보드(Enter/Space)로 열었을 때만 첫 항목으로 포커스 이동. 터치·마우스는 detail > 0 */
+    _setMenu(!_menuOpen(), { focusFirst: e.detail === 0 });
   });
   document.addEventListener('click', function (e) {
-    if (!menu.contains(e.target)) menu.classList.remove('open');
+    if (_menuOpen() && !menu.contains(e.target)) _setMenu(false);
   });
+  /* 메뉴 안 링크를 누르면 닫는다 (같은 페이지 링크에서도 메뉴가 남지 않게) */
+  menu.addEventListener('click', function (e) {
+    if (e.target.closest('a')) _setMenu(false);
+  });
+  /* Esc로 닫고 햄버거 버튼으로 포커스 복귀 */
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && _menuOpen()) _setMenu(false, { returnFocus: true });
+  });
+  /* Tab으로 메뉴 밖으로 나가면 닫는다 */
+  menu.addEventListener('focusout', function (e) {
+    if (_menuOpen() && e.relatedTarget && !menu.contains(e.relatedTarget) && e.relatedTarget !== hamBtn) _setMenu(false);
+  });
+  /* 창이 넓어져 햄버거가 사라지면 열린 메뉴도 닫는다 */
+  const _wideMq = window.matchMedia('(min-width: 768px)');
+  const _onWide = () => { if (_wideMq.matches && _menuOpen()) _setMenu(false); };
+  if (_wideMq.addEventListener) _wideMq.addEventListener('change', _onWide);
+  else if (_wideMq.addListener) _wideMq.addListener(_onWide);
 
   const si = nav.querySelector('#hhNavSearch');
   si.addEventListener('input', function () {
