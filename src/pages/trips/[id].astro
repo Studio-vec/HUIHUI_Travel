@@ -106,7 +106,10 @@ const _body = `
                 </ul>
                 <div class="closed-banner-hint">출발일을 바꾸면 바로 다시 확인해요.</div>
             </div>
-            <div v-else-if="hasClosedData" class="closed-ok" role="status">✓ 확인된 휴무 정보 기준으로, 이 날짜엔 쉬는 곳이 없어요</div>
+            <div v-else-if="hasClosedData" class="closed-ok" role="status">✓ 요일 기준으로는 이 날짜에 쉬는 곳이 없어요</div>
+            <ul v-if="closedNotes.length" class="closed-notes">
+                <li v-for="c in closedNotes" :key="c.id">Day {{ c.day }} · {{ c.name }} · {{ c.note }}에도 쉬어요 (달력에서 확인)</li>
+            </ul>
             <div v-if="currentPlace" class="now-card">
                 <div class="now-eyebrow"><span class="now-dot"></span>지금 여기</div>
                 <div>

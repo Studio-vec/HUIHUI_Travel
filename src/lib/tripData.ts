@@ -46,6 +46,8 @@ export interface TripPlace {
   transitTo?: TripTransit;
   /** 정기 휴무 요일 (0=일 … 6=토). 출발일을 고르면 쉬는 곳을 미리 경고하는 데 쓴다 */
   closedDays?: number[];
+  /** 요일로 표현할 수 없는 휴무(공휴일, 매월 마지막 주 월요일 등). 출발일 확인 결과 옆에 함께 보여 준다 */
+  closedNote?: string;
 }
 
 export interface TripInfoBanner {
@@ -99,6 +101,7 @@ export interface MobilePlace {
   details: TripPlaceDetail[];
   transitTo?: TripTransit;
   closedDays?: number[];
+  closedNote?: string;
 }
 
 export function toMobileSchedule(data: TripData): { places: MobilePlace[] }[] {
@@ -121,6 +124,7 @@ export function toMobileSchedule(data: TripData): { places: MobilePlace[] }[] {
           details: p.details,
           ...(p.transitTo ? { transitTo: p.transitTo } : {}),
           ...(p.closedDays && p.closedDays.length ? { closedDays: p.closedDays } : {}),
+          ...(p.closedNote ? { closedNote: p.closedNote } : {}),
         })),
     });
   }

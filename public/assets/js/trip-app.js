@@ -68,7 +68,11 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
             const closedList = computed(() => schedule.value.flatMap((d, i) =>
                 d.places.filter(p => isClosed(p, i)).map(p => ({ id: p.id, name: p.name, day: i + 1, wd: DAY_LABELS[weekdayOf(i)] }))
             ));
-            const hasClosedData = computed(() => schedule.value.some(d => d.places.some(p => p.closedDays && p.closedDays.length)));
+            const hasClosedData = computed(() => schedule.value.some(d => d.places.some(p => (p.closedDays && p.closedDays.length) || p.closedNote)));
+            /* 요일로는 판단할 수 없는 휴무(공휴일 등) — 날짜와 상관없이 함께 안내한다 */
+            const closedNotes = computed(() => schedule.value.flatMap((d, i) =>
+                d.places.filter(p => p.closedNote).map(p => ({ id: p.id, name: p.name, day: i + 1, note: p.closedNote }))
+            ));
 
             const getFormattedDate = (offset) =>
                 dayjs(startDate.value).add(offset, 'day').format('MM.DD');
@@ -236,7 +240,7 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
 
             return {
                 startDate, endDate, schedule, getFormattedDate,
-                isClosed, closedList, hasClosedData,
+                isClosed, closedList, hasClosedData, closedNotes,
                 currentPlace, allPhotos, clickUpload, uploadPhoto,
                 isArtPlaying, playArt, showReport, saveImage, collagePieces,
                 isVisited, toggleVisited,
