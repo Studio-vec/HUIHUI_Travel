@@ -164,11 +164,8 @@ const _body = `
                         <div v-if="p.enjoyTip" class="expand-enjoy">{{ p.enjoyTip }}</div>
                         <div v-if="p.details && p.details.length" class="expand-details">
                             <div v-for="d in p.details" :key="d.label" class="expand-item">
-                                <span class="expand-item-icon">{{ d.icon }}</span>
-                                <div class="expand-item-content">
-                                    <span class="expand-item-label">{{ d.label }}</span>
-                                    <span class="expand-item-value">{{ d.value }}</span>
-                                </div>
+                                <span class="expand-item-label">{{ d.label }}</span>
+                                <span class="expand-item-value">{{ d.value }}</span>
                             </div>
                         </div>
                     </div>
