@@ -1,4 +1,5 @@
 ---
+import { asset } from '../lib/asset';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
@@ -21,7 +22,7 @@ const tripList = Object.values(_tripModules)
   description="여행지와 계절에 맞는 준비물을 골라보는 미니 게임입니다. 실제 코스를 떠나기 전 무엇을 챙겨야 하는지 가볍게 점검해볼 수 있습니다."
 >
   <Fragment slot="head">
-  <link rel="stylesheet" href="/assets/css/tokens.css"/>
+  <link rel="stylesheet" href={asset('/assets/css/tokens.css')}/>
   <script define:vars={{ tripList }}>window.__TRIP_LIST__ = tripList;</script>
   </Fragment>
   <Navbar />
