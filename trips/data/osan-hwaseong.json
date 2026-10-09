@@ -17,7 +17,6 @@
     "물향기수목원·아모레 팩토리·남양성모성지·동탄 코스"
   ],
   "downloadName": "오산동탄로그.png",
-  "scheduleVersion": "v2",
   "infoBanner": {
     "icon": "📅",
     "title": "공휴일이 아닌 화·수·목·금 출발만 가능해요",
@@ -99,7 +98,8 @@
     {
       "id": "oh1-3",
       "closedDays": [0, 6],
-      "closedNote": "공휴일·매월 마지막 주 월요일",
+      "closedLastWeekdays": [1],
+      "closedNote": "공휴일",
       "day": 1,
       "no": "03",
       "time": "12:30",

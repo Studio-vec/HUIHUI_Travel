@@ -34,7 +34,8 @@ const scheduleJson = JSON.stringify(toMobileSchedule(tripData));
 const tipsJson = JSON.stringify(toMobileTips(tripData));
 const dayCount = dayCountOf(tripData);
 
-const storageKey = `trip_${tripData.id}_${tripData.scheduleVersion || 'v1'}`;
+/* 사진은 장소 이름·id로 새 일정에 다시 붙이므로 일정이 바뀌어도 키를 바꾸지 않는다 */
+const storageKey = `trip_${tripData.id}`;
 const tipsKey = `trip_${tripData.id}_tips_v1`;
 const tripUrl = `/trips/${tripData.id}`;
 const momentLabel = tripData.id.charAt(0).toUpperCase() + tripData.id.slice(1);
@@ -106,9 +107,9 @@ const _body = `
                 </ul>
                 <div class="closed-banner-hint">출발일을 바꾸면 바로 다시 확인해요.</div>
             </div>
-            <div v-else-if="hasClosedData" class="closed-ok" role="status">✓ 요일 기준으로는 이 날짜에 쉬는 곳이 없어요</div>
-            <ul v-if="closedNotes.length" class="closed-notes">
-                <li v-for="c in closedNotes" :key="c.id">Day {{ c.day }} · {{ c.name }} · {{ c.note }}에도 쉬어요 (달력에서 확인)</li>
+            <div v-else-if="hasClosedData" class="closed-ok" role="status">✓ 이 날짜엔 정기 휴무인 곳이 없어요{{ closedNotes.length ? ' · 공휴일인지는 아래를 확인하세요' : '' }}</div>
+            <ul v-if="closedNotes.length" class="closed-notes" role="status">
+                <li v-for="c in closedNotes" :key="c.id">⚠ Day {{ c.day }} · {{ c.name }} · {{ c.note }}에도 쉬어요 — 그날이 해당하는지 달력에서 확인하세요</li>
             </ul>
             <div v-if="currentPlace" class="now-card">
                 <div class="now-eyebrow"><span class="now-dot"></span>지금 여기</div>

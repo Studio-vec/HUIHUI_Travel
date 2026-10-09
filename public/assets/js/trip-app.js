@@ -64,12 +64,25 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
 
             /* 선택한 출발일 기준으로 쉬는 곳 찾기 */
             const weekdayOf = (dIdx) => dayjs(startDate.value).add(dIdx, 'day').day();
-            const isClosed = (p, dIdx) => !!(p.closedDays && p.closedDays.includes(weekdayOf(dIdx)));
+            /* 그 달의 마지막 X요일인지 (7일 뒤가 다음 달이면 마지막) */
+            const isLastWeekOfMonth = (dIdx) => {
+                const d = dayjs(startDate.value).add(dIdx, 'day');
+                return d.add(7, 'day').month() !== d.month();
+            };
+            const isClosed = (p, dIdx) => {
+                const wd = weekdayOf(dIdx);
+                if (p.closedDays && p.closedDays.includes(wd)) return true;
+                return !!(p.closedLastWeekdays && p.closedLastWeekdays.includes(wd) && isLastWeekOfMonth(dIdx));
+            };
             const closedList = computed(() => schedule.value.flatMap((d, i) =>
-                d.places.filter(p => isClosed(p, i)).map(p => ({ id: p.id, name: p.name, day: i + 1, wd: DAY_LABELS[weekdayOf(i)] }))
+                d.places.filter(p => isClosed(p, i)).map(p => ({
+                    id: p.id, name: p.name, day: i + 1,
+                    wd: DAY_LABELS[weekdayOf(i)] + (p.closedDays && p.closedDays.includes(weekdayOf(i)) ? '' : ', 마지막 주')
+                }))
             ));
-            const hasClosedData = computed(() => schedule.value.some(d => d.places.some(p => (p.closedDays && p.closedDays.length) || p.closedNote)));
-            /* 요일로는 판단할 수 없는 휴무(공휴일 등) — 날짜와 상관없이 함께 안내한다 */
+            const hasClosedData = computed(() => schedule.value.some(d => d.places.some(p =>
+                (p.closedDays && p.closedDays.length) || (p.closedLastWeekdays && p.closedLastWeekdays.length) || p.closedNote)));
+            /* 날짜로 계산할 수 없는 휴무(공휴일 등) — 날짜와 상관없이 함께 안내한다 */
             const closedNotes = computed(() => schedule.value.flatMap((d, i) =>
                 d.places.filter(p => p.closedNote).map(p => ({ id: p.id, name: p.name, day: i + 1, note: p.closedNote }))
             ));
@@ -226,9 +239,44 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
                 localStorage.setItem(GLOBAL_DATE_KEY, val);
             });
 
+            /* 예전에는 일정이 바뀔 때마다 trip_<id>_v2처럼 키를 새로 만들었다. 그 키들에 남은 사진과 날짜를 가져온다 */
+            const _legacyKeys = () => {
+                const re = new RegExp('^' + storageKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '_v(\\d+)(?:_date)?$');
+                const vers = new Set();
+                for (let i = 0; i < localStorage.length; i++) {
+                    const m = re.exec(localStorage.key(i));
+                    if (m) vers.add(Number(m[1]));   // 사진을 올리기 전엔 날짜 키만 있을 수 있다
+                }
+                return [...vers].sort((a, b) => b - a).map(v => storageKey + '_v' + v);   // 최신 버전 먼저
+            };
+
+            /* 저장본은 사진만 쓰고 나머지(장소·시간·휴무)는 항상 새 데이터를 따른다.
+               장소 id가 다른 장소에 다시 쓰일 수 있어 이름으로 먼저 찾고, 이름이 사라진 장소만 id로 찾는다 */
+            const _restorePhotos = (savedSchedules) => {
+                const places = schedule.value.flatMap(d => d.places);
+                const byName = new Map(places.map(p => [p.name, p]));
+                const byId = new Map(places.map(p => [p.id, p]));
+                savedSchedules.forEach(saved => {
+                    saved.flatMap(d => d.places || []).filter(p => p.photo).forEach(old => {
+                        const target = byName.get(old.name) || byId.get(old.id);
+                        if (target && !target.photo) target.photo = old.photo;
+                    });
+                });
+            };
+
             onMounted(() => {
-                const saved = localStorage.getItem(storageKey);
-                if (saved) schedule.value = JSON.parse(saved);
+                const legacy = _legacyKeys();
+                const savedSchedules = [storageKey, ...legacy]
+                    .map(k => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } })
+                    .filter(Array.isArray);
+                _restorePhotos(savedSchedules);
+                if (legacy.length) {
+                    const legacyDate = legacy.map(k => localStorage.getItem(k + '_date')).find(Boolean);
+                    if (legacyDate && !localStorage.getItem(dateKey)) localStorage.setItem(dateKey, legacyDate);
+                    /* 옮긴 뒤 예전 키를 지워야 localStorage 한도(약 5MB)를 계속 차지하지 않는다 */
+                    legacy.forEach(k => { localStorage.removeItem(k); localStorage.removeItem(k + '_date'); });
+                    if (savedSchedules.length) _saveSchedule();
+                }
                 if (tipsKey) {
                     const savedTips = localStorage.getItem(tipsKey);
                     if (savedTips) tips.value = JSON.parse(savedTips);
