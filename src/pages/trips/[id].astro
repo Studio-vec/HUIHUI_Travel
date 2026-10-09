@@ -152,7 +152,7 @@ const _body = `
                         </div>
                         <svg class="expand-chevron" :class="{ open: expandedId === p.id }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                         <div class="photo-slot" :class="{ 'has-img': p.photo }" @click.stop="p.photo ? null : clickUpload(p.id)">
-                            <img v-if="p.photo" :src="p.photo" alt="" @touchstart.prevent="startPress(p.id)" @touchend="endPress()" @mousedown="startPress(p.id)" @mouseup="endPress()" @mouseleave="endPress()" @contextmenu.prevent>
+                            <img v-if="p.photo" :src="p.photo" alt="" @touchstart.passive="startPress(p.id, $event)" @touchmove.passive="movePress($event)" @touchend="endPress()" @touchcancel="endPress()" @mousedown="startPress(p.id)" @mouseup="endPress()" @mouseleave="endPress()" @contextmenu.prevent>
                             <svg v-else class="photo-slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                                 <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
                                 <circle cx="12" cy="13" r="4"/>

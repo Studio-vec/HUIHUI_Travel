@@ -90,9 +90,18 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
             const clickUpload = (id) => document.getElementById('file-' + id).click();
 
             const deleteConfirmId = ref(null);
+            /* 사진 길게 누르기(0.6초) → 삭제 확인. 손가락이 10px 넘게 움직이면 스크롤로 보고 취소한다 */
             let _pressTimer = null;
-            const startPress = (id) => {
+            let _pressX = 0, _pressY = 0;
+            const startPress = (id, e) => {
+                clearTimeout(_pressTimer);
+                const t = e && e.touches && e.touches[0];
+                if (t) { _pressX = t.clientX; _pressY = t.clientY; }
                 _pressTimer = setTimeout(() => { deleteConfirmId.value = id; }, 600);
+            };
+            const movePress = (e) => {
+                const t = e.touches && e.touches[0];
+                if (t && Math.hypot(t.clientX - _pressX, t.clientY - _pressY) > 10) endPress();
             };
             const endPress = () => {
                 clearTimeout(_pressTimer);
@@ -232,7 +241,7 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
                 isArtPlaying, playArt, showReport, saveImage, collagePieces,
                 isVisited, toggleVisited,
                 tips, showTipModal, newTipAuthor, newTipText, upvoteTip, submitTip,
-                deleteConfirmId, startPress, endPress, cancelDelete, confirmDelete,
+                deleteConfirmId, startPress, movePress, endPress, cancelDelete, confirmDelete,
                 expandedId, toggleExpand
             };
         }
