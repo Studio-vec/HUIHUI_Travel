@@ -180,7 +180,7 @@
 }
 @media (max-width: 767px) {
   .hh-navbar-links  { display: none !important; }
-  .hh-hamburger     { display: flex !important; }
+  .hh-hamburger     { display: flex !important; margin-left: auto; }
   .hh-user-area     { display: none; }
   .hh-lang-wrap     { display: none; }
   .hh-view-btn      { display: none; }
@@ -297,7 +297,7 @@
     if (typeof window.filterBySearch === 'function') {
       window.filterBySearch(si.value.trim());
     } else {
-      window.location.href = base + 'gallery.html?q=' + encodeURIComponent(si.value.trim());
+      window.location.href = '/gallery?q=' + encodeURIComponent(si.value.trim());
     }
   });
 
@@ -374,6 +374,11 @@
   _renderLangOptions();
 
   /* ── Supabase 인증 상태 반영 ─────────────────────────────── */
+  /* 닉네임 등 사용자 입력값을 innerHTML에 넣기 전에 escape */
+  function _esc(v) {
+    return String(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  }
+
   async function _updateUserBtn() {
     if (typeof window._sb === 'undefined') return;
     try {
@@ -389,8 +394,9 @@
           .eq('id', session.user.id)
           .single();
 
-        const nick    = profile?.nickname || '사용자';
-        const initial = nick.charAt(0).toUpperCase();
+        const nickRaw = profile?.nickname || '사용자';
+        const nick    = _esc(nickRaw);
+        const initial = _esc(nickRaw.charAt(0).toUpperCase());
 
         userArea.innerHTML = `
           <a href="/auth/profile" class="hh-user-btn">

@@ -1,4 +1,5 @@
 ---
+import { asset } from '../lib/asset';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
@@ -27,7 +28,7 @@ const galleryDestinations = allTrips.map((t) => ({
   description="HUIHUI Travel에 공개된 국내 여행 코스 전체 목록입니다. 지역별로 일자별 동선, 장소별 운영시간과 이동 정보를 정리한 코스를 찾아보실 수 있습니다."
 >
   <Fragment slot="head">
-  <link rel="stylesheet" href="/assets/css/tokens.css"/>
+  <link rel="stylesheet" href={asset('/assets/css/tokens.css')}/>
   </Fragment>
   <Navbar />
   <main id="main">

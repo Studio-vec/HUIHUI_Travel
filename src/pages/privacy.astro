@@ -1,11 +1,12 @@
 ---
+import { asset } from '../lib/asset';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 ---
 <BaseLayout title="개인정보처리방침 — HUIHUI Travel" description="HUIHUI Travel 개인정보처리방침">
   <Fragment slot="head">
-  <link rel="stylesheet" href="/assets/css/tokens.css"/>
+  <link rel="stylesheet" href={asset('/assets/css/tokens.css')}/>
   </Fragment>
   <Navbar />
   <main id="main">
