@@ -41,9 +41,16 @@
 
 <script>
 (function () {
+  // 같은 사이트의 경로만 허용. 정규식 검사는 '/\evil.com'(브라우저가 //evil.com으로 해석)을 통과시키므로 URL로 파싱해 origin을 비교한다
+  function sameOriginPath(v) {
+    try {
+      var t = new URL(v, location.origin);
+      return t.origin === location.origin ? t.pathname + t.search + t.hash : null;
+    } catch (e) { return null; }
+  }
+
   var params = new URLSearchParams(location.search);
-  var u = params.get('u') || '/';
-  if (!/^\/(?!\/)/.test(u)) u = '/';           // 같은 사이트의 경로만 허용
+  var u = sameOriginPath(params.get('u') || '/') || '/';
 
   var pref = null;
   try { pref = localStorage.getItem('hh-view'); } catch (e) {}
@@ -62,8 +69,9 @@
   window.addEventListener('message', function (e) {
     var d = e.data;
     if (e.origin !== location.origin || e.source !== frame.contentWindow || !d || d.hh !== 'nav') return;
-    if (typeof d.href === 'string' && /^\/(?!\/)/.test(d.href)) {
-      try { history.replaceState(null, '', d.href); } catch (x) {}
+    var href = typeof d.href === 'string' ? sameOriginPath(d.href) : null;
+    if (href) {
+      try { history.replaceState(null, '', href); } catch (x) {}
     }
     if (typeof d.title === 'string' && d.title) document.title = d.title;
   });

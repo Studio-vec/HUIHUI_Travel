@@ -19,6 +19,11 @@ import Navbar from '../../components/Navbar.astro';
   <div class="toast" id="toast"></div>
 
 <script>
+  /* 사용자 입력값을 innerHTML 템플릿에 넣기 전에 escape */
+  function esc(v) {
+    return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  }
+
   async function loadProfile() {
     if (!window._sb) {
       renderNotLoggedIn();
@@ -72,10 +77,10 @@ import Navbar from '../../components/Navbar.astro';
         <div class="receipt-top"></div>
         <div class="receipt-body">
           <div class="user-header">
-            <div class="user-avatar-lg" id="avatarLg">${initial}</div>
+            <div class="user-avatar-lg" id="avatarLg">${esc(initial)}</div>
             <div class="user-info-wrap">
-              <div class="user-nick" id="dispNick">${profile.nickname}</div>
-              <div class="user-id">@${profile.username} <span style="color:#C8B1FF">· 아이디 변경불가</span></div>
+              <div class="user-nick" id="dispNick">${esc(profile.nickname)}</div>
+              <div class="user-id">@${esc(profile.username)} <span style="color:#C8B1FF">· 아이디 변경불가</span></div>
               <div class="user-since">MEMBER SINCE ${dateStr}</div>
             </div>
           </div>
@@ -89,24 +94,24 @@ import Navbar from '../../components/Navbar.astro';
 
         <div class="field">
           <label class="field-label">닉네임 <span>변경 가능</span></label>
-          <input class="input-box" type="text" id="editNick" value="${profile.nickname}" maxlength="20" oninput="onNickInput(this)"/>
+          <input class="input-box" type="text" id="editNick" value="${esc(profile.nickname)}" maxlength="20" oninput="onNickInput(this)"/>
           <div class="hint" id="nickHint"></div>
         </div>
 
         <div class="field">
           <label class="field-label">아이디 <span>변경 불가</span></label>
-          <input class="input-box" type="text" value="${profile.username}" disabled/>
+          <input class="input-box" type="text" value="${esc(profile.username)}" disabled/>
         </div>
 
         <div class="field">
           <label class="field-label">이메일 <span>변경 가능</span></label>
-          <input class="input-box" type="email" id="editEmail" value="${session.user.email || ''}" oninput="onEmailInput(this)"/>
+          <input class="input-box" type="email" id="editEmail" value="${esc(session.user.email)}" oninput="onEmailInput(this)"/>
           <div class="hint" id="emailHint"></div>
         </div>
 
         <div class="field">
           <label class="field-label">전화번호 <span>선택 · 변경 가능</span></label>
-          <input class="input-box" type="tel" id="editPhone" value="${profile.phone || ''}" placeholder="010-0000-0000" oninput="onPhoneInput(this)"/>
+          <input class="input-box" type="tel" id="editPhone" value="${esc(profile.phone)}" placeholder="010-0000-0000" oninput="onPhoneInput(this)"/>
           <div class="hint" id="phoneHint"></div>
         </div>
 
