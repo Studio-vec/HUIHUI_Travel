@@ -997,8 +997,12 @@ function loadCustomItems() {
 function saveCustomItems() {
   try { localStorage.setItem(LS_KEY, JSON.stringify(customItems)); } catch {}
 }
+/* 사용자가 정한 아이템 이름·사진 주소를 innerHTML 템플릿에 넣기 전에 escape */
+function esc(v) {
+  return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+}
 function makeCustomRender(dataUrl) {
-  return (W, H) => `<img class="custom-item-img" src="${dataUrl}" width="${W}" height="${H}" style="width:${W}px;height:${H}px"/>`;
+  return (W, H) => `<img class="custom-item-img" src="${esc(dataUrl)}" width="${W}" height="${H}" style="width:${W}px;height:${H}px"/>`;
 }
 function renderMyItemsGrid() {
   const grid = $('myItemsGrid');
@@ -1010,7 +1014,7 @@ function renderMyItemsGrid() {
   customItems.forEach((ci, idx) => {
     const chip = document.createElement('div');
     chip.className = 'my-item-chip';
-    chip.innerHTML = `<img class="my-item-thumb" src="${ci.dataUrl}" alt="${ci.name}"/><span>${ci.name}</span><span style="font-size: 12px;color:var(--color-text-tertiary)">(${ci.w}×${ci.h})</span><button class="my-item-del" onclick="deleteCustomItem(${idx})" title="삭제">✕</button>`;
+    chip.innerHTML = `<img class="my-item-thumb" src="${esc(ci.dataUrl)}" alt="${esc(ci.name)}"/><span>${esc(ci.name)}</span><span style="font-size: 12px;color:var(--color-text-tertiary)">(${Number(ci.w)}×${Number(ci.h)})</span><button class="my-item-del" onclick="deleteCustomItem(${idx})" title="삭제">✕</button>`;
     grid.appendChild(chip);
   });
 }
@@ -1134,7 +1138,7 @@ function buildTray() {
     const el = document.createElement('div');
     el.className = 'tray-item'; el.id = 'ti-'+item.id;
     el.style.width = iW+'px'; el.style.height = iH+'px';
-    el.innerHTML = renderItemDisplay(item, item.cells, CS, GAP, 0) + `<div class="item-lbl">${item.name}</div>`;
+    el.innerHTML = renderItemDisplay(item, item.cells, CS, GAP, 0) + `<div class="item-lbl">${esc(item.name)}</div>`;
     el.addEventListener('mousedown', e => beginDrag(e, item));
     el.addEventListener('touchstart', e => beginDrag(e, item), {passive:false});
     tray.appendChild(el);
