@@ -23,7 +23,10 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
                 expandedId.value = expandedId.value === id ? null : id;
             };
 
-            const _showPhotoAlert = () => {
+            const _showPhotoAlert = (
+                title = '사진을 등록해주세요',
+                body  = '최소 한 장 이상의 사진을 등록해야<br>여행 완료로 기록할 수 있어요'
+            ) => {
                 const existing = document.getElementById('_photo-alert-overlay');
                 if (existing) return;
                 const overlay = document.createElement('div');
@@ -32,8 +35,8 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
                 overlay.innerHTML = `
                   <div style="background:#fff;border-radius:20px;padding:32px 28px 24px;max-width:300px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(107,79,180,0.18);animation:_paSlide 0.22s ease">
                     <div style="width:48px;height:48px;background:#EDE5FF;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.4rem">📷</div>
-                    <div style="font-family:'DM Serif Display',serif;font-style:italic;font-size:1.2rem;color:#2a1f48;margin-bottom:8px">사진을 등록해주세요</div>
-                    <p style="font-size:13px;color:#7a6a9a;line-height:1.6;margin-bottom:20px">최소 한 장 이상의 사진을 등록해야<br>여행 완료로 기록할 수 있어요</p>
+                    <div style="font-family:'DM Serif Display',serif;font-style:italic;font-size:1.2rem;color:#2a1f48;margin-bottom:8px">${title}</div>
+                    <p style="font-size:13px;color:#7a6a9a;line-height:1.6;margin-bottom:20px;word-break:keep-all">${body}</p>
                     <button id="_photo-alert-btn" style="width:100%;padding:12px;background:#C0A8FF;color:#4E3490;border:none;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:0.04em">확인</button>
                   </div>`;
                 const style = document.createElement('style');
@@ -101,21 +104,60 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
                 schedule.value.forEach(d => d.places.forEach(p => {
                     if (p.id === id) p.photo = null;
                 }));
-                localStorage.setItem(storageKey, JSON.stringify(schedule.value));
+                _saveSchedule();
                 deleteConfirmId.value = null;
             };
 
-            const uploadPhoto = (e, id) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (res) => {
-                    schedule.value.forEach(d => d.places.forEach(p => {
-                        if (p.id === id) p.photo = res.target.result;
-                    }));
+            /* 일정(사진 포함)을 저장. localStorage 한도(보통 5MB)를 넘으면 false */
+            const _saveSchedule = () => {
+                try {
                     localStorage.setItem(storageKey, JSON.stringify(schedule.value));
+                    return true;
+                } catch (err) {
+                    return false;
+                }
+            };
+
+            /* 폰 원본 사진(3~10MB)은 localStorage에 들어가지 않으므로 긴 변 1024px JPEG로 줄인다 (장당 약 100~200KB) */
+            const PHOTO_MAX = 1024;
+            const PHOTO_QUALITY = 0.75;
+            const _shrinkPhoto = (file) => new Promise((resolve, reject) => {
+                const url = URL.createObjectURL(file);
+                const img = new Image();
+                img.onload = () => {
+                    const scale = Math.min(1, PHOTO_MAX / Math.max(img.naturalWidth, img.naturalHeight));
+                    const canvas = document.createElement('canvas');
+                    canvas.width  = Math.round(img.naturalWidth * scale);
+                    canvas.height = Math.round(img.naturalHeight * scale);
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    URL.revokeObjectURL(url);
+                    resolve(canvas.toDataURL('image/jpeg', PHOTO_QUALITY));
                 };
-                reader.readAsDataURL(file);
+                img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('decode')); };
+                img.src = url;
+            });
+
+            const uploadPhoto = async (e, id) => {
+                const file = e.target.files[0];
+                e.target.value = '';   // 같은 사진을 다시 골라도 change가 일어나게
+                if (!file) return;
+
+                let dataUrl;
+                try {
+                    dataUrl = await _shrinkPhoto(file);
+                } catch (err) {
+                    _showPhotoAlert('사진을 열 수 없어요', '이 형식의 사진은 지원하지 않아요.<br>JPG나 PNG 사진으로 다시 시도해주세요');
+                    return;
+                }
+
+                const place = schedule.value.flatMap(d => d.places).find(p => p.id === id);
+                if (!place) return;
+                const prev = place.photo;
+                place.photo = dataUrl;
+                if (!_saveSchedule()) {
+                    place.photo = prev;   // 저장 못 한 사진은 새로고침하면 사라지므로 화면에도 남기지 않는다
+                    _showPhotoAlert('저장 공간이 부족해요', '이 브라우저에 사진을 더 저장할 수 없어요.<br>다른 코스의 사진을 지운 뒤 다시 시도해주세요');
+                }
             };
 
             const playArt = () => {
