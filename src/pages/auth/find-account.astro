@@ -29,7 +29,7 @@ import Navbar from '../../components/Navbar.astro';
 
     <!-- 아이디 찾기 패널 -->
     <div class="panel" id="panelId">
-      <p style="font-size:0.72rem;color:var(--text-dim);margin-bottom:12px;line-height:1.5;">
+      <p style="font-size:0.75rem;color:var(--text-dim);margin-bottom:12px;line-height:1.5;">
         가입 시 등록한 이메일을 입력하면<br>아이디를 알려드려요.
       </p>
       <div class="field">
@@ -42,7 +42,7 @@ import Navbar from '../../components/Navbar.astro';
 
     <!-- 비밀번호 찾기 패널 -->
     <div class="panel" id="panelPw">
-      <p style="font-size:0.72rem;color:var(--text-dim);margin-bottom:12px;line-height:1.5;">
+      <p style="font-size:0.75rem;color:var(--text-dim);margin-bottom:12px;line-height:1.5;">
         가입한 이메일로 비밀번호 재설정<br>링크를 보내드려요.
       </p>
       <div class="field">
@@ -127,7 +127,7 @@ import Navbar from '../../components/Navbar.astro';
       });
       if (error) throw error;
       showResult('findPwResult',
-        '재설정 링크를 보냈어요.<br>이메일함을 확인해주세요. 📬<br><span style="font-size:0.65rem;color:#9a8ab0">스팸함도 확인해보세요</span>',
+        '재설정 링크를 보냈어요.<br>이메일함을 확인해주세요. 📬<br><span style="font-size:0.75rem;color:#9a8ab0">스팸함도 확인해보세요</span>',
         'ok'
       );
     } catch (e) {
@@ -205,7 +205,7 @@ import Navbar from '../../components/Navbar.astro';
     }
     .logo-circle span { font-family:'Playfair Display',serif; font-size:0.85rem; font-weight:900; color:white; letter-spacing:0.05em; }
     .receipt-title { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:900; color:var(--purple); }
-    .receipt-sub { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.68rem; color:var(--text-dim); letter-spacing:0.15em; margin-top:2px; }
+    .receipt-sub { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.75rem; color:var(--text-dim); letter-spacing:0.15em; margin-top:2px; }
     .divider { border:none; border-top:1.5px dashed var(--purple-light); margin:12px 0; }
     .divider-solid { border:none; border-top:1px solid var(--purple-light); margin:10px 0; }
 
@@ -215,7 +215,7 @@ import Navbar from '../../components/Navbar.astro';
       flex:1; height:34px; border-radius:999px;
       border: 1.5px solid var(--purple-light);
       background: none; cursor:pointer;
-      font-family:'Noto Sans KR',sans-serif; font-size:0.72rem; font-weight:600;
+      font-family:'Noto Sans KR',sans-serif; font-size:0.75rem; font-weight:600;
       color: var(--text-dim); transition: all .15s;
     }
     .tab-btn.active {
@@ -228,7 +228,7 @@ import Navbar from '../../components/Navbar.astro';
     .panel.active { display:block; }
 
     .field { margin-bottom:12px; }
-    .field-label { font-size:0.6rem; font-weight:700; color:var(--green); letter-spacing:0.14em; margin-bottom:5px; display:block; }
+    .field-label { font-size:0.75rem; font-weight:700; color:var(--green); letter-spacing:0.14em; margin-bottom:5px; display:block; }
     .input-box {
       width:100%; height:40px; background:white;
       border:1.5px solid var(--purple-light); border-radius:999px;
@@ -257,7 +257,7 @@ import Navbar from '../../components/Navbar.astro';
     .btn-submit {
       width:100%; height:42px; background:var(--purple);
       border:none; border-radius:999px;
-      font-size:0.72rem; font-weight:700; color:white; letter-spacing:0.1em; text-transform:uppercase;
+      font-size:0.75rem; font-weight:700; color:white; letter-spacing:0.1em; text-transform:uppercase;
       cursor:pointer; font-family:'Noto Sans KR',sans-serif;
       box-shadow:0 4px 14px rgba(122,87,205,0.3);
       transition:transform .15s, box-shadow .15s; margin-top:4px;
@@ -266,7 +266,7 @@ import Navbar from '../../components/Navbar.astro';
     .btn-submit:disabled { opacity:.6; cursor:not-allowed; transform:none !important; }
 
     .receipt-links { display:flex; justify-content:center; gap:14px; margin-top:14px; }
-    .receipt-links a { font-size:0.68rem; color:var(--green); text-decoration:none; }
+    .receipt-links a { font-size:0.75rem; color:var(--green); text-decoration:none; }
     .receipt-links a:hover { color:var(--purple); text-decoration:underline; }
     .receipt-links span { color:var(--purple-light); }
 

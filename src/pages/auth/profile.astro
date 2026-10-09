@@ -58,7 +58,7 @@ import Navbar from '../../components/Navbar.astro';
         <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#7A57CD;margin-bottom:8px;">로그인이 필요해요</div>
         <p style="font-size:0.78rem;color:#746A91;margin-bottom:20px;line-height:1.6;">마이페이지를 이용하려면<br>먼저 로그인해주세요.</p>
         <a href="/auth/login" style="display:block;background:#7A57CD;color:white;border-radius:999px;padding:12px 24px;text-decoration:none;font-size:0.78rem;font-weight:700;letter-spacing:0.08em;">로그인하기</a>
-        <a href="/auth/register" style="display:block;margin-top:10px;font-size:0.7rem;color:#8F9D68;text-align:center;">아직 계정이 없으신가요? 회원가입 →</a>
+        <a href="/auth/register" style="display:block;margin-top:10px;font-size:0.75rem;color:#8F9D68;text-align:center;">아직 계정이 없으신가요? 회원가입 →</a>
       </div>`;
   }
 
@@ -376,8 +376,8 @@ import Navbar from '../../components/Navbar.astro';
     }
     .user-info-wrap { flex: 1; min-width: 0; }
     .user-nick { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--purple); }
-    .user-id { font-size: 0.72rem; color: var(--text-dim); margin-top: 3px; letter-spacing: 0.04em; }
-    .user-since { font-size: 0.65rem; color: var(--text-dim); font-family: 'Cormorant Garamond', serif; font-style: italic; }
+    .user-id { font-size: 0.75rem; color: var(--text-dim); margin-top: 3px; letter-spacing: 0.04em; }
+    .user-since { font-size: 0.75rem; color: var(--text-dim); font-family: 'Cormorant Garamond', serif; font-style: italic; }
 
     .divider { border:none; border-top:1.5px dashed var(--purple-light); margin:12px 0; }
     .divider-solid { border:none; border-top:1px solid rgba(139,111,208,0.2); margin:12px 0; }
@@ -390,14 +390,14 @@ import Navbar from '../../components/Navbar.astro';
       padding: 20px 24px;
     }
     .section-title {
-      font-size: 0.62rem; font-weight: 700; color: var(--green);
+      font-size: 0.75rem; font-weight: 700; color: var(--green);
       letter-spacing: 0.14em; margin-bottom: 14px;
     }
 
     .field { margin-bottom: 14px; }
     .field:last-child { margin-bottom: 0; }
-    .field-label { font-size: 0.6rem; font-weight: 600; color: var(--text-dim); letter-spacing: 0.1em; margin-bottom: 5px; display: block; }
-    .field-label span { font-weight: 400; color: rgba(154,138,176,0.7); font-size: 0.56rem; margin-left: 4px; }
+    .field-label { font-size: 0.75rem; font-weight: 600; color: var(--text-dim); letter-spacing: 0.1em; margin-bottom: 5px; display: block; }
+    .field-label span { font-weight: 400; color: rgba(154,138,176,0.7); font-size: 0.75rem; margin-left: 4px; }
     .input-box {
       width: 100%; height: 40px; background: white;
       border: 1.5px solid var(--purple-light); border-radius: 999px;
@@ -408,7 +408,7 @@ import Navbar from '../../components/Navbar.astro';
     .input-box:focus { border-color: var(--purple); }
     .input-box::placeholder { color: var(--text-dim); font-size: 0.75rem; }
     .input-box:disabled { background: rgba(245,240,255,0.5); color: var(--text-dim); cursor: not-allowed; }
-    .hint { font-size: 0.6rem; margin-top: 3px; min-height: 14px; padding-left: 4px; color: var(--text-dim); }
+    .hint { font-size: 0.75rem; margin-top: 3px; min-height: 14px; padding-left: 4px; color: var(--text-dim); }
     .hint.ok    { color: var(--ok); }
     .hint.error { color: var(--error); }
 
@@ -416,14 +416,14 @@ import Navbar from '../../components/Navbar.astro';
     .pw-toggle {
       position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
       background: none; border: none; cursor: pointer; color: var(--text-dim);
-      font-size: 0.64rem; font-family: 'Noto Sans KR', sans-serif; padding: 4px;
+      font-size: 0.75rem; font-family: 'Noto Sans KR', sans-serif; padding: 4px;
     }
     .pw-toggle:hover { color: var(--purple); }
 
     /* 마케팅 토글 */
     .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; }
     .toggle-label { font-size: 0.78rem; color: var(--text-mid); }
-    .toggle-sub { font-size: 0.65rem; color: var(--text-dim); margin-top: 2px; }
+    .toggle-sub { font-size: 0.75rem; color: var(--text-dim); margin-top: 2px; }
     .toggle-switch { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
     .toggle-switch input { opacity: 0; width: 0; height: 0; }
     .toggle-slider {
@@ -456,7 +456,7 @@ import Navbar from '../../components/Navbar.astro';
     .btn-logout {
       width: 100%; height: 40px; background: none;
       border: 1.5px solid rgba(200,80,80,0.3); border-radius: 999px;
-      font-size: 0.73rem; font-weight: 600; color: #c04040; letter-spacing: 0.06em;
+      font-size: 0.75rem; font-weight: 600; color: #c04040; letter-spacing: 0.06em;
       cursor: pointer; font-family: 'Noto Sans KR', sans-serif;
       transition: background 0.15s, border-color 0.15s;
     }
@@ -464,7 +464,7 @@ import Navbar from '../../components/Navbar.astro';
 
     .btn-back {
       display: inline-flex; align-items: center; gap: 6px;
-      font-size: 0.72rem; color: var(--text-dim); text-decoration: none;
+      font-size: 0.75rem; color: var(--text-dim); text-decoration: none;
       padding: 6px 0; transition: color 0.15s;
     }
     .btn-back:hover { color: var(--purple); }
