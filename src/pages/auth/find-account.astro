@@ -123,7 +123,7 @@ import Navbar from '../../components/Navbar.astro';
 
     try {
       const { error } = await window._sb.auth.resetPasswordForEmail(email, {
-        redirectTo: 'https://huihui-travel.vercel.app/auth/reset-password'
+        redirectTo: 'https://travel-huihui.com/auth/reset-password'
       });
       if (error) throw error;
       showResult('findPwResult',
