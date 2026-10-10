@@ -25,6 +25,34 @@ create policy "self_update" on public.profiles
 alter table public.profiles
   add constraint profiles_username_no_html check (username !~ '[<>"''&]') not valid;
 
--- 4. 대시보드에서 직접 바꿀 설정
+-- 4. 구글 로그인 가입이 username NOT NULL 에 걸려 실패하던 문제: 메타데이터가 없으면 아이디·닉네임을 만들어 넣는다
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql security definer set search_path = public
+as $$
+begin
+  insert into public.profiles (id, username, nickname, phone, marketing_email, marketing_sms)
+  values (
+    new.id,
+    coalesce(
+      nullif(new.raw_user_meta_data->>'username', ''),
+      'g' || left(replace(new.id::text, '-', ''), 15)
+    ),
+    left(coalesce(
+      nullif(trim(new.raw_user_meta_data->>'nickname'), ''),
+      nullif(trim(new.raw_user_meta_data->>'name'), ''),
+      nullif(trim(new.raw_user_meta_data->>'full_name'), ''),
+      nullif(split_part(new.email, '@', 1), ''),
+      '여행자'
+    ), 20),
+    new.raw_user_meta_data->>'phone',
+    coalesce((new.raw_user_meta_data->>'marketing_email')::boolean, false),
+    coalesce((new.raw_user_meta_data->>'marketing_sms')::boolean, false)
+  );
+  return new;
+end;
+$$;
+
+-- 5. 대시보드에서 직접 바꿀 설정
 --    - Authentication > Providers > Email > "Confirm email" 켜기
 --    - Authentication > URL Configuration > Site URL = https://travel-huihui.com

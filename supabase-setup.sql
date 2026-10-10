@@ -34,6 +34,7 @@ grant update (nickname, phone, marketing_email, marketing_sms, updated_at)
   on public.profiles to authenticated;
 
 -- 4. 회원가입 트리거 — signUp 시 메타데이터로 profiles 자동 생성
+--    구글 로그인은 username·nickname 메타데이터가 없으므로 id에서 아이디를, 구글 이름·이메일에서 닉네임을 만든다
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql security definer set search_path = public
@@ -42,8 +43,17 @@ begin
   insert into public.profiles (id, username, nickname, phone, marketing_email, marketing_sms)
   values (
     new.id,
-    new.raw_user_meta_data->>'username',
-    new.raw_user_meta_data->>'nickname',
+    coalesce(
+      nullif(new.raw_user_meta_data->>'username', ''),
+      'g' || left(replace(new.id::text, '-', ''), 15)
+    ),
+    left(coalesce(
+      nullif(trim(new.raw_user_meta_data->>'nickname'), ''),
+      nullif(trim(new.raw_user_meta_data->>'name'), ''),
+      nullif(trim(new.raw_user_meta_data->>'full_name'), ''),
+      nullif(split_part(new.email, '@', 1), ''),
+      '여행자'
+    ), 20),
     new.raw_user_meta_data->>'phone',
     coalesce((new.raw_user_meta_data->>'marketing_email')::boolean, false),
     coalesce((new.raw_user_meta_data->>'marketing_sms')::boolean, false)

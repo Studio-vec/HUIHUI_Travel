@@ -159,8 +159,12 @@ import Navbar from '../../components/Navbar.astro';
     btn.querySelector('.btn-checkin-label').innerHTML = '<span class="loading-spinner"></span>확인 중…';
 
     try {
-      /* 계정 존재 여부가 드러나지 않도록 실패 사유는 하나로 묶는다 */
+      /* 계정 존재 여부가 드러나지 않도록 실패 사유는 하나로 묶는다.
+         단, 미인증은 비밀번호가 맞아야만 돌아오는 응답이라 따로 안내해도 존재 여부가 새지 않는다 */
       const { error: signErr } = await window._sb.auth.signInWithPassword({ email, password: pw });
+      if (signErr?.code === 'email_not_confirmed' || /not confirmed/i.test(signErr?.message || '')) {
+        throw new Error('아직 이메일 인증 전이에요. 가입 메일의 링크를 눌러 인증을 마쳐주세요 📬');
+      }
       if (signErr) throw new Error('이메일 또는 비밀번호가 맞지 않아요');
 
       document.getElementById('toast').classList.add('show');
