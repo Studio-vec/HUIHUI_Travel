@@ -74,15 +74,21 @@ export interface TripData {
   places: TripPlace[];
   /**
    * 비밀코드 여행지. 값이 있으면 홈·갤러리·게임·사이트맵 목록에 나오지 않고 검색엔진에도 색인되지 않는다.
-   * 홈 맨 끝 "비밀코드" 카드에서 이 코드를 입력해야 /trips/<id>로 연결된다.
+   * 코드 원문 대신 `node scripts/secret_hash.mjs "코드"`로 만든 해시를 넣는다.
+   * 페이지는 /trips/<id>가 아니라 /trips/<해시 앞 24자>에 만들어져, 코드를 아는 사람만 주소를 알 수 있다.
    */
-  secretCode?: string;
+  secretHash?: string;
   /** Homepage key-card display order (defaults to array order if omitted) */
   no?: number;
   /** Short Korean place name shown on the homepage key card */
   shortNameKo?: string;
   /** Optional short tagline shown on the homepage key card */
   tagline?: string;
+}
+
+/** 여행지 페이지 경로의 마지막 조각. 비밀코드 여행지는 id를 드러내지 않도록 해시에서 만든다 */
+export function tripSlug(data: TripData): string {
+  return data.secretHash ? data.secretHash.slice(0, 24) : data.id;
 }
 
 export function dayCountOf(data: TripData): number {

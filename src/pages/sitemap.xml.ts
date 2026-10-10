@@ -24,7 +24,7 @@ export const GET: APIRoute = ({ site }) => {
 
   const tripPaths = Object.values(tripModules)
     .map((mod) => mod.default)
-  .filter((t) => !t.secretCode)
+  .filter((t) => !t.secretHash)
     .sort((a, b) => (a.no ?? 0) - (b.no ?? 0))
     .map((t) => ({ path: `/trips/${t.id}`, priority: '0.9', changefreq: 'monthly' }));
 

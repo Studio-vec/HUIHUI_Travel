@@ -1,5 +1,5 @@
 /**
- * HUIHUI Travel — 공유 네브바 컴포넌트
+ * Travel HUIHUI — 공유 네브바 컴포넌트
  * 모든 페이지에서 <script src="...navbar.js"></script> 한 줄로 삽입됩니다.
  */
 (function () {
@@ -207,7 +207,7 @@
   const nav = document.createElement('nav');
   nav.className = 'hh-navbar';
   nav.innerHTML = `
-  <a href="/" class="hh-navbar-logo">HUIHUI Travel</a>
+  <a href="/" class="hh-navbar-logo">Travel HUIHUI</a>
   <ul class="hh-navbar-links">
     <li><a href="/"${homeActive}>홈</a></li>
     <li><a href="/gallery"${galleryActive}>갤러리</a></li>

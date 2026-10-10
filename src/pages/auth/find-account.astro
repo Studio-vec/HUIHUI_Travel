@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Navbar from '../../components/Navbar.astro';
 
 ---
-<BaseLayout title="아이디 / 비밀번호 찾기 – HUIHUI Travel" noindex ads={false}>
+<BaseLayout title="비밀번호 찾기 – Travel HUIHUI" noindex ads={false}>
 
   <Navbar />
   <main id="main">
@@ -21,27 +21,8 @@ import Navbar from '../../components/Navbar.astro';
 
     <hr class="divider-solid"/>
 
-    <!-- 탭 -->
-    <div class="tabs">
-      <button class="tab-btn" id="tabId" onclick="switchTab('id')">아이디 찾기</button>
-      <button class="tab-btn" id="tabPw" onclick="switchTab('pw')">비밀번호 찾기</button>
-    </div>
-
-    <!-- 아이디 찾기 패널 -->
-    <div class="panel" id="panelId">
-      <p style="font-size:0.75rem;color:var(--text-dim);margin-bottom:12px;line-height:1.5;">
-        가입 시 등록한 이메일을 입력하면<br>아이디를 알려드려요.
-      </p>
-      <div class="field">
-        <label class="field-label">이메일</label>
-        <input class="input-box" type="email" id="findIdEmail" placeholder="가입한 이메일 주소"/>
-      </div>
-      <div class="result-box" id="findIdResult"></div>
-      <button class="btn-submit" id="findIdBtn" onclick="findId()">아이디 찾기</button>
-    </div>
-
     <!-- 비밀번호 찾기 패널 -->
-    <div class="panel" id="panelPw">
+    <div class="panel active" id="panelPw">
       <p style="font-size:0.75rem;color:var(--text-dim);margin-bottom:12px;line-height:1.5;">
         가입한 이메일로 비밀번호 재설정<br>링크를 보내드려요.
       </p>
@@ -66,48 +47,10 @@ import Navbar from '../../components/Navbar.astro';
 </div>
 
 <script>
-  /* URL 파라미터로 초기 탭 결정 */
-  const initMode = new URLSearchParams(location.search).get('mode') || 'id';
-  switchTab(initMode);
-
-  function switchTab(mode) {
-    document.getElementById('tabId').classList.toggle('active',  mode === 'id');
-    document.getElementById('tabPw').classList.toggle('active',  mode === 'pw');
-    document.getElementById('panelId').classList.toggle('active', mode === 'id');
-    document.getElementById('panelPw').classList.toggle('active', mode === 'pw');
-    history.replaceState(null,'', '?mode=' + mode);
-  }
-
   function showResult(id, msg, type) {
     const el = document.getElementById(id);
-    el.innerHTML = msg;
+    el.textContent = msg;
     el.className = 'result-box ' + type + ' show';
-  }
-
-  /* 아이디 찾기 */
-  async function findId() {
-    const email = document.getElementById('findIdEmail').value.trim();
-    const btn   = document.getElementById('findIdBtn');
-    if (!email) { showResult('findIdResult','이메일을 입력해주세요','error'); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showResult('findIdResult','이메일 형식을 확인해주세요','error'); return; }
-    if (!window._sb) { showResult('findIdResult','서버 연결을 확인해주세요','error'); return; }
-
-    btn.disabled = true;
-    btn.innerHTML = '<span class="loading-spinner"></span>찾는 중…';
-
-    try {
-      const { data: username, error } = await window._sb.rpc('get_username_by_email', { p_email: email });
-      if (error || !username) throw new Error('해당 이메일로 가입된 계정이 없어요');
-      showResult('findIdResult',
-        `가입된 아이디를 찾았어요!<div class="result-id">${username}</div>`,
-        'ok'
-      );
-    } catch (e) {
-      showResult('findIdResult', e.message, 'error');
-    }
-
-    btn.disabled = false;
-    btn.textContent = '아이디 찾기';
   }
 
   /* 비밀번호 재설정 메일 */
@@ -126,32 +69,22 @@ import Navbar from '../../components/Navbar.astro';
         redirectTo: 'https://travel-huihui.com/auth/reset-password'
       });
       if (error) throw error;
+      /* 가입 여부와 관계없이 같은 문구를 보여 계정 존재 여부를 드러내지 않는다 */
       showResult('findPwResult',
-        '재설정 링크를 보냈어요.<br>이메일함을 확인해주세요. 📬<br><span style="font-size:0.75rem;color:#9a8ab0">스팸함도 확인해보세요</span>',
+        '가입된 이메일이라면 재설정 링크를 보냈어요. 이메일함(스팸함 포함)을 확인해주세요. 📬',
         'ok'
       );
     } catch (e) {
-      showResult('findPwResult',
-        e.message.includes('not found') || e.message.includes('User')
-          ? '해당 이메일로 가입된 계정이 없어요'
-          : e.message || '오류가 발생했어요',
-        'error'
-      );
+      showResult('findPwResult', '메일을 보내지 못했어요. 잠시 후 다시 시도해주세요.', 'error');
     }
 
     btn.disabled = false;
     btn.textContent = '재설정 메일 보내기';
   }
 
-  document.addEventListener('keydown', e => {
-    if (e.key !== 'Enter') return;
-    const mode = new URLSearchParams(location.search).get('mode') || 'id';
-    if (mode === 'id') findId(); else findPw();
-  });
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') findPw(); });
 
-  window.switchTab = switchTab;
-  window.findId    = findId;
-  window.findPw    = findPw;
+  window.findPw = findPw;
 </script>
 
 
@@ -210,20 +143,6 @@ import Navbar from '../../components/Navbar.astro';
     .divider-solid { border:none; border-top:1px solid var(--purple-light); margin:10px 0; }
 
     /* 탭 */
-    .tabs { display:flex; gap:4px; margin-bottom:14px; }
-    .tab-btn {
-      flex:1; height:34px; border-radius:999px;
-      border: 1.5px solid var(--purple-light);
-      background: none; cursor:pointer;
-      font-family:'Noto Sans KR',sans-serif; font-size:0.75rem; font-weight:600;
-      color: var(--text-dim); transition: all .15s;
-    }
-    .tab-btn.active {
-      background: var(--purple); border-color: var(--purple);
-      color: white; box-shadow: 0 2px 8px rgba(122,87,205,0.3);
-    }
-
-    /* 패널 */
     .panel { display:none; }
     .panel.active { display:block; }
 

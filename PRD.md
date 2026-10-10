@@ -1,4 +1,4 @@
-# HUIHUI Travel — Product Requirements Document
+# Travel HUIHUI — Product Requirements Document
 > Version 1.1 · 2026-04-30 · Senior Designer Review
 
 ---
@@ -9,7 +9,7 @@
 국내 여행을 큐레이션하는 **개인 브랜드 기반 여행 플랫폼**. 블로거(운영자)가 직접 설계한 여행 코스를 중심으로, 방문자들이 장소별 팁을 댓글로 쌓아가며 살아있는 여행 가이드가 되는 서비스. 장기적으로는 사진 기반 인터랙티브 아트와 미니 게임으로 확장해 브랜드 IP를 구축한다.
 
 ### Positioning
-| 구분 | 기존 여행 플랫폼 (네이버 블로그, 트리플) | HUIHUI Travel |
+| 구분 | 기존 여행 플랫폼 (네이버 블로그, 트리플) | Travel HUIHUI |
 |---|---|---|
 | 콘텐츠 구조 | 포스팅 단위, 검색 기반 | 코스 단위, 큐레이션 기반 |
 | 커뮤니티 | 없음 / 약함 | 장소별 팁 댓글 스레드 |
@@ -180,7 +180,7 @@ Depth 5  회원가입 모달              로그인 페이지에서 오버레이
 
 ### Phase 3 — Interactive Art & Mini-Game
 
-> 이 단계가 HUIHUI Travel을 단순 여행 플랫폼과 차별화하는 핵심.
+> 이 단계가 Travel HUIHUI를 단순 여행 플랫폼과 차별화하는 핵심.
 
 #### F-08. 사진 아카이브 & 인터랙티브 아트
 

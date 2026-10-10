@@ -1,4 +1,4 @@
-# HUIHUI Travel — User Flow & Service Scenarios
+# Travel HUIHUI — User Flow & Service Scenarios
 > Version 1.0 · 2026-04-30
 
 ---

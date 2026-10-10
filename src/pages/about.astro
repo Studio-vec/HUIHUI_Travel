@@ -13,7 +13,7 @@ const tripModules = import.meta.glob('/trips/data/*.json', { eager: true }) as R
 >;
 const allTrips = Object.values(tripModules)
   .map((mod) => mod.default)
-  .filter((t) => !t.secretCode)
+  .filter((t) => !t.secretHash)
   .sort((a, b) => (a.no ?? 0) - (b.no ?? 0));
 
 const totalPlaces = allTrips.reduce((sum, t) => sum + t.places.length, 0);
@@ -21,8 +21,8 @@ const totalDays = allTrips.reduce((sum, t) => sum + dayCountOf(t), 0);
 const regions = [...new Set(allTrips.map((t) => t.locationLabel))];
 ---
 <BaseLayout
-  title="사이트 소개 — HUIHUI Travel"
-  description="HUIHUI Travel은 직접 다녀온 국내 여행 코스를 일자별 동선과 장소별 실측 정보로 정리해 공개하는 개인 여행 기록 사이트입니다. 코스를 만드는 기준과 정보 검증 방식, 문의 방법을 안내합니다."
+  title="사이트 소개 — Travel HUIHUI"
+  description="Travel HUIHUI는 직접 다녀온 국내 여행 코스를 일자별 동선과 장소별 실측 정보로 정리해 공개하는 개인 여행 기록 사이트입니다. 코스를 만드는 기준과 정보 검증 방식, 문의 방법을 안내합니다."
 >
   <Fragment slot="head">
   <link rel="stylesheet" href={asset('/assets/css/tokens.css')}/>
@@ -39,7 +39,7 @@ const regions = [...new Set(allTrips.map((t) => t.locationLabel))];
 
     <div class="pp-body">
       <p class="pp-lead">
-        HUIHUI Travel은 직접 다녀온 국내 여행을 코스 단위로 기록하고 공개하는 개인 여행 기록
+        Travel HUIHUI는 직접 다녀온 국내 여행을 코스 단위로 기록하고 공개하는 개인 여행 기록
         사이트입니다. 검색으로 흩어진 정보를 하나씩 모으는 대신, 아침에 출발해서 저녁에 숙소로
         돌아오기까지의 하루를 그대로 따라갈 수 있는 형태로 정리합니다. 현재 {regions.length}개 지역,
         {allTrips.length}개 코스, {totalPlaces}곳의 장소 기록이 공개되어 있습니다.

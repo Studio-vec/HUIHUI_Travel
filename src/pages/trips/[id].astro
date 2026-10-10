@@ -5,7 +5,7 @@ import Navbar from '../../components/Navbar.astro';
 import TripArticle from '../../components/TripArticle.astro';
 import TripIndex from '../../components/TripIndex.astro';
 import Footer from '../../components/Footer.astro';
-import { toMobileSchedule, toMobileTips, dayCountOf } from '../../lib/tripData';
+import { toMobileSchedule, toMobileTips, dayCountOf, tripSlug } from '../../lib/tripData';
 import type { TripData } from '../../lib/tripData';
 
 export async function getStaticPaths() {
@@ -18,8 +18,8 @@ export async function getStaticPaths() {
     .sort((a, b) => (a.no ?? 0) - (b.no ?? 0));
 
   return all.map((trip) => ({
-    params: { id: trip.id },
-    props: { tripData: trip, otherTrips: all.filter((t) => t.id !== trip.id && !t.secretCode) },
+    params: { id: tripSlug(trip) },
+    props: { tripData: trip, otherTrips: all.filter((t) => t.id !== trip.id && !t.secretHash) },
   }));
 }
 
@@ -37,7 +37,7 @@ const dayCount = dayCountOf(tripData);
 /* 사진은 장소 이름·id로 새 일정에 다시 붙이므로 일정이 바뀌어도 키를 바꾸지 않는다 */
 const storageKey = `trip_${tripData.id}`;
 const tipsKey = `trip_${tripData.id}_tips_v1`;
-const tripUrl = `/trips/${tripData.id}`;
+const tripUrl = `/trips/${tripSlug(tripData)}`;
 const momentLabel = tripData.id.charAt(0).toUpperCase() + tripData.id.slice(1);
 
 const tripDescription = [
@@ -260,7 +260,7 @@ createTripApp({
 </script>
 `;
 ---
-<BaseLayout title={`${tripData.title} — HUIHUI Travel`} description={tripDescription} noindex={!!tripData.secretCode} app>
+<BaseLayout title={`${tripData.title} — Travel HUIHUI`} description={tripDescription} noindex={!!tripData.secretHash} app>
   <Fragment slot="head">
   <link rel="stylesheet" href={asset('/assets/css/trip.css')}>
   <link rel="stylesheet" href={asset('/assets/css/trip-article.css')}>

@@ -10,7 +10,7 @@ const tripModules = import.meta.glob('/trips/data/*.json', { eager: true }) as R
 >;
 const trips = Object.values(tripModules)
   .map((mod) => mod.default)
-  .filter((t) => !t.secretCode)
+  .filter((t) => !t.secretHash)
   .sort((a, b) => (a.no ?? 0) - (b.no ?? 0))
   .map((t) => ({
     id: t.id,
@@ -20,7 +20,7 @@ const trips = Object.values(tripModules)
   }));
 ---
 <BaseLayout
-  title="404 — 없는 객실이에요 | HUIHUI Travel"
+  title="404 — 없는 객실이에요 | Travel HUIHUI"
   description="찾으시는 페이지를 찾을 수 없습니다. 키카드를 태그하고 다른 여행지 객실로 이동해 보세요."
   noindex
   ads={false}
@@ -92,7 +92,7 @@ const trips = Object.values(tripModules)
         <button class="card" id="card" type="button" aria-label="키카드를 리더기에 태그해서 문 열기">
           <span class="card-body">
             <span class="card-chip"></span>
-            <span class="card-name">HUIHUI Travel</span>
+            <span class="card-name">Travel HUIHUI</span>
             <span class="card-sub">KEY · 다른 여행지</span>
             <span class="card-stripe"></span>
           </span>

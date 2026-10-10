@@ -1,5 +1,5 @@
 /**
- * HUIHUI Travel — PC / 모바일 화면 전환
+ * Travel HUIHUI — PC / 모바일 화면 전환
  *
  * - PC에서 '모바일 화면': /m.html 셸에서 같은 페이지를 폰 크기 iframe(미디어쿼리가 그대로 적용됨)에 담아 보여준다.
  * - 폰에서 'PC 화면': viewport를 1280px로 바꿔 PC 레이아웃을 축소해서 보여준다.

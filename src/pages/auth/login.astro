@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Navbar from '../../components/Navbar.astro';
 
 ---
-<BaseLayout title="로그인 – HUIHUI Travel" noindex ads={false}>
+<BaseLayout title="로그인 – Travel HUIHUI" noindex ads={false}>
 
   <Navbar />
   <main id="main">
@@ -17,14 +17,14 @@ import Navbar from '../../components/Navbar.astro';
     <div class="receipt-hotel">
       <div class="hotel-badge"><span>HH</span></div>
       <div class="hotel-name">MASIL</div>
-      <div class="hotel-sub">HUIHUI TRAVEL LOG</div>
+      <div class="hotel-sub">TRAVEL HUIHUI LOG</div>
     </div>
 
     <!-- 예약 메타 -->
     <table class="meta-table">
       <tr>
         <td class="meta-label">PROPERTY</td>
-        <td class="meta-value">HUIHUI TRAVEL</td>
+        <td class="meta-value">TRAVEL HUIHUI</td>
       </tr>
       <tr>
         <td class="meta-label">GUEST&nbsp;ID</td>
@@ -43,8 +43,8 @@ import Navbar from '../../components/Navbar.astro';
     <hr class="divider"/>
 
     <div class="field">
-      <label class="field-label">GUEST ID / 아이디</label>
-      <input class="input-box" type="text" id="uid" placeholder="아이디를 입력하세요" autocomplete="username"/>
+      <label class="field-label">GUEST EMAIL / 이메일</label>
+      <input class="input-box" type="email" id="uid" placeholder="가입한 이메일을 입력하세요" autocomplete="email" inputmode="email"/>
     </div>
 
     <div class="field">
@@ -65,9 +65,7 @@ import Navbar from '../../components/Navbar.astro';
     </button>
 
     <div class="receipt-links">
-      <a href="/auth/find-account?mode=id">아이디 찾기</a>
-      <span>·</span>
-      <a href="/auth/find-account?mode=pw">비밀번호 찾기</a>
+      <a href="/auth/find-account">비밀번호 찾기</a>
     </div>
     <div class="receipt-links" style="margin-top:5px;">
       <a href="/auth/register">처음이세요? 회원가입 →</a>
@@ -125,6 +123,13 @@ import Navbar from '../../components/Navbar.astro';
     num.textContent = code;
   })();
 
+  /* ?redirect= 는 같은 사이트 경로만 허용한다. javascript:·외부 주소·//host 로의 이동을 막는다 */
+  function safeRedirect() {
+    const r = new URLSearchParams(location.search).get('redirect') || '/';
+    /* 탭·줄바꿈은 브라우저가 지워 '/\t/evil.com' → '//evil.com' 이 되므로 공백·제어문자도 거부 */
+    return /^\/(?![\/\\])[^\s\x00-\x1f]*$/.test(r) ? r : '/';
+  }
+
   function togglePw() {
     const i = document.getElementById('pw');
     const b = event.currentTarget;
@@ -133,15 +138,15 @@ import Navbar from '../../components/Navbar.astro';
   }
 
   async function doLogin() {
-    const uid = document.getElementById('uid').value.trim();
+    const email = document.getElementById('uid').value.trim();
     const pw  = document.getElementById('pw').value;
     const err = document.getElementById('errMsg');
     const btn = document.getElementById('loginBtn');
 
     err.classList.remove('show');
 
-    if (!uid || !pw) {
-      err.textContent = '아이디와 비밀번호를 모두 입력해주세요.';
+    if (!email || !pw) {
+      err.textContent = '이메일과 비밀번호를 모두 입력해주세요.';
       err.classList.add('show'); return;
     }
 
@@ -154,18 +159,14 @@ import Navbar from '../../components/Navbar.astro';
     btn.querySelector('.btn-checkin-label').innerHTML = '<span class="loading-spinner"></span>확인 중…';
 
     try {
-      /* 아이디로 이메일 조회 */
-      const { data: email, error: rpcErr } = await window._sb.rpc('get_email_by_username', { p_username: uid });
-      if (rpcErr || !email) throw new Error('아이디를 찾을 수 없습니다');
-
-      /* 이메일 + 비밀번호로 로그인 */
+      /* 계정 존재 여부가 드러나지 않도록 실패 사유는 하나로 묶는다 */
       const { error: signErr } = await window._sb.auth.signInWithPassword({ email, password: pw });
-      if (signErr) throw new Error('비밀번호가 맞지 않아요');
+      if (signErr) throw new Error('이메일 또는 비밀번호가 맞지 않아요');
 
       document.getElementById('toast').classList.add('show');
 
       /* 로그인 전 페이지로 돌아가거나 홈으로 */
-      const redirect = new URLSearchParams(location.search).get('redirect') || '/';
+      const redirect = safeRedirect();
       setTimeout(() => window.location.href = redirect, 1400);
 
     } catch (e) {
@@ -197,7 +198,7 @@ import Navbar from '../../components/Navbar.astro';
     btn.disabled = true;
     btn.querySelector('span').textContent = '연결 중…';
 
-    const redirect = new URLSearchParams(location.search).get('redirect') || '/';
+    const redirect = safeRedirect();
     /* redirectTo를 로그인 페이지로 설정해 세션 처리를 보장 */
     /* 모바일 화면 미리보기(iframe) 안에서는 구글이 프레임 표시를 막으므로 최상위 창으로 이동 */
     const inPhoneFrame = window.name === 'hh-phone';
@@ -224,7 +225,7 @@ import Navbar from '../../components/Navbar.astro';
   /* OAuth 콜백 처리: 세션 확립되면 바로 이동 */
   (async function handleOAuthCallback() {
     if (!window._sb) return;
-    const redirectTo = new URLSearchParams(location.search).get('redirect') || '/';
+    const redirectTo = safeRedirect();
 
     /* 이미 세션이 있으면 즉시 이동 */
     const { data: { session } } = await window._sb.auth.getSession();
