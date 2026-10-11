@@ -161,7 +161,6 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
   </div>
   <div class="he-petals" aria-hidden="true"></div>
   <div class="he-bar">
-    <p class="he-hint">처마 밑으로 바람을 일으켜 보세요 · 꽃을 누르면 꽃잎이 날려요</p>
     <button type="button" class="he-sound-btn" aria-pressed="false">풍경 소리 <span>끔</span></button>
   </div>
 </div>
@@ -383,8 +382,6 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
     display: flex; align-items: center; gap: 16px;
     opacity: 0; animation: heFade .8s ease-out 3.2s forwards;
   }
-  .he-hint { font-family: var(--font-heading); font-size: 11px; letter-spacing: 0.08em; color: var(--color-text-tertiary); }
-  .hanok-eave.is-touched .he-hint { opacity: .45; transition: opacity .4s; }
   .he-sound-btn {
     min-height: 32px; padding: 0 2px; background: none; border: none; border-bottom: 1px solid var(--color-rule-strong); border-radius: 0;
     font-family: var(--font-heading); font-size: 11px; letter-spacing: 0.08em; color: var(--color-text-primary); cursor: pointer;
@@ -392,7 +389,6 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
   .he-sound-btn span { color: var(--color-text-tertiary); margin-left: 4px; }
   .he-sound-btn[aria-pressed="true"] { border-color: var(--yeonji-500); }
   .he-sound-btn[aria-pressed="true"] span { color: var(--yeonji-500); }
-  @media (max-width: 640px) { .he-hint { display: none; } }
 
   /* 풍경이 울릴 때 소리 자국 */
   .he-svg :global(.he-sound) { opacity: 0; }
@@ -413,6 +409,5 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
     .he-svg :global(.he-draw path) { animation: none; stroke-dashoffset: 0; }
     .he-svg :global(.he-fade) { animation: none; opacity: 1; }
     .he-bar { animation: none; opacity: 1; }
-    .he-hint { display: none; }
   }
 </style>
