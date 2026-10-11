@@ -48,13 +48,6 @@
   --meok-400: #646B84;
   --hyeonpan:  #1F3A33;  /* 현판 테두리 (단청 석간주 위 짙은 녹) */
 
-  /* ── 밤 NIGHT (먹·쪽빛 — 기와집 프런트, 네브바, 푸터) ── */
-  --night-900: #0F141B;
-  --night-800: #151C25;
-  --night-700: #202A36;
-  --night-600: #313E4D;
-  --night-line: #E6E0D2;   /* 밤 배경 위 선화(흰 선) */
-
   /* 원칙: 오프화이트 바탕 + 차콜 네이비 글씨·선, 포인트는 팝 핑크(주)와 비비드 민트(보조) 둘. 금은 가는 선에만 */
 
   /* ── SEMANTIC ── */
@@ -64,7 +57,7 @@
   --color-surface-tint: var(--yeonji-50);
 
   --color-brand:        var(--yeonji-300);
-  --color-brand-dark:   var(--yeonji-500);
+  --color-brand-dark:   var(--yeonji-600);   /* 글자로 쓰이므로 대비가 되는 진한 핑크 */
   --color-brand-light:  var(--yeonji-100);
 
   --color-accent:       var(--bichwi-300);

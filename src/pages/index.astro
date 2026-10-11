@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import TripIndex from '../components/TripIndex.astro';
 import HanokEave from '../components/HanokEave.astro';
 import { homeCardOf, publicTrips } from '../lib/tripData';
+import { KNOT_PATH } from '../lib/hanok';
 
 const allTrips = publicTrips();
 
@@ -319,10 +320,11 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
   <!-- ── TOAST CONTAINER ── -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <script define:vars={{ tripConfig }}>
+  <script define:vars={{ tripConfig, KNOT_PATH }}>
     /* trips/data/*.json에서 빌드타임에 생성된 트립 목록.
        새 여행지는 이 파일을 건드릴 필요 없이 JSON 추가만으로 반영됨. */
     window.__TRIP_CONFIG__ = tripConfig;
+    window.__KNOT_PATH__ = KNOT_PATH;
   </script>
   <script is:inline>
     /* ════════════════════════════════════════════
@@ -603,18 +605,17 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
 
     /* ── UTILITIES ── */
     function _fmtNo(no) { return String(no).padStart(2, '0'); }
+    /* 번호 없이 열린 비밀 여행지는 card.json 이 999 를 주므로 번호 대신 ∞ 로 적는다 */
+    function _cardNo(no) { return no >= 999 ? 'No.∞' : 'No.' + _fmtNo(no); }
 
     /* ════════════════════════════════════════════
        CARD SVG TEMPLATES  (전통 테마: 한지·연지·금)
     ════════════════════════════════════════════ */
     /* 카드 그림: 머리글 아래 가는 선에서 내려온 연지 끈 + 선으로 그린 생쪽매듭. 틀과 글자는 HTML/CSS가 맡는다 */
-    const _KNOT = 'M0 -6L6 0L0 6L-6 0Z M-3.5 -3.5C-8 -9 -1.5 -11 0 -6M3.5 -3.5C8 -9 1.5 -11 0 -6M-3.5 3.5C-8 9 -1.5 11 0 6M3.5 3.5C8 9 1.5 11 0 6M-3.5 -3.5C-9 -8 -11 -1.5 -6 0M-3.5 3.5C-9 8 -11 1.5 -6 0M3.5 -3.5C9 -8 11 -1.5 6 0M3.5 3.5C9 8 11 1.5 6 0';
-    function _cardBgSVG() {
-      return `<svg class="card-slot-img" viewBox="0 0 200 276" fill="none" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    const _CARD_BG = `<svg class="card-slot-img" viewBox="0 0 200 276" fill="none" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 <path d="M100 66V96" stroke="#EF4D6D" stroke-width="1.1"/>
-<g transform="translate(100 76)"><path d="${_KNOT}" stroke="#EF4D6D" stroke-width="1"/></g>
+<g transform="translate(100 76)"><path d="${window.__KNOT_PATH__}" stroke="#EF4D6D" stroke-width="1"/></g>
 </svg>`;
-    }
 
     /* 준비 중: 아직 걸리지 않은 열쇠 자리 — 점선으로 그린 열쇠 윤곽 */
     function _comingSoonSVG() {
@@ -691,7 +692,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
       if      (s === 'open')        keyHTML = `<div class="card-key-img">${_keyImgHTML(trip, i)}</div>`;
       else if (s === 'reserved')    keyHTML = `<div class="card-key-img">${_reservedSVG()}</div>`;
       else if (s === 'coming-soon') keyHTML = `<div class="card-key-img">${_comingSoonSVG()}</div>`;
-      return `<div class="${cl}" data-trip-idx="${i}"><div class="card-3d">${_cardBgSVG(i)}<div class="card-head"><span class="card-no">No.${_fmtNo(trip.no)}</span><span class="card-region">${_esc(trip.region)}</span><span class="${nameCls}">${_esc(label)}</span></div>${keyHTML}</div><div class="card-meta">${_esc(metaTxt)}</div></div>`;
+      return `<div class="${cl}" data-trip-idx="${i}"><div class="card-3d">${_CARD_BG}<div class="card-head"><span class="card-no">${_cardNo(trip.no)}</span><span class="card-region">${_esc(trip.region)}</span><span class="${nameCls}">${_esc(label)}</span></div>${keyHTML}</div><div class="card-meta">${_esc(metaTxt)}</div></div>`;
     }
 
     function _attachCardClicks() {
@@ -859,7 +860,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     /* ── 비밀코드 카드 (그리드 맨 끝, 필터·추천 대상 아님) ── */
     function _renderSecretCard() {
       const i = TRIPS.length; // 다른 카드와 SVG 그라데이션 id가 겹치지 않게
-      return `<div class="key-card secret" id="secretCard" role="button" tabindex="0" aria-label="비밀코드 입력"><div class="card-3d">${_cardBgSVG(i)}<div class="card-head"><span class="card-no">No.∞</span><span class="card-region">Secret</span><span class="card-name">비밀코드</span></div><div class="card-key-img"><img src="/assets/keys/secret.webp" width="416" height="1077" alt="비밀코드 열쇠" onerror="_onKeyImgError(this)" /></div></div><div class="card-meta">코드를 입력하세요</div></div>`;
+      return `<div class="key-card secret" id="secretCard" role="button" tabindex="0" aria-label="비밀코드 입력"><div class="card-3d">${_CARD_BG}<div class="card-head"><span class="card-no">No.∞</span><span class="card-region">Secret</span><span class="card-name">비밀코드</span></div><div class="card-key-img"><img src="/assets/keys/secret.webp" width="416" height="1077" alt="비밀코드 열쇠" onerror="_onKeyImgError(this)" /></div></div><div class="card-meta">코드를 입력하세요</div></div>`;
     }
 
     function _renderGrid() {
@@ -1053,7 +1054,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
       font-family: var(--font-accent);
       font-size: clamp(46px, 9.4vw, 128px); font-weight: 800;
       line-height: 1.02; letter-spacing: -0.05em;
-      color: var(--yeonji-500);
+      color: var(--yeonji-500);   /* 큰 글씨라 팝 핑크 그대로 (대비 3:1 이상) */
     }
     .hero-foot {
       display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-5);
@@ -1208,7 +1209,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
       cursor: pointer; transition: color var(--dur-fast), border-color var(--dur-fast);
     }
     .hero-cta-arrow { display: inline-block; transition: transform var(--dur-base) var(--ease-out); }
-    .hero-cta:hover { color: var(--yeonji-500); border-color: var(--yeonji-500); }
+    .hero-cta:hover { color: var(--yeonji-600); border-color: var(--yeonji-500); }
     .hero-cta:hover .hero-cta-arrow { transform: translateX(4px); }
 
     /* ── Key Card ── */
@@ -1335,7 +1336,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
       transition: color .15s, border-color .15s, background .15s;
     }
     .tip-chip:hover {
-      color: var(--yeonji-500);
+      color: var(--yeonji-600);
       border-color: var(--yeonji-300);
       background: var(--yeonji-50);
     }
@@ -1405,7 +1406,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     }
     .tips-toggle:hover {
       border-color: var(--yeonji-300);
-      color: var(--yeonji-500);
+      color: var(--yeonji-600);
       background: var(--yeonji-50);
     }
     .tips-toggle svg {
@@ -1633,7 +1634,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
       cursor: pointer; text-decoration: none;
       transition: border-color .15s, color .15s;
     }
-    .login-req-btn-secondary:hover { border-color: var(--yeonji-300); color: var(--yeonji-500); }
+    .login-req-btn-secondary:hover { border-color: var(--yeonji-300); color: var(--yeonji-600); }
     .login-req-close {
       margin-top: 10px; background: none; border: none; cursor: pointer;
       font-size: var(--text-xs); color: var(--color-text-tertiary);

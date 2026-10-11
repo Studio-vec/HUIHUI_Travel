@@ -267,7 +267,6 @@ import Navbar from '../../components/Navbar.astro';
       flex-direction: column;
       align-items: stretch;
       font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
-      background: linear-gradient(160deg, #FCF1F2 0%, #F8E3E4 55%, #F7A1B2 100%);
     }
     /* 네브바 아래 영역을 채워서 receipt를 중앙 정렬 */
     .login-stage {
@@ -281,9 +280,7 @@ import Navbar from '../../components/Navbar.astro';
     /* ── 영수증 ── */
     .receipt {
       width: min(316px, 94vw);
-      background: var(--cream);
       position: relative;
-      filter: drop-shadow(0 24px 48px rgba(138,46,54,0.28));
     }
 
     /* 위 톱니 */
@@ -301,62 +298,49 @@ import Navbar from '../../components/Navbar.astro';
     }
 
     /* 바디 */
-    .receipt-body { background:var(--cream); padding:6px 26px 22px; }
+    .receipt-body { padding:6px 26px 22px; }
 
     /* 헤더 */
     .receipt-hotel {
       text-align: center;
       padding: 18px 0 12px;
-      border-bottom: 1px solid rgba(239,77,109,0.15);
       margin-bottom: 12px;
     }
     .hotel-badge {
       display: inline-flex; align-items: center; justify-content: center;
-      width: 52px; height: 52px; border-radius: 50%;
-      background: linear-gradient(135deg, #DFA5A9 0%, #EF4D6D 100%);
-      box-shadow: 0 4px 16px rgba(239,77,109,0.4), inset 0 -2px 6px rgba(74,52,40,0.2);
       margin-bottom: 8px;
     }
     .hotel-badge span {
       font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
       font-size: 1.1rem; font-weight: 700; color: white; letter-spacing: 0.06em;
     }
-    .hotel-name {
-      font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
-      font-size: 1.45rem; font-weight: 600;
-      color: var(--purple); letter-spacing: 0.18em; line-height: 1;
+    .hotel-name { line-height: 1;
     }
-    .hotel-sub {
-      font-size: 0.75rem; color: var(--text-dim);
-      letter-spacing: 0.22em; margin-top: 4px;
+    .hotel-sub { margin-top: 4px;
       text-transform: uppercase;
     }
 
     /* 메타 테이블 */
     .meta-table { width: 100%; margin-bottom: 4px; }
     .meta-table td { padding: 2px 0; vertical-align: baseline; }
-    .meta-label { font-size: 0.75rem; font-weight: 700; color: var(--green); letter-spacing: 0.14em; white-space: nowrap; }
-    .meta-value { font-size: 0.75rem; color: var(--text-dim); font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif; text-align: right; }
+    .meta-label { white-space: nowrap; }
+    .meta-value { font-size: 0.75rem; font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif; text-align: right; }
     .meta-value.mono { font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif; font-size: 0.75rem; letter-spacing: 0.04em; }
 
-    .divider       { border:none; border-top: 1.5px dashed rgba(239,77,109,0.25); margin: 11px 0; }
-    .divider-solid { border:none; border-top: 1px solid rgba(239,77,109,0.15);    margin: 10px 0; }
+    .divider       { margin: 11px 0; }
+    .divider-solid {    margin: 10px 0; }
 
     /* 폼 */
     .field { margin-bottom: 10px; }
-    .field-label {
-      font-size: 0.75rem; font-weight: 700; color: var(--green);
-      letter-spacing: 0.14em; margin-bottom: 5px; display: block;
+    .field-label { margin-bottom: 5px; display: block;
     }
     .input-box {
-      width: 100%; height: 40px; background: white;
-      border: 1.5px solid rgba(239,77,109,0.22); border-radius: 8px;
-      padding: 0 40px 0 14px; font-size: 0.84rem;
-      font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif; color: var(--text); outline: none;
+      width: 100%; height: 40px; font-size: 0.84rem;
+      font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif; outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .input-box:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(239,77,109,0.1); }
-    .input-box::placeholder { color: #C7BAAF; font-size: 0.76rem; }
+
+    .input-box::placeholder { font-size: 0.76rem; }
     .pw-wrap { position: relative; }
     .pw-toggle {
       position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
@@ -372,26 +356,24 @@ import Navbar from '../../components/Navbar.astro';
 
     /* 버튼 */
     .btn-checkin {
-      width: 100%; height: 44px; background: var(--purple); border: none; border-radius: 8px;
+      width: 100%; height: 44px; border: none;
       display: flex; align-items: center; padding: 0 18px; cursor: pointer;
-      box-shadow: 0 4px 16px rgba(239,77,109,0.4);
       transition: transform 0.15s, box-shadow 0.15s; margin-top: 2px;
     }
     .btn-checkin:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
-    .btn-checkin:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(239,77,109,0.5); }
+
     .btn-checkin:active { transform: translateY(0); }
     .btn-checkin-label {
-      font-size: 0.75rem; font-weight: 700; color: rgba(255,255,255,0.8);
-      letter-spacing: 0.16em; flex: 1;
+      font-size: 0.75rem; font-weight: 700; flex: 1;
       font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
     }
     .btn-checkin-arrow { font-size: 1rem; color: white; }
 
     /* 링크 */
     .receipt-links { display: flex; justify-content: center; gap: 14px; margin-top: 12px; }
-    .receipt-links a { font-size: 0.75rem; color: var(--green); text-decoration: none; letter-spacing: 0.04em; }
-    .receipt-links a:hover { color: var(--purple); text-decoration: underline; }
-    .receipt-links span { color: var(--purple-light); }
+    .receipt-links a { font-size: 0.75rem; text-decoration: none; letter-spacing: 0.04em; }
+    .receipt-links a:hover { text-decoration: underline; }
+
 
     /* 구분선 또는 */
     .divider-or {
@@ -404,14 +386,13 @@ import Navbar from '../../components/Navbar.astro';
 
     /* 구글 버튼 */
     .btn-google {
-      width: 100%; height: 40px; background: white;
-      border: 1.5px solid rgba(239,77,109,0.22); border-radius: 8px;
+      width: 100%; height: 40px;
       display: flex; align-items: center; justify-content: center; gap: 8px;
       cursor: pointer; font-size: 0.76rem; font-weight: 500;
       font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif; color: var(--text);
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .btn-google:hover:not(:disabled) { border-color: var(--purple); box-shadow: 0 2px 10px rgba(239,77,109,0.15); }
+
     .btn-google:disabled { opacity: 0.6; cursor: not-allowed; }
 
     /* 바코드 */
@@ -422,8 +403,7 @@ import Navbar from '../../components/Navbar.astro';
       display: flex; gap: 1.5px; height: 28px; align-items: flex-end;
     }
     .barcode span {
-      display: inline-block; background: var(--purple); border-radius: 1px;
-      opacity: 0.35;
+      display: inline-block;
     }
     .barcode-num {
       font-family: 'Pretendard Variable', Pretendard, monospace; font-variant-numeric: tabular-nums; font-size: 0.75rem;
@@ -433,20 +413,17 @@ import Navbar from '../../components/Navbar.astro';
     /* 스탬프 */
     .stamp {
       position: absolute; bottom: 42px; right: 16px;
-      width: 48px; height: 48px;
-      border: 2.5px solid var(--purple); border-radius: 50%;
-      opacity: 0.12; display: flex; align-items: center; justify-content: center;
-      font-size: 0.75rem; font-weight: 800; color: var(--purple);
-      letter-spacing: 0.06em; transform: rotate(-18deg); pointer-events: none;
+      width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 800;
+      letter-spacing: 0.06em; pointer-events: none;
       text-align: center; line-height: 1.3;
     }
 
     /* 토스트 */
     .toast {
       position: fixed; top: 24px; left: 50%;
-      transform: translateX(-50%) translateY(-80px);
-      background: var(--purple); color: white; border-radius: 999px; padding: 10px 24px;
-      font-size: 0.82rem; font-weight: 500; box-shadow: 0 8px 24px rgba(239,77,109,0.3);
+      transform: translateX(-50%) translateY(-80px); color: white; padding: 10px 24px;
+      font-size: 0.82rem; font-weight: 500;
       transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1); white-space: nowrap; z-index: 999;
     }
     .toast.show { transform: translateX(-50%) translateY(0); }

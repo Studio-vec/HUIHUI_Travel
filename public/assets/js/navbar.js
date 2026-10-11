@@ -93,14 +93,14 @@
   background: none; border-left: none; border-right: none; border-top: none;
   cursor: pointer; width: 100%; text-align: left;
 }
-.hh-mm-item:hover { color: #EF4D6D; }
-.hh-mm-item.active { color: #EF4D6D; }
+.hh-mm-item:hover { color: #C9304F; }
+.hh-mm-item.active { color: #C9304F; }
 .hh-mm-divider { border: none; margin: 6px 0; }
 .hh-mm-logout {
   font-size: 13px; color: #646B84; padding: 10px 0;
   background: none; border: none; cursor: pointer; width: 100%; text-align: left;
 }
-.hh-mm-logout:hover { color: #EF4D6D; }
+.hh-mm-logout:hover { color: #C9304F; }
 .hh-view-btn, .hh-lang-btn {
   display: flex; align-items: center; gap: 6px; flex-shrink: 0;
   font-family: inherit; font-size: 12px; font-weight: 500; letter-spacing: 0.04em; color: #4E5672;
@@ -128,7 +128,7 @@
   border: none; background: none; width: 100%; text-align: left;
 }
 .hh-lang-opt:hover { color: #202943; background: rgba(32,41,67,0.04); }
-.hh-lang-opt.selected { color: #EF4D6D; font-weight: 700; }
+.hh-lang-opt.selected { color: #C9304F; font-weight: 700; }
 .hh-mm-lang-row { display: flex; gap: 16px; padding: 12px 0; flex-wrap: wrap; }
 .hh-mm-lang-chip {
   font-size: 13px; font-weight: 500; color: #646B84; font-family: inherit;

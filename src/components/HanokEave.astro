@@ -1,4 +1,5 @@
 ---
+import { KNOT_PATH } from '../lib/hanok';
 /**
  * 홈 히어로 맨 위 기와 처마 — 차콜 네이비 선화에 팝 핑크·비비드 민트 포인트.
  * 부재는 기와골 → 수막새(연화문) → 창방(머리초·휘·금문), 창방 아래에 풍경과 매듭 술이 매달려 있다.
@@ -69,8 +70,9 @@ const beads = (n, r, rr, attrs) => {
 };
 const seeds = (r) => `<circle r="${r}" ${LS(0.9, 0.9)}/>${beads(5, r * 0.5, r * 0.16, LS(0.6, 0.7))}`;
 // 회전 가능한 꽃: 바깥 잎(.he-po)과 안 잎(.he-pi)이 따로 돈다. r 은 누를 수 있는 반지름
-const flower = (cx, cy, r, body, outer, inner, center) =>
-  `<g transform="translate(${f(cx)} ${f(cy)})"><g class="he-rot" data-cx="${f(cx)}" data-cy="${f(cy)}" data-r="${r}">${body}<g class="he-po">${outer}</g><g class="he-pi">${inner}</g>${center}</g></g>`;
+// sym 은 꽃잎 수 — 돌다가 멈출 때 원래 모양과 겹치는 각도(360/sym)에 맞춰 선다
+const flower = (cx, cy, r, body, outer, inner, center, sym = 8) =>
+  `<g transform="translate(${f(cx)} ${f(cy)})"><g class="he-rot" data-cx="${f(cx)}" data-cy="${f(cy)}" data-r="${r}" data-sym="${sym}">${body}<g class="he-po">${outer}</g><g class="he-pi">${inner}</g>${center}</g></g>`;
 
 /* 수막새: 연주문 테두리 + 연화문 여덟 잎 + 자방 */
 const maksae = (cx, cy) => flower(cx, cy, 20,
@@ -97,7 +99,7 @@ const beamSeg = (x0) => {
   };
   const gx = x0 + 160, gw = SEG - 320, gy = y + 9, gh = BH - 18, gcx = gx + gw / 2;
   s += `<rect x="${gx}" y="${gy}" width="${gw}" height="${gh}" ${LS(0.9, 0.9)}/><rect x="${gx + 4}" y="${gy + 4}" width="${gw - 8}" height="${gh - 8}" ${LS(0.5, 0.5)}/>`;
-  s += flower(gcx, cy, 13, `<circle r="13" ${LS(0.8, 0.85)}/>`, ring(4, 2, 12, 5, LS(0.7, 0.85), 0, true), ring(4, 2, 7, 2.6, LS(0.5, 0.5), 45), `<circle r="2.4" ${LS(0.7)}/>`);
+  s += flower(gcx, cy, 13, `<circle r="13" ${LS(0.8, 0.85)}/>`, ring(4, 2, 12, 5, LS(0.7, 0.85), 0, true), ring(4, 2, 7, 2.6, LS(0.5, 0.5), 45), `<circle r="2.4" ${LS(0.7)}/>`, 4);
   s += hwi(x0 + 92, 1) + hwi(x0 + SEG - 92, -1);
   s += meoricho(x0 + 46, cy) + meoricho(x0 + SEG - 46, cy);
   s += `<path d="M${x0 + SEG} ${y}V${y + BH}" ${LS(0.9, 0.9)}/>`;
@@ -105,7 +107,6 @@ const beamSeg = (x0) => {
 };
 
 /* ── 매달린 것들 ─────────────────────── */
-const KNOT = 'M0 -6L6 0L0 6L-6 0Z M-3.5 -3.5C-8 -9 -1.5 -11 0 -6M3.5 -3.5C8 -9 1.5 -11 0 -6M-3.5 3.5C-8 9 -1.5 11 0 6M3.5 3.5C8 9 1.5 11 0 6M-3.5 -3.5C-9 -8 -11 -1.5 -6 0M-3.5 3.5C-9 8 -11 1.5 -6 0M3.5 -3.5C9 -8 11 -1.5 6 0M3.5 3.5C9 8 11 1.5 6 0';
 // 풍경: 줄 → 종 → 추 → 물고기(연지)
 const pung = (x, L, i) => {
   const y = HANG, by = y + L;
@@ -127,7 +128,7 @@ const tassel = (x, L) => {
   for (let k = -3; k <= 3; k++) threads += `<path d="M${x + k * 1.6} ${ty + 12}L${x + k * 2.8} ${ty + 58}" stroke="${RED}" stroke-width="1.6"/>`;
   return `<g class="he-hang" data-type="tassel" data-x="${x}" data-y="${y}" data-l="${L + 60}">
 <path d="M${x} ${y}V${ty}" stroke="${RED}" stroke-width="1.3"/>
-<g transform="translate(${x} ${f(ky)}) scale(1.5)"><path d="${KNOT}" fill="#F7F0E5" stroke="${RED}" stroke-width="1"/></g>
+<g transform="translate(${x} ${f(ky)}) scale(1.5)"><path d="${KNOT_PATH}" fill="#F7F0E5" stroke="${RED}" stroke-width="1"/></g>
 <path d="M${x - 6} ${ty + 12}C${x - 6} ${ty + 4} ${x - 3} ${ty} ${x} ${ty}C${x + 3} ${ty} ${x + 6} ${ty + 4} ${x + 6} ${ty + 12}Z" ${LS(1, 1)}/>
 ${threads}
 <path d="M${x - 7} ${ty + 20}H${x + 7}" ${LS(1, 0.9)}/>
@@ -224,7 +225,7 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
 
     /* ── 꽃: 가까이 가면 살짝 피고, 누르면 팽그르르 돈다 ── */
     var flowers = [].slice.call(svg.querySelectorAll('.he-rot')).map(function (g) {
-      return { g: g, po: g.querySelector('.he-po'), pi: g.querySelector('.he-pi'), x: +g.dataset.cx, y: +g.dataset.cy, r: +g.dataset.r, k: 0, spin: 0, sv: 0 };
+      return { g: g, po: g.querySelector('.he-po'), pi: g.querySelector('.he-pi'), x: +g.dataset.cx, y: +g.dataset.cy, r: +g.dataset.r, step: 360 / (+g.dataset.sym || 8), k: 0, spin: 0, sv: 0 };
     });
 
     var cursor = null, running = false, lastT = 0;
@@ -252,13 +253,14 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
         goal = goal * goal * (3 - 2 * goal);
         fl.k += (goal - fl.k) * 0.1;
         fl.spin += fl.sv * dt; fl.sv *= Math.pow(0.18, dt);
-        if (Math.abs(fl.sv) < 4) { fl.sv = 0; fl.spin += ((Math.round(fl.spin / 45) * 45) - fl.spin) * 0.15; }
-        if (Math.abs(goal - fl.k) > 0.002 || fl.sv || Math.abs(fl.spin % 45) > 0.2) busy = true;
+        if (Math.abs(fl.sv) < 4) { fl.sv = 0; fl.spin += ((Math.round(fl.spin / fl.step) * fl.step) - fl.spin) * 0.15; }
+        if (Math.abs(goal - fl.k) > 0.002 || fl.sv || Math.abs(fl.spin - Math.round(fl.spin / fl.step) * fl.step) > 0.2) busy = true;
         fl.g.setAttribute('transform', 'rotate(' + fl.spin.toFixed(1) + ') scale(' + (1 + fl.k * 0.16).toFixed(3) + ')');
         fl.po.setAttribute('transform', 'rotate(' + (fl.k * 30).toFixed(2) + ')');
         fl.pi.setAttribute('transform', 'rotate(' + (-fl.k * 50).toFixed(2) + ')');
       });
-      if (busy || cursor) requestAnimationFrame(tick); else running = false;
+      /* 모두 멈추면 쉰다. 커서가 다시 움직이면 kick() 이 깨운다 */
+      if (busy) requestAnimationFrame(tick); else running = false;
     }
 
     function ring(h, now) {
@@ -388,7 +390,7 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
   }
   .he-sound-btn span { color: var(--color-text-tertiary); margin-left: 4px; }
   .he-sound-btn[aria-pressed="true"] { border-color: var(--yeonji-500); }
-  .he-sound-btn[aria-pressed="true"] span { color: var(--yeonji-500); }
+  .he-sound-btn[aria-pressed="true"] span { color: var(--yeonji-600); }
 
   /* 풍경이 울릴 때 소리 자국 */
   .he-svg :global(.he-sound) { opacity: 0; }

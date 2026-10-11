@@ -144,7 +144,8 @@ const first = rooms[0];
       c.quadraticCurveTo(x + Math.cos(a) * l * 0.5 + (rnd() - .5) * 4, y + Math.sin(a) * l * 0.5, x + Math.cos(a) * l, y + Math.sin(a) * l);
       c.stroke();
     }
-    cv._holes && cv._holes.forEach(function (h) { tear(cv, h.x, h.y, h.r, h.s, true); });
+    /* 구멍은 문짝 크기에 대한 비율로 저장해 두었다가, 크기가 바뀌면 새 크기에 맞춰 다시 낸다 */
+    cv._holes && cv._holes.forEach(function (h) { tear(cv, h.x * rect.width, h.y * rect.height, h.r * rect.width, h.s, true); });
   }
 
   /* 찢긴 구멍: 들쭉날쭉한 원을 오려 내고, 가장자리에 말린 종이 테두리를 남긴다 */
@@ -178,7 +179,10 @@ const first = rooms[0];
     c.globalCompositeOperation = 'destination-out';
     path(1); c.fill();
     c.globalCompositeOperation = 'source-over';
-    if (!replay) (cv._holes = cv._holes || []).push({ x: x, y: y, r: r, s: s });
+    if (!replay) {
+      var b = cv.getBoundingClientRect();
+      (cv._holes = cv._holes || []).push({ x: x / b.width, y: y / b.height, r: r / b.width, s: s });
+    }
   }
 
   var canvases = [].slice.call(door.querySelectorAll('.hanji'));
@@ -236,7 +240,7 @@ const first = rooms[0];
   @media (max-width: 860px) { .nf-grid { grid-template-columns: 1fr; } .door { max-width: 380px; } }
   .nf-title, .nf-desc { word-break: keep-all; }
 
-  .nf-no { font-family: var(--font-heading); font-size: 11px; letter-spacing: 0.16em; color: var(--yeonji-500); }
+  .nf-no { font-family: var(--font-heading); font-size: 11px; letter-spacing: 0.16em; color: var(--yeonji-600); }
   .nf-title {
     font-family: var(--font-display); font-weight: 600;
     font-size: clamp(44px, 7.4vw, 96px); line-height: 1.04; letter-spacing: -0.035em;
@@ -246,7 +250,7 @@ const first = rooms[0];
     font-family: var(--font-display); font-size: clamp(15px, 1.5vw, 18px); line-height: 1.85;
     color: var(--color-text-secondary); max-width: 30em;
   }
-  .nf-desc em { font-style: normal; color: var(--yeonji-500); font-weight: 600; }
+  .nf-desc em { font-style: normal; color: var(--yeonji-600); font-weight: 600; }
   .nf-count {
     margin-top: 24px; padding-top: 12px; border-top: 1px solid var(--color-rule); max-width: 240px;
     font-family: var(--font-heading); font-size: 11px; letter-spacing: 0.14em; color: var(--color-text-tertiary);
@@ -264,7 +268,7 @@ const first = rooms[0];
     font-size: 13px; letter-spacing: 0.04em; color: var(--color-text-primary);
     text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 2px; min-height: 0;
   }
-  .nf-link:hover { color: var(--yeonji-500); }
+  .nf-link:hover { color: var(--yeonji-600); }
 
   /* ── 창호 문 ── */
   .door {
@@ -326,7 +330,7 @@ const first = rooms[0];
     display: flex; align-items: baseline; gap: 10px; min-height: 48px; padding: 12px 0;
     font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--color-text-primary); text-decoration: none;
   }
-  .nf-more a:hover { color: var(--yeonji-500); }
+  .nf-more a:hover { color: var(--yeonji-600); }
 
   @media (prefers-reduced-motion: reduce) {
     .leaf { transition: none; }

@@ -39,19 +39,6 @@ body { background: var(--color-bg); color: var(--color-text-primary); }
   transform: rotate(45deg); border: 1.2px solid var(--yeonji-500);
 }
 
-/* 가운데 매듭이 있는 구분선 */
-.hh-divider { display: flex; align-items: center; gap: 12px; color: var(--color-rule); }
-.hh-divider::before, .hh-divider::after { content: ''; flex: 1; height: 1px; background: currentColor; }
-.hh-divider > i { width: 7px; height: 7px; transform: rotate(45deg); border: 1.2px solid var(--yeonji-500); }
-
-/* 낙관: 핑크 사각 도장 (한 글자 넣을 때) */
-.hh-seal {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 22px; height: 22px; border-radius: 2px;
-  background: var(--yeonji-500); color: var(--color-bg);
-  font-family: var(--font-display); font-size: 12px; font-weight: 700;
-}
-
 /* ── 문서 페이지 (사이트 소개 · 개인정보처리방침) ── */
 .pp-page {
   max-width: 760px; margin: 0 auto;
@@ -86,7 +73,7 @@ body { background: var(--color-bg); color: var(--color-text-primary); }
   transform: rotate(45deg); border: 1.2px solid var(--yeonji-500);
 }
 .pp-section a { color: var(--color-text-primary); text-decoration: none; border-bottom: 1px solid var(--yeonji-500); }
-.pp-section a:hover { color: var(--yeonji-500); }
+.pp-section a:hover { color: var(--yeonji-600); }
 .pp-section table { width: 100%; border-collapse: collapse; font-size: 14px; border-top: 1px solid var(--color-text-primary); }
 .pp-section th, .pp-section td { text-align: left; padding: 10px 8px 10px 0; border-bottom: 1px solid var(--color-rule); vertical-align: top; color: var(--color-text-secondary); }
 .pp-section th { color: var(--color-text-primary); font-weight: 500; }

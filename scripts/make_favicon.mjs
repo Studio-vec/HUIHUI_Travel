@@ -16,11 +16,11 @@ import fs from 'fs';
 
 const W = 1024; // 합성 작업 해상도
 /* 囍 로고 아이콘(public/assets/brand/hui-app-icon.svg) 하나로 모든 크기를 만든다 */
-const bell = await sharp('public/assets/brand/hui-app-icon.svg', { density: 600 }).resize({ width: W }).png().toBuffer();
+const icon = await sharp('public/assets/brand/hui-app-icon.svg', { density: 600 }).resize({ width: W }).png().toBuffer();
 
 async function square(size, { pad = 0.04, bg = { r: 0, g: 0, b: 0, alpha: 0 } } = {}) {
   const inner = Math.round(size * (1 - pad * 2));
-  const fitted = await sharp(bell).resize(inner, inner, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer();
+  const fitted = await sharp(icon).resize(inner, inner, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer();
   return sharp({ create: { width: size, height: size, channels: 4, background: bg } })
     .composite([{ input: fitted, gravity: 'center' }])
     .png()
