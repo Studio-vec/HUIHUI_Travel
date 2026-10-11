@@ -87,9 +87,10 @@
   --color-error:   #C0443E;
 
   /* ── TYPOGRAPHY ── */
-  --font-display:  'Pretendard Variable', Pretendard, -apple-system, 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
-  --font-heading:  'Pretendard Variable', Pretendard, -apple-system, 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
-  --font-body:     'Pretendard Variable', Pretendard, -apple-system, 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
+  --font-display:  'Pretendard Variable', Pretendard, -apple-system, 'Noto Sans KR', sans-serif;
+  --font-heading:  'Pretendard Variable', Pretendard, -apple-system, 'Noto Sans KR', sans-serif;
+  --font-body:     'Pretendard Variable', Pretendard, -apple-system, 'Noto Sans KR', sans-serif;
+  --font-accent:   'Hahmlet', 'Pretendard Variable', Pretendard, serif;   /* 히어로 제목 등 한 줄짜리 강조 */
 
   --text-xs:   12px;
   --text-sm:   13px;

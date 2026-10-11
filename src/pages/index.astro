@@ -41,7 +41,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
         <span class="hero-key-cap"></span>
       </button>
       <h1 class="hero-title fade-up" id="heroTitle">
-        기쁜 걸음만 골라 담은<br><em>국내 여행 안내서</em>
+        <span class="hero-kicker">기쁜 걸음만 골라 담은</span><em>국내 여행 안내서</em>
       </h1>
       <div class="hero-foot fade-up">
         <p class="hero-desc" id="heroDesc">
@@ -338,25 +338,25 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     const HERO_TEXTS = {
       ko: {
         eyebrow: 'Studio.Vec · 국내 여행 큐레이션',
-        title:   '기쁜 걸음만 골라 담은<br><em>국내 여행 안내서</em>',
+        title:   '<span class="hero-kicker">기쁜 걸음만 골라 담은</span><em>국내 여행 안내서</em>',
         desc:    '직접 걸어 본 길을 하루 단위 코스로 엮었어요.<br>동선과 시간, 현장에서 알게 된 작은 팁까지 함께 적어 둡니다.',
         section: '여행 코스',
       },
       en: {
         eyebrow: 'Studio.Vec · Domestic Travel Curation',
-        title:   'Joyful steps, gathered into<br><em>a Korea travel guide</em>',
+        title:   '<span class="hero-kicker">Joyful steps, gathered into</span><em>a Korea travel guide</em>',
         desc:    'Day-by-day courses from roads I actually walked.<br>Routes, timing, and the small tips you only learn on site.',
         section: 'Travel Courses',
       },
       ja: {
         eyebrow: 'Studio.Vec · 国内旅行キュレーション',
-        title:   'うれしい足どりを集めた<br><em>国内旅行ガイド</em>',
+        title:   '<span class="hero-kicker">うれしい足どりを集めた</span><em>国内旅行ガイド</em>',
         desc:    '実際に歩いた道を一日単位のコースにまとめました。<br>動線と時間、現地で知った小さなヒントまで。',
         section: '旅行コース',
       },
       zh: {
         eyebrow: 'Studio.Vec · 国内旅游精选',
-        title:   '收集欢喜脚步的<br><em>国内旅行指南</em>',
+        title:   '<span class="hero-kicker">收集欢喜脚步的</span><em>国内旅行指南</em>',
         desc:    '把亲自走过的路整理成按天安排的路线。<br>动线、时间，还有现场才知道的小贴士。',
         section: '旅游路线',
       },
@@ -1033,15 +1033,28 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     .hero-eyebrow { font-weight: 500; color: var(--color-text-primary); }
     .hero-title {
       font-family: var(--font-display);
-      font-size: clamp(38px, 7.2vw, 96px);
       font-weight: 700;
-      line-height: 1.08;
-      letter-spacing: -0.045em;
+      line-height: 1;
       word-break: keep-all;
       color: var(--color-text-primary);
       margin: clamp(var(--space-6), 4vw, var(--space-12)) 0 clamp(var(--space-6), 3vw, var(--space-10));
     }
-    .hero-title em { font-style: normal; color: var(--yeonji-500); }
+    /* 위 작은 줄: 본문 글꼴로 가볍게 */
+    .hero-kicker {
+      display: block;
+      font-family: var(--font-heading);
+      font-size: clamp(17px, 2.2vw, 28px); font-weight: 600; letter-spacing: -0.02em;
+      color: var(--color-text-primary);
+      margin-bottom: clamp(10px, 1.4vw, 18px);
+    }
+    /* 큰 줄: 함렛으로 개성 있게 */
+    .hero-title em {
+      display: block; font-style: normal;
+      font-family: var(--font-accent);
+      font-size: clamp(46px, 9.4vw, 128px); font-weight: 800;
+      line-height: 1.02; letter-spacing: -0.05em;
+      color: var(--yeonji-500);
+    }
     .hero-foot {
       display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-5);
       padding-top: var(--space-5);
