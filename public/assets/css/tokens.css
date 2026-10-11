@@ -48,7 +48,9 @@
   --meok-400: #646B84;
   --hyeonpan:  #1F3A33;  /* 현판 테두리 (단청 석간주 위 짙은 녹) */
 
-  /* 원칙: 오프화이트 바탕 + 차콜 네이비 글씨·선, 포인트는 팝 핑크(주)와 비비드 민트(보조) 둘. 금은 가는 선에만 */
+  /* 원칙: 오프화이트 바탕 + 차콜 네이비 글씨·선.
+     팝 핑크 = 브랜드 강조(큰 제목·주요 버튼·선택된 상태·처마 술), 비비드 민트 = 상태(방문·성공·가능).
+     끈·매듭·번호 같은 구조 요소는 네이비로 둔다. 금은 놋쇠 장식에만 */
 
   /* ── SEMANTIC ── */
   --color-bg:           var(--hanji-100);
@@ -80,7 +82,7 @@
   --color-error:   #C0443E;
 
   /* ── TYPOGRAPHY ── */
-  --font-display:  'Pretendard Variable', Pretendard, -apple-system, 'Noto Sans KR', sans-serif;
+  --font-display:  'Hahmlet', 'Pretendard Variable', Pretendard, serif;   /* 제목·지명 = 함렛, 본문 = Pretendard */
   --font-heading:  'Pretendard Variable', Pretendard, -apple-system, 'Noto Sans KR', sans-serif;
   --font-body:     'Pretendard Variable', Pretendard, -apple-system, 'Noto Sans KR', sans-serif;
   --font-accent:   'Hahmlet', 'Pretendard Variable', Pretendard, serif;   /* 히어로 제목 등 한 줄짜리 강조 */

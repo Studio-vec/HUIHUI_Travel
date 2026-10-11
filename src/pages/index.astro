@@ -633,8 +633,8 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     ════════════════════════════════════════════ */
     /* 카드 그림: 머리글 아래 가는 선에서 내려온 연지 끈 + 선으로 그린 생쪽매듭. 틀과 글자는 HTML/CSS가 맡는다 */
     const _CARD_BG = `<svg class="card-slot-img" viewBox="0 0 200 276" fill="none" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-<path d="M100 66V96" stroke="#EF4D6D" stroke-width="1.1"/>
-<g transform="translate(100 76)"><path d="${window.__KNOT_PATH__}" stroke="#EF4D6D" stroke-width="1"/></g>
+<path d="M100 66V96" stroke="#202943" stroke-opacity=".7" stroke-width="1.1"/>
+<g transform="translate(100 76)"><path d="${window.__KNOT_PATH__}" stroke="#202943" stroke-opacity=".8" stroke-width="1"/></g>
 </svg>`;
 
     /* 준비 중: 아직 걸리지 않은 열쇠 자리 — 점선으로 그린 열쇠 윤곽 */
@@ -1083,7 +1083,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
       border-top: 1px solid var(--color-rule);
     }
     .hero-desc {
-      font-family: var(--font-display);
+      font-family: var(--font-body);
       font-size: clamp(var(--text-base), 1.6vw, var(--text-lg));
       color: var(--color-text-secondary);
       line-height: var(--leading-normal);
@@ -1202,8 +1202,8 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     }
     .hero-key[hidden] { display: none; }
     .hero-key:hover, .hero-key:focus-visible { animation-duration: 1.8s; }
-    .hero-key-rope { width: 1px; height: clamp(16px, 2.6vw, 34px); background: var(--yeonji-500); }
-    .hero-key-knot { width: 9px; height: 9px; margin: -1px 0 3px; transform: rotate(45deg); border: 1.5px solid var(--yeonji-500); }
+    .hero-key-rope { width: 1px; height: clamp(16px, 2.6vw, 34px); background: var(--color-text-primary); }
+    .hero-key-knot { width: 9px; height: 9px; margin: -1px 0 3px; transform: rotate(45deg); border: 1.5px solid var(--color-text-primary); }
     .hero-key img { width: 100%; height: auto; display: block; filter: drop-shadow(0 6px 10px rgba(32,41,67,0.18)); }
     .hero-key-cap {
       position: absolute; right: 0; top: 100%; margin-top: var(--space-2); white-space: nowrap;
@@ -1567,7 +1567,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     .rec-single-info { flex: 1; min-width: 0; }
     .rec-single-no { font-size: 12px; color: var(--color-text-tertiary); letter-spacing: .12em; margin-bottom: 4px; }
     .rec-single-name {
-      font-family: var(--font-display); font-style: italic;
+      font-family: var(--font-body); font-style: italic;
       font-size: 2rem; color: var(--color-text-primary);
       line-height: 1.1; letter-spacing: var(--tracking-tight);
     }

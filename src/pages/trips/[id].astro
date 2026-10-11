@@ -175,7 +175,7 @@ const _body = `
                         <div class="transit-vline"></div>
                     </div>
                     <div class="transit-info">
-                        <span class="transit-icon">{{ p.transitTo.icon }}</span>
+                        <span class="transit-icon" :data-k="({'🚶':'walk','🚗':'car','🚕':'taxi','🚌':'bus'})[p.transitTo.icon] || 'car'" aria-hidden="true"></span>
                         <span class="transit-desc">{{ p.transitTo.desc }}</span>
                     </div>
                 </div>

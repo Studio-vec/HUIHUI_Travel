@@ -40,6 +40,8 @@ const galleryDestinations = allTrips.map((t) => ({
 </div>
 
 <section class="key-rack-section">
+  <!-- 모바일 전용 안내 줄: 지금 보는 열쇠 번호와 사용법 (모바일에선 페이지 머리가 숨겨진다) -->
+  <div class="rack-status" aria-live="polite"><b>Gallery</b> <span id="rackPos">1/{allTrips.length}</span><span class="rack-hint">열쇠를 눌러 기억을 열어 보세요</span></div>
   <div class="hh-beam rack-beam" aria-hidden="true"></div>
   <button class="mobile-nav-btn mobile-nav-prev" id="mobileNavPrev">
     <svg width="10" height="18" viewBox="0 0 10 18" fill="none"><path d="M9 1L1 9l8 8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -270,6 +272,28 @@ async function renderKeyRack() {
 
   _initInfiniteScroll(rack);
   _initDragScroll(rack);
+  _initRackPos(rack);
+}
+
+/* 가운데에 온 열쇠가 몇 번째인지 (3벌 복사본이라 목적지 순서로 센다) */
+function _initRackPos(rack) {
+  const el = document.getElementById('rackPos');
+  if (!el) return;
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    const rr = rack.getBoundingClientRect(), vc = rr.left + rr.width / 2;
+    let best = null, minD = Infinity;
+    rack.querySelectorAll('.key-item').forEach(it => {
+      const ir = it.getBoundingClientRect(), d = Math.abs(ir.left + ir.width / 2 - vc);
+      if (d < minD) { minD = d; best = it; }
+    });
+    if (!best) return;
+    const i = DESTINATIONS.findIndex(d => d.id === best.dataset.destId);
+    if (i >= 0) el.textContent = (i + 1) + '/' + DESTINATIONS.length;
+  };
+  rack.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  requestAnimationFrame(() => requestAnimationFrame(update));
 }
 
 function handleKeyClick(id) {
@@ -593,7 +617,7 @@ renderKeyRack();
       color:var(--color-text-primary); margin-top:clamp(16px,2.5vh,28px);
     }
     .page-desc {
-      font-family:var(--font-display);
+      font-family:var(--font-body);
       font-size:15px; color:var(--color-text-secondary); margin-top:10px;
     }
 
@@ -608,6 +632,7 @@ renderKeyRack();
       display: flex; align-items: stretch;
     }
     .rack-beam { position:absolute; top:0; left:0; right:0; z-index:1; }
+    .rack-status { display:none; }
     .key-rack {
       display:flex; gap:0;
       padding:13px 0 12px;
@@ -648,12 +673,12 @@ renderKeyRack();
     /* 창방에서 내려온 연지 끈 + 매듭 */
     .key-hook {
       position:absolute; top:0; left:50%; transform:translateX(-50%);
-      width:1px; height:44px; background:var(--yeonji-500);
+      width:1px; height:44px; background:var(--color-text-primary);
     }
     .key-hook::after {
       content:''; position:absolute; left:50%; top:18px; width:8px; height:8px;
       transform:translateX(-50%) rotate(45deg);
-      border:1.2px solid var(--yeonji-500); background:var(--color-bg);
+      border:1.2px solid var(--color-text-primary); background:var(--color-bg);
     }
     .key-img {
       width:100%; height:100%; object-fit:contain; object-position:top center;
@@ -669,10 +694,10 @@ renderKeyRack();
       75%{transform:rotate(6deg);}
     }
 
-    /* 방문 표시: 연지 마름모(방문) / 빈 마름모(미방문) */
+    /* 방문 표시: 민트 마름모(방문) / 빈 마름모(미방문) — 민트는 '상태' 전용 */
     .key-status-dot {
       width:7px; height:7px; transform:rotate(45deg);
-      background:var(--yeonji-500); border:1.2px solid var(--yeonji-500);
+      background:var(--bichwi-400); border:1.2px solid var(--bichwi-400);
     }
     .key-item.unvisited .key-status-dot { background:transparent; border-color:var(--color-text-tertiary); }
 
@@ -784,7 +809,7 @@ renderKeyRack();
       gap:12px; color:rgba(101,34,39,0.5);
     }
     .kh-empty span:first-child { font-size:48px; }
-    .kh-empty span { font-size:14px; font-family:var(--font-display); font-style:italic; }
+    .kh-empty span { font-size:14px; font-family:var(--font-body); font-style:italic; }
 
     /* Glass highlight on sphere */
     .kh-glass {
@@ -942,6 +967,16 @@ renderKeyRack();
       .key-rack-section { position:relative; height: calc(100vh - 70px); }
       .mobile-nav-btn { display:flex; }
       .page-header { display:none; }
+      /* 머리 대신 얇은 안내 줄 */
+      .rack-status {
+        display:flex; align-items:baseline; gap:8px; position:absolute; top:0; left:0; right:0; z-index:2;
+        padding:10px 20px; font-family:var(--font-heading); font-size:12px; letter-spacing:.04em; color:var(--color-text-secondary);
+        background:var(--color-bg);
+      }
+      .rack-status b { font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--color-text-primary); }
+      .rack-hint { margin-left:auto; letter-spacing:0; color:var(--color-text-tertiary); }
+      .rack-beam { top:38px; }
+      .key-rack { padding-top:51px; }
       .navbar-search-wrap { display:flex; }
       .key-item { min-width:100vw; width:100vw; }
       .key-img-wrap { width:clamp(220px,76vw,340px); }
@@ -974,7 +1009,7 @@ renderKeyRack();
     @keyframes slideUp { from{transform:translateY(16px);opacity:0;} to{transform:translateY(0);opacity:1;} }
     .unv-icon { display:block; margin-bottom:var(--space-5); }
     .unv-msg {
-      font-family:var(--font-display); font-weight:500;
+      font-family:var(--font-body); font-weight:500;
       font-size:18px; color:var(--color-text-primary);
       line-height:1.5; margin-bottom:var(--space-6);
     }

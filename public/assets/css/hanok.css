@@ -54,7 +54,7 @@ body { background: var(--color-bg); color: var(--color-text-primary); }
 }
 .pp-updated { margin-top: 14px; font-family: var(--font-heading); font-size: 12px; letter-spacing: 0.1em; color: var(--color-text-tertiary); }
 .pp-lead {
-  font-family: var(--font-display); font-size: clamp(16px, 1.7vw, 19px); line-height: 1.9;
+  font-family: var(--font-body); font-size: clamp(16px, 1.7vw, 19px); line-height: 1.9;
   color: var(--color-text-primary); word-break: keep-all;
   padding: 24px 0 32px; margin-bottom: 8px;
   border-top: 1px solid var(--color-rule); border-bottom: 2px solid var(--color-text-primary);

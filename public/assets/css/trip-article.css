@@ -224,7 +224,7 @@
   border-left: 2px solid var(--yeonji-500);
   background: none; box-shadow: none; border-radius: 0;
 }
-.ta-note-text { font-family: var(--font-display); font-size: var(--text-md); line-height: var(--leading-loose); color: var(--color-text-primary); }
+.ta-note-text { font-family: var(--font-body); font-size: var(--text-md); line-height: var(--leading-loose); color: var(--color-text-primary); }
 .ta-note-avatar { filter: grayscale(.2); }
 
 /* Day: 굵은 먹 선 아래 번호와 장소 수 */
@@ -241,7 +241,7 @@
 .ta-place { border-bottom: 1px solid var(--color-rule); }
 .ta-place-no {
   position: relative; padding-right: 18px;
-  font-family: var(--font-heading); font-size: 12px; letter-spacing: 0.12em; color: var(--yeonji-600);
+  font-family: var(--font-heading); font-size: 12px; letter-spacing: 0.12em; color: var(--color-text-tertiary);
 }
 .ta-place-no::after {
   content: ''; position: absolute; right: 2px; top: 50%; width: 6px; height: 6px;

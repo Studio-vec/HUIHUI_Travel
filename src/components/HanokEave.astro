@@ -135,10 +135,14 @@ ${threads}
 <path d="M${x - 7} ${ty + 20}H${x + 7}" ${LS(1, 0.9)}/>
 </g>`;
 };
-// 창방 아래 걸이: 풍경과 술을 번갈아, 길이는 들쭉날쭉하게
+// 창방 아래 걸이: 풍경 하나에 술 둘, 길이는 들쭉날쭉하게
 const hangs = [];
 const LENS = [22, 38, 14, 30, 42, 18, 34, 26, 20, 40, 16, 32];
-for (let i = 0, x = 70; x < W; i++, x += 130) hangs.push(i % 3 === 1 ? pung(x, LENS[i % LENS.length] - 10, i) : tassel(x, LENS[i % LENS.length]));
+// 간격을 일부러 고르지 않게(±25) 두고 수도 줄여, 손으로 하나씩 건 것처럼 보이게 한다
+const GAPS = [150, 128, 172, 141, 166, 124, 158, 147];
+for (let i = 0, x = 88; x < W - 40; x += GAPS[i % GAPS.length], i++) {
+  hangs.push(i % 3 === 1 ? pung(x, LENS[i % LENS.length] - 10, i) : tassel(x, LENS[i % LENS.length]));
+}
 
 /* ── 그리기 ─────────────────────── */
 let art = '';
@@ -163,7 +167,7 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
   </div>
   <div class="he-petals" aria-hidden="true"></div>
   <div class="he-bar">
-    <button type="button" class="he-sound-btn" aria-pressed="false">풍경 소리 <span>끔</span></button>
+    <button type="button" class="he-sound-btn" aria-pressed="false"><svg class="he-spk" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h3l4-3v10L5 10H2z"/><path class="he-spk-on" d="M11.5 5.5a3.5 3.5 0 0 1 0 5M13.5 3.5a6.5 6.5 0 0 1 0 9"/><path class="he-spk-off" d="M11 6l4 4M15 6l-4 4"/></svg>풍경 소리 <span>끔</span></button>
   </div>
 </div>
 
@@ -190,7 +194,9 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
 
     /* ── 소리: 기본은 끔. 켜면 WebAudio 로 맑은 종소리(배음 셋)를 낸다 ── */
     var audio = null, soundOn = false;
-    var NOTES = [784, 880, 1047, 1175, 1319, 1568];
+    /* 오음계(솔·라·도·레·미 …): 처마 왼쪽 풍경은 낮게, 오른쪽으로 갈수록 높게 */
+    var NOTES = [587, 659, 784, 880, 1047, 1175, 1319, 1568];
+    function noteAt(x) { return NOTES[Math.max(0, Math.min(NOTES.length - 1, Math.round(x / 1440 * (NOTES.length - 1))))]; }
     soundBtn.addEventListener('click', function () {
       soundOn = !soundOn;
       soundBtn.setAttribute('aria-pressed', String(soundOn));
@@ -219,7 +225,7 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
         g: g, fish: fish, snd: g.querySelector('.he-sound'),
         x: +g.dataset.x, y: +g.dataset.y, len: +g.dataset.l, pung: g.dataset.type === 'pung',
         fx: fish ? +fish.dataset.px : 0, fy: fish ? +fish.dataset.py : 0,
-        a: 0, v: 0, fa: 0, fv: 0, last: 0, note: NOTES[i % NOTES.length],
+        a: 0, v: 0, fa: 0, fv: 0, last: 0, note: noteAt(+g.dataset.x),
         k: 22 + (i % 4) * 4   // 길이마다 흔들리는 빠르기가 조금씩 다르다
       };
     });
@@ -406,13 +412,21 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
     display: flex; align-items: center; gap: 16px;
     opacity: 0; animation: heFade .8s ease-out 3.2s forwards;
   }
+  /* 풍경 소리 켜기: 손가락으로 누르기 좋게 44px, 스피커 그림으로 버튼임을 알린다 */
   .he-sound-btn {
-    min-height: 32px; padding: 0 2px; background: none; border: none; border-bottom: 1px solid var(--color-rule-strong); border-radius: 0;
-    font-family: var(--font-heading); font-size: 12px; letter-spacing: 0.08em; color: var(--color-text-primary); cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    min-height: 44px; padding: 0 12px; background: var(--color-bg);
+    border: 1px solid var(--color-rule-strong); border-radius: 999px;
+    font-family: var(--font-heading); font-size: 12px; font-weight: 500; letter-spacing: 0.02em; color: var(--color-text-primary); cursor: pointer;
+    transition: border-color .15s, color .15s;
   }
-  .he-sound-btn span { color: var(--color-text-tertiary); margin-left: 4px; }
+  .he-sound-btn:hover { border-color: var(--yeonji-500); }
+  .he-sound-btn span { color: var(--color-text-tertiary); }
+  .he-spk-on { display: none; }
   .he-sound-btn[aria-pressed="true"] { border-color: var(--yeonji-500); }
   .he-sound-btn[aria-pressed="true"] span { color: var(--yeonji-600); }
+  .he-sound-btn[aria-pressed="true"] .he-spk-on { display: inline; }
+  .he-sound-btn[aria-pressed="true"] .he-spk-off { display: none; }
 
   /* 풍경이 울릴 때 소리 자국 */
   .he-svg :global(.he-sound) { opacity: 0; }
