@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 70" fill="none" stroke="#202943" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
-  <!-- 호출 종 윗부분: 먹 선 한 가닥 + 연지 점 -->
-  <circle cx="60" cy="7" r="4.5"/>
-  <path d="M60 11.5V15"/>
-  <path d="M16 64C16 34 36 15 60 15C84 15 104 34 104 64Z" fill="#FBF7F0"/>
-  <path d="M34 50C36 38 44 30 54 27" stroke-opacity=".35"/>
-  <circle cx="60" cy="64" r="3.4" fill="#EF4D6D" stroke="none"/>
-</svg>

@@ -2,7 +2,7 @@
 /**
  * 404 — 창호지 문
  * 찾는 방(페이지)은 비어 있다. 닫힌 창호 문의 한지를 손가락으로 콕콕 뚫어 안을 들여다보면,
- * 방 안에 '대신 가 볼 만한 여행지' 열쇠가 걸려 있다. 구멍을 몇 개 내면 문이 스르르 열린다.
+ * 방 안에 '대신 가 볼 만한 여행지' 열쇠가 걸려 있다. 구멍을 다섯 개 내면 문이 스르르 열린다.
  *  - 한지는 <canvas> 한 장: 누른 자리를 destination-out 으로 찢어 낸다(가장자리는 들쭉날쭉 + 섬유 결)
  *  - 문살은 그 위 SVG, 방은 그 아래 HTML
  *  - 키보드·스크린리더 사용자는 '문 열기' 버튼과 아래 링크로 같은 곳에 갈 수 있다
@@ -44,7 +44,7 @@ const first = rooms[0];
             주소가 바뀌었거나 아직 짓지 않은 방이에요.<br />
             창호지에 손가락으로 <em>콕</em> 구멍을 내서 옆방을 들여다보세요.
           </p>
-          <p class="nf-count" aria-live="polite" id="nfCount">구멍 0 / 3</p>
+          <p class="nf-count" aria-live="polite" id="nfCount">구멍 0 / 5</p>
           <div class="nf-actions">
             <button type="button" class="nf-btn" id="nfOpen">문 열기</button>
             <a class="nf-link" href="/">홈으로 →</a>
@@ -62,7 +62,6 @@ const first = rooms[0];
             <span class="room-cap">
               <span class="room-no" id="roomNo">No.{first?.no}</span>
               <span class="room-name" id="roomName">{first?.name}</span>
-              <span class="room-go">대신 이 방은 어때요? →</span>
             </span>
           </a>
 
@@ -108,7 +107,7 @@ const first = rooms[0];
   var door = document.getElementById('door');
   var countEl = document.getElementById('nfCount');
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var NEED = 3;
+  var NEED = 5;
   var holes = 0;
 
   /* 오늘 날짜로 고르는 옆방 (하루 종일 같은 방) */
@@ -273,8 +272,8 @@ const first = rooms[0];
   /* ── 창호 문 ── */
   .door {
     position: relative; width: calc(100% - 22px); aspect-ratio: 3 / 4;
-    background: #120F0D; overflow: hidden;
-    box-shadow: 0 0 0 10px #2A221C, 0 0 0 11px var(--color-text-primary), 0 30px 60px -30px rgba(32,41,67,0.5);
+    background: #0B0E1A; overflow: hidden;
+    box-shadow: 0 0 0 10px #161C30, 0 0 0 11px var(--color-text-primary), 0 30px 60px -30px rgba(32,41,67,0.5);
     margin: 11px;
   }
   .door-frame { position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.6); }
@@ -302,25 +301,29 @@ const first = rooms[0];
   .room {
     position: absolute; inset: 0; z-index: 1;
     display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-    padding-top: 6%; text-decoration: none; color: #F7F0E5;
-    background: radial-gradient(ellipse at 50% 30%, #3A2C20 0%, #1A1410 55%, #0E0B09 100%);
+    padding-top: 5%; text-decoration: none; color: #F7F0E5;
+    /* 방 안: 차콜 네이비에서 거의 검정으로, 단계 없이 부드럽게 */
+    background:
+      radial-gradient(120% 90% at 50% 34%, rgba(54,64,96,.55) 0%, rgba(32,41,67,.35) 30%, rgba(22,28,48,.15) 55%, rgba(10,12,22,0) 80%),
+      linear-gradient(180deg, #1B2238 0%, #121729 60%, #0B0E1A 100%);
   }
+  /* 열쇠 뒤 등잔빛: 가장자리를 여러 단계로 풀고 흐려서 테두리가 보이지 않게 */
   .room-light {
-    position: absolute; left: 50%; top: 18%; width: 70%; aspect-ratio: 1; transform: translateX(-50%);
-    background: radial-gradient(circle, rgba(246,223,166,0.35), transparent 65%); pointer-events: none;
+    position: absolute; left: 50%; top: 8%; width: 115%; aspect-ratio: 1; transform: translateX(-50%);
+    background: radial-gradient(closest-side, rgba(246,223,166,.28) 0%, rgba(246,223,166,.18) 25%, rgba(246,223,166,.09) 48%, rgba(246,223,166,.035) 70%, rgba(246,223,166,0) 100%);
+    filter: blur(8px); pointer-events: none;
   }
-  .room-cord { width: 1px; height: 12%; background: var(--yeonji-400); position: relative; }
+  .room-cord { width: 1px; height: 7%; background: var(--yeonji-400); position: relative; }
   .room-cord::after {
     content: ''; position: absolute; left: 50%; bottom: -5px; width: 9px; height: 9px;
-    transform: translateX(-50%) rotate(45deg); border: 1.2px solid var(--yeonji-400); background: #1A1410;
+    transform: translateX(-50%) rotate(45deg); border: 1.2px solid var(--yeonji-400); background: #1B2238;
   }
-  .room-key { height: 52%; width: auto; margin-top: 6px; filter: drop-shadow(0 10px 18px rgba(0,0,0,.6)); transform-origin: 50% 0; animation: nfSway 4.6s ease-in-out infinite; }
+  .room-key { height: 70%; width: auto; margin-top: 6px; filter: drop-shadow(0 12px 20px rgba(0,0,0,.55)); transform-origin: 50% 0; animation: nfSway 4.6s ease-in-out infinite; }
   @keyframes nfSway { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
-  .room-cap { position: absolute; left: 0; right: 0; bottom: 7%; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .room-no { font-family: var(--font-heading); font-size: 11px; letter-spacing: 0.16em; color: rgba(244,241,234,0.6); }
-  .room-name { font-family: var(--font-display); font-size: clamp(22px, 3vw, 30px); font-weight: 600; letter-spacing: -0.01em; }
-  .room-go { font-size: 12px; letter-spacing: 0.06em; color: rgba(244,241,234,0.75); border-bottom: 1px solid currentColor; padding-bottom: 2px; margin-top: 6px; }
-  .room:hover .room-go, .room:focus-visible .room-go { color: #fff; }
+  /* 아래 글은 작게: 번호와 지명만 */
+  .room-cap { position: absolute; left: 0; right: 0; bottom: 4%; display: flex; align-items: baseline; justify-content: center; gap: 8px; }
+  .room-no { font-family: var(--font-heading); font-size: 10px; letter-spacing: 0.16em; color: rgba(247,240,229,0.55); }
+  .room-name { font-family: var(--font-display); font-size: clamp(14px, 1.6vw, 17px); font-weight: 700; letter-spacing: -0.01em; }
 
   /* ── 아래 목록 ── */
   .nf-more { padding-top: 28px; }
