@@ -5,7 +5,7 @@ import Navbar from '../../components/Navbar.astro';
 import TripArticle from '../../components/TripArticle.astro';
 import TripIndex from '../../components/TripIndex.astro';
 import Footer from '../../components/Footer.astro';
-import { toMobileSchedule, toMobileTips, dayCountOf, tripSlug } from '../../lib/tripData';
+import { toMobileSchedule, toMobileTips, dayCountOf, tripSlug, nameEnOf } from '../../lib/tripData';
 import type { TripData } from '../../lib/tripData';
 
 export async function getStaticPaths() {
@@ -38,10 +38,7 @@ const dayCount = dayCountOf(tripData);
 const storageKey = `trip_${tripData.id}`;
 const tipsKey = `trip_${tripData.id}_tips_v1`;
 const tripUrl = `/trips/${tripSlug(tripData)}`;
-/* 비밀 여행지: 이 페이지를 연 브라우저의 홈 목록에 나오도록 주소만 남긴다.
-   카드 정보는 홈이 매번 <주소>/card.json 에서 새로 읽는다 */
-const unlockUrl = tripData.secretHash ? tripUrl : null;
-const momentLabel = tripData.id.charAt(0).toUpperCase() + tripData.id.slice(1);
+const momentLabel = nameEnOf(tripData);
 
 const tripDescription = [
   `${tripData.locationLabel} ${dayCount}일 여행 코스.`,
@@ -281,17 +278,15 @@ createTripApp({
   />
   </main>
   <Footer />
-  {unlockUrl && (
-    <script is:inline define:vars={{ unlockUrl }}>
+  {tripData.secretHash && (
+    <script is:inline define:vars={{ tripUrl }}>
+      /* 비밀 여행지: 이 페이지를 연 브라우저의 홈 목록에 나오도록 주소만 남긴다.
+         카드 정보는 홈이 매번 <주소>/card.json 에서 새로 읽고, 예전 형식 정리·중복 제거도 홈이 한다 */
       try {
         const KEY = 'huihui_unlocked';
         const saved = JSON.parse(localStorage.getItem(KEY) || '[]');
-        /* 예전 형식(카드 객체)도 주소로 바꿔 읽고, 이미 있으면 순서를 그대로 둔다 */
-        const urls = (Array.isArray(saved) ? saved : [])
-          .map((c) => (typeof c === 'string' ? c : c && c.url))
-          .filter((u) => typeof u === 'string');
-        if (!urls.includes(unlockUrl)) urls.push(unlockUrl);
-        localStorage.setItem(KEY, JSON.stringify(urls));
+        const urls = Array.isArray(saved) ? saved : [];
+        if (!urls.includes(tripUrl)) localStorage.setItem(KEY, JSON.stringify([...urls, tripUrl]));
       } catch (_) {}
     </script>
   )}

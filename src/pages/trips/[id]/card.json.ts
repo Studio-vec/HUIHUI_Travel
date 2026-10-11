@@ -24,13 +24,7 @@ export const GET: APIRoute = ({ props }) => {
   const key = existsSync(join(process.cwd(), 'public', 'assets', 'keys', `${trip.id}.webp`))
     ? `/assets/keys/${trip.id}.webp`
     : '/assets/keys/secret.webp';
-  const card = {
-    ...homeCardOf(trip, 999),
-    nameEn: trip.id.charAt(0).toUpperCase() + trip.id.slice(1),
-    url: `/trips/${tripSlug(trip)}`,
-    key,
-  };
-  return new Response(JSON.stringify(card), {
+  return new Response(JSON.stringify({ ...homeCardOf(trip, 999), key }), {
     headers: { 'Content-Type': 'application/json; charset=utf-8' },
   });
 };

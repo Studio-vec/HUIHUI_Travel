@@ -103,9 +103,16 @@ function regionOf(tag: string): string {
 }
 
 /** 홈 열쇠 카드에 쓰는 정보. 홈(공개 여행지)과 비밀 여행지 페이지(코드를 연 사람의 홈에 추가)가 함께 쓴다 */
+/** 영문 표시 이름: id 첫 글자만 대문자 */
+export function nameEnOf(t: TripData): string {
+  return t.id.charAt(0).toUpperCase() + t.id.slice(1);
+}
+
 export function homeCardOf(t: TripData, fallbackNo: number) {
   return {
     no: t.no ?? fallbackNo,
+    nameEn: nameEnOf(t),
+    url: `/trips/${tripSlug(t)}`,
     nameKo: t.shortNameKo || t.title,
     tagline: t.tagline || '',
     region: regionOf(t.tags[0] || ''),

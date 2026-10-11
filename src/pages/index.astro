@@ -807,60 +807,64 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     const _clean = v => String(v ?? '').replace(/[<>"'&`]/g, ''); // innerHTML 에 들어가므로 태그·속성 깨는 문자를 뺀다
 
     async function _unlockedTrips(publicUrls) {
-      let urls = [];
+      let saved = [];
       try {
-        const saved = JSON.parse(localStorage.getItem(UNLOCKED_KEY) || '[]');
-        urls = (Array.isArray(saved) ? saved : []).map(c => typeof c === 'string' ? c : c && c.url);
+        const parsed = JSON.parse(localStorage.getItem(UNLOCKED_KEY) || '[]');
+        if (Array.isArray(parsed)) saved = parsed;
       } catch (_) {}
-      urls = [...new Set(urls.filter(u => typeof u === 'string' && /^\/trips\/[\w-]+$/.test(u) && !publicUrls.has(u)))];
+      /* 예전 형식(카드 객체)도 주소로 바꿔 읽는다 */
+      const urls = [...new Set(saved.map(c => typeof c === 'string' ? c : c && c.url)
+        .filter(u => typeof u === 'string' && /^\/trips\/[\w-]+$/.test(u) && !publicUrls.has(u)))];
       const results = await Promise.all(urls.map(async url => {
         try {
-          const res = await fetch(url + '/card.json', { cache: 'no-store' });
+          const res = await fetch(url + '/card.json', { cache: 'no-cache' });
           if (res.status === 404) return { url, gone: true };
           if (!res.ok) return { url };
           const c = await res.json();
           if (!c || !c.nameKo) return { url, gone: true };
-          return { url, trip: {
-            nameEn:  _clean(c.nameEn),
-            nameKo:  _clean(c.nameKo),
-            status:  'open',
-            url,
-            no:      Number(c.no) || 999,
-            key:     /^\/assets\/keys\/[\w-]+\.webp$/.test(c.key) ? c.key : '/assets/keys/secret.webp',
-            tagline: _clean(c.tagline),
-            region:  _clean(c.region),
-            nights:  _clean(c.nights),
-            theme:   _clean(c.theme),
-            loc:     _clean(c.loc),
-          } };
+          const card = Object.fromEntries(Object.entries(c).map(([k, v]) => [k, _clean(v)]));
+          const key = /^\/assets\/keys\/[\w-]+\.webp$/.test(c.key) ? c.key : '/assets/keys/secret.webp';
+          return { url, trip: _toTrip(card, { url, key, no: Number(c.no) || 999 }) };
         } catch (_) { return { url }; }
       }));
-      try { localStorage.setItem(UNLOCKED_KEY, JSON.stringify(results.filter(r => !r.gone).map(r => r.url))); } catch (_) {}
+      const kept = results.filter(r => !r.gone).map(r => r.url);
+      if (JSON.stringify(kept) !== JSON.stringify(saved)) {
+        try { localStorage.setItem(UNLOCKED_KEY, JSON.stringify(kept)); } catch (_) {}
+      }
       return results.filter(r => r.trip).map(r => r.trip);
     }
 
-    function _buildTrips() {
-      return Object.entries(TRIP_CONFIG).map(([slug, cfg], idx) => ({
-        nameEn:  slug.charAt(0).toUpperCase() + slug.slice(1),
-        nameKo:  cfg.nameKo  || slug,
+    /* 공개·비밀 여행지 카드가 같은 모양이 되도록 한 곳에서 만든다 (cfg 는 homeCardOf 결과) */
+    function _toTrip(cfg, { url, key, no }) {
+      return {
+        nameEn:  cfg.nameEn  || '',
+        nameKo:  cfg.nameKo  || cfg.nameEn || '',
         status:  'open',
-        url:     `/trips/${slug}`,
-        no:      cfg.no      || (idx + 1),
-        key:     `/assets/keys/${slug}.webp`,
+        url,
+        no,
+        key,
         tagline: cfg.tagline || '',
         region:  cfg.region  || '',
         nights:  cfg.nights  || '',
         theme:   cfg.theme   || '',
         loc:     cfg.loc     || '',
-      }));
+      };
+    }
+
+    function _buildTrips() {
+      return Object.entries(TRIP_CONFIG).map(([slug, cfg], idx) =>
+        _toTrip(cfg, { url: cfg.url, key: `/assets/keys/${slug}.webp`, no: cfg.no || (idx + 1) }));
     }
 
     /* 예약 표시는 여행지 주소로 저장한다. 예전 형식(카드 순서 번호)은 지금 순서대로 주소로 바꿔 둔다 */
     function _loadReserved() {
-      const set = new Set([..._getSet(RESERVED_KEY)]
+      const saved = [..._getSet(RESERVED_KEY)];
+      const set = new Set(saved
         .map(v => typeof v === 'number' ? TRIPS[v]?.url : v)
         .filter(v => typeof v === 'string'));
-      try { _saveSet(RESERVED_KEY, set); } catch (_) {}
+      if (saved.some(v => typeof v !== 'string')) {
+        try { _saveSet(RESERVED_KEY, set); } catch (_) {}
+      }
       return set;
     }
 
@@ -985,15 +989,24 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
       });
     }
 
-    async function _init() {
-      const pub = _buildTrips();
-      TRIPS = pub.concat(await _unlockedTrips(new Set(pub.map(t => t.url))));
-      reservedSet = _loadReserved();
-      /* 키 이미지 존재 여부 병렬 체크 → 없으면 coming-soon */
-      await Promise.all(TRIPS.map(async trip => {
+    /* 키 이미지 존재 여부 병렬 체크 → 없으면 coming-soon */
+    async function _probeKeys(trips) {
+      await Promise.all(trips.map(async trip => {
         const exists = await _probeImg(trip.key);
         if (!exists) { trip.status = 'coming-soon'; trip.key = null; }
       }));
+      return trips;
+    }
+
+    async function _init() {
+      const pub = _buildTrips();
+      /* 공개 여행지 키 확인과 비밀 여행지 card.json 읽기를 동시에 진행한다 */
+      const [, unlocked] = await Promise.all([
+        _probeKeys(pub),
+        _unlockedTrips(new Set(pub.map(t => t.url))).then(_probeKeys),
+      ]);
+      TRIPS = pub.concat(unlocked);
+      reservedSet = _loadReserved();
       _renderFilters();
       _renderGrid();
       _attachLongPress();
