@@ -226,7 +226,7 @@
   <hr class="hh-mm-divider"/>
   ${showView ? '<button class="hh-mm-item" id="hhMobileView" type="button"></button><hr class="hh-mm-divider"/>' : ''}
   <div id="hhMobileUser">
-    <a class="hh-mm-item" href="/auth/login">로그인 / 회원가입</a>
+    <a class="hh-mm-item" href="/auth/login">방명록 · 로그인</a>
   </div>`;
 
   /* ── 삽입 ─────────────────────────────────────────────────── */
@@ -449,7 +449,7 @@
           const userArea   = document.getElementById('hhUserArea');
           const mobileUser = document.getElementById('hhMobileUser');
           if (userArea)   userArea.innerHTML   = `<a href="/auth/login" class="hh-login-btn">로그인</a>`;
-          if (mobileUser) mobileUser.innerHTML = `<a class="hh-mm-item" href="/auth/login">로그인 / 회원가입</a>`;
+          if (mobileUser) mobileUser.innerHTML = `<a class="hh-mm-item" href="/auth/login">방명록 · 로그인</a>`;
           window._hhUser = null;
         }
       });

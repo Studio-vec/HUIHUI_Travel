@@ -14,42 +14,21 @@ import Navbar from '../../components/Navbar.astro';
   <div class="receipt-top"></div>
   <div class="receipt-body">
 
-    <!-- 호텔 헤더 -->
-    <div class="receipt-hotel">
-      <div class="hotel-badge"><span>HH</span></div>
-      <div class="hotel-name">MASIL</div>
-      <div class="hotel-sub">TRAVEL HUIHUI LOG</div>
-    </div>
-
-    <!-- 예약 메타 -->
-    <table class="meta-table">
-      <tr>
-        <td class="meta-label">PROPERTY</td>
-        <td class="meta-value">TRAVEL HUIHUI</td>
-      </tr>
-      <tr>
-        <td class="meta-label">GUEST&nbsp;ID</td>
-        <td class="meta-value mono">—</td>
-      </tr>
-      <tr>
-        <td class="meta-label">CHECK&nbsp;IN</td>
-        <td class="meta-value mono" id="dateValue">—</td>
-      </tr>
-      <tr>
-        <td class="meta-label">ROOM&nbsp;TYPE</td>
-        <td class="meta-value">TRAVELER</td>
-      </tr>
-    </table>
-
-    <hr class="divider"/>
+    <!-- 객주 방명록 머리 -->
+    <header class="gb-head">
+      <div class="hotel-badge" aria-hidden="true"></div>
+      <h1 class="gb-title">객주 방명록</h1>
+      <p class="gb-sub">묵어 가실 분은 이름을 적어 주세요</p>
+      <p class="gb-date"><span id="dateValue">—</span> 방명록</p>
+    </header>
 
     <div class="field">
-      <label class="field-label">GUEST EMAIL / 이메일</label>
+      <label class="field-label" for="uid">이메일</label>
       <input class="input-box" type="email" id="uid" placeholder="가입한 이메일을 입력하세요" autocomplete="email" inputmode="email"/>
     </div>
 
     <div class="field">
-      <label class="field-label">PASS KEY / 비밀번호</label>
+      <label class="field-label" for="pw">비밀번호</label>
       <div class="pw-wrap">
         <input class="input-box" type="password" id="pw" placeholder="비밀번호를 입력하세요" autocomplete="current-password"/>
         <button class="pw-toggle" onclick="togglePw()" type="button">보기</button>
@@ -61,42 +40,37 @@ import Navbar from '../../components/Navbar.astro';
     <hr class="divider"/>
 
     <button class="btn-checkin" id="loginBtn" onclick="doLogin()">
-      <span class="btn-checkin-label">CHECK IN</span>
+      <span class="btn-checkin-label">들어가기</span>
       <span class="btn-checkin-arrow">→</span>
     </button>
 
     <div class="receipt-links">
-      <a href="/auth/find-account">비밀번호 찾기</a>
+      <a href="/auth/find-account">비밀번호를 잊으셨나요?</a>
     </div>
     <div class="receipt-links" style="margin-top:5px;">
-      <a href="/auth/register">처음이세요? 회원가입 →</a>
+      <a href="/auth/register">처음 오셨나요? 방명록에 이름 올리기 →</a>
     </div>
 
-    <div class="divider-or"><span>OR</span></div>
+    <div class="divider-or"><span>또는</span></div>
 
     <button class="btn-google" id="googleBtn" onclick="doGoogleLogin()">
       <svg width="15" height="15" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       <span>Google로 계속하기</span>
     </button>
 
-    <!-- 바코드 -->
-    <div class="barcode-wrap">
-      <div class="barcode" id="barcodeEl"></div>
-      <div class="barcode-num" id="barcodeNum">0000 0000 0000 0000</div>
-    </div>
 
   </div>
   <div class="receipt-bottom"></div>
-  <div class="stamp">CHECK<br>IN</div>
+  <div class="stamp" aria-hidden="true">入</div>
 </div>
 </div>
 
-<div class="toast" id="toast">✓ 체크인 완료! 어서오세요 🗝️</div>
+<div class="toast" id="toast">어서 오세요. 방을 내어 드렸어요.</div>
 
 <script>
   const t = new Date();
   document.getElementById('dateValue').textContent =
-    t.getFullYear() + '.' + String(t.getMonth()+1).padStart(2,'0') + '.' + String(t.getDate()).padStart(2,'0');
+    t.getFullYear() + '년 ' + (t.getMonth()+1) + '월 ' + t.getDate() + '일';
 
   /* OAuth 콜백 URL 오류 감지 */
   const urlParams = new URLSearchParams(location.search);
@@ -108,21 +82,6 @@ import Navbar from '../../components/Navbar.astro';
     history.replaceState(null, '', location.pathname);
   }
 
-  /* 바코드 장식 생성 */
-  (function() {
-    const el = document.getElementById('barcodeEl');
-    const num = document.getElementById('barcodeNum');
-    if (!el) return;
-    const widths = [1,2,1,3,1,2,3,1,2,1,3,2,1,2,1,3,1,2,1,2,3,1,2,1,3,1,2,3,1,2,1,3,2,1,2,1,3,1,2,1,2,3,1,2,1];
-    widths.forEach(w => {
-      const bar = document.createElement('span');
-      bar.style.width = w + 'px';
-      bar.style.height = (14 + Math.random() * 14) + 'px';
-      el.appendChild(bar);
-    });
-    const code = Array.from({length:4}, () => Math.floor(Math.random()*9000+1000)).join(' ');
-    num.textContent = code;
-  })();
 
   /* ?redirect= 는 같은 사이트 경로만 허용한다. javascript:·외부 주소·//host 로의 이동을 막는다 */
   function safeRedirect() {
@@ -164,7 +123,7 @@ import Navbar from '../../components/Navbar.astro';
          단, 미인증은 비밀번호가 맞아야만 돌아오는 응답이라 따로 안내해도 존재 여부가 새지 않는다 */
       const { error: signErr } = await window._sb.auth.signInWithPassword({ email, password: pw });
       if (signErr?.code === 'email_not_confirmed' || /not confirmed/i.test(signErr?.message || '')) {
-        throw new Error('아직 이메일 인증 전이에요. 가입 메일의 링크를 눌러 인증을 마쳐주세요 📬');
+        throw new Error('아직 이메일 인증 전이에요. 가입 메일의 링크를 눌러 인증을 마쳐 주세요.');
       }
       if (signErr) throw new Error('이메일 또는 비밀번호가 맞지 않아요');
 
@@ -176,7 +135,7 @@ import Navbar from '../../components/Navbar.astro';
 
     } catch (e) {
       btn.disabled = false;
-      btn.querySelector('.btn-checkin-label').textContent = 'CHECK IN';
+      btn.querySelector('.btn-checkin-label').textContent = '들어가기';
       document.getElementById('pw').value = '';
       err.textContent = e.message;
       err.classList.add('show');
@@ -300,32 +259,11 @@ import Navbar from '../../components/Navbar.astro';
     /* 바디 */
     .receipt-body { padding:6px 26px 22px; }
 
-    /* 헤더 */
-    .receipt-hotel {
-      text-align: center;
-      padding: 18px 0 12px;
-      margin-bottom: 12px;
-    }
     .hotel-badge {
       display: inline-flex; align-items: center; justify-content: center;
       margin-bottom: 8px;
     }
-    .hotel-badge span {
-      font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
-      font-size: 1.1rem; font-weight: 700; color: white; letter-spacing: 0.06em;
-    }
-    .hotel-name { line-height: 1;
-    }
-    .hotel-sub { margin-top: 4px;
-      text-transform: uppercase;
-    }
 
-    /* 메타 테이블 */
-    .meta-table { width: 100%; margin-bottom: 4px; }
-    .meta-table td { padding: 2px 0; vertical-align: baseline; }
-    .meta-label { white-space: nowrap; }
-    .meta-value { font-size: 0.75rem; font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif; text-align: right; }
-    .meta-value.mono { font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif; font-size: 0.75rem; letter-spacing: 0.04em; }
 
     .divider       { margin: 11px 0; }
     .divider-solid {    margin: 10px 0; }
@@ -363,9 +301,7 @@ import Navbar from '../../components/Navbar.astro';
     .btn-checkin:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
 
     .btn-checkin:active { transform: translateY(0); }
-    .btn-checkin-label {
-      font-size: 0.75rem; font-weight: 700; flex: 1;
-      font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
+    .btn-checkin-label { flex: 1;
     }
     .btn-checkin-arrow { font-size: 1rem; color: white; }
 
@@ -378,7 +314,7 @@ import Navbar from '../../components/Navbar.astro';
     /* 구분선 또는 */
     .divider-or {
       display: flex; align-items: center; gap: 10px; margin: 12px 0 10px;
-      color: var(--text-dim); font-size: 0.75rem; letter-spacing: 0.1em;
+      color: var(--text-dim); font-size: 0.75rem;
     }
     .divider-or::before, .divider-or::after {
       content: ''; flex: 1; height: 1px; background: rgba(239,77,109,0.18);
@@ -395,28 +331,12 @@ import Navbar from '../../components/Navbar.astro';
 
     .btn-google:disabled { opacity: 0.6; cursor: not-allowed; }
 
-    /* 바코드 */
-    .barcode-wrap {
-      display: flex; flex-direction: column; align-items: center; padding: 14px 0 6px; gap: 4px;
-    }
-    .barcode {
-      display: flex; gap: 1.5px; height: 28px; align-items: flex-end;
-    }
-    .barcode span {
-      display: inline-block;
-    }
-    .barcode-num {
-      font-family: 'Pretendard Variable', Pretendard, monospace; font-variant-numeric: tabular-nums; font-size: 0.75rem;
-      color: var(--text-dim); letter-spacing: 0.18em;
-    }
 
     /* 스탬프 */
     .stamp {
-      position: absolute; bottom: 42px; right: 16px;
-      width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
-      font-size: 0.75rem; font-weight: 800;
+      position: absolute; display: flex; align-items: center; justify-content: center;
       letter-spacing: 0.06em; pointer-events: none;
-      text-align: center; line-height: 1.3;
+      text-align: center;
     }
 
     /* 토스트 */

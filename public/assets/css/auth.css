@@ -1,7 +1,8 @@
 /* ============================================================
-   로그인·회원가입·계정 찾기·비밀번호 재설정·프로필 — 전통 × 에디토리얼
-   영수증 구조는 그대로 두고, 한지 한 장 + 먹 선 + 연지 낙관으로 다시 칠한다.
-   각 페이지의 <style is:global> 보다 늦게 적용되도록 로 한 단계 높여 쓴다.
+   로그인·회원가입·비밀번호 찾기·재설정·프로필 — 객주 방명록
+   손님이 묵어 가며 이름을 적는 방명록 한 장. 위는 창방 같은 두 줄 선,
+   글줄마다 옅은 괘선, 오른쪽 위에 핑크 '入' 낙관.
+   생김새(색·테두리·글꼴)는 이 파일만 정하고, 각 페이지의 <style is:global> 에는 배치만 남긴다.
    ============================================================ */
 body {
   --purple: #EF4D6D;
@@ -16,44 +17,50 @@ body {
   background: var(--color-bg);
 }
 
-/* 종이 카드: 톱니·그림자 없이 위 굵은 먹 선 + 가는 테두리 */
+/* 방명록 한 장: 위 두 줄 창방 선 + 가는 테두리 + 옅은 괘선 */
 .receipt {
   filter: none;
-  background: var(--color-surface);
+  background-color: var(--color-surface);
+  background-image: repeating-linear-gradient(to bottom, transparent 0 31px, rgba(32,41,67,0.045) 31px 32px);
+  /* 괘선은 제목 아래부터 (머리글 글자를 가로지르지 않게) */
+  background-size: 100% calc(100% - 170px); background-position: bottom; background-repeat: no-repeat;
   border: 1px solid var(--color-rule);
-  border-top: 2px solid var(--color-text-primary);
+  border-top: 4px double var(--color-text-primary);
 }
 .receipt-top, .receipt-bottom { display: none; }
 .receipt-body { background: transparent; }
 .section-card {
   background: var(--color-surface); border-radius: 0; box-shadow: none;
-  border: 1px solid var(--color-rule); border-top: 2px solid var(--color-text-primary);
+  border: 1px solid var(--color-rule); border-top: 4px double var(--color-text-primary);
 }
 
-/* 머리: HH 동그라미 → 囍 로고 */
+/* 머리: 囍 로고 + 방명록 제목 + 오늘 날짜 */
 .hotel-badge, .logo-circle {
-  width: 64px; height: 45px; border-radius: 0; box-shadow: none;
+  width: 56px; height: 39px; border-radius: 0; box-shadow: none;
   background: url('/assets/brand/huihui-logo.svg') center / contain no-repeat;
 }
-.hotel-badge span, .logo-circle span { display: none; }
-.receipt-hotel { border-bottom: 1px solid var(--color-rule); }
-.hotel-name, .receipt-title {
-  font-family: var(--font-display); font-weight: 600; font-style: normal;
-  font-size: 1.35rem; letter-spacing: 0.2em; color: var(--color-text-primary);
+.logo-circle span { display: none; }
+.gb-head { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 22px 0 18px; border-bottom: 1px solid var(--color-rule); margin-bottom: 18px; }
+.gb-head .hotel-badge { margin-bottom: 12px; }
+.gb-title, .receipt-title {
+  font-family: var(--font-display); font-weight: 700; font-style: normal;
+  font-size: 1.6rem; letter-spacing: -0.01em; color: var(--color-text-primary); margin: 0;
 }
-.hotel-sub, .receipt-sub {
-  font-family: var(--font-heading); font-style: normal;
-  font-size: 12px; letter-spacing: 0.16em; color: var(--color-text-tertiary);
+.gb-sub, .receipt-sub {
+  font-family: var(--font-body); font-style: normal;
+  font-size: 13px; letter-spacing: 0; color: var(--color-text-secondary); margin: 6px 0 0;
 }
-.section-title, .meta-label, .field-label {
-  font-family: var(--font-heading); font-weight: 500; font-size: 12px; letter-spacing: 0.14em;
-  color: var(--color-text-tertiary);
+.gb-date { margin: 10px 0 0; font-size: 12px; color: var(--color-text-tertiary); }
+.section-title, .field-label {
+  font-family: var(--font-heading); font-weight: 600; font-size: 13px; letter-spacing: 0;
+  color: var(--color-text-primary);
 }
-.meta-value { color: var(--color-text-secondary); }
+.section-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; margin-top: 0; }
+.field-label span { color: var(--color-text-tertiary); font-weight: 400; font-size: 12px; margin-left: 4px; }
 .divider { border: none; border-top: 1px dashed var(--color-rule); }
 .divider-solid { border: none; border-top: 1px solid var(--color-rule); }
 
-/* 입력: 밑줄 하나 */
+/* 입력: 방명록 줄 위에 쓰는 밑줄 하나 */
 .input-box {
   background: transparent; border: none; border-bottom: 1px solid var(--color-rule-strong); border-radius: 0;
   padding: 0 40px 0 2px; color: var(--color-text-primary);
@@ -61,14 +68,14 @@ body {
 .input-box:focus { border-color: var(--yeonji-500); box-shadow: 0 1px 0 var(--yeonji-500); }
 .input-box::placeholder { color: #9D9286; }
 
-/* 버튼: 먹 바탕 → 누르면 연지 */
+/* 버튼: 네이비 바탕 → 누르면 핑크 */
 .btn-checkin, .btn-submit, .btn-save {
   background: var(--color-text-primary); border-radius: 2px; box-shadow: none; color: var(--color-bg);
 }
 .btn-checkin:hover:not(:disabled), .btn-submit:hover:not(:disabled), .btn-save:hover:not(:disabled) {
   background: var(--yeonji-500); transform: none; box-shadow: none;
 }
-.btn-checkin-label { color: var(--color-bg); letter-spacing: 0.2em; }
+.btn-checkin-label { color: var(--color-bg); letter-spacing: 0.02em; text-transform: none; font-size: 14px; font-weight: 600; }
 .btn-google, .btn-logout {
   background: transparent; border: 1px solid var(--color-rule-strong); border-radius: 2px;
 }
@@ -76,17 +83,21 @@ body {
 .receipt-links a { color: var(--color-text-secondary); }
 .receipt-links a:hover { color: var(--yeonji-600); }
 .receipt-links span { color: var(--color-text-tertiary); }
+.divider-or { letter-spacing: 0; }
 
-/* 바코드는 먹 가는 선, 스탬프는 연지 낙관 */
-.barcode span { background: var(--color-text-primary); opacity: .55; border-radius: 0; }
+/* 낙관: 오른쪽 위 핑크 '入' 도장 */
 .stamp {
-  border-radius: 2px; border: 1.5px solid var(--yeonji-500); opacity: .55;
-  color: var(--yeonji-600); transform: rotate(-8deg);
+  width: 44px; height: 44px; top: 18px; right: 16px; bottom: auto;
+  border-radius: 3px; border: none; opacity: .85;
+  background: var(--yeonji-500); color: var(--color-bg);
+  font-family: var(--font-display); font-size: 24px; font-weight: 700; line-height: 1;
+  box-shadow: inset 0 0 0 2px var(--yeonji-500), inset 0 0 0 4px rgba(247,240,229,.8);
+  transform: rotate(-6deg);
 }
 
 /* 프로필 */
-.user-avatar-lg { border-radius: 2px; background: var(--yeonji-500); font-family: var(--font-display); }
-.user-nick { font-family: var(--font-display); color: var(--color-text-primary); font-weight: 600; }
+.user-avatar-lg { border-radius: 2px; background: var(--yeonji-500); font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; }
+.user-nick { font-family: var(--font-display); color: var(--color-text-primary); font-weight: 700; font-size: 1.25rem; }
 .user-since { font-style: normal; }
 .toggle-switch input:checked + .toggle-slider { background: var(--color-text-primary); }
 

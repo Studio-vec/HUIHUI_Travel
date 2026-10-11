@@ -91,7 +91,7 @@ import Navbar from '../../components/Navbar.astro';
 
       <!-- 프로필 수정 -->
       <div class="section-card">
-        <div class="section-title">PROFILE EDIT</div>
+        <h2 class="section-title">손님 정보</h2>
 
         <div class="field">
           <label class="field-label">닉네임 <span>변경 가능</span></label>
@@ -121,7 +121,7 @@ import Navbar from '../../components/Navbar.astro';
 
       <!-- 비밀번호 변경 -->
       <div class="section-card">
-        <div class="section-title">PASSWORD CHANGE</div>
+        <h2 class="section-title">비밀번호 바꾸기</h2>
 
         <div class="field">
           <label class="field-label">새 비밀번호</label>
@@ -146,7 +146,7 @@ import Navbar from '../../components/Navbar.astro';
 
       <!-- 광고 수신 -->
       <div class="section-card">
-        <div class="section-title">MARKETING</div>
+        <h2 class="section-title">소식 받기</h2>
         <div class="toggle-row">
           <div>
             <div class="toggle-label">이메일 수신</div>
@@ -242,7 +242,7 @@ import Navbar from '../../components/Navbar.astro';
         if (emailErr) throw emailErr;
         showToast('저장 완료! 새 이메일로 확인 메일을 보냈어요');
       } else {
-        showToast('프로필이 저장됐어요 ✓');
+        showToast('손님 정보를 고쳐 적었어요');
       }
 
       /* UI 즉시 반영 */
@@ -273,7 +273,7 @@ import Navbar from '../../components/Navbar.astro';
     try {
       const { error } = await window._sb.auth.updateUser({ password: pw });
       if (error) throw error;
-      showToast('비밀번호가 변경됐어요 ✓');
+      showToast('비밀번호를 바꿨어요');
       document.getElementById('newPw').value  = '';
       document.getElementById('newPw2').value = '';
     } catch (e) {
@@ -368,11 +368,11 @@ import Navbar from '../../components/Navbar.astro';
     .user-header { display:flex; align-items:center; gap:16px; padding: 8px 0 16px; }
     .user-avatar-lg {
       width: 64px; height: 64px;
-      display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: white; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; color: white;
       flex-shrink: 0;
     }
     .user-info-wrap { flex: 1; min-width: 0; }
-    .user-nick { font-size: 1.2rem; }
+    .user-nick { }
     .user-id { font-size: 0.75rem; color: var(--text-dim); margin-top: 3px; letter-spacing: 0.04em; }
     .user-since { font-size: 0.75rem; color: var(--text-dim); font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif; }
 
@@ -390,7 +390,7 @@ import Navbar from '../../components/Navbar.astro';
     .field { margin-bottom: 14px; }
     .field:last-child { margin-bottom: 0; }
     .field-label { margin-bottom: 5px; display: block; }
-    .field-label span { font-weight: 400; color: rgba(157,143,131,0.7); font-size: 0.75rem; margin-left: 4px; }
+    .field-label span { margin-left: 4px; }
     .input-box {
       width: 100%; height: 40px; font-size: 0.82rem;
       font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif; outline: none;
