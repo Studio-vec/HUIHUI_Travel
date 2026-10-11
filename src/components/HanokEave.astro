@@ -1,56 +1,50 @@
 ---
 /**
- * 홈 히어로 맨 위 기와 처마 — 먹 선화 위에 숨어 있는 단청.
+ * 홈 히어로 맨 위 기와 처마 — 먹 선화에 연지 포인트 하나.
+ * 부재는 기와골 → 수막새(연화문) → 창방(머리초·휘·금문), 창방 아래에 풍경과 매듭 술이 매달려 있다.
  *
- * 가까이 올려다본 처마라 부재 하나하나가 크다. 같은 그림을 두 장 겹친다.
- *   1) 아래: 단청 채색층 (.he-color) — 평소에는 가려져 있다
- *   2) 위:   먹 선화층  (.he-line)  — 늘 보인다
- * 커서(손가락)가 지나가는 자리만 원형 마스크로 채색층이 드러나 붓으로 색을 입히듯 단청이 나타나고,
- * 가까운 꽃(막새 연화문·부연 주화·서까래 녹화·창방 머리초)은 바깥 잎과 안 잎이 서로 반대로 돌며 피어난다.
- * 처음 열릴 때는 선이 그려진 뒤 색이 처마를 한 번 훑고 지나간다.
- * 움직임 줄이기 설정이면 선 그리기·인트로·회전 없이, 호버 드러남만 남긴다.
+ * 놀이
+ *   - 바람: 커서를 움직이면(손가락으로 가로로 쓸면) 그 빠르기만큼 바람이 일어
+ *           풍경과 술이 용수철처럼 흔들린다. 풍경 물고기는 종보다 한 박자 늦게 따라 흔들린다.
+ *   - 울림: 세게 흔들린 풍경은 소리 자국을 그리며 울린다. '풍경 소리'를 켜면 실제 소리도 난다(기본은 끔).
+ *   - 꽃잎: 막새·머리초 꽃을 누르면 꽃이 팽그르르 돌고 꽃잎이 흩날려 떨어진다.
+ *   - 가까이 간 꽃은 살짝 피어난다.
+ *   - 처음 열릴 때는 선이 그려진 뒤 바람이 한 번 왼쪽에서 오른쪽으로 지나간다.
+ * 움직임 줄이기 설정이면 선 그리기·흔들림·꽃잎 없이 완성된 그림만 보인다.
  */
 const W = 1440;
-const H = 430;
+const H = 440;
 const MID = W / 2;
 const INK = '#1A1714';
-
-// 단청 색
-const C = {
-  green: '#2F7F6C', lgreen: '#8CC7AE', blue: '#2E4A7D', sky: '#8DB0D4',
-  red: '#B23A44', pink: '#EBB1B0', brown: '#6E3329', gold: '#D9AE45', white: '#F4F1EA',
-  tile: '#2A333F', tileHi: '#46525F', clay: '#5E6873', clayHi: '#7C8792',
-};
+const RED = '#B23A44';
 
 const FLAT = 380;
 const SPAN = MID + 60 - FLAT;
-const EAVE = 180;
+const EAVE = 150;
 const eaveY = (x) => {
   const d = Math.abs(x - MID);
   if (d <= FLAT) return EAVE;
   const t = Math.min(1, (d - FLAT) / SPAN);
-  return EAVE - 150 * Math.pow(t, 2.1);
+  return EAVE - 124 * Math.pow(t, 2.1);
 };
-const tilt = (x) => (Math.atan2(eaveY(x + 1) - eaveY(x - 1), 2) * 180) / Math.PI;
 const f = (n) => +n.toFixed(1);
 const STEP = 80;
 const xs = [];
 for (let x = (MID % STEP) - STEP; x <= W + STEP; x += STEP) xs.push(x);
 const top = (x) => MID + (x - MID) * 0.8;
-const BEAM = 336; // 창방 윗선
+const BEAM = 202; // 창방 윗선
 const BH = 74;    // 창방 높이
 const SEG = 420;  // 창방 한 칸
+const HANG = BEAM + BH + 6; // 매다는 자리
 
 const eavePts = (off = 0) => {
   const p = [];
   for (let x = -60; x <= W + 60; x += 8) p.push(`${x},${f(eaveY(x) + off)}`);
   return p;
 };
-const roofPath = `M-60 -10H${W + 60}L${eavePts(-2).reverse().join(' L')}Z`;
 
 /* ── 꽃 그리기 도구 ─────────────────────── */
 const LS = (w = 0.9, o = 0.8) => `fill="none" stroke="${INK}" stroke-width="${w}" stroke-opacity="${o}"`;
-// 끝이 뾰족한 연잎 하나 (위쪽을 향함, 원점 중심)
 const petalD = (r1, r2, w) => {
   const m = r1 + (r2 - r1) * 0.55;
   return `M0 ${-r1}C${w} ${-r1 - 1} ${w} ${-m} 0 ${-r2}C${-w} ${-m} ${-w} ${-r1 - 1} 0 ${-r1}Z`;
@@ -72,160 +66,103 @@ const beads = (n, r, rr, attrs) => {
   }
   return s;
 };
-// 석류동(꽃술): 금 동그라미에 씨앗 다섯
-const seeds = (r, mode) => mode === 'color'
-  ? `<circle r="${r}" fill="${C.gold}"/>${beads(5, r * 0.5, r * 0.18, `fill="${C.red}"`)}<circle r="${r * 0.22}" fill="${C.red}"/>`
-  : `<circle r="${r}" ${LS(0.9, 0.9)}/>${beads(5, r * 0.5, r * 0.16, LS(0.6, 0.7))}`;
-// 회전 가능한 꽃 묶음: 바깥 잎(.he-po)과 안 잎(.he-pi)이 따로 돈다
-const flower = (cx, cy, body, outer, inner, center, a = 0) =>
-  `<g transform="translate(${f(cx)} ${f(cy)}) rotate(${f(a)})"><g class="he-rot" data-cx="${f(cx)}" data-cy="${f(cy)}">${body}<g class="he-po">${outer}</g><g class="he-pi">${inner}</g>${center}</g></g>`;
+const seeds = (r) => `<circle r="${r}" ${LS(0.9, 0.9)}/>${beads(5, r * 0.5, r * 0.16, LS(0.6, 0.7))}`;
+// 회전 가능한 꽃: 바깥 잎(.he-po)과 안 잎(.he-pi)이 따로 돈다. r 은 누를 수 있는 반지름
+const flower = (cx, cy, r, body, outer, inner, center) =>
+  `<g transform="translate(${f(cx)} ${f(cy)})"><g class="he-rot" data-cx="${f(cx)}" data-cy="${f(cy)}" data-r="${r}">${body}<g class="he-po">${outer}</g><g class="he-pi">${inner}</g>${center}</g></g>`;
 
 /* 수막새: 연주문 테두리 + 연화문 여덟 잎 + 자방 */
-const maksae = (cx, cy, mode) => mode === 'color'
-  ? flower(cx, cy,
-      `<circle r="20" fill="${C.clay}"/><circle r="15.5" fill="${C.tileHi}"/>${beads(16, 17.8, 1.1, `fill="${C.clayHi}"`)}`,
-      ring(8, 4.5, 15, 5, `fill="${C.clayHi}"`), ring(8, 3.5, 9.5, 2.6, `fill="${C.sky}"`, 22.5), seeds(4, mode))
-  : flower(cx, cy,
-      `<circle r="20" ${LS(1.2, 1)}/><circle r="15.5" ${LS(0.7, 0.6)}/>${beads(16, 17.8, 1, LS(0.5, 0.6))}`,
-      ring(8, 4.5, 15, 5, LS(0.8, 0.85), 0, true), ring(8, 3.5, 9.5, 2.6, LS(0.5, 0.55), 22.5), seeds(4, mode));
+const maksae = (cx, cy) => flower(cx, cy, 20,
+  `<circle r="20" fill="#F4F1EA" ${LS(1.2, 1).replace('fill="none" ', '')}/><circle r="15.5" ${LS(0.7, 0.6)}/>${beads(16, 17.8, 1, LS(0.5, 0.6))}`,
+  ring(8, 4.5, 15, 5, LS(0.8, 0.85), 0, true), ring(8, 3.5, 9.5, 2.6, LS(0.5, 0.55), 22.5), seeds(4));
 
-/* 부연 끝: 주화 — 네모 안에 마름모, 귀마다 휘, 가운데 네 잎 */
-const buyeon = (cx, cy, a, mode) => {
-  const corners = (attrs) => [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([sx, sy]) => `<path d="M${sx * 16} ${sy * 16}L${sx * 7} ${sy * 16}L${sx * 16} ${sy * 7}Z" ${attrs}/>`).join('');
-  return mode === 'color'
-    ? flower(cx, cy,
-        `<rect x="-16" y="-16" width="32" height="32" fill="${C.blue}"/><rect x="-12.5" y="-12.5" width="25" height="25" fill="${C.sky}"/>${corners(`fill="${C.red}"`)}<path d="M0 -11L11 0L0 11L-11 0Z" fill="${C.white}"/>`,
-        ring(4, 2, 10, 4.2, `fill="${C.red}"`), ring(4, 1.5, 6, 2, `fill="${C.pink}"`, 45), `<circle r="2.4" fill="${C.gold}"/>`, a)
-    : flower(cx, cy,
-        `<rect x="-16" y="-16" width="32" height="32" ${LS(1, 1)}/><rect x="-12.5" y="-12.5" width="25" height="25" ${LS(0.6, 0.55)}/>${corners(LS(0.6, 0.7))}<path d="M0 -11L11 0L0 11L-11 0Z" ${LS(0.7, 0.8)}/>`,
-        ring(4, 2, 10, 4.2, LS(0.7, 0.85), 0, true), ring(4, 1.5, 6, 2, LS(0.5, 0.55), 45), `<circle r="2.2" ${LS(0.7)}/>`, a);
-};
+/* 창방 머리초 */
+const meoricho = (cx, cy) => flower(cx, cy, 31,
+  `<circle r="31" ${LS(1.2, 1)}/><circle r="26" ${LS(0.6, 0.55)}/>`,
+  ring(8, 9, 26, 8.5, LS(0.9, 0.9), 0, true) + ring(8, 11, 22, 4.6, LS(0.5, 0.45)),
+  ring(8, 5, 14, 4.4, LS(0.7, 0.75), 22.5), seeds(5.4));
 
-/* 서까래 끝: 녹화 — 녹·백·청 띠를 두른 여섯 잎 꽃 */
-const rafter = (cx, cy, mode) => mode === 'color'
-  ? flower(cx, cy,
-      `<circle r="22" fill="${C.green}"/><circle r="19" fill="${C.lgreen}"/><circle r="17.2" fill="${C.white}"/><circle r="15.6" fill="${C.blue}"/>`,
-      ring(6, 4.5, 14.5, 6, `fill="${C.red}"`) + ring(6, 5.5, 12, 3.4, `fill="${C.pink}"`),
-      ring(6, 3, 8, 2.6, `fill="${C.white}"`, 30), seeds(3.2, mode))
-  : flower(cx, cy,
-      `<circle r="22" ${LS(1.1, 1)}/><circle r="19" ${LS(0.6, 0.55)}/><circle r="15.6" ${LS(0.7, 0.7)}/>`,
-      ring(6, 4.5, 14.5, 6, LS(0.8, 0.85), 0, true),
-      ring(6, 3, 8, 2.6, LS(0.5, 0.55), 30), seeds(3.2, mode));
-
-/* 창방 머리초: 청 테두리 + 연지 바림 겹잎 + 흰 안잎 + 석류동 */
-const meoricho = (cx, cy, mode) => mode === 'color'
-  ? flower(cx, cy,
-      `<circle r="31" fill="${C.blue}"/><circle r="28.4" fill="none" stroke="${C.white}" stroke-width="1.6"/><circle r="26" fill="${C.sky}"/>`,
-      ring(8, 9, 26, 8.5, `fill="${C.red}"`) + ring(8, 11, 22, 4.6, `fill="${C.pink}"`),
-      ring(8, 5, 14, 4.4, `fill="${C.white}"`, 22.5) + ring(8, 6, 11.5, 2, `fill="${C.lgreen}"`, 22.5), seeds(5.4, mode))
-  : flower(cx, cy,
-      `<circle r="31" ${LS(1.2, 1)}/><circle r="26" ${LS(0.6, 0.55)}/>`,
-      ring(8, 9, 26, 8.5, LS(0.9, 0.9), 0, true) + ring(8, 11, 22, 4.6, LS(0.5, 0.45)),
-      ring(8, 5, 14, 4.4, LS(0.7, 0.75), 22.5), seeds(5.4, mode));
-
-/* 창방 한 칸: 머리초 · 휘 · 금문(비단 무늬 + 작은 주화) · 휘 · 머리초 */
-const beamSeg = (x0, mode) => {
+/* 창방 한 칸: 머리초 · 휘 · 금문(작은 주화) · 휘 · 머리초 */
+const beamSeg = (x0) => {
   const y = BEAM, cy = BEAM + BH / 2;
-  const color = mode === 'color';
   let s = '';
-  if (color) {
-    s += `<rect x="${x0}" y="${y}" width="${SEG}" height="${BH}" fill="${C.green}"/>`;
-    s += `<rect x="${x0}" y="${y + 6}" width="${SEG}" height="${BH - 12}" fill="${C.lgreen}" fill-opacity=".35"/>`;
-  }
-  // 휘: 화살촉 띠 다섯 줄 (청·하늘·백·녹·적), 띠마다 두 겹
   const hwi = (xStart, dir) => {
-    const cols = [C.blue, C.sky, C.white, C.green, C.red];
     let o = '';
     for (let k = 0; k < 5; k++) {
       const xx = xStart + dir * k * 12;
-      const d = `M${xx} ${y + 8}L${xx + dir * 14} ${cy}L${xx} ${y + BH - 8}`;
-      o += color
-        ? `<path d="${d}" stroke="${cols[k]}" stroke-width="7" stroke-linejoin="miter"/>`
-        : `<path d="${d}" ${LS(0.8, 0.75)}/><path d="M${xx + dir * 6} ${y + 8}L${xx + dir * 20} ${cy}L${xx + dir * 6} ${y + BH - 8}" ${LS(0.45, 0.4)}/>`;
+      o += `<path d="M${xx} ${y + 8}L${xx + dir * 14} ${cy}L${xx} ${y + BH - 8}" ${LS(0.8, 0.75)}/><path d="M${xx + dir * 6} ${y + 8}L${xx + dir * 20} ${cy}L${xx + dir * 6} ${y + BH - 8}" ${LS(0.45, 0.4)}/>`;
     }
     return o;
   };
-  // 금문
   const gx = x0 + 160, gw = SEG - 320, gy = y + 9, gh = BH - 18, gcx = gx + gw / 2;
-  if (color) {
-    s += `<rect x="${gx}" y="${gy}" width="${gw}" height="${gh}" fill="${C.brown}"/>`;
-    s += `<g clip-path="url(#heGum${x0})">`;
-    for (let i = -6; i < 16; i++) s += `<path d="M${gx + i * 10} ${gy}l${gh} ${gh}M${gx + i * 10 + gh} ${gy}l-${gh} ${gh}" stroke="${C.gold}" stroke-width="1"/>`;
-    s += `</g>`;
-  } else {
-    s += `<rect x="${gx}" y="${gy}" width="${gw}" height="${gh}" ${LS(0.9, 0.9)}/><rect x="${gx + 4}" y="${gy + 4}" width="${gw - 8}" height="${gh - 8}" ${LS(0.5, 0.5)}/>`;
-  }
-  // 금문 가운데 작은 주화
-  s += color
-    ? flower(gcx, cy, `<circle r="13" fill="${C.white}"/>`, ring(4, 2, 12, 5, `fill="${C.red}"`), ring(4, 2, 7, 2.6, `fill="${C.pink}"`, 45), `<circle r="2.6" fill="${C.gold}"/>`)
-    : flower(gcx, cy, `<circle r="13" ${LS(0.8, 0.85)}/>`, ring(4, 2, 12, 5, LS(0.7, 0.85), 0, true), ring(4, 2, 7, 2.6, LS(0.5, 0.5), 45), `<circle r="2.4" ${LS(0.7)}/>`);
+  s += `<rect x="${gx}" y="${gy}" width="${gw}" height="${gh}" ${LS(0.9, 0.9)}/><rect x="${gx + 4}" y="${gy + 4}" width="${gw - 8}" height="${gh - 8}" ${LS(0.5, 0.5)}/>`;
+  s += flower(gcx, cy, 13, `<circle r="13" ${LS(0.8, 0.85)}/>`, ring(4, 2, 12, 5, LS(0.7, 0.85), 0, true), ring(4, 2, 7, 2.6, LS(0.5, 0.5), 45), `<circle r="2.4" ${LS(0.7)}/>`);
   s += hwi(x0 + 92, 1) + hwi(x0 + SEG - 92, -1);
-  s += meoricho(x0 + 46, cy, mode) + meoricho(x0 + SEG - 46, cy, mode);
-  if (!color) s += `<path d="M${x0 + SEG} ${y}V${y + BH}" ${LS(0.9, 0.9)}/>`;
+  s += meoricho(x0 + 46, cy) + meoricho(x0 + SEG - 46, cy);
+  s += `<path d="M${x0 + SEG} ${y}V${y + BH}" ${LS(0.9, 0.9)}/>`;
   return s;
 };
 
-/* ── 한 장 그리기 ─────────────────────── */
-const draw = (mode) => {
-  const color = mode === 'color';
-  let s = '';
-  // 지붕 면 + 기와골 (수키와 한 줄 = 막새 하나)
-  if (color) {
-    s += `<path d="${roofPath}" fill="${C.tile}"/>`;
-    s += xs.map((x) => `<path d="M${f(x + (top(x) - x) * 0.35)} ${f(eaveY(x) - 150)}L${x} ${f(eaveY(x) - 10)}" stroke="${C.tileHi}" stroke-width="30"/><path d="M${f(x - 8 + (top(x) - x) * 0.35)} ${f(eaveY(x) - 150)}L${x - 8} ${f(eaveY(x) - 14)}" stroke="${C.clayHi}" stroke-opacity=".5" stroke-width="3"/>`).join('');
-    s += `<path d="M${eavePts(0).join(' L')} L${eavePts(150).reverse().join(' L')}Z" fill="${C.green}" fill-opacity=".92"/>`;
-  } else {
-    s += `<g class="he-draw" style="--d:0s">` + xs.map((x) => `<path pathLength="1" d="M${f(x - 15 + (top(x) - x) * 0.35)} ${f(eaveY(x) - 150)}L${x - 15} ${f(eaveY(x) - 18)}" stroke="${INK}" stroke-opacity=".28"/><path pathLength="1" d="M${f(x + 15 + (top(x) - x) * 0.35)} ${f(eaveY(x) - 150)}L${x + 15} ${f(eaveY(x) - 18)}" stroke="${INK}" stroke-opacity=".28"/>`).join('') + `</g>`;
-    s += `<g class="he-draw" style="--d:.3s"><path pathLength="1" d="M${eavePts().join(' L')}" stroke="${INK}" stroke-width="1.4"/></g>`;
-  }
-  // 암막새: 막새 사이로 처진 띠 + 당초 한 줄
-  s += `<g class="${color ? '' : 'he-draw'}" style="--d:.55s">`;
-  xs.forEach((x) => {
-    const y1 = eaveY(x), y2 = eaveY(x + STEP), mx = x + STEP / 2, my = (y1 + y2) / 2 + 18;
-    const d = `M${x + 21} ${f(y1 + 4)}Q${mx} ${f(my)} ${x + STEP - 21} ${f(y2 + 4)}`;
-    const d2 = `M${x + 24} ${f(y1 + 10)}Q${mx} ${f(my + 6)} ${x + STEP - 24} ${f(y2 + 10)}`;
-    s += color
-      ? `<path d="${d}" stroke="${C.clay}" stroke-width="8"/><path d="${d2}" stroke="${C.clayHi}" stroke-width="2" stroke-dasharray="3 4"/>`
-      : `<path pathLength="1" d="${d}" stroke="${INK}" stroke-opacity=".7"/><path pathLength="1" d="${d2}" stroke="${INK}" stroke-opacity=".35" stroke-dasharray=".02 .03"/>`;
-  });
-  s += `</g>`;
-  // 수막새
-  s += `<g class="${color ? '' : 'he-fade'}" style="--d:.8s">` + xs.map((x) => maksae(x, eaveY(x), mode)).join('') + `</g>`;
-  // 부연 · 서까래
-  s += `<g class="${color ? '' : 'he-fade'}" style="--d:1s">`;
-  s += xs.map((x) => buyeon(x, eaveY(x) + 56, tilt(x), mode)).join('');
-  s += xs.map((x) => { const cx = x + STEP / 2; return rafter(cx, eaveY(cx) + 112, mode); }).join('');
-  s += `</g>`;
-  // 창방
-  s += `<g class="${color ? '' : 'he-fade'}" style="--d:1.2s">`;
-  if (color) s += `<rect x="-60" y="${BEAM - 4}" width="${W + 120}" height="4" fill="${C.red}"/><rect x="-60" y="${BEAM + BH}" width="${W + 120}" height="4" fill="${C.red}"/>`;
-  else s += `<path d="M-60 ${BEAM - 4}H${W + 60}M-60 ${BEAM}H${W + 60}M-60 ${BEAM + BH}H${W + 60}M-60 ${BEAM + BH + 4}H${W + 60}" ${LS(0.9, 0.9)}/>`;
-  for (let x0 = 0; x0 < W; x0 += SEG) s += beamSeg(x0, mode);
-  s += `</g>`;
-  return s;
+/* ── 매달린 것들 ─────────────────────── */
+const KNOT = 'M0 -6L6 0L0 6L-6 0Z M-3.5 -3.5C-8 -9 -1.5 -11 0 -6M3.5 -3.5C8 -9 1.5 -11 0 -6M-3.5 3.5C-8 9 -1.5 11 0 6M3.5 3.5C8 9 1.5 11 0 6M-3.5 -3.5C-9 -8 -11 -1.5 -6 0M-3.5 3.5C-9 8 -11 1.5 -6 0M3.5 -3.5C9 -8 11 -1.5 6 0M3.5 3.5C9 8 11 1.5 6 0';
+// 풍경: 줄 → 종 → 추 → 물고기(연지)
+const pung = (x, L, i) => {
+  const y = HANG, by = y + L;
+  return `<g class="he-hang" data-type="pung" data-x="${x}" data-y="${y}" data-l="${L + 70}">
+<path d="M${x} ${y}V${by}" ${LS(1, 0.9)}/>
+<path d="M${x - 15} ${by + 26}C${x - 15} ${by + 8} ${x - 8} ${by} ${x} ${by}C${x + 8} ${by} ${x + 15} ${by + 8} ${x + 15} ${by + 26}Z" fill="#F4F1EA" ${LS(1.1, 1).replace('fill="none" ', '')}/>
+<path d="M${x - 19} ${by + 26}H${x + 19}M${x - 9} ${by + 12}H${x + 9}" ${LS(0.7, 0.7)}/>
+<g class="he-sound" transform="translate(${x} ${by + 14})"><path d="M22 -10Q30 0 22 10M30 -16Q42 0 30 16M-22 -10Q-30 0 -22 10M-30 -16Q-42 0 -30 16" ${LS(1, 0.8)}/></g>
+<g class="he-fish" data-px="${x}" data-py="${by + 26}">
+<path d="M${x} ${by + 26}V${by + 46}" ${LS(0.8, 0.8)}/>
+<path d="M${x} ${by + 46}C${x + 10} ${by + 52} ${x + 10} ${by + 68} ${x} ${by + 78}C${x - 10} ${by + 68} ${x - 10} ${by + 52} ${x} ${by + 46}ZM${x} ${by + 78}L${x - 8} ${by + 90}H${x + 8}Z" fill="${RED}"/>
+<circle cx="${x - 2.5}" cy="${by + 55}" r="1.4" fill="#F4F1EA"/>
+</g></g>`;
 };
-const colorSvg = draw('color');
-const lineSvg = draw('line');
-const segs = Array.from({ length: Math.ceil(W / SEG) }, (_, i) => i * SEG);
+// 매듭 술: 줄 → 생쪽매듭 → 술머리 → 술(연지)
+const tassel = (x, L) => {
+  const y = HANG, ky = y + L * 0.55, ty = y + L;
+  let threads = '';
+  for (let k = -3; k <= 3; k++) threads += `<path d="M${x + k * 1.6} ${ty + 12}L${x + k * 2.8} ${ty + 58}" stroke="${RED}" stroke-width="1.6"/>`;
+  return `<g class="he-hang" data-type="tassel" data-x="${x}" data-y="${y}" data-l="${L + 60}">
+<path d="M${x} ${y}V${ty}" stroke="${RED}" stroke-width="1.3"/>
+<g transform="translate(${x} ${f(ky)}) scale(1.5)"><path d="${KNOT}" fill="#F4F1EA" stroke="${RED}" stroke-width="1"/></g>
+<path d="M${x - 6} ${ty + 12}C${x - 6} ${ty + 4} ${x - 3} ${ty} ${x} ${ty}C${x + 3} ${ty} ${x + 6} ${ty + 4} ${x + 6} ${ty + 12}Z" ${LS(1, 1)}/>
+${threads}
+<path d="M${x - 7} ${ty + 20}H${x + 7}" ${LS(1, 0.9)}/>
+</g>`;
+};
+// 창방 아래 걸이: 풍경과 술을 번갈아, 길이는 들쭉날쭉하게
+const hangs = [];
+const LENS = [34, 58, 22, 46, 64, 28, 52, 40, 30, 60, 24, 48];
+for (let i = 0, x = 70; x < W; i++, x += 130) hangs.push(i % 3 === 1 ? pung(x, LENS[i % LENS.length] - 10, i) : tassel(x, LENS[i % LENS.length]));
+
+/* ── 그리기 ─────────────────────── */
+let art = '';
+art += `<g class="he-draw" style="--d:0s">` + xs.map((x) => `<path pathLength="1" d="M${f(x - 15 + (top(x) - x) * 0.35)} ${f(eaveY(x) - 150)}L${x - 15} ${f(eaveY(x) - 18)}" stroke="${INK}" stroke-opacity=".28"/><path pathLength="1" d="M${f(x + 15 + (top(x) - x) * 0.35)} ${f(eaveY(x) - 150)}L${x + 15} ${f(eaveY(x) - 18)}" stroke="${INK}" stroke-opacity=".28"/>`).join('') + `</g>`;
+art += `<g class="he-draw" style="--d:.3s"><path pathLength="1" d="M${eavePts().join(' L')}" stroke="${INK}" stroke-width="1.4"/>`;
+xs.forEach((x) => {
+  const y1 = eaveY(x), y2 = eaveY(x + STEP), mx = x + STEP / 2, my = (y1 + y2) / 2 + 18;
+  art += `<path pathLength="1" d="M${x + 21} ${f(y1 + 4)}Q${mx} ${f(my)} ${x + STEP - 21} ${f(y2 + 4)}" stroke="${INK}" stroke-opacity=".7"/>`;
+});
+art += `</g>`;
+art += `<g class="he-fade" style="--d:.8s">` + xs.map((x) => maksae(x, eaveY(x))).join('') + `</g>`;
+art += `<g class="he-fade" style="--d:1.1s"><path d="M-60 ${BEAM - 4}H${W + 60}M-60 ${BEAM}H${W + 60}M-60 ${BEAM + BH}H${W + 60}M-60 ${BEAM + BH + 4}H${W + 60}" ${LS(0.9, 0.9)}/>`;
+for (let x0 = 0; x0 < W; x0 += SEG) art += beamSeg(x0);
+art += `</g>`;
+art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
 ---
 <div class="hanok-eave" data-eave>
   <div class="he-stack">
-    <svg class="he-svg he-color" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMin slice" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-      <defs>{segs.map((x0) => <clipPath id={`heGum${x0}`}><rect x={x0 + 160} y={BEAM + 9} width={SEG - 320} height={BH - 18} /></clipPath>)}</defs>
-      <Fragment set:html={colorSvg} />
-    </svg>
-    <svg class="he-svg he-line" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMin slice" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-      <Fragment set:html={lineSvg} />
-      <!-- 풍경: 왼쪽 추녀 끝 -->
-      <g class="he-pung" style="transform-origin:236px 118px">
-        <path d="M236 118V146M222 172C222 155 228 146 236 146C244 146 250 155 250 172ZM218 172H254M236 172V190" stroke={INK} stroke-width="1.1" />
-        <g class="he-fish" style="transform-origin:236px 190px">
-          <path d="M236 190C245 196 245 210 236 218C227 210 227 196 236 190ZM236 218L230 227H242Z" fill="#B23A44" />
-        </g>
-      </g>
+    <svg class="he-svg" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMin slice" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+      <Fragment set:html={art} />
     </svg>
   </div>
-  <p class="he-hint" aria-hidden="true">처마에 마우스를 대 보세요 — 단청이 피어납니다</p>
+  <div class="he-petals" aria-hidden="true"></div>
+  <div class="he-bar">
+    <p class="he-hint">처마 밑으로 바람을 일으켜 보세요 · 꽃을 누르면 꽃잎이 날려요</p>
+    <button type="button" class="he-sound-btn" aria-pressed="false">풍경 소리 <span>끔</span></button>
+  </div>
 </div>
 
 <script is:inline>
@@ -233,89 +170,190 @@ const segs = Array.from({ length: Math.ceil(W / SEG) }, (_, i) => i * SEG);
     var root = document.querySelector('[data-eave]');
     if (!root) return;
     var stack = root.querySelector('.he-stack');
-    var color = root.querySelector('.he-color');
-    var line = root.querySelector('.he-line');
+    var svg = root.querySelector('.he-svg');
+    var petalsBox = root.querySelector('.he-petals');
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var soundBtn = root.querySelector('.he-sound-btn');
 
-    /* 두 층의 꽃 묶음을 짝지어 둔다 (같은 순서로 그려졌다) */
-    var cRot = [].slice.call(color.querySelectorAll('.he-rot'));
-    var flowers = [].slice.call(line.querySelectorAll('.he-rot')).map(function (g, i) {
-      var c = cRot[i];
+    function toSvg(cx, cy) {
+      var m = svg.getScreenCTM(); if (!m) return null;
+      var p = svg.createSVGPoint(); p.x = cx; p.y = cy;
+      return p.matrixTransform(m.inverse());
+    }
+    function toScreen(x, y) {
+      var m = svg.getScreenCTM(); if (!m) return null;
+      var p = svg.createSVGPoint(); p.x = x; p.y = y;
+      return p.matrixTransform(m);
+    }
+
+    /* ── 소리: 기본은 끔. 켜면 WebAudio 로 맑은 종소리(배음 셋)를 낸다 ── */
+    var audio = null, soundOn = false;
+    var NOTES = [784, 880, 1047, 1175, 1319, 1568];
+    soundBtn.addEventListener('click', function () {
+      soundOn = !soundOn;
+      soundBtn.setAttribute('aria-pressed', String(soundOn));
+      soundBtn.querySelector('span').textContent = soundOn ? '켬' : '끔';
+      if (soundOn && !audio) { try { audio = new (window.AudioContext || window.webkitAudioContext)(); } catch (_) {} }
+      if (soundOn) chime(1047, 0.6);
+    });
+    function chime(freq, vol) {
+      if (!soundOn || !audio) return;
+      var t = audio.currentTime;
+      [[1, 1], [2.76, 0.45], [5.4, 0.18]].forEach(function (p) {
+        var o = audio.createOscillator(), g = audio.createGain();
+        o.type = 'sine'; o.frequency.value = freq * p[0];
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.05 * vol * p[1], t + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 2.2 / p[0] + 0.4);
+        o.connect(g).connect(audio.destination);
+        o.start(t); o.stop(t + 2.8);
+      });
+    }
+
+    /* ── 매달린 것들: 진자 + 용수철 ── */
+    var hangs = [].slice.call(svg.querySelectorAll('.he-hang')).map(function (g, i) {
+      var fish = g.querySelector('.he-fish');
       return {
-        g: [g, c], po: [g.querySelector('.he-po'), c.querySelector('.he-po')], pi: [g.querySelector('.he-pi'), c.querySelector('.he-pi')],
-        x: +g.dataset.cx, y: +g.dataset.cy, k: 0
+        g: g, fish: fish, snd: g.querySelector('.he-sound'),
+        x: +g.dataset.x, y: +g.dataset.y, len: +g.dataset.l, pung: g.dataset.type === 'pung',
+        fx: fish ? +fish.dataset.px : 0, fy: fish ? +fish.dataset.py : 0,
+        a: 0, v: 0, fa: 0, fv: 0, last: 0, note: NOTES[i % NOTES.length],
+        k: 22 + (i % 4) * 4   // 길이마다 흔들리는 빠르기가 조금씩 다르다
       };
     });
 
-    var target = null;   // 커서 위치 (SVG 좌표)
-    var running = false;
-    var REACH = 210;     // 꽃이 반응하는 거리 (SVG 단위)
+    /* ── 꽃: 가까이 가면 살짝 피고, 누르면 팽그르르 돈다 ── */
+    var flowers = [].slice.call(svg.querySelectorAll('.he-rot')).map(function (g) {
+      return { g: g, po: g.querySelector('.he-po'), pi: g.querySelector('.he-pi'), x: +g.dataset.cx, y: +g.dataset.cy, r: +g.dataset.r, k: 0, spin: 0, sv: 0 };
+    });
 
-    function setMask(px, py, r) {
-      stack.style.setProperty('--mx', px + 'px');
-      stack.style.setProperty('--my', py + 'px');
-      if (r != null) stack.style.setProperty('--mr', r + 'px');
-    }
-    function toSvg(cx, cy) {
-      var m = line.getScreenCTM();
-      if (!m) return null;
-      var p = line.createSVGPoint(); p.x = cx; p.y = cy;
-      return p.matrixTransform(m.inverse());
-    }
-    function set(list, v) { list[0].setAttribute('transform', v); list[1].setAttribute('transform', v); }
+    var cursor = null, running = false, lastT = 0;
+    function kick() { if (!running && !reduce) { running = true; lastT = performance.now(); requestAnimationFrame(tick); } }
 
-    /* 가까운 꽃일수록 크게 피어난다: 바깥 잎은 시계 방향, 안 잎은 반대로 돌고 꽃 전체가 살짝 커진다 */
-    function tick() {
+    function tick(now) {
+      var dt = Math.min(0.033, (now - lastT) / 1000); lastT = now;
       var busy = false;
+      hangs.forEach(function (h) {
+        var acc = -h.k * h.a - 1.1 * h.v;
+        h.v += acc * dt; h.a += h.v * dt;
+        if (h.a > 42) { h.a = 42; h.v *= -0.4; } else if (h.a < -42) { h.a = -42; h.v *= -0.4; }
+        // 물고기는 종이 흔들리는 반대 방향 힘을 받아 한 박자 늦게 따라온다
+        if (h.fish) {
+          var facc = -60 * h.fa - 2.2 * h.fv - acc * 0.9;
+          h.fv += facc * dt; h.fa += h.fv * dt;
+          h.fish.setAttribute('transform', 'rotate(' + h.fa.toFixed(2) + ' ' + h.fx + ' ' + h.fy + ')');
+          if (h.pung && Math.abs(h.v) > 70 && now - h.last > 500) ring(h, now);
+        }
+        h.g.setAttribute('transform', 'rotate(' + h.a.toFixed(2) + ' ' + h.x + ' ' + h.y + ')');
+        if (Math.abs(h.a) > 0.05 || Math.abs(h.v) > 0.05) busy = true;
+      });
       flowers.forEach(function (fl) {
-        var goal = target ? Math.max(0, 1 - Math.hypot(fl.x - target.x, fl.y - target.y) / REACH) : 0;
+        var goal = cursor ? Math.max(0, 1 - Math.hypot(fl.x - cursor.x, fl.y - cursor.y) / 160) : 0;
         goal = goal * goal * (3 - 2 * goal);
         fl.k += (goal - fl.k) * 0.1;
-        if (Math.abs(goal - fl.k) > 0.002) busy = true;
-        var k = fl.k;
-        set(fl.g, 'scale(' + (1 + k * 0.22).toFixed(3) + ')');
-        set(fl.po, 'rotate(' + (k * 45).toFixed(2) + ') scale(' + (1 + k * 0.12).toFixed(3) + ')');
-        set(fl.pi, 'rotate(' + (-k * 70).toFixed(2) + ') scale(' + (1 - k * 0.1).toFixed(3) + ')');
+        fl.spin += fl.sv * dt; fl.sv *= Math.pow(0.18, dt);
+        if (Math.abs(fl.sv) < 4) { fl.sv = 0; fl.spin += ((Math.round(fl.spin / 45) * 45) - fl.spin) * 0.15; }
+        if (Math.abs(goal - fl.k) > 0.002 || fl.sv || Math.abs(fl.spin % 45) > 0.2) busy = true;
+        fl.g.setAttribute('transform', 'rotate(' + fl.spin.toFixed(1) + ') scale(' + (1 + fl.k * 0.16).toFixed(3) + ')');
+        fl.po.setAttribute('transform', 'rotate(' + (fl.k * 30).toFixed(2) + ')');
+        fl.pi.setAttribute('transform', 'rotate(' + (-fl.k * 50).toFixed(2) + ')');
       });
-      if (busy || target) requestAnimationFrame(tick); else running = false;
+      if (busy || cursor) requestAnimationFrame(tick); else running = false;
     }
-    function kick() { if (!running && !reduce) { running = true; requestAnimationFrame(tick); } }
 
-    function reveal(e) {
-      var b = stack.getBoundingClientRect();
-      setMask(e.clientX - b.left, e.clientY - b.top, b.width < 700 ? 120 : 190);
-      target = toSvg(e.clientX, e.clientY);
+    function ring(h, now) {
+      h.last = now;
+      h.snd.classList.remove('on'); void h.snd.getBoundingClientRect(); h.snd.classList.add('on');
+      chime(h.note, Math.min(1, Math.abs(h.v) / 160));
+    }
+
+    /* 바람: 커서가 움직인 거리(가로)만큼 가까운 걸이에 힘을 준다 */
+    var prev = null;
+    function wind(p, strength) {
+      hangs.forEach(function (h) {
+        var dx = Math.abs(h.x - p.x);
+        if (dx > 110) return;
+        var near = 1 - dx / 110;
+        var vertical = (p.y > h.y - 140 && p.y < h.y + h.len + 40) ? 1 : 0.35;
+        h.v += strength * near * near * vertical;
+      });
+    }
+    root.addEventListener('pointermove', function (e) {
+      var p = toSvg(e.clientX, e.clientY); if (!p) return;
+      cursor = p;
+      if (prev && !reduce) {
+        var dt = Math.max(8, e.timeStamp - prev.t);
+        var vx = (p.x - prev.x) / dt * 16;   // 한 프레임당 이동량
+        wind(p, Math.max(-60, Math.min(60, vx)) * 9);
+      }
+      prev = { x: p.x, y: p.y, t: e.timeStamp };
       root.classList.add('is-touched');
       kick();
-    }
-    /* 마우스는 지나가기만 해도, 손가락은 톡 누르거나 가로로 쓸면 드러난다 */
-    root.addEventListener('pointermove', reveal);
-    root.addEventListener('pointerdown', reveal);
-    root.addEventListener('pointerleave', function () {
-      stack.style.setProperty('--mr', '0px');
-      target = null;
+    });
+    root.addEventListener('pointerleave', function () { cursor = null; prev = null; kick(); });
+
+    /* 누르기: 가까운 꽃이 돌며 꽃잎을 날리고, 아니면 그 자리에 작은 돌풍 */
+    root.addEventListener('pointerdown', function (e) {
+      if (reduce || e.target.closest('.he-bar')) return;
+      var p = toSvg(e.clientX, e.clientY); if (!p) return;
+      var hit = null, best = Infinity;
+      flowers.forEach(function (fl) {
+        var d = Math.hypot(fl.x - p.x, fl.y - p.y);
+        if (d < fl.r + 8 && d < best) { best = d; hit = fl; }
+      });
+      if (hit) {
+        hit.sv += 900 * (Math.random() < 0.5 ? -1 : 1);
+        scatter(hit);
+      } else {
+        wind(p, (Math.random() < 0.5 ? -1 : 1) * 260);
+      }
+      root.classList.add('is-touched');
       kick();
     });
 
-    /* 인트로: 선이 다 그려지면 색이 처마를 왼쪽에서 오른쪽으로 한 번 훑는다 */
+    /* 꽃잎: 연지·분홍·먹 선 꽃잎이 팔랑이며 떨어진다 */
+    var PETAL = 'M0 -1C4 -2 4 -8 0 -11C-4 -8 -4 -2 0 -1Z';
+    function scatter(fl) {
+      var s = toScreen(fl.x, fl.y); if (!s) return;
+      var box = root.getBoundingClientRect();
+      var scale = svg.getScreenCTM().a;
+      var n = fl.r > 25 ? 9 : 6;
+      for (var i = 0; i < n; i++) {
+        var el = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        var size = (10 + Math.random() * 8) * Math.max(0.7, scale * 1.6);
+        el.setAttribute('viewBox', '-6 -12 12 12');
+        el.setAttribute('width', size); el.setAttribute('height', size);
+        var kind = i % 3;
+        el.innerHTML = '<path d="' + PETAL + '" ' + (kind === 2 ? 'fill="#F4F1EA" stroke="#1A1714" stroke-width=".7"' : 'fill="' + (kind ? '#E6A3A6' : '#B23A44') + '"') + '/>';
+        el.style.left = (s.x - box.left - size / 2) + 'px';
+        el.style.top = (s.y - box.top - size / 2) + 'px';
+        petalsBox.appendChild(el);
+        var ang = (i / n) * Math.PI * 2 + Math.random() * 0.6;
+        var burst = 30 + Math.random() * 40;
+        var dx = Math.cos(ang) * burst, dy = Math.sin(ang) * burst * 0.6;
+        var fall = 160 + Math.random() * 220, drift = (Math.random() - 0.5) * 140;
+        var rot = (Math.random() < 0.5 ? -1 : 1) * (240 + Math.random() * 360);
+        el.animate([
+          { transform: 'translate(0,0) rotate(0deg) scale(.4)', opacity: 0 },
+          { transform: 'translate(' + dx + 'px,' + dy + 'px) rotate(' + rot * 0.2 + 'deg) scale(1)', opacity: 1, offset: 0.15 },
+          { transform: 'translate(' + (dx + drift * 0.5 + 18) + 'px,' + (dy + fall * 0.45) + 'px) rotate(' + rot * 0.55 + 'deg) scale(1)', opacity: 1, offset: 0.55 },
+          { transform: 'translate(' + (dx + drift - 14) + 'px,' + (dy + fall) + 'px) rotate(' + rot + 'deg) scale(.9)', opacity: 0 }
+        ], { duration: 2200 + Math.random() * 1200, easing: 'cubic-bezier(.25,.6,.4,1)' }).onfinish = function () { this.effect.target.remove(); };
+      }
+    }
+
+    /* 인트로: 선이 다 그려지면 바람이 한 번 지나간다 */
     if (!reduce) {
       setTimeout(function () {
         if (root.classList.contains('is-touched')) return;
-        var b = stack.getBoundingClientRect();
-        var t0 = performance.now(), dur = 3000;
-        stack.classList.add('is-sweeping');
-        (function step(now) {
-          if (root.classList.contains('is-touched')) { stack.classList.remove('is-sweeping'); return; }
-          var t = Math.min(1, (now - t0) / dur);
-          var e = t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-          var x = -160 + e * (b.width + 320);
-          setMask(x, b.height * 0.6, 280 * Math.sin(Math.PI * t));
-          target = t < 1 ? toSvg(b.left + x, b.top + b.height * 0.6) : null;
+        var t0 = performance.now();
+        (function gust(now) {
+          var t = Math.min(1, (now - t0) / 1600);
+          wind({ x: -100 + t * (1440 + 200), y: 300 }, 22);
           kick();
-          if (t < 1) requestAnimationFrame(step);
-          else { stack.classList.remove('is-sweeping'); stack.style.setProperty('--mr', '0px'); }
+          if (t < 1 && !root.classList.contains('is-touched')) requestAnimationFrame(gust);
         })(t0);
-      }, 1700);
+      }, 1900);
     }
 
     /* 스크롤하면 처마가 조금 늦게 따라 올라간다 */
@@ -333,45 +371,47 @@ const segs = Array.from({ length: Math.ceil(W / SEG) }, (_, i) => i * SEG);
 </script>
 
 <style>
-  @property --mr { syntax: '<length>'; inherits: true; initial-value: 0px; }
-  .hanok-eave { position: relative; width: 100%; height: clamp(250px, 29.9vw, 430px); cursor: crosshair; touch-action: pan-y; }
-  .he-stack { position: absolute; inset: 0; --mx: -999px; --my: -999px; --mr: 0px; transition: --mr .5s cubic-bezier(0.22, 1, 0.36, 1); }
-  .he-stack.is-sweeping { transition: none; }
+  .hanok-eave { position: relative; width: 100%; height: clamp(250px, 30.6vw, 440px); touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+  .he-stack { position: absolute; inset: 0; }
   .he-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; overflow: hidden; }
+  .he-petals { position: absolute; inset: 0; pointer-events: none; overflow: visible; z-index: 3; }
+  .he-petals :global(svg) { position: absolute; will-change: transform, opacity; }
 
-  /* 단청 채색층: 커서 둘레만 붓자국처럼 드러난다 (가장자리는 부드럽게) */
-  .he-color {
-    -webkit-mask-image: radial-gradient(circle var(--mr) at var(--mx) var(--my), #000 0%, #000 50%, rgba(0,0,0,.5) 75%, transparent 100%);
-            mask-image: radial-gradient(circle var(--mr) at var(--mx) var(--my), #000 0%, #000 50%, rgba(0,0,0,.5) 75%, transparent 100%);
+  .he-bar {
+    position: absolute; right: clamp(20px, 5vw, 48px); bottom: 2px; z-index: 4;
+    display: flex; align-items: center; gap: 16px;
+    opacity: 0; animation: heFade .8s ease-out 3.2s forwards;
   }
+  .he-hint { font-family: var(--font-heading); font-size: 11px; letter-spacing: 0.08em; color: var(--color-text-tertiary); }
+  .hanok-eave.is-touched .he-hint { opacity: .45; transition: opacity .4s; }
+  .he-sound-btn {
+    min-height: 32px; padding: 0 2px; background: none; border: none; border-bottom: 1px solid var(--color-rule-strong); border-radius: 0;
+    font-family: var(--font-heading); font-size: 11px; letter-spacing: 0.08em; color: var(--color-text-primary); cursor: pointer;
+  }
+  .he-sound-btn span { color: var(--color-text-tertiary); margin-left: 4px; }
+  .he-sound-btn[aria-pressed="true"] { border-color: var(--yeonji-500); }
+  .he-sound-btn[aria-pressed="true"] span { color: var(--yeonji-500); }
+  @media (max-width: 640px) { .he-hint { display: none; } }
 
-  .he-hint {
-    position: absolute; right: clamp(20px, 5vw, 48px); bottom: -4px;
-    font-family: var(--font-heading); font-size: 11px; letter-spacing: 0.08em; color: var(--color-text-tertiary);
-    opacity: 0; animation: heFade .8s ease-out 5s forwards;
-  }
-  .hanok-eave.is-touched .he-hint { animation: none; opacity: 0; transition: opacity .4s; }
-  @media (hover: none) { .he-hint { display: none; } }
+  /* 풍경이 울릴 때 소리 자국 */
+  .he-svg :global(.he-sound) { opacity: 0; }
+  .he-svg :global(.he-sound.on) { animation: heRing .7s ease-out; }
+  @keyframes heRing { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
 
   /* 선이 그려지며 나타난다 / 장식은 차례로 스민다 */
-  .he-line :global(.he-draw path) {
+  .he-svg :global(.he-draw path) {
     stroke-dasharray: 1; stroke-dashoffset: 1;
     animation: heDraw 1.4s cubic-bezier(0.65, 0, 0.35, 1) forwards;
     animation-delay: var(--d, 0s);
   }
-  .he-line :global(.he-draw path[stroke-dasharray]) { stroke-dasharray: .02 .03; stroke-dashoffset: 0; animation: heFade .9s ease-out forwards; animation-delay: var(--d, 0s); opacity: 0; }
-  .he-line :global(.he-fade) { opacity: 0; animation: heFade .9s ease-out forwards; animation-delay: var(--d, 0s); }
+  .he-svg :global(.he-fade) { opacity: 0; animation: heFade .9s ease-out forwards; animation-delay: var(--d, 0s); }
   @keyframes heDraw { to { stroke-dashoffset: 0; } }
   @keyframes heFade { to { opacity: 1; } }
 
-  .he-pung { transform-box: view-box; animation: heSway 5.4s ease-in-out 2s infinite; }
-  .he-fish { transform-box: view-box; animation: heSway 2.6s ease-in-out 2.4s infinite; }
-  @keyframes heSway { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
-
   @media (prefers-reduced-motion: reduce) {
-    .he-line :global(.he-draw path) { animation: none; stroke-dashoffset: 0; opacity: 1; }
-    .he-line :global(.he-fade) { animation: none; opacity: 1; }
-    .he-pung, .he-fish { animation: none; }
-    .he-hint { animation: none; opacity: 1; }
+    .he-svg :global(.he-draw path) { animation: none; stroke-dashoffset: 0; }
+    .he-svg :global(.he-fade) { animation: none; opacity: 1; }
+    .he-bar { animation: none; opacity: 1; }
+    .he-hint { display: none; }
   }
 </style>
