@@ -2,6 +2,7 @@
  * 파비콘 생성 스크립트 (한 번 실행해서 결과물을 커밋한다)
  *
  * 브랜드 아이콘: 오프화이트 바탕 위 囍 로고 (public/assets/brand/hui-app-icon.svg)
+ * 탭 파비콘(16·32·48px)은 바탕 없이 로고 원본만 투명 배경으로 (public/assets/brand/huihui-logo.svg)
  *
  * 출력 (public/):
  *   favicon.ico          16·32·48px PNG를 담은 ICO (브라우저가 기본으로 요청하는 경로)
@@ -15,10 +16,12 @@ import sharp from 'sharp';
 import fs from 'fs';
 
 const W = 1024; // 합성 작업 해상도
-/* 囍 로고 아이콘(public/assets/brand/hui-app-icon.svg) 하나로 모든 크기를 만든다 */
-const icon = await sharp('public/assets/brand/hui-app-icon.svg', { density: 600 }).resize({ width: W }).png().toBuffer();
+/* 큰 아이콘은 바탕이 있는 앱 아이콘, 탭 파비콘은 투명 배경의 로고 원본 */
+const raster = (path) => sharp(path, { density: 600 }).resize({ width: W }).png().toBuffer();
+const appIcon = await raster('public/assets/brand/hui-app-icon.svg');
+const logo = await raster('public/assets/brand/huihui-logo.svg');
 
-async function square(size, { pad = 0.04, bg = { r: 0, g: 0, b: 0, alpha: 0 } } = {}) {
+async function square(size, { icon = appIcon, pad = 0.04, bg = { r: 0, g: 0, b: 0, alpha: 0 } } = {}) {
   const inner = Math.round(size * (1 - pad * 2));
   const fitted = await sharp(icon).resize(inner, inner, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer();
   return sharp({ create: { width: size, height: size, channels: 4, background: bg } })
@@ -49,9 +52,9 @@ function ico(images) {
 }
 
 const icoImages = [];
-for (const size of [16, 32, 48]) icoImages.push({ size, data: await square(size, { pad: 0.02 }) });
+for (const size of [16, 32, 48]) icoImages.push({ size, data: await square(size, { icon: logo, pad: 0 }) });
 fs.writeFileSync('public/favicon.ico', ico(icoImages));
-fs.writeFileSync('public/favicon-32.png', await square(32, { pad: 0.02 }));
+fs.writeFileSync('public/favicon-32.png', await square(32, { icon: logo, pad: 0 }));
 fs.writeFileSync('public/icon-192.png', await square(192));
 fs.writeFileSync('public/apple-touch-icon.png', await square(180, { pad: 0.14, bg: { r: 255, g: 255, b: 255, alpha: 1 } }));
 
