@@ -1,4 +1,6 @@
 ---
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import { asset } from '../../lib/asset';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Navbar from '../../components/Navbar.astro';
@@ -33,6 +35,10 @@ const storageKey = `trip_${tripData.id}`;
 const tipsKey = `trip_${tripData.id}_tips_v1`;
 const tripUrl = `/trips/${tripSlug(tripData)}`;
 const momentLabel = nameEnOf(tripData);
+/* 우상단에 걸어 두는 이 여행지의 열쇠. 전용 이미지가 없으면 비밀코드 열쇠를 쓴다 (card.json과 같은 규칙) */
+const keyFile = existsSync(join(process.cwd(), 'public', 'assets', 'keys', `${tripData.id}.webp`))
+  ? `/assets/keys/${tripData.id}.webp`
+  : '/assets/keys/secret.webp';
 
 const tripDescription = [
   `${tripData.locationLabel} ${dayCount}일 여행 코스.`,
@@ -278,7 +284,12 @@ createTripApp({
   <link rel="stylesheet" href={asset('/assets/css/trip-article.css')}>
   </Fragment>
   <Navbar />
-  <main id="main">
+  <main id="main" class="trip-main">
+  <div class="trip-key" aria-hidden="true">
+    <span class="trip-key-rope"></span>
+    <span class="trip-key-knot"></span>
+    <img src={asset(keyFile)} width="416" height="1077" alt="" />
+  </div>
   <TripArticle data={tripData} />
   <Fragment set:html={_body} />
 
@@ -303,3 +314,25 @@ createTripApp({
     </script>
   )}
 </BaseLayout>
+
+<style>
+  /* 페이지 우상단: 내비 아래 선(모바일은 머리글 위 굵은 선)에 매달린 열쇠 */
+  .trip-main { position: relative; }
+  .trip-key {
+    position: absolute; z-index: 2; top: 0;
+    right: clamp(20px, 5vw, 48px);
+    width: clamp(56px, 6vw, 76px);
+    display: flex; flex-direction: column; align-items: center;
+    pointer-events: none;
+    transform-origin: 50% 0; animation: tripKeySway 5.2s ease-in-out infinite;
+  }
+  .trip-key-rope { width: 1px; height: clamp(20px, 3vw, 40px); background: var(--color-text-primary, #202943); }
+  .trip-key-knot { width: 9px; height: 9px; margin: -1px 0 3px; transform: rotate(45deg); border: 1.5px solid var(--color-text-primary, #202943); }
+  .trip-key img { width: 100%; height: auto; display: block; filter: drop-shadow(0 6px 10px rgba(32,41,67,0.18)); }
+  @keyframes tripKeySway { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg); } }
+  @media (max-width: 767px) {
+    .trip-key { top: 18px; right: 28px; width: 44px; }
+    .trip-key-rope { height: 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .trip-key { animation: none; } }
+</style>
