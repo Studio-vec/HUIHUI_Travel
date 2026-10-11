@@ -1147,6 +1147,11 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     .fchip:hover { color: var(--color-text-primary); }
     .fchip[aria-pressed="true"] { color: var(--color-text-primary); border-bottom-color: var(--yeonji-500); font-weight: 700; }
     .filter-row { gap: 14px; }
+    /* 기간 | 지역 묶음 사이 가는 세로선 (모바일에선 줄 사이 가로선) */
+    .filter-row + .filter-row { padding-left: var(--space-6); border-left: 1px solid var(--color-rule); }
+    @media (max-width: 719px) {
+      .filter-row + .filter-row { padding-left: 0; border-left: none; border-top: 1px solid var(--color-rule); padding-top: 9px; }
+    }
     .filter-count {
       margin-left: auto; white-space: nowrap;
       font-size: var(--text-xs); color: var(--color-text-tertiary);
