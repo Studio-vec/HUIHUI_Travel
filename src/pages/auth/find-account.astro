@@ -4,6 +4,7 @@ import Navbar from '../../components/Navbar.astro';
 
 ---
 <BaseLayout title="비밀번호 찾기 – Travel HUIHUI" noindex ads={false}>
+  <Fragment slot="head"><link rel="stylesheet" href="/assets/css/auth.css" /></Fragment>
 
   <Navbar />
   <main id="main">
@@ -136,8 +137,8 @@ import Navbar from '../../components/Navbar.astro';
       box-shadow: 2px 4px 8px rgba(0,0,0,0.12), inset -2px -4px 8px rgba(116,39,45,0.25);
       display:flex; align-items:center; justify-content:center; margin-bottom:8px;
     }
-    .logo-circle span { font-family:'Playfair Display',serif; font-size:0.85rem; font-weight:900; color:white; letter-spacing:0.05em; }
-    .receipt-title { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:900; color:var(--purple); }
+    .logo-circle span { font-family:'Noto Serif KR',serif; font-size:0.85rem; font-weight:900; color:white; letter-spacing:0.05em; }
+    .receipt-title { font-family:'Noto Serif KR',serif; font-size:1.2rem; font-weight:900; color:var(--purple); }
     .receipt-sub { font-family:'Noto Serif KR',serif; font-style:italic; font-size:0.75rem; color:var(--text-dim); letter-spacing:0.15em; margin-top:2px; }
     .divider { border:none; border-top:1.5px dashed var(--purple-light); margin:12px 0; }
     .divider-solid { border:none; border-top:1px solid var(--purple-light); margin:10px 0; }
@@ -168,7 +169,7 @@ import Navbar from '../../components/Navbar.astro';
     .result-box.error { background:rgba(192,64,64,0.08); border:1px solid rgba(192,64,64,0.25); color:var(--error); }
     .result-box.show  { display:block; }
     .result-id {
-      font-family:'Playfair Display',serif; font-size:1.1rem;
+      font-family:'Noto Serif KR',serif; font-size:1.1rem;
       font-weight:700; color:var(--purple); margin-top:4px;
       letter-spacing:0.04em;
     }

@@ -4,6 +4,7 @@ import Navbar from '../../components/Navbar.astro';
 
 ---
 <BaseLayout title="마이페이지 – Travel HUIHUI" noindex ads={false}>
+  <Fragment slot="head"><link rel="stylesheet" href="/assets/css/auth.css" /></Fragment>
 
   <Navbar />
   <main id="main">
@@ -55,7 +56,7 @@ import Navbar from '../../components/Navbar.astro';
       <a href="/" class="btn-back">← 메인으로</a>
       <div class="section-card" style="text-align:center;padding:40px 24px;">
         <div style="font-size:2rem;margin-bottom:12px;">🔑</div>
-        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#B23A44;margin-bottom:8px;">로그인이 필요해요</div>
+        <div style="font-family:'Noto Serif KR',serif;font-size:1.1rem;color:#B23A44;margin-bottom:8px;">로그인이 필요해요</div>
         <p style="font-size:0.78rem;color:#6E6255;margin-bottom:20px;line-height:1.6;">마이페이지를 이용하려면<br>먼저 로그인해주세요.</p>
         <a href="/auth/login" style="display:block;background:#B23A44;color:white;border-radius:999px;padding:12px 24px;text-decoration:none;font-size:0.78rem;font-weight:700;letter-spacing:0.08em;">로그인하기</a>
         <a href="/auth/register" style="display:block;margin-top:10px;font-size:0.75rem;color:#8F9D68;text-align:center;">아직 계정이 없으신가요? 회원가입 →</a>
@@ -371,11 +372,11 @@ import Navbar from '../../components/Navbar.astro';
       width: 64px; height: 64px; border-radius: 50%;
       background: linear-gradient(135deg, #E8A3A3, #B23A44);
       display: flex; align-items: center; justify-content: center;
-      font-family: 'Playfair Display', serif; font-size: 1.6rem; color: white; font-weight: 700;
+      font-family: 'Noto Serif KR', serif; font-size: 1.6rem; color: white; font-weight: 700;
       flex-shrink: 0;
     }
     .user-info-wrap { flex: 1; min-width: 0; }
-    .user-nick { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--purple); }
+    .user-nick { font-family: 'Noto Serif KR', serif; font-size: 1.2rem; font-weight: 700; color: var(--purple); }
     .user-id { font-size: 0.75rem; color: var(--text-dim); margin-top: 3px; letter-spacing: 0.04em; }
     .user-since { font-size: 0.75rem; color: var(--text-dim); font-family: 'Noto Serif KR', serif; font-style: italic; }
 

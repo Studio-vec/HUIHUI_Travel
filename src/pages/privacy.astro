@@ -13,7 +13,7 @@ import Footer from '../components/Footer.astro';
 
   <div class="pp-page">
     <div class="pp-header">
-      <p class="pp-eyebrow">Privacy Policy</p>
+      <div class="hh-mast"><span>喜喜 Travel Journal</span><b>Privacy Policy</b><span>Studio.Vec</span></div>
       <h1 class="pp-title">개인정보처리방침</h1>
       <p class="pp-updated">시행일자: 2026년 7월 20일</p>
     </div>
@@ -125,81 +125,8 @@ import Footer from '../components/Footer.astro';
 </BaseLayout>
 
 <style is:global>
+  /* 문서 지면 스타일은 public/assets/css/hanok.css 의 .pp-* 를 함께 쓴다 */
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-  body {
-    background: var(--color-bg);
-    color: var(--color-text-primary);
-    font-family: var(--font-body);
-    min-height: 100vh;
-  }
-  .pp-page {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: clamp(40px, 7vw, 72px) clamp(20px, 5vw, 48px) clamp(64px, 10vw, 96px);
-  }
-  .pp-header { margin-bottom: 40px; }
-  .pp-eyebrow {
-    font-family: var(--font-heading);
-    font-size: var(--text-xs);
-    font-weight: 600;
-    color: var(--yeonji-500);
-    letter-spacing: var(--tracking-widest);
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-  .pp-title {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: clamp(28px, 5vw, 40px);
-    color: var(--color-text-primary);
-    letter-spacing: -0.02em;
-  }
-  .pp-updated {
-    font-size: var(--text-xs);
-    color: var(--color-text-tertiary);
-    margin-top: 10px;
-  }
-  .pp-lead {
-    font-size: var(--text-sm);
-    color: var(--color-text-secondary);
-    line-height: var(--leading-normal);
-    padding-bottom: 28px;
-    border-bottom: 1px solid var(--color-border);
-    margin-bottom: 32px;
-  }
-  .pp-section { margin-bottom: 32px; }
-  .pp-section h2 {
-    font-family: var(--font-heading);
-    font-size: var(--text-base);
-    font-weight: 600;
-    color: var(--color-text-primary);
-    margin-bottom: 12px;
-  }
-  .pp-section p {
-    font-size: var(--text-sm);
-    color: var(--color-text-secondary);
-    line-height: var(--leading-normal);
-    margin-bottom: 10px;
-  }
-  .pp-section ul {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .pp-section li {
-    position: relative;
-    padding-left: 16px;
-    font-size: var(--text-sm);
-    color: var(--color-text-secondary);
-    line-height: var(--leading-normal);
-  }
-  .pp-section li::before {
-    content: '';
-    position: absolute; left: 0; top: 0.55em;
-    width: 5px; height: 5px; border-radius: var(--radius-full);
-    background: var(--yeonji-300);
-  }
-  .pp-section a { color: var(--yeonji-500); text-decoration: underline; }
+  body { font-family: var(--font-body); min-height: 100vh; }
 </style>

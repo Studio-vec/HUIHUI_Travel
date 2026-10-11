@@ -40,8 +40,9 @@ const entries = trips.map((t) => ({
   </div>
 
   <ul class="ti-list">
-    {entries.map((e) => (
+    {entries.map((e, i) => (
       <li class="ti-item">
+        <span class="ti-no">{String(i + 1).padStart(2, '0')}</span>
         <a class="ti-link" href={e.href}>
           <span class="ti-item-loc">{e.eyebrow}</span>
           <h3 class="ti-item-title">{e.title}</h3>
@@ -58,39 +59,48 @@ const entries = trips.map((t) => ({
 </section>
 
 <style>
+/* 에디토리얼 목차: 굵은 먹 선 아래 번호 붙은 항목, 항목 사이는 가는 선 */
 .trip-index {
-  max-width: 980px;
+  max-width: 1148px;
   margin: 0 auto;
   padding: 64px clamp(20px, 5vw, 48px) 72px;
 }
 .ti-head {
-  border-bottom: 1px solid rgba(178,58,68, 0.16);
-  padding-bottom: 20px;
-  margin-bottom: 8px;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 12px 48px; align-items: end;
+  border-top: 2px solid var(--color-text-primary);
+  padding: 20px 0 24px;
+  border-bottom: 1px solid var(--color-rule);
 }
 .ti-title {
-  font-family: 'Noto Serif KR', Georgia, serif;
-  font-size: clamp(24px, 3.4vw, 32px);
+  font-family: var(--font-display);
+  font-size: clamp(26px, 3.4vw, 40px);
   font-weight: 600;
-  color: #524539;
-  margin: 0 0 10px;
-  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+  margin: 0;
+  letter-spacing: -0.02em;
+  word-break: keep-all;
 }
 .ti-desc {
   font-size: 14px;
-  line-height: 1.75;
-  color: #6D655F;
+  line-height: 1.8;
+  color: var(--color-text-secondary);
   margin: 0;
-  max-width: 62ch;
+  word-break: keep-all;
 }
 .ti-list {
   list-style: none;
   margin: 0;
   padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); column-gap: 48px;
 }
 .ti-item {
-  padding: 26px 0;
-  border-bottom: 1px solid rgba(178,58,68, 0.1);
+  position: relative;
+  padding: 24px 0 22px 44px;
+  border-bottom: 1px solid var(--color-rule);
+}
+.ti-no {
+  position: absolute; left: 0; top: 27px;
+  font-family: var(--font-heading); font-size: 11px; letter-spacing: 0.12em; color: var(--yeonji-500);
 }
 .ti-link {
   text-decoration: none;
@@ -98,45 +108,52 @@ const entries = trips.map((t) => ({
 }
 .ti-item-loc {
   display: block;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-family: var(--font-heading);
+  font-size: 11px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #B09E8F;
+  color: var(--color-text-tertiary);
   margin-bottom: 6px;
 }
 .ti-item-title {
-  font-family: 'Noto Serif KR', Georgia, serif;
-  font-size: 21px;
+  font-family: var(--font-display);
+  font-size: 20px;
   font-weight: 600;
-  color: #524539;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
   margin: 0 0 8px;
+  word-break: keep-all;
   transition: color 0.18s;
 }
-.ti-link:hover .ti-item-title { color: #B23A44; }
+.ti-link:hover .ti-item-title { color: var(--yeonji-500); }
 .ti-item-meta {
-  font-size: 12.5px;
-  color: #6E6255;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--color-text-tertiary);
   margin: 0 0 10px;
 }
 .ti-item-note {
   font-size: 14px;
   line-height: 1.8;
-  color: #56514C;
-  margin: 0 0 12px;
-  max-width: 70ch;
+  color: var(--color-text-secondary);
+  margin: 0 0 6px;
+  word-break: keep-all;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
 .ti-more {
   display: inline-flex; align-items: center; min-height: 44px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
-  color: #B23A44;
+  letter-spacing: 0.04em;
+  color: var(--color-text-primary);
   text-decoration: none;
 }
-.ti-more:hover { text-decoration: underline; }
+.ti-more:hover { color: var(--yeonji-500); }
 
-@media (max-width: 600px) {
+@media (max-width: 720px) {
   .trip-index { padding: 44px 20px 56px; }
-  .ti-item-title { font-size: 19px; }
+  .ti-head { grid-template-columns: 1fr; }
+  .ti-list { grid-template-columns: 1fr; }
+  .ti-item-title { font-size: 18px; }
 }
 </style>

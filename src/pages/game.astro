@@ -27,6 +27,7 @@ const tripList = publicTrips()
 
 <!-- ══ START: SCENARIO SELECTION ══ -->
 <div class="screen active" id="screen-start">
+  <div class="hh-mast game-mast"><span>喜喜 Travel Journal</span><b>Packing Game</b><span>{tripList.length} Trips</span></div>
   <h1 class="start-title">짐 싸기</h1>
   <p class="start-sub">어떤 여행을 떠나시나요?<br>힌트를 보고 딱 맞는 짐을 골라보세요!</p>
   <div class="scenario-grid" id="scenarioGrid"></div>
@@ -1767,6 +1768,35 @@ function confirmCustomItem(){if(!pendingDataUrl)return;const name=$('itemNameInp
     width: 5px; height: 5px; border-radius: var(--radius-full); background: var(--yeonji-300);
   }
   .game-about a { color: var(--yeonji-500); text-decoration: underline; }
+
+  /* ══════════════════════════════════════════
+     전통 × 에디토리얼 덧칠 — 게임 그림(가방·아이템)은 그대로, 지면과 버튼만 먹·한지로
+  ══════════════════════════════════════════ */
+  .game-mast { width: 100%; max-width: 720px; }
+  .start-title { font-style: normal; font-weight: 600; letter-spacing: -0.035em; font-size: clamp(44px, 8vw, 88px); line-height: 1.04; }
+  .start-sub { font-family: var(--font-display); max-width: 420px; word-break: keep-all; }
+  .scenario-card {
+    background: var(--color-surface); border: 1px solid var(--color-rule); border-radius: 0;
+  }
+  .scenario-card:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(26,23,20,0.08); border-color: var(--color-text-primary); }
+  .sc-key-wrap { background: transparent; border-bottom: 1px solid var(--color-rule); }
+  .sc-title { font-family: var(--font-display); font-size: 14px; font-weight: 600; }
+  .detail-card, .modal-box { border-radius: 2px !important; border-top: 2px solid var(--color-text-primary); box-shadow: var(--shadow-lg); }
+  .detail-title, .result-title { font-family: var(--font-display); font-style: normal; font-weight: 600; letter-spacing: -0.02em; }
+  .detail-season-tag, .ghb-chip, .res-scenario-tag { background: none; border: 1px solid var(--color-rule-strong); border-radius: 2px; color: var(--color-text-primary); }
+  .btn-primary { background: var(--color-text-primary); border-radius: 2px; letter-spacing: 0.04em; }
+  .btn-primary:hover { background: var(--yeonji-500); transform: none; }
+  .btn-outline, .btn-modal-cancel, .btn-trip-link { border-radius: 2px !important; }
+  .btn-modal-confirm { background: var(--color-text-primary) !important; border-radius: 2px !important; }
+  .btn-add-item { background: none; border: none; border-bottom: 1px solid var(--color-text-primary); border-radius: 0; padding: 4px 0; color: var(--color-text-primary); }
+  .btn-add-item:hover { background: none; color: var(--yeonji-500); border-color: var(--yeonji-500); }
+  .my-item-chip, .stat-box, .score-row, .bonus-item, .ttp-item, .size-opt { border-radius: 2px !important; }
+  .my-items-section, .game-about { border-top: 2px solid var(--color-text-primary); padding-top: 16px; }
+  .game-about h2 { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.01em; }
+  .timer-fill, .fm-fill, .fill-bar-fill { background: var(--yeonji-500); }
+  .timer-track, .fm-track, .fill-bar-track { border-radius: 0 !important; }
+  .timer-fill, .fm-fill, .fill-bar-fill { border-radius: 0 !important; }
+  .best-badge { border-radius: 2px; background: none; border: 1px solid var(--color-rule-strong); }
 </style>
 
   </main>
