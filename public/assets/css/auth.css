@@ -43,10 +43,10 @@ body {
 }
 .hotel-sub, .receipt-sub {
   font-family: var(--font-heading); font-style: normal;
-  font-size: 11px; letter-spacing: 0.16em; color: var(--color-text-tertiary);
+  font-size: 12px; letter-spacing: 0.16em; color: var(--color-text-tertiary);
 }
 .section-title, .meta-label, .field-label {
-  font-family: var(--font-heading); font-weight: 500; font-size: 11px; letter-spacing: 0.14em;
+  font-family: var(--font-heading); font-weight: 500; font-size: 12px; letter-spacing: 0.14em;
   color: var(--color-text-tertiary);
 }
 .meta-value { color: var(--color-text-secondary); }

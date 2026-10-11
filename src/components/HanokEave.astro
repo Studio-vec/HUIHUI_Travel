@@ -14,7 +14,8 @@ import { KNOT_PATH } from '../lib/hanok';
  * 움직임 줄이기 설정이면 선 그리기·흔들림·꽃잎 없이 완성된 그림만 보인다.
  */
 const W = 1440;
-const H = 440;
+const TOP = 45;   // 위쪽 지붕골 일부는 잘라 보여준다 (처마 끝은 남는다)
+const H = 365;   // 보이는 높이: TOP ~ TOP+H
 const MID = W / 2;
 const INK = '#202943';
 const RED = '#EF4D6D';
@@ -136,7 +137,7 @@ ${threads}
 };
 // 창방 아래 걸이: 풍경과 술을 번갈아, 길이는 들쭉날쭉하게
 const hangs = [];
-const LENS = [34, 58, 22, 46, 64, 28, 52, 40, 30, 60, 24, 48];
+const LENS = [22, 38, 14, 30, 42, 18, 34, 26, 20, 40, 16, 32];
 for (let i = 0, x = 70; x < W; i++, x += 130) hangs.push(i % 3 === 1 ? pung(x, LENS[i % LENS.length] - 10, i) : tassel(x, LENS[i % LENS.length]));
 
 /* ── 그리기 ─────────────────────── */
@@ -156,7 +157,7 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
 ---
 <div class="hanok-eave" data-eave>
   <div class="he-stack">
-    <svg class="he-svg" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMin slice" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+    <svg class="he-svg" viewBox={`0 ${TOP} ${W} ${H}`} preserveAspectRatio="xMidYMin slice" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
       <Fragment set:html={art} />
     </svg>
   </div>
@@ -283,6 +284,7 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
     root.addEventListener('pointermove', function (e) {
       var p = toSvg(e.clientX, e.clientY); if (!p) return;
       cursor = p;
+      root.style.cursor = flowerAt(p) ? 'pointer' : '';
       if (prev && !reduce) {
         var dt = Math.max(8, e.timeStamp - prev.t);
         var vx = (p.x - prev.x) / dt * 16;   // 한 프레임당 이동량
@@ -294,15 +296,20 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
     });
     root.addEventListener('pointerleave', function () { cursor = null; prev = null; kick(); });
 
-    /* 누르기: 가까운 꽃이 돌며 꽃잎을 날리고, 아니면 그 자리에 작은 돌풍 */
-    root.addEventListener('pointerdown', function (e) {
-      if (reduce || e.target.closest('.he-bar')) return;
-      var p = toSvg(e.clientX, e.clientY); if (!p) return;
+    function flowerAt(p) {
       var hit = null, best = Infinity;
       flowers.forEach(function (fl) {
         var d = Math.hypot(fl.x - p.x, fl.y - p.y);
         if (d < fl.r + 8 && d < best) { best = d; hit = fl; }
       });
+      return hit;
+    }
+
+    /* 누르기: 가까운 꽃이 돌며 꽃잎을 날리고, 아니면 그 자리에 작은 돌풍 */
+    root.addEventListener('pointerdown', function (e) {
+      if (reduce || e.target.closest('.he-bar')) return;
+      var p = toSvg(e.clientX, e.clientY); if (!p) return;
+      var hit = flowerAt(p);
       if (hit) {
         hit.sv += 900 * (Math.random() < 0.5 ? -1 : 1);
         scatter(hit);
@@ -354,8 +361,23 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
           wind({ x: -100 + t * (1440 + 200), y: 300 }, 22);
           kick();
           if (t < 1 && !root.classList.contains('is-touched')) requestAnimationFrame(gust);
+          else if (t >= 1) demoOnce();
         })(t0);
       }, 1900);
+    }
+
+    /* 처음 온 사람에게만 한 번: 가운데 머리초가 돌며 꽃잎을 날려 '눌러 볼 수 있다'를 보여 준다 */
+    function demoOnce() {
+      var KEY = 'hh-eave-demo';
+      try { if (localStorage.getItem(KEY)) return; localStorage.setItem(KEY, '1'); } catch (_) { return; }
+      if (root.classList.contains('is-touched')) return;
+      var mid = flowers.filter(function (fl) { return fl.r > 25; })
+        .sort(function (a, b) { return Math.abs(a.x - 720) - Math.abs(b.x - 720); })[0];
+      if (!mid) return;
+      setTimeout(function () {
+        if (root.classList.contains('is-touched')) return;
+        mid.sv += 900; scatter(mid); kick();
+      }, 500);
     }
 
     /* 스크롤하면 처마가 조금 늦게 따라 올라간다 */
@@ -373,7 +395,7 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
 </script>
 
 <style>
-  .hanok-eave { position: relative; width: 100%; height: clamp(250px, 30.6vw, 440px); touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+  .hanok-eave { position: relative; width: 100%; height: clamp(210px, 25.4vw, 365px); touch-action: pan-y; user-select: none; -webkit-user-select: none; }
   .he-stack { position: absolute; inset: 0; }
   .he-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; overflow: hidden; }
   .he-petals { position: absolute; inset: 0; pointer-events: none; overflow: visible; z-index: 3; }
@@ -386,7 +408,7 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
   }
   .he-sound-btn {
     min-height: 32px; padding: 0 2px; background: none; border: none; border-bottom: 1px solid var(--color-rule-strong); border-radius: 0;
-    font-family: var(--font-heading); font-size: 11px; letter-spacing: 0.08em; color: var(--color-text-primary); cursor: pointer;
+    font-family: var(--font-heading); font-size: 12px; letter-spacing: 0.08em; color: var(--color-text-primary); cursor: pointer;
   }
   .he-sound-btn span { color: var(--color-text-tertiary); margin-left: 4px; }
   .he-sound-btn[aria-pressed="true"] { border-color: var(--yeonji-500); }

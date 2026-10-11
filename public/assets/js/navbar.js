@@ -26,7 +26,7 @@
 }
 .hh-navbar-logo img { width: 40px; height: 28px; display: block; }
 .hh-navbar-logo small {
-  font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif; font-size: 11px; font-weight: 400; letter-spacing: 0.08em;
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 0.08em;
   color: #646B84; padding-left: 10px; border-left: 1px solid rgba(32,41,67,0.2);
 }
 .hh-navbar-links { display: flex; list-style: none; gap: 22px; margin: 0; padding: 0; }

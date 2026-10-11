@@ -457,3 +457,11 @@ body {
 .nav-btn.primary, .nav-btn.complete { background: var(--ink); border-color: var(--ink); }
 .nav-btn.primary:hover, .nav-btn.complete:hover { background: var(--brand); border-color: var(--brand); }
 .nav-btn.done { background: none; color: var(--brand); border-color: var(--brand); }
+
+/* 아래 버튼 줄: 스크롤 내릴 때 숨김 */
+.bottom-nav { transition: transform .3s cubic-bezier(0.22,1,0.36,1); }
+.bottom-nav.is-hidden { transform: translateY(110%); }
+/* 비활성은 너무 흐리지 않게, 이유(사진 수)가 보이게 */
+.nav-btn:disabled { opacity: 0.55; }
+.nav-count { font-size: 12px; font-weight: 500; color: var(--ink-3); margin-left: 2px; }
+@media (prefers-reduced-motion: reduce) { .bottom-nav { transition: none; } }

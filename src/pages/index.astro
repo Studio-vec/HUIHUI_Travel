@@ -244,15 +244,16 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     </svg>
   </button>
   <script is:inline>
-    /* 히어로 추천 버튼이 화면에 보이면 떠 있는 종을 숨긴다 */
+    /* 히어로(추천 버튼·오늘의 키)가 화면에 걸쳐 있는 동안은 떠 있는 풍경을 숨기고,
+       열쇠 목록으로 내려오면 나타나게 한다 (첫 화면에서 오늘의 키와 겹치지 않게) */
     (function () {
       var bell = document.getElementById('bellWrapper');
-      var cta = document.querySelector('.hero-cta');
-      if (!bell || !cta || !('IntersectionObserver' in window)) return;
+      var hero = document.querySelector('.hero');
+      if (!bell || !hero || !('IntersectionObserver' in window)) return;
       bell.classList.add('is-hidden');
       new IntersectionObserver(function (entries) {
         bell.classList.toggle('is-hidden', entries[0].isIntersecting);
-      }).observe(cta);
+      }).observe(hero);
     })();
   </script>
 
@@ -706,12 +707,13 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
       const isKo    = _currentLang() === 'ko';
       const label   = isKo ? trip.nameKo : trip.nameEn;
       const nameCls = s === 'coming-soon' ? 'card-name coming-soon' : 'card-name' + (label.length > 5 ? ' long' : '');
-      const metaTxt = s === 'coming-soon' ? '준비 중' : [trip.loc, trip.nights].filter(Boolean).join(' · ');
+      /* 고를 때 먼저 보는 기간은 카드 머리에, 장소·지역은 카드 아래에 */
+      const metaTxt = s === 'coming-soon' ? '준비 중' : [trip.loc, trip.region].filter(Boolean).join(' · ');
       let keyHTML   = '';
       if      (s === 'open')        keyHTML = `<div class="card-key-img">${_keyImgHTML(trip, i)}</div>`;
       else if (s === 'reserved')    keyHTML = `<div class="card-key-img">${_reservedSVG()}</div>`;
       else if (s === 'coming-soon') keyHTML = `<div class="card-key-img">${_comingSoonSVG()}</div>`;
-      return `<div class="${cl}" data-trip-idx="${i}"><div class="card-3d">${_CARD_BG}<div class="card-head"><span class="card-no">${_cardNo(trip.no)}</span><span class="card-region">${_esc(trip.region)}</span><span class="${nameCls}">${_esc(label)}</span></div>${keyHTML}</div><div class="card-meta">${_esc(metaTxt)}</div></div>`;
+      return `<div class="${cl}" data-trip-idx="${i}"><div class="card-3d">${_CARD_BG}<div class="card-head"><span class="card-no">${_cardNo(trip.no)}</span><span class="card-region">${_esc(trip.nights || trip.region)}</span><span class="${nameCls}">${_esc(label)}</span></div>${keyHTML}</div><div class="card-meta">${_esc(metaTxt)}</div></div>`;
     }
 
     function _attachCardClicks() {
@@ -1037,7 +1039,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     }
     .hero-inner {
       position: relative; z-index: 1;
-      max-width: 1148px; margin: clamp(var(--space-6), 3vw, var(--space-10)) auto 0;
+      max-width: 1148px; margin: var(--space-3) auto 0;
       padding: 0 clamp(var(--space-5), 5vw, var(--space-12));
     }
     .hero-mast {
@@ -1045,7 +1047,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
       padding: var(--space-3) 0;
       border-top: 2px solid var(--color-text-primary);
       border-bottom: 1px solid var(--color-rule);
-      font-family: var(--font-heading); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+      font-family: var(--font-heading); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
       color: var(--color-text-secondary);
     }
     .hero-mast-l { display: inline-flex; align-items: center; gap: 8px; }
@@ -1057,7 +1059,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
       line-height: 1;
       word-break: keep-all;
       color: var(--color-text-primary);
-      margin: clamp(var(--space-6), 4vw, var(--space-12)) 0 clamp(var(--space-6), 3vw, var(--space-10));
+      margin: clamp(var(--space-5), 2.6vw, var(--space-8)) 0 clamp(var(--space-5), 2.2vw, var(--space-6));
     }
     /* 위 작은 줄: 본문 글꼴로 가볍게 */
     .hero-kicker {
@@ -1065,27 +1067,28 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
       font-family: var(--font-heading);
       font-size: clamp(17px, 2.2vw, 28px); font-weight: 600; letter-spacing: -0.02em;
       color: var(--color-text-primary);
-      margin-bottom: clamp(10px, 1.4vw, 18px);
+      margin-bottom: clamp(8px, 1vw, 12px);
     }
     /* 큰 줄: 함렛으로 개성 있게 */
     .hero-title em {
       display: block; font-style: normal;
       font-family: var(--font-accent);
-      font-size: clamp(46px, 9.4vw, 128px); font-weight: 800;
+      font-size: clamp(46px, 7.4vw, 96px); font-weight: 800;
       line-height: 1.02; letter-spacing: -0.05em;
       color: var(--yeonji-500);   /* 큰 글씨라 팝 핑크 그대로 (대비 3:1 이상) */
     }
     .hero-foot {
-      display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-5);
-      padding-top: var(--space-5);
+      display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2);
+      padding-top: var(--space-3);
       border-top: 1px solid var(--color-rule);
     }
     .hero-desc {
       font-family: var(--font-display);
       font-size: clamp(var(--text-base), 1.6vw, var(--text-lg));
       color: var(--color-text-secondary);
-      line-height: var(--leading-loose);
+      line-height: var(--leading-normal);
       max-width: 460px;
+      word-break: keep-all;
     }
     @media (max-width: 640px) {
       .hero-mast { grid-template-columns: 1fr 1fr; }
@@ -1204,7 +1207,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     .hero-key img { width: 100%; height: auto; display: block; filter: drop-shadow(0 6px 10px rgba(32,41,67,0.18)); }
     .hero-key-cap {
       position: absolute; right: 0; top: 100%; margin-top: var(--space-2); white-space: nowrap;
-      font-family: var(--font-heading); font-size: 11px; letter-spacing: 0.08em;
+      font-family: var(--font-heading); font-size: 12px; letter-spacing: 0.08em;
       color: var(--color-text-secondary);
     }
     @keyframes heroSway { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg); } }
@@ -1268,10 +1271,10 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
       z-index: 3;
     }
     .card-no, .card-region {
-      font-family: var(--font-heading); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+      font-family: var(--font-heading); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
       color: var(--color-text-tertiary);
     }
-    .card-region { text-align: right; }
+    .card-region { text-align: right; letter-spacing: 0.02em; }
     .card-name {
       grid-column: 1 / -1; align-self: center;
       font-family: var(--font-display);
@@ -1283,7 +1286,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     .card-name.coming-soon { color: var(--color-text-tertiary); font-weight: 400; }
     .card-meta {
       margin-top: var(--space-2);
-      font-family: var(--font-heading); font-size: 11px; letter-spacing: 0.06em;
+      font-family: var(--font-heading); font-size: 12px; letter-spacing: 0.06em;
       color: var(--color-text-secondary);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }

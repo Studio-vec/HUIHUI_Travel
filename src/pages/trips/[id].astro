@@ -203,7 +203,7 @@ const _body = `
     </div>
     <div class="bottom-nav">
         <a href="/game?trip=${tripData.id}" class="nav-btn game-nav-link">🎒 짐 싸기</a>
-        <button class="nav-btn" @click="playArt" :disabled="allPhotos.length === 0">모아보기</button>
+        <button class="nav-btn" @click="playArt" :disabled="allPhotos.length === 0" :title="allPhotos.length === 0 ? '사진을 한 장 이상 올리면 열려요' : ''">모아보기 <span class="nav-count">{{ allPhotos.length }}장</span></button>
         <button :class="['nav-btn', isVisited ? 'done' : (allPhotos.length > 0 ? 'complete' : '')]"
                 @click="toggleVisited">
             {{ isVisited ? '완료됨 ✓' : '여행 완료' }}
@@ -243,6 +243,21 @@ const _body = `
     </div></div>
 <script src="${asset('/assets/js/trip-app.js')}"></script>
 <script>
+/* 아래 버튼 줄: 내려 읽는 동안은 숨기고, 위로 올리거나 맨 끝에 닿으면 다시 보인다 */
+(function () {
+    var lastY = window.scrollY, ticking = false;
+    window.addEventListener('scroll', function () {
+        if (ticking) return; ticking = true;
+        requestAnimationFrame(function () {
+            var nav = document.querySelector('.bottom-nav');
+            var y = window.scrollY;
+            var atEnd = window.innerHeight + y >= document.documentElement.scrollHeight - 8;
+            if (nav) nav.classList.toggle('is-hidden', y > lastY + 4 && y > 120 && !atEnd);
+            if (Math.abs(y - lastY) > 4) lastY = y;
+            ticking = false;
+        });
+    }, { passive: true });
+})();
 createTripApp({
     tripUrl: '${tripUrl}',
     storageKey: '${storageKey}',

@@ -14,14 +14,14 @@ body { background: var(--color-bg); color: var(--color-text-primary); }
   padding: 10px 0;
   border-top: 2px solid var(--color-text-primary);
   border-bottom: 1px solid var(--color-rule);
-  font-family: var(--font-heading); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  font-family: var(--font-heading); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--color-text-secondary);
 }
 .hh-mast b { font-weight: 500; color: var(--color-text-primary); }
 
 /* 작은 라벨 (번호·카테고리) */
 .hh-label {
-  font-family: var(--font-heading); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  font-family: var(--font-heading); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--color-text-tertiary);
 }
 
@@ -52,7 +52,7 @@ body { background: var(--color-bg); color: var(--color-text-primary); }
   font-size: clamp(38px, 6vw, 68px); line-height: 1.06; letter-spacing: -0.03em;
   color: var(--color-text-primary); word-break: keep-all;
 }
-.pp-updated { margin-top: 14px; font-family: var(--font-heading); font-size: 11px; letter-spacing: 0.1em; color: var(--color-text-tertiary); }
+.pp-updated { margin-top: 14px; font-family: var(--font-heading); font-size: 12px; letter-spacing: 0.1em; color: var(--color-text-tertiary); }
 .pp-lead {
   font-family: var(--font-display); font-size: clamp(16px, 1.7vw, 19px); line-height: 1.9;
   color: var(--color-text-primary); word-break: keep-all;
