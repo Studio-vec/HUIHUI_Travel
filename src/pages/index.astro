@@ -18,7 +18,7 @@ const allTrips = Object.values(tripModules)
 
 /* 비밀코드 여행지는 홈에 아무 정보도 싣지 않는다. 입력한 코드의 해시로 주소(/trips/<해시 앞 24자>)를 만들어
    그 페이지가 있는지만 확인한다. 해시 규칙은 scripts/secret_hash.mjs 와 같아야 한다.
-   한 번 연 비밀 여행지는 그 페이지가 localStorage(huihui_unlocked)에 카드 정보를 남겨, 이 브라우저의 홈 목록에 함께 나온다. */
+   한 번 연 비밀 여행지는 그 페이지가 localStorage(huihui_unlocked)에 주소를 남기고, 홈이 <주소>/card.json 으로 카드를 그린다. */
 
 const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf(t, idx + 1)]));
 ---
@@ -727,18 +727,18 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     }
     function _saveSet(key, s) { localStorage.setItem(key, JSON.stringify([...s])); }
 
-    let reservedSet = _getSet(RESERVED_KEY);
+    let reservedSet = new Set(); // _init 에서 TRIPS 를 만든 뒤 읽는다
 
     /* 첫 페이지에서는 '여행 완료(방문)' 여부와 무관하게 키 이미지가 있으면 항상 걸려 있는 키로 보여준다.
        방문 상태는 갤러리에서만 사용. */
-    function _effectiveStatus(trip, i) {
-      if (reservedSet.has(i)) return 'reserved';
+    function _effectiveStatus(trip) {
+      if (reservedSet.has(trip.url)) return 'reserved';
       return trip.status;
     }
 
     /* ── RENDER CARD ── */
     function _renderCard(trip, i) {
-      const s       = _effectiveStatus(trip, i);
+      const s       = _effectiveStatus(trip);
       const cl      = 'key-card' + (s !== 'open' ? ' ' + s : '');
       const isKo    = _currentLang() === 'ko';
       const label   = isKo ? trip.nameKo : trip.nameEn;
@@ -756,7 +756,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
         const i = parseInt(card.dataset.tripIdx);
         card.addEventListener('click', () => {
           const trip = TRIPS[i];
-          const st   = _effectiveStatus(trip, i);
+          const st   = _effectiveStatus(trip);
           if (st === 'coming-soon')                              showComingSoonPopup();
           else if (st === 'open' && trip.url) goTo(trip.url);
         });
@@ -765,8 +765,9 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
 
     /* ── LONG PRESS → reserved toggle ── */
     function _toggleReserved(i) {
-      if (reservedSet.has(i)) reservedSet.delete(i);
-      else                    reservedSet.add(i);
+      const url = TRIPS[i].url;
+      if (reservedSet.has(url)) reservedSet.delete(url);
+      else                      reservedSet.add(url);
       _saveSet(RESERVED_KEY, reservedSet);
       _renderGrid();
     }
@@ -800,15 +801,42 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     }
 
     /* ── BUILD TRIPS FROM CONFIG ── */
-    /* 이 브라우저에서 한 번 연 비밀 여행지 (비밀 여행지 페이지가 남긴 카드 정보) */
-    function _unlockedTrips() {
+    /* 이 브라우저에서 한 번 연 비밀 여행지. 저장된 건 주소뿐이고, 카드 정보는 매번 <주소>/card.json 에서 읽는다.
+       404(코드 변경·삭제·공개 전환)면 목록에서 지우고, 네트워크 오류면 이번에만 빼 둔다. */
+    const UNLOCKED_KEY = 'huihui_unlocked';
+    const _clean = v => String(v ?? '').replace(/[<>"'&`]/g, ''); // innerHTML 에 들어가므로 태그·속성 깨는 문자를 뺀다
+
+    async function _unlockedTrips(publicUrls) {
+      let urls = [];
       try {
-        const list = JSON.parse(localStorage.getItem('huihui_unlocked') || '[]');
-        return Array.isArray(list)
-          ? list.filter(c => c && typeof c.url === 'string' && /^\/trips\/[\w-]+$/.test(c.url) && c.nameKo)
-                .map(c => ({ ...c, status: 'open' }))
-          : [];
-      } catch (_) { return []; }
+        const saved = JSON.parse(localStorage.getItem(UNLOCKED_KEY) || '[]');
+        urls = (Array.isArray(saved) ? saved : []).map(c => typeof c === 'string' ? c : c && c.url);
+      } catch (_) {}
+      urls = [...new Set(urls.filter(u => typeof u === 'string' && /^\/trips\/[\w-]+$/.test(u) && !publicUrls.has(u)))];
+      const results = await Promise.all(urls.map(async url => {
+        try {
+          const res = await fetch(url + '/card.json', { cache: 'no-store' });
+          if (res.status === 404) return { url, gone: true };
+          if (!res.ok) return { url };
+          const c = await res.json();
+          if (!c || !c.nameKo) return { url, gone: true };
+          return { url, trip: {
+            nameEn:  _clean(c.nameEn),
+            nameKo:  _clean(c.nameKo),
+            status:  'open',
+            url,
+            no:      Number(c.no) || 999,
+            key:     /^\/assets\/keys\/[\w-]+\.webp$/.test(c.key) ? c.key : '/assets/keys/secret.webp',
+            tagline: _clean(c.tagline),
+            region:  _clean(c.region),
+            nights:  _clean(c.nights),
+            theme:   _clean(c.theme),
+            loc:     _clean(c.loc),
+          } };
+        } catch (_) { return { url }; }
+      }));
+      try { localStorage.setItem(UNLOCKED_KEY, JSON.stringify(results.filter(r => !r.gone).map(r => r.url))); } catch (_) {}
+      return results.filter(r => r.trip).map(r => r.trip);
     }
 
     function _buildTrips() {
@@ -824,7 +852,16 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
         nights:  cfg.nights  || '',
         theme:   cfg.theme   || '',
         loc:     cfg.loc     || '',
-      })).concat(_unlockedTrips());
+      }));
+    }
+
+    /* 예약 표시는 여행지 주소로 저장한다. 예전 형식(카드 순서 번호)은 지금 순서대로 주소로 바꿔 둔다 */
+    function _loadReserved() {
+      const set = new Set([..._getSet(RESERVED_KEY)]
+        .map(v => typeof v === 'number' ? TRIPS[v]?.url : v)
+        .filter(v => typeof v === 'string'));
+      try { _saveSet(RESERVED_KEY, set); } catch (_) {}
+      return set;
     }
 
     /* ── FILTER (기간 · 지역 · 검색어) ── */
@@ -949,7 +986,9 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     }
 
     async function _init() {
-      TRIPS = _buildTrips();
+      const pub = _buildTrips();
+      TRIPS = pub.concat(await _unlockedTrips(new Set(pub.map(t => t.url))));
+      reservedSet = _loadReserved();
       /* 키 이미지 존재 여부 병렬 체크 → 없으면 coming-soon */
       await Promise.all(TRIPS.map(async trip => {
         const exists = await _probeImg(trip.key);
@@ -989,7 +1028,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     /* bfcache 복원 시 localStorage 재읽기 */
     window.addEventListener('pageshow', e => {
       if (!e.persisted) return;
-      reservedSet = _getSet(RESERVED_KEY);
+      reservedSet = _loadReserved();
       _renderGrid();
     });
 
