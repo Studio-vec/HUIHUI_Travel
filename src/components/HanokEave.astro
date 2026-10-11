@@ -2,126 +2,166 @@
 /**
  * 홈 히어로 맨 위 기와 처마 — 먹 선화 위에 숨어 있는 단청.
  *
- * 같은 그림을 두 장 겹친다.
+ * 가까이 올려다본 처마라 부재 하나하나가 크다. 같은 그림을 두 장 겹친다.
  *   1) 아래: 단청 채색층 (.he-color) — 평소에는 가려져 있다
  *   2) 위:   먹 선화층  (.he-line)  — 늘 보인다
- * 마우스(손가락)가 지나가는 자리만 원형 마스크로 채색층이 드러나, 붓으로 색을 입히듯 단청이 나타난다.
- * 커서 가까운 연화(서까래·막새·창방 머리초)는 천천히 돌며 피어난다.
+ * 커서(손가락)가 지나가는 자리만 원형 마스크로 채색층이 드러나 붓으로 색을 입히듯 단청이 나타나고,
+ * 가까운 꽃(막새 연화문·부연 주화·서까래 녹화·창방 머리초)은 바깥 잎과 안 잎이 서로 반대로 돌며 피어난다.
  * 처음 열릴 때는 선이 그려진 뒤 색이 처마를 한 번 훑고 지나간다.
- *
- * 부재: 기와골 → 수막새(연화) → 부연(주화) → 서까래(녹화) → 창방(머리초·휘·금문)
  * 움직임 줄이기 설정이면 선 그리기·인트로·회전 없이, 호버 드러남만 남긴다.
  */
 const W = 1440;
-const H = 340;
+const H = 430;
 const MID = W / 2;
 const INK = '#1A1714';
 
 // 단청 색
 const C = {
-  green: '#2F7F6C', blue: '#2E4A7D', sky: '#86A9CF',
-  red: '#B23A44', brown: '#6E3329', gold: '#D2A23A', white: '#F4F1EA', pink: '#E6A3A6',
-  tile: '#2A333F', tileHi: '#46525F', clay: '#59636F',
+  green: '#2F7F6C', lgreen: '#8CC7AE', blue: '#2E4A7D', sky: '#8DB0D4',
+  red: '#B23A44', pink: '#EBB1B0', brown: '#6E3329', gold: '#D9AE45', white: '#F4F1EA',
+  tile: '#2A333F', tileHi: '#46525F', clay: '#5E6873', clayHi: '#7C8792',
 };
 
-const FLAT = 400;
-const SPAN = MID + 40 - FLAT;
-const EAVE = 150;
+const FLAT = 380;
+const SPAN = MID + 60 - FLAT;
+const EAVE = 180;
 const eaveY = (x) => {
   const d = Math.abs(x - MID);
   if (d <= FLAT) return EAVE;
   const t = Math.min(1, (d - FLAT) / SPAN);
-  return EAVE - 134 * Math.pow(t, 2.1);
+  return EAVE - 150 * Math.pow(t, 2.1);
 };
 const tilt = (x) => (Math.atan2(eaveY(x + 1) - eaveY(x - 1), 2) * 180) / Math.PI;
 const f = (n) => +n.toFixed(1);
-const STEP = 46;
+const STEP = 80;
 const xs = [];
 for (let x = (MID % STEP) - STEP; x <= W + STEP; x += STEP) xs.push(x);
 const top = (x) => MID + (x - MID) * 0.8;
-const BEAM = 252; // 창방 윗선
-const BH = 38;    // 창방 높이
-const SEG = 240;  // 창방 한 칸
+const BEAM = 336; // 창방 윗선
+const BH = 74;    // 창방 높이
+const SEG = 420;  // 창방 한 칸
 
 const eavePts = (off = 0) => {
   const p = [];
-  for (let x = -40; x <= W + 40; x += 8) p.push(`${x},${f(eaveY(x) + off)}`);
+  for (let x = -60; x <= W + 60; x += 8) p.push(`${x},${f(eaveY(x) + off)}`);
   return p;
 };
-const roofPath = `M-40 -10H${W + 40}L${eavePts(-2).reverse().join(' L')}Z`;
+const roofPath = `M-60 -10H${W + 60}L${eavePts(-2).reverse().join(' L')}Z`;
 
-/* ── 연화(꽃잎 n장) ─────────────────────── */
-const petals = (cx, cy, n, r1, r2, w, mode, fill) => {
+/* ── 꽃 그리기 도구 ─────────────────────── */
+const LS = (w = 0.9, o = 0.8) => `fill="none" stroke="${INK}" stroke-width="${w}" stroke-opacity="${o}"`;
+// 끝이 뾰족한 연잎 하나 (위쪽을 향함, 원점 중심)
+const petalD = (r1, r2, w) => {
+  const m = r1 + (r2 - r1) * 0.55;
+  return `M0 ${-r1}C${w} ${-r1 - 1} ${w} ${-m} 0 ${-r2}C${-w} ${-m} ${-w} ${-r1 - 1} 0 ${-r1}Z`;
+};
+const ring = (n, r1, r2, w, attrs, off = 0, vein = false) => {
   let s = '';
   for (let i = 0; i < n; i++) {
-    const a = (i * 360) / n;
-    s += `<ellipse cx="${cx}" cy="${f(cy - (r1 + r2) / 2)}" rx="${w}" ry="${f((r2 - r1) / 2)}" transform="rotate(${a} ${cx} ${cy})" ${
-      mode === 'color' ? `fill="${fill}"` : `fill="none" stroke="${INK}" stroke-width=".7" stroke-opacity=".75"`
-    }/>`;
+    const a = off + (i * 360) / n;
+    s += `<path d="${petalD(r1, r2, w)}" transform="rotate(${f(a)})" ${attrs}/>`;
+    if (vein) s += `<path d="M0 ${-r1 - 2}V${f(-r2 + 3)}" transform="rotate(${f(a)})" ${LS(0.5, 0.45)}/>`;
   }
   return s;
 };
-
-/* 서까래 끝: 녹화(綠花) */
-const rafter = (cx, cy, mode) => {
-  const g = mode === 'color'
-    ? `<circle cx="${cx}" cy="${cy}" r="12" fill="${C.green}"/><circle cx="${cx}" cy="${cy}" r="9.6" fill="${C.white}"/><circle cx="${cx}" cy="${cy}" r="8.4" fill="${C.blue}"/>${petals(cx, cy, 8, 2.4, 8, 2.2, 'color', C.pink)}${petals(cx, cy, 8, 2.4, 6, 1.4, 'color', C.red)}<circle cx="${cx}" cy="${cy}" r="2.4" fill="${C.gold}"/>`
-    : `<circle cx="${cx}" cy="${cy}" r="12" fill="none" stroke="${INK}" stroke-width="1"/><circle cx="${cx}" cy="${cy}" r="8.6" fill="none" stroke="${INK}" stroke-width=".6" stroke-opacity=".6"/>${petals(cx, cy, 8, 2.4, 8, 2.2, 'line')}<circle cx="${cx}" cy="${cy}" r="2.2" fill="none" stroke="${INK}" stroke-width=".7"/>`;
-  return `<g class="he-rot" data-cx="${cx}" data-cy="${cy}">${g}</g>`;
+const beads = (n, r, rr, attrs) => {
+  let s = '';
+  for (let i = 0; i < n; i++) {
+    const a = (i * Math.PI * 2) / n;
+    s += `<circle cx="${f(Math.cos(a) * r)}" cy="${f(Math.sin(a) * r)}" r="${rr}" ${attrs}/>`;
+  }
+  return s;
 };
+// 석류동(꽃술): 금 동그라미에 씨앗 다섯
+const seeds = (r, mode) => mode === 'color'
+  ? `<circle r="${r}" fill="${C.gold}"/>${beads(5, r * 0.5, r * 0.18, `fill="${C.red}"`)}<circle r="${r * 0.22}" fill="${C.red}"/>`
+  : `<circle r="${r}" ${LS(0.9, 0.9)}/>${beads(5, r * 0.5, r * 0.16, LS(0.6, 0.7))}`;
+// 회전 가능한 꽃 묶음: 바깥 잎(.he-po)과 안 잎(.he-pi)이 따로 돈다
+const flower = (cx, cy, body, outer, inner, center, a = 0) =>
+  `<g transform="translate(${f(cx)} ${f(cy)}) rotate(${f(a)})"><g class="he-rot" data-cx="${f(cx)}" data-cy="${f(cy)}">${body}<g class="he-po">${outer}</g><g class="he-pi">${inner}</g>${center}</g></g>`;
 
-/* 부연 끝: 주화(朱花) 네모 */
+/* 수막새: 연주문 테두리 + 연화문 여덟 잎 + 자방 */
+const maksae = (cx, cy, mode) => mode === 'color'
+  ? flower(cx, cy,
+      `<circle r="20" fill="${C.clay}"/><circle r="15.5" fill="${C.tileHi}"/>${beads(16, 17.8, 1.1, `fill="${C.clayHi}"`)}`,
+      ring(8, 4.5, 15, 5, `fill="${C.clayHi}"`), ring(8, 3.5, 9.5, 2.6, `fill="${C.sky}"`, 22.5), seeds(4, mode))
+  : flower(cx, cy,
+      `<circle r="20" ${LS(1.2, 1)}/><circle r="15.5" ${LS(0.7, 0.6)}/>${beads(16, 17.8, 1, LS(0.5, 0.6))}`,
+      ring(8, 4.5, 15, 5, LS(0.8, 0.85), 0, true), ring(8, 3.5, 9.5, 2.6, LS(0.5, 0.55), 22.5), seeds(4, mode));
+
+/* 부연 끝: 주화 — 네모 안에 마름모, 귀마다 휘, 가운데 네 잎 */
 const buyeon = (cx, cy, a, mode) => {
-  const body = mode === 'color'
-    ? `<rect x="-9" y="-9" width="18" height="18" fill="${C.blue}"/><rect x="-6.6" y="-6.6" width="13.2" height="13.2" fill="${C.sky}"/><path d="M0 -6L6 0L0 6L-6 0Z" fill="${C.white}"/>${petals(0, 0, 4, 0.8, 5, 1.8, 'color', C.red)}<circle r="1.6" fill="${C.gold}"/>`
-    : `<rect x="-9" y="-9" width="18" height="18" fill="none" stroke="${INK}" stroke-width=".9"/><path d="M0 -6L6 0L0 6L-6 0Z" fill="none" stroke="${INK}" stroke-width=".6" stroke-opacity=".7"/><circle r="1.6" fill="none" stroke="${INK}" stroke-width=".6"/>`;
-  return `<g transform="translate(${cx} ${cy}) rotate(${f(a)})">${body}</g>`;
+  const corners = (attrs) => [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([sx, sy]) => `<path d="M${sx * 16} ${sy * 16}L${sx * 7} ${sy * 16}L${sx * 16} ${sy * 7}Z" ${attrs}/>`).join('');
+  return mode === 'color'
+    ? flower(cx, cy,
+        `<rect x="-16" y="-16" width="32" height="32" fill="${C.blue}"/><rect x="-12.5" y="-12.5" width="25" height="25" fill="${C.sky}"/>${corners(`fill="${C.red}"`)}<path d="M0 -11L11 0L0 11L-11 0Z" fill="${C.white}"/>`,
+        ring(4, 2, 10, 4.2, `fill="${C.red}"`), ring(4, 1.5, 6, 2, `fill="${C.pink}"`, 45), `<circle r="2.4" fill="${C.gold}"/>`, a)
+    : flower(cx, cy,
+        `<rect x="-16" y="-16" width="32" height="32" ${LS(1, 1)}/><rect x="-12.5" y="-12.5" width="25" height="25" ${LS(0.6, 0.55)}/>${corners(LS(0.6, 0.7))}<path d="M0 -11L11 0L0 11L-11 0Z" ${LS(0.7, 0.8)}/>`,
+        ring(4, 2, 10, 4.2, LS(0.7, 0.85), 0, true), ring(4, 1.5, 6, 2, LS(0.5, 0.55), 45), `<circle r="2.2" ${LS(0.7)}/>`, a);
 };
 
-/* 수막새: 연화문 */
-const maksae = (cx, cy, mode) => {
-  const g = mode === 'color'
-    ? `<circle cx="${cx}" cy="${cy}" r="11.5" fill="${C.clay}"/><circle cx="${cx}" cy="${cy}" r="9" fill="${C.tileHi}"/>${petals(cx, cy, 8, 2.6, 8.4, 2, 'color', C.sky)}<circle cx="${cx}" cy="${cy}" r="2.4" fill="${C.gold}"/>`
-    : `<circle cx="${cx}" cy="${cy}" r="11.5" fill="#F4F1EA" fill-opacity=".001" stroke="${INK}" stroke-width="1.1"/>${petals(cx, cy, 8, 2.6, 8.4, 2, 'line')}<circle cx="${cx}" cy="${cy}" r="2.2" fill="none" stroke="${INK}" stroke-width=".7"/>`;
-  return `<g class="he-rot" data-cx="${cx}" data-cy="${cy}">${g}</g>`;
-};
+/* 서까래 끝: 녹화 — 녹·백·청 띠를 두른 여섯 잎 꽃 */
+const rafter = (cx, cy, mode) => mode === 'color'
+  ? flower(cx, cy,
+      `<circle r="22" fill="${C.green}"/><circle r="19" fill="${C.lgreen}"/><circle r="17.2" fill="${C.white}"/><circle r="15.6" fill="${C.blue}"/>`,
+      ring(6, 4.5, 14.5, 6, `fill="${C.red}"`) + ring(6, 5.5, 12, 3.4, `fill="${C.pink}"`),
+      ring(6, 3, 8, 2.6, `fill="${C.white}"`, 30), seeds(3.2, mode))
+  : flower(cx, cy,
+      `<circle r="22" ${LS(1.1, 1)}/><circle r="19" ${LS(0.6, 0.55)}/><circle r="15.6" ${LS(0.7, 0.7)}/>`,
+      ring(6, 4.5, 14.5, 6, LS(0.8, 0.85), 0, true),
+      ring(6, 3, 8, 2.6, LS(0.5, 0.55), 30), seeds(3.2, mode));
 
-/* 창방 한 칸: 머리초(연화) + 휘(화살촉 띠) + 가운데 금문(비단 무늬) + 반대쪽 머리초 */
+/* 창방 머리초: 청 테두리 + 연지 바림 겹잎 + 흰 안잎 + 석류동 */
+const meoricho = (cx, cy, mode) => mode === 'color'
+  ? flower(cx, cy,
+      `<circle r="31" fill="${C.blue}"/><circle r="28.4" fill="none" stroke="${C.white}" stroke-width="1.6"/><circle r="26" fill="${C.sky}"/>`,
+      ring(8, 9, 26, 8.5, `fill="${C.red}"`) + ring(8, 11, 22, 4.6, `fill="${C.pink}"`),
+      ring(8, 5, 14, 4.4, `fill="${C.white}"`, 22.5) + ring(8, 6, 11.5, 2, `fill="${C.lgreen}"`, 22.5), seeds(5.4, mode))
+  : flower(cx, cy,
+      `<circle r="31" ${LS(1.2, 1)}/><circle r="26" ${LS(0.6, 0.55)}/>`,
+      ring(8, 9, 26, 8.5, LS(0.9, 0.9), 0, true) + ring(8, 11, 22, 4.6, LS(0.5, 0.45)),
+      ring(8, 5, 14, 4.4, LS(0.7, 0.75), 22.5), seeds(5.4, mode));
+
+/* 창방 한 칸: 머리초 · 휘 · 금문(비단 무늬 + 작은 주화) · 휘 · 머리초 */
 const beamSeg = (x0, mode) => {
   const y = BEAM, cy = BEAM + BH / 2;
+  const color = mode === 'color';
   let s = '';
+  if (color) {
+    s += `<rect x="${x0}" y="${y}" width="${SEG}" height="${BH}" fill="${C.green}"/>`;
+    s += `<rect x="${x0}" y="${y + 6}" width="${SEG}" height="${BH - 12}" fill="${C.lgreen}" fill-opacity=".35"/>`;
+  }
+  // 휘: 화살촉 띠 다섯 줄 (청·하늘·백·녹·적), 띠마다 두 겹
   const hwi = (xStart, dir) => {
-    const cols = [C.blue, C.white, C.green, C.red];
+    const cols = [C.blue, C.sky, C.white, C.green, C.red];
     let o = '';
-    for (let k = 0; k < 4; k++) {
-      const xx = xStart + dir * k * 7;
-      o += mode === 'color'
-        ? `<path d="M${xx} ${y + 3}L${xx + dir * 8} ${cy}L${xx} ${y + BH - 3}L${xx + dir * 5} ${y + BH - 3}L${xx + dir * 13} ${cy}L${xx + dir * 5} ${y + 3}Z" fill="${cols[k]}"/>`
-        : `<path d="M${xx} ${y + 3}L${xx + dir * 8} ${cy}L${xx} ${y + BH - 3}" fill="none" stroke="${INK}" stroke-width=".7" stroke-opacity=".7"/>`;
+    for (let k = 0; k < 5; k++) {
+      const xx = xStart + dir * k * 12;
+      const d = `M${xx} ${y + 8}L${xx + dir * 14} ${cy}L${xx} ${y + BH - 8}`;
+      o += color
+        ? `<path d="${d}" stroke="${cols[k]}" stroke-width="7" stroke-linejoin="miter"/>`
+        : `<path d="${d}" ${LS(0.8, 0.75)}/><path d="M${xx + dir * 6} ${y + 8}L${xx + dir * 20} ${cy}L${xx + dir * 6} ${y + BH - 8}" ${LS(0.45, 0.4)}/>`;
     }
     return o;
   };
-  const rose = (cx) => {
-    const g = mode === 'color'
-      ? `<circle cx="${cx}" cy="${cy}" r="15" fill="${C.blue}"/><circle cx="${cx}" cy="${cy}" r="12.6" fill="${C.white}"/>${petals(cx, cy, 8, 3, 12, 3.4, 'color', C.red)}${petals(cx, cy, 8, 3, 8, 2, 'color', C.pink)}<circle cx="${cx}" cy="${cy}" r="3.4" fill="${C.gold}"/>`
-      : `<circle cx="${cx}" cy="${cy}" r="15" fill="none" stroke="${INK}" stroke-width="1"/>${petals(cx, cy, 8, 3, 12, 3.4, 'line')}<circle cx="${cx}" cy="${cy}" r="3.2" fill="none" stroke="${INK}" stroke-width=".8"/>`;
-    return `<g class="he-rot" data-cx="${cx}" data-cy="${cy}">${g}</g>`;
-  };
-  if (mode === 'color') s += `<rect x="${x0}" y="${y}" width="${SEG}" height="${BH}" fill="${C.green}"/>`;
-  // 가운데 금문
-  const gx = x0 + 92, gw = 56, gh = BH - 8;
-  if (mode === 'color') {
-    s += `<rect x="${gx}" y="${y + 4}" width="${gw}" height="${gh}" fill="${C.brown}"/>`;
-    s += `<g clip-path="url(#heGum)">`;
-    for (let i = -4; i < 8; i++) s += `<path d="M${gx + i * 8} ${y + 4}l${gh} ${gh}M${gx + i * 8 + gh} ${y + 4}l-${gh} ${gh}" stroke="${C.gold}" stroke-width=".8"/>`;
+  // 금문
+  const gx = x0 + 160, gw = SEG - 320, gy = y + 9, gh = BH - 18, gcx = gx + gw / 2;
+  if (color) {
+    s += `<rect x="${gx}" y="${gy}" width="${gw}" height="${gh}" fill="${C.brown}"/>`;
+    s += `<g clip-path="url(#heGum${x0})">`;
+    for (let i = -6; i < 16; i++) s += `<path d="M${gx + i * 10} ${gy}l${gh} ${gh}M${gx + i * 10 + gh} ${gy}l-${gh} ${gh}" stroke="${C.gold}" stroke-width="1"/>`;
     s += `</g>`;
   } else {
-    s += `<rect x="${gx}" y="${y + 4}" width="${gw}" height="${gh}" fill="none" stroke="${INK}" stroke-width=".8"/>`;
-    for (let i = 0; i < 7; i++) { const l = Math.min(8 * (7 - i), gh); s += `<path d="M${gx + i * 8} ${y + 4}l${l} ${l}" stroke="${INK}" stroke-width=".5" stroke-opacity=".45"/>`; }
+    s += `<rect x="${gx}" y="${gy}" width="${gw}" height="${gh}" ${LS(0.9, 0.9)}/><rect x="${gx + 4}" y="${gy + 4}" width="${gw - 8}" height="${gh - 8}" ${LS(0.5, 0.5)}/>`;
   }
-  s += hwi(x0 + 50, 1) + hwi(x0 + SEG - 50, -1);
-  s += rose(x0 + 28) + rose(x0 + SEG - 28);
-  if (mode === 'line') s += `<path d="M${x0 + SEG} ${y}V${y + BH}" stroke="${INK}" stroke-width=".8"/>`;
+  // 금문 가운데 작은 주화
+  s += color
+    ? flower(gcx, cy, `<circle r="13" fill="${C.white}"/>`, ring(4, 2, 12, 5, `fill="${C.red}"`), ring(4, 2, 7, 2.6, `fill="${C.pink}"`, 45), `<circle r="2.6" fill="${C.gold}"/>`)
+    : flower(gcx, cy, `<circle r="13" ${LS(0.8, 0.85)}/>`, ring(4, 2, 12, 5, LS(0.7, 0.85), 0, true), ring(4, 2, 7, 2.6, LS(0.5, 0.5), 45), `<circle r="2.4" ${LS(0.7)}/>`);
+  s += hwi(x0 + 92, 1) + hwi(x0 + SEG - 92, -1);
+  s += meoricho(x0 + 46, cy, mode) + meoricho(x0 + SEG - 46, cy, mode);
+  if (!color) s += `<path d="M${x0 + SEG} ${y}V${y + BH}" ${LS(0.9, 0.9)}/>`;
   return s;
 };
 
@@ -129,54 +169,58 @@ const beamSeg = (x0, mode) => {
 const draw = (mode) => {
   const color = mode === 'color';
   let s = '';
-  // 지붕 면 + 기와골
+  // 지붕 면 + 기와골 (수키와 한 줄 = 막새 하나)
   if (color) {
     s += `<path d="${roofPath}" fill="${C.tile}"/>`;
-    s += xs.map((x) => `<path d="M${f(x + (top(x) - x) * 0.35)} ${f(eaveY(x) - 110)}L${x} ${f(eaveY(x) - 8)}" stroke="${C.tileHi}" stroke-width="18"/>`).join('');
-    s += `<path d="M${eavePts(0).join(' L')} L${eavePts(84).reverse().join(' L')}Z" fill="${C.green}" fill-opacity=".9"/>`;
+    s += xs.map((x) => `<path d="M${f(x + (top(x) - x) * 0.35)} ${f(eaveY(x) - 150)}L${x} ${f(eaveY(x) - 10)}" stroke="${C.tileHi}" stroke-width="30"/><path d="M${f(x - 8 + (top(x) - x) * 0.35)} ${f(eaveY(x) - 150)}L${x - 8} ${f(eaveY(x) - 14)}" stroke="${C.clayHi}" stroke-opacity=".5" stroke-width="3"/>`).join('');
+    s += `<path d="M${eavePts(0).join(' L')} L${eavePts(150).reverse().join(' L')}Z" fill="${C.green}" fill-opacity=".92"/>`;
   } else {
-    s += `<g class="he-draw" style="--d:0s">` + xs.map((x) => `<path pathLength="1" d="M${f(x + (top(x) - x) * 0.35)} ${f(eaveY(x) - 100)}L${x} ${f(eaveY(x) - 12)}" stroke="${INK}" stroke-opacity=".3" stroke-width="1"/>`).join('') + `</g>`;
-    s += `<g class="he-draw" style="--d:.3s"><path pathLength="1" d="M${eavePts().join(' L')}" stroke="${INK}" stroke-width="1.3"/></g>`;
+    s += `<g class="he-draw" style="--d:0s">` + xs.map((x) => `<path pathLength="1" d="M${f(x - 15 + (top(x) - x) * 0.35)} ${f(eaveY(x) - 150)}L${x - 15} ${f(eaveY(x) - 18)}" stroke="${INK}" stroke-opacity=".28"/><path pathLength="1" d="M${f(x + 15 + (top(x) - x) * 0.35)} ${f(eaveY(x) - 150)}L${x + 15} ${f(eaveY(x) - 18)}" stroke="${INK}" stroke-opacity=".28"/>`).join('') + `</g>`;
+    s += `<g class="he-draw" style="--d:.3s"><path pathLength="1" d="M${eavePts().join(' L')}" stroke="${INK}" stroke-width="1.4"/></g>`;
   }
-  // 암막새
+  // 암막새: 막새 사이로 처진 띠 + 당초 한 줄
   s += `<g class="${color ? '' : 'he-draw'}" style="--d:.55s">`;
   xs.forEach((x) => {
-    const d = `M${x + 12} ${f(eaveY(x) + 3)}Q${x + STEP / 2} ${f((eaveY(x) + eaveY(x + STEP)) / 2 + 12)} ${x + STEP - 12} ${f(eaveY(x + STEP) + 3)}`;
-    s += color ? `<path d="${d}" stroke="${C.clay}" stroke-width="5"/>` : `<path pathLength="1" d="${d}" stroke="${INK}" stroke-opacity=".6"/>`;
+    const y1 = eaveY(x), y2 = eaveY(x + STEP), mx = x + STEP / 2, my = (y1 + y2) / 2 + 18;
+    const d = `M${x + 21} ${f(y1 + 4)}Q${mx} ${f(my)} ${x + STEP - 21} ${f(y2 + 4)}`;
+    const d2 = `M${x + 24} ${f(y1 + 10)}Q${mx} ${f(my + 6)} ${x + STEP - 24} ${f(y2 + 10)}`;
+    s += color
+      ? `<path d="${d}" stroke="${C.clay}" stroke-width="8"/><path d="${d2}" stroke="${C.clayHi}" stroke-width="2" stroke-dasharray="3 4"/>`
+      : `<path pathLength="1" d="${d}" stroke="${INK}" stroke-opacity=".7"/><path pathLength="1" d="${d2}" stroke="${INK}" stroke-opacity=".35" stroke-dasharray=".02 .03"/>`;
   });
   s += `</g>`;
   // 수막새
-  s += `<g class="${color ? '' : 'he-fade'}" style="--d:.8s">` + xs.map((x) => maksae(x, f(eaveY(x)), mode)).join('') + `</g>`;
+  s += `<g class="${color ? '' : 'he-fade'}" style="--d:.8s">` + xs.map((x) => maksae(x, eaveY(x), mode)).join('') + `</g>`;
   // 부연 · 서까래
   s += `<g class="${color ? '' : 'he-fade'}" style="--d:1s">`;
-  s += xs.map((x) => buyeon(x, f(eaveY(x) + 32), tilt(x), mode)).join('');
-  s += xs.map((x) => { const cx = x + STEP / 2; return rafter(cx, f(eaveY(cx) + 62), mode); }).join('');
+  s += xs.map((x) => buyeon(x, eaveY(x) + 56, tilt(x), mode)).join('');
+  s += xs.map((x) => { const cx = x + STEP / 2; return rafter(cx, eaveY(cx) + 112, mode); }).join('');
   s += `</g>`;
   // 창방
   s += `<g class="${color ? '' : 'he-fade'}" style="--d:1.2s">`;
-  if (!color) s += `<path d="M-40 ${BEAM}H${W + 40}M-40 ${BEAM + BH}H${W + 40}" stroke="${INK}" stroke-width="1.1"/>`;
+  if (color) s += `<rect x="-60" y="${BEAM - 4}" width="${W + 120}" height="4" fill="${C.red}"/><rect x="-60" y="${BEAM + BH}" width="${W + 120}" height="4" fill="${C.red}"/>`;
+  else s += `<path d="M-60 ${BEAM - 4}H${W + 60}M-60 ${BEAM}H${W + 60}M-60 ${BEAM + BH}H${W + 60}M-60 ${BEAM + BH + 4}H${W + 60}" ${LS(0.9, 0.9)}/>`;
   for (let x0 = 0; x0 < W; x0 += SEG) s += beamSeg(x0, mode);
-  if (color) s += `<path d="M-40 ${BEAM + 1.5}H${W + 40}M-40 ${BEAM + BH - 1.5}H${W + 40}" stroke="${C.red}" stroke-width="3"/>`;
   s += `</g>`;
   return s;
 };
 const colorSvg = draw('color');
 const lineSvg = draw('line');
-const gumRects = Array.from({ length: Math.ceil(W / SEG) }, (_, i) => i * SEG + 92);
+const segs = Array.from({ length: Math.ceil(W / SEG) }, (_, i) => i * SEG);
 ---
 <div class="hanok-eave" data-eave>
   <div class="he-stack">
     <svg class="he-svg he-color" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMin slice" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-      <defs><clipPath id="heGum">{gumRects.map((x) => <rect x={x} y={BEAM + 4} width="56" height={BH - 8} />)}</clipPath></defs>
+      <defs>{segs.map((x0) => <clipPath id={`heGum${x0}`}><rect x={x0 + 160} y={BEAM + 9} width={SEG - 320} height={BH - 18} /></clipPath>)}</defs>
       <Fragment set:html={colorSvg} />
     </svg>
     <svg class="he-svg he-line" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMin slice" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
       <Fragment set:html={lineSvg} />
       <!-- 풍경: 왼쪽 추녀 끝 -->
-      <g class="he-pung" style="transform-origin:262px 104px">
-        <path d="M262 104V128M252 146C252 134 256 128 262 128C268 128 272 134 272 146ZM249 146H275M262 146V160" stroke={INK} stroke-width="1" />
-        <g class="he-fish" style="transform-origin:262px 160px">
-          <path d="M262 160C268 164 268 174 262 180C256 174 256 164 262 160ZM262 180L258 186H266Z" fill="#B23A44" />
+      <g class="he-pung" style="transform-origin:236px 118px">
+        <path d="M236 118V146M222 172C222 155 228 146 236 146C244 146 250 155 250 172ZM218 172H254M236 172V190" stroke={INK} stroke-width="1.1" />
+        <g class="he-fish" style="transform-origin:236px 190px">
+          <path d="M236 190C245 196 245 210 236 218C227 210 227 196 236 190ZM236 218L230 227H242Z" fill="#B23A44" />
         </g>
       </g>
     </svg>
@@ -193,14 +237,19 @@ const gumRects = Array.from({ length: Math.ceil(W / SEG) }, (_, i) => i * SEG + 
     var line = root.querySelector('.he-line');
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    /* 두 층의 연화 묶음을 짝지어 둔다 (같은 순서로 그려졌다) */
+    /* 두 층의 꽃 묶음을 짝지어 둔다 (같은 순서로 그려졌다) */
     var cRot = [].slice.call(color.querySelectorAll('.he-rot'));
-    var roses = [].slice.call(line.querySelectorAll('.he-rot')).map(function (g, i) {
-      return { a: g, b: cRot[i], x: +g.dataset.cx, y: +g.dataset.cy, ang: 0, s: 1 };
+    var flowers = [].slice.call(line.querySelectorAll('.he-rot')).map(function (g, i) {
+      var c = cRot[i];
+      return {
+        g: [g, c], po: [g.querySelector('.he-po'), c.querySelector('.he-po')], pi: [g.querySelector('.he-pi'), c.querySelector('.he-pi')],
+        x: +g.dataset.cx, y: +g.dataset.cy, k: 0
+      };
     });
 
     var target = null;   // 커서 위치 (SVG 좌표)
     var running = false;
+    var REACH = 210;     // 꽃이 반응하는 거리 (SVG 단위)
 
     function setMask(px, py, r) {
       stack.style.setProperty('--mx', px + 'px');
@@ -213,22 +262,20 @@ const gumRects = Array.from({ length: Math.ceil(W / SEG) }, (_, i) => i * SEG + 
       var p = line.createSVGPoint(); p.x = cx; p.y = cy;
       return p.matrixTransform(m.inverse());
     }
+    function set(list, v) { list[0].setAttribute('transform', v); list[1].setAttribute('transform', v); }
 
-    /* 커서 가까운 연화가 돌며 커진다. 멀어지면 천천히 제자리로 */
+    /* 가까운 꽃일수록 크게 피어난다: 바깥 잎은 시계 방향, 안 잎은 반대로 돌고 꽃 전체가 살짝 커진다 */
     function tick() {
       var busy = false;
-      roses.forEach(function (r) {
-        var goalA = 0, goalS = 1;
-        if (target) {
-          var k = Math.max(0, 1 - Math.hypot(r.x - target.x, r.y - target.y) / 150);
-          goalA = k * 90; goalS = 1 + k * 0.28;
-        }
-        r.ang += (goalA - r.ang) * 0.12;
-        r.s += (goalS - r.s) * 0.14;
-        if (Math.abs(goalA - r.ang) > 0.05 || Math.abs(goalS - r.s) > 0.002) busy = true;
-        var tf = 'translate(' + r.x + ' ' + r.y + ') rotate(' + r.ang.toFixed(2) + ') scale(' + r.s.toFixed(3) + ') translate(' + -r.x + ' ' + -r.y + ')';
-        r.a.setAttribute('transform', tf);
-        r.b.setAttribute('transform', tf);
+      flowers.forEach(function (fl) {
+        var goal = target ? Math.max(0, 1 - Math.hypot(fl.x - target.x, fl.y - target.y) / REACH) : 0;
+        goal = goal * goal * (3 - 2 * goal);
+        fl.k += (goal - fl.k) * 0.1;
+        if (Math.abs(goal - fl.k) > 0.002) busy = true;
+        var k = fl.k;
+        set(fl.g, 'scale(' + (1 + k * 0.22).toFixed(3) + ')');
+        set(fl.po, 'rotate(' + (k * 45).toFixed(2) + ') scale(' + (1 + k * 0.12).toFixed(3) + ')');
+        set(fl.pi, 'rotate(' + (-k * 70).toFixed(2) + ') scale(' + (1 - k * 0.1).toFixed(3) + ')');
       });
       if (busy || target) requestAnimationFrame(tick); else running = false;
     }
@@ -236,7 +283,7 @@ const gumRects = Array.from({ length: Math.ceil(W / SEG) }, (_, i) => i * SEG + 
 
     function reveal(e) {
       var b = stack.getBoundingClientRect();
-      setMask(e.clientX - b.left, e.clientY - b.top, b.width < 700 ? 90 : 130);
+      setMask(e.clientX - b.left, e.clientY - b.top, b.width < 700 ? 120 : 190);
       target = toSvg(e.clientX, e.clientY);
       root.classList.add('is-touched');
       kick();
@@ -255,15 +302,15 @@ const gumRects = Array.from({ length: Math.ceil(W / SEG) }, (_, i) => i * SEG + 
       setTimeout(function () {
         if (root.classList.contains('is-touched')) return;
         var b = stack.getBoundingClientRect();
-        var t0 = performance.now(), dur = 2600;
+        var t0 = performance.now(), dur = 3000;
         stack.classList.add('is-sweeping');
         (function step(now) {
           if (root.classList.contains('is-touched')) { stack.classList.remove('is-sweeping'); return; }
           var t = Math.min(1, (now - t0) / dur);
           var e = t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-          var x = -120 + e * (b.width + 240);
-          setMask(x, b.height * 0.62, 220 * Math.sin(Math.PI * t));
-          target = t < 1 ? toSvg(b.left + x, b.top + b.height * 0.62) : null;
+          var x = -160 + e * (b.width + 320);
+          setMask(x, b.height * 0.6, 280 * Math.sin(Math.PI * t));
+          target = t < 1 ? toSvg(b.left + x, b.top + b.height * 0.6) : null;
           kick();
           if (t < 1) requestAnimationFrame(step);
           else { stack.classList.remove('is-sweeping'); stack.style.setProperty('--mr', '0px'); }
@@ -287,21 +334,21 @@ const gumRects = Array.from({ length: Math.ceil(W / SEG) }, (_, i) => i * SEG + 
 
 <style>
   @property --mr { syntax: '<length>'; inherits: true; initial-value: 0px; }
-  .hanok-eave { position: relative; width: 100%; height: clamp(170px, 23.6vw, 340px); cursor: crosshair; touch-action: pan-y; }
-  .he-stack { position: absolute; inset: 0; --mx: -999px; --my: -999px; --mr: 0px; transition: --mr .45s cubic-bezier(0.22, 1, 0.36, 1); }
+  .hanok-eave { position: relative; width: 100%; height: clamp(250px, 29.9vw, 430px); cursor: crosshair; touch-action: pan-y; }
+  .he-stack { position: absolute; inset: 0; --mx: -999px; --my: -999px; --mr: 0px; transition: --mr .5s cubic-bezier(0.22, 1, 0.36, 1); }
   .he-stack.is-sweeping { transition: none; }
   .he-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; overflow: hidden; }
 
   /* 단청 채색층: 커서 둘레만 붓자국처럼 드러난다 (가장자리는 부드럽게) */
   .he-color {
-    -webkit-mask-image: radial-gradient(circle var(--mr) at var(--mx) var(--my), #000 0%, #000 45%, rgba(0,0,0,.55) 70%, transparent 100%);
-            mask-image: radial-gradient(circle var(--mr) at var(--mx) var(--my), #000 0%, #000 45%, rgba(0,0,0,.55) 70%, transparent 100%);
+    -webkit-mask-image: radial-gradient(circle var(--mr) at var(--mx) var(--my), #000 0%, #000 50%, rgba(0,0,0,.5) 75%, transparent 100%);
+            mask-image: radial-gradient(circle var(--mr) at var(--mx) var(--my), #000 0%, #000 50%, rgba(0,0,0,.5) 75%, transparent 100%);
   }
 
   .he-hint {
-    position: absolute; right: clamp(20px, 5vw, 48px); bottom: 0;
+    position: absolute; right: clamp(20px, 5vw, 48px); bottom: -4px;
     font-family: var(--font-heading); font-size: 11px; letter-spacing: 0.08em; color: var(--color-text-tertiary);
-    opacity: 0; animation: heFade .8s ease-out 4.6s forwards;
+    opacity: 0; animation: heFade .8s ease-out 5s forwards;
   }
   .hanok-eave.is-touched .he-hint { animation: none; opacity: 0; transition: opacity .4s; }
   @media (hover: none) { .he-hint { display: none; } }
@@ -312,6 +359,7 @@ const gumRects = Array.from({ length: Math.ceil(W / SEG) }, (_, i) => i * SEG + 
     animation: heDraw 1.4s cubic-bezier(0.65, 0, 0.35, 1) forwards;
     animation-delay: var(--d, 0s);
   }
+  .he-line :global(.he-draw path[stroke-dasharray]) { stroke-dasharray: .02 .03; stroke-dashoffset: 0; animation: heFade .9s ease-out forwards; animation-delay: var(--d, 0s); opacity: 0; }
   .he-line :global(.he-fade) { opacity: 0; animation: heFade .9s ease-out forwards; animation-delay: var(--d, 0s); }
   @keyframes heDraw { to { stroke-dashoffset: 0; } }
   @keyframes heFade { to { opacity: 1; } }
@@ -321,7 +369,7 @@ const gumRects = Array.from({ length: Math.ceil(W / SEG) }, (_, i) => i * SEG + 
   @keyframes heSway { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
 
   @media (prefers-reduced-motion: reduce) {
-    .he-line :global(.he-draw path) { animation: none; stroke-dashoffset: 0; }
+    .he-line :global(.he-draw path) { animation: none; stroke-dashoffset: 0; opacity: 1; }
     .he-line :global(.he-fade) { animation: none; opacity: 1; }
     .he-pung, .he-fish { animation: none; }
     .he-hint { animation: none; opacity: 1; }
