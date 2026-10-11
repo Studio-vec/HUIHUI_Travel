@@ -30,7 +30,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     <HanokEave />
     <div class="hero-inner">
       <div class="hero-mast fade-up">
-        <span class="hero-mast-l"><img src="/assets/brand/hui-glyph.svg" alt="" width="18" height="18" /> 喜喜 Travel Journal</span>
+        <span class="hero-mast-l"><img src="/assets/brand/huihui-logo.svg" alt="" width="26" height="18" /> HUIHUI Travel Journal</span>
         <span class="hero-eyebrow" id="heroEyebrow">Studio.Vec · 국내 여행 큐레이션</span>
         <span class="hero-mast-r">{allTrips.length} Courses</span>
       </div>
@@ -41,12 +41,12 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
         <span class="hero-key-cap"></span>
       </button>
       <h1 class="hero-title fade-up" id="heroTitle">
-        <em>국내 여행 안내서</em>
+        기쁜 걸음만 골라 담은<br><em>국내 여행 안내서</em>
       </h1>
       <div class="hero-foot fade-up">
         <p class="hero-desc" id="heroDesc">
-          직접 다녀온 국내 여행 코스를 공유합니다.<br>
-          소소한 기억들
+          직접 걸어 본 길을 하루 단위 코스로 엮었어요.<br>
+          동선과 시간, 현장에서 알게 된 작은 팁까지 함께 적어 둡니다.
         </p>
         <button class="hero-cta" type="button" onclick="ringBell()">
           오늘의 여행지 추천 받기 <span class="hero-cta-arrow" aria-hidden="true">→</span>
@@ -338,26 +338,26 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     const HERO_TEXTS = {
       ko: {
         eyebrow: 'Studio.Vec · 국내 여행 큐레이션',
-        title:   '<em>국내 여행 안내서</em>',
-        desc:    '직접 다녀온 국내 여행 코스를 공유합니다.<br>소소한 기억들',
+        title:   '기쁜 걸음만 골라 담은<br><em>국내 여행 안내서</em>',
+        desc:    '직접 걸어 본 길을 하루 단위 코스로 엮었어요.<br>동선과 시간, 현장에서 알게 된 작은 팁까지 함께 적어 둡니다.',
         section: '여행 코스',
       },
       en: {
         eyebrow: 'Studio.Vec · Domestic Travel Curation',
-        title:   '<em>Korea Travel Guide</em>',
-        desc:    'Curated travel courses from personal visits.<br>Little memories along the way.',
+        title:   'Joyful steps, gathered into<br><em>a Korea travel guide</em>',
+        desc:    'Day-by-day courses from roads I actually walked.<br>Routes, timing, and the small tips you only learn on site.',
         section: 'Travel Courses',
       },
       ja: {
         eyebrow: 'Studio.Vec · 国内旅行キュレーション',
-        title:   '<em>国内旅行ガイド</em>',
-        desc:    '実際に旅した国内旅行コースをシェアします。<br>ささやかな思い出とともに。',
+        title:   'うれしい足どりを集めた<br><em>国内旅行ガイド</em>',
+        desc:    '実際に歩いた道を一日単位のコースにまとめました。<br>動線と時間、現地で知った小さなヒントまで。',
         section: '旅行コース',
       },
       zh: {
         eyebrow: 'Studio.Vec · 国内旅游精选',
-        title:   '<em>国内旅行指南</em>',
-        desc:    '分享亲自探访的国内旅游路线。<br>留下美好的小记忆。',
+        title:   '收集欢喜脚步的<br><em>国内旅行指南</em>',
+        desc:    '把亲自走过的路整理成按天安排的路线。<br>动线、时间，还有现场才知道的小贴士。',
         section: '旅游路线',
       },
     };
@@ -611,40 +611,40 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     const _KNOT = 'M0 -6L6 0L0 6L-6 0Z M-3.5 -3.5C-8 -9 -1.5 -11 0 -6M3.5 -3.5C8 -9 1.5 -11 0 -6M-3.5 3.5C-8 9 -1.5 11 0 6M3.5 3.5C8 9 1.5 11 0 6M-3.5 -3.5C-9 -8 -11 -1.5 -6 0M-3.5 3.5C-9 8 -11 1.5 -6 0M3.5 -3.5C9 -8 11 -1.5 6 0M3.5 3.5C9 8 11 1.5 6 0';
     function _cardBgSVG() {
       return `<svg class="card-slot-img" viewBox="0 0 200 276" fill="none" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-<path d="M100 66V96" stroke="#B23A44" stroke-width="1.1"/>
-<g transform="translate(100 76)"><path d="${_KNOT}" stroke="#B23A44" stroke-width="1"/></g>
+<path d="M100 66V96" stroke="#EF4D6D" stroke-width="1.1"/>
+<g transform="translate(100 76)"><path d="${_KNOT}" stroke="#EF4D6D" stroke-width="1"/></g>
 </svg>`;
     }
 
     /* 준비 중: 아직 걸리지 않은 열쇠 자리 — 점선으로 그린 열쇠 윤곽 */
     function _comingSoonSVG() {
-      return `<svg style="width:46%;height:92%" viewBox="0 0 80 200" fill="none" stroke="#1A1714" stroke-opacity=".28" stroke-width="1.2" stroke-dasharray="3 4" stroke-linecap="round" aria-hidden="true">
+      return `<svg style="width:46%;height:92%" viewBox="0 0 80 200" fill="none" stroke="#202943" stroke-opacity=".28" stroke-width="1.2" stroke-dasharray="3 4" stroke-linecap="round" aria-hidden="true">
   <circle cx="40" cy="34" r="26"/><circle cx="40" cy="34" r="12"/>
   <path d="M40 60V184M40 150H54V160H46M40 168H52V178H40"/>
-  <text x="40" y="112" text-anchor="middle" font-family="Noto Sans KR,sans-serif" font-size="9" letter-spacing="3" fill="#6E6255" stroke="none">SOON</text>
+  <text x="40" y="112" text-anchor="middle" font-family="Pretendard,sans-serif" font-size="9" letter-spacing="3" fill="#646B84" stroke="none">SOON</text>
 </svg>`;
     }
 
     /* 예약: 열쇠 대신 걸어 둔 종이 꼬리표 */
     function _reservedSVG() {
       return `<svg style="width:62%;height:82%" viewBox="0 0 120 190" fill="none" aria-hidden="true">
-  <path d="M60 0V30" stroke="#B23A44" stroke-width="1.2"/>
-  <path d="M30 40L60 26L90 40V180H30Z" fill="#FBFAF6" stroke="#1A1714" stroke-width="1.2"/>
-  <circle cx="60" cy="40" r="4" stroke="#1A1714" stroke-width="1.2"/>
-  <path d="M40 70H80M40 150H80" stroke="#1A1714" stroke-opacity=".3"/>
-  <text x="60" y="114" text-anchor="middle" font-family="Noto Serif KR,serif" font-size="17" font-weight="600" fill="#1A1714">예약</text>
-  <text x="60" y="134" text-anchor="middle" font-family="Noto Sans KR,sans-serif" font-size="8" letter-spacing="3" fill="#B23A44">RESERVED</text>
+  <path d="M60 0V30" stroke="#EF4D6D" stroke-width="1.2"/>
+  <path d="M30 40L60 26L90 40V180H30Z" fill="#FBF7F0" stroke="#202943" stroke-width="1.2"/>
+  <circle cx="60" cy="40" r="4" stroke="#202943" stroke-width="1.2"/>
+  <path d="M40 70H80M40 150H80" stroke="#202943" stroke-opacity=".3"/>
+  <text x="60" y="114" text-anchor="middle" font-family="Pretendard,sans-serif" font-size="17" font-weight="600" fill="#202943">예약</text>
+  <text x="60" y="134" text-anchor="middle" font-family="Pretendard,sans-serif" font-size="8" letter-spacing="3" fill="#EF4D6D">RESERVED</text>
 </svg>`;
     }
 
     const _placeholderKey = `<svg style="width:60%;height:70%" viewBox="0 0 80 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="40" cy="38" r="30" stroke="#B23A44" stroke-width="2.5" fill="rgba(232,163,163,0.15)"/>
+<circle cx="40" cy="38" r="30" stroke="#EF4D6D" stroke-width="2.5" fill="rgba(232,163,163,0.15)"/>
 <circle cx="40" cy="38" r="20" stroke="#D06A6E" stroke-width="1.8" fill="rgba(250,234,235,0.25)"/>
-<circle cx="40" cy="38" r="8" fill="rgba(178,58,68,0.25)" stroke="#B23A44" stroke-width="1.5"/>
-<rect x="37" y="68" width="6" height="100" rx="3" fill="rgba(178,58,68,0.35)" stroke="#B23A44" stroke-width="1.5"/>
-<rect x="43" y="110" width="12" height="8" rx="2" fill="rgba(178,58,68,0.45)" stroke="#B23A44" stroke-width="1.2"/>
-<rect x="43" y="126" width="8"  height="8" rx="2" fill="rgba(178,58,68,0.45)" stroke="#B23A44" stroke-width="1.2"/>
-<rect x="43" y="142" width="12" height="8" rx="2" fill="rgba(178,58,68,0.45)" stroke="#B23A44" stroke-width="1.2"/>
+<circle cx="40" cy="38" r="8" fill="rgba(239,77,109,0.25)" stroke="#EF4D6D" stroke-width="1.5"/>
+<rect x="37" y="68" width="6" height="100" rx="3" fill="rgba(239,77,109,0.35)" stroke="#EF4D6D" stroke-width="1.5"/>
+<rect x="43" y="110" width="12" height="8" rx="2" fill="rgba(239,77,109,0.45)" stroke="#EF4D6D" stroke-width="1.2"/>
+<rect x="43" y="126" width="8"  height="8" rx="2" fill="rgba(239,77,109,0.45)" stroke="#EF4D6D" stroke-width="1.2"/>
+<rect x="43" y="142" width="12" height="8" rx="2" fill="rgba(239,77,109,0.45)" stroke="#EF4D6D" stroke-width="1.2"/>
 </svg>`;
 
     function _onKeyImgError(img) { img.outerHTML = _placeholderKey; }
@@ -1033,14 +1033,15 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     .hero-eyebrow { font-weight: 500; color: var(--color-text-primary); }
     .hero-title {
       font-family: var(--font-display);
-      font-size: clamp(44px, 9vw, 112px);
-      font-weight: 600;
-      line-height: 1.02;
-      letter-spacing: -0.035em;
+      font-size: clamp(38px, 7.2vw, 96px);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.045em;
+      word-break: keep-all;
       color: var(--color-text-primary);
       margin: clamp(var(--space-6), 4vw, var(--space-12)) 0 clamp(var(--space-6), 3vw, var(--space-10));
     }
-    .hero-title em { font-style: normal; }
+    .hero-title em { font-style: normal; color: var(--yeonji-500); }
     .hero-foot {
       display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-5);
       padding-top: var(--space-5);
@@ -1162,7 +1163,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     .hero-key:hover, .hero-key:focus-visible { animation-duration: 1.8s; }
     .hero-key-rope { width: 1px; height: clamp(16px, 2.6vw, 34px); background: var(--yeonji-500); }
     .hero-key-knot { width: 9px; height: 9px; margin: -1px 0 3px; transform: rotate(45deg); border: 1.5px solid var(--yeonji-500); }
-    .hero-key img { width: 100%; height: auto; display: block; filter: drop-shadow(0 6px 10px rgba(26,23,20,0.18)); }
+    .hero-key img { width: 100%; height: auto; display: block; filter: drop-shadow(0 6px 10px rgba(32,41,67,0.18)); }
     .hero-key-cap {
       position: absolute; right: 0; top: 100%; margin-top: var(--space-2); white-space: nowrap;
       font-family: var(--font-heading); font-size: 11px; letter-spacing: 0.08em;
@@ -1175,8 +1176,8 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
 
     .key-card.spot { animation: spotPulse 1.1s ease-out 3; }
     @keyframes spotPulse {
-      0%   { box-shadow: 0 0 0 0 rgba(178,58,68, 0.55); }
-      100% { box-shadow: 0 0 0 22px rgba(178,58,68, 0); }
+      0%   { box-shadow: 0 0 0 0 rgba(239,77,109, 0.55); }
+      100% { box-shadow: 0 0 0 22px rgba(239,77,109, 0); }
     }
 
     /* ── hero CTA: 밑줄 친 글줄 링크 ── */
@@ -1220,7 +1221,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
       border: 1px solid var(--color-rule);
       transition: border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
     }
-    .key-card:not(.coming-soon):not(.reserved):hover .card-3d { border-color: var(--color-text-primary); box-shadow: 0 10px 28px rgba(26,23,20,0.08); }
+    .key-card:not(.coming-soon):not(.reserved):hover .card-3d { border-color: var(--color-text-primary); box-shadow: 0 10px 28px rgba(32,41,67,0.08); }
     .card-head {
       position: absolute; top: 0; left: 8%; right: 8%; height: 24%;
       display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto 1fr; align-content: start;
@@ -1257,7 +1258,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     }
     .key-card .card-key-img img {
       height: 100%; width: auto; max-width: 100%; object-fit: contain;
-      filter: drop-shadow(0 4px 6px rgba(26,23,20,0.16));
+      filter: drop-shadow(0 4px 6px rgba(32,41,67,0.16));
     }
     .card-key-img > * { transform-origin: center top; }
     .key-card:not(.coming-soon):not(.reserved):hover .card-key-img > * {
@@ -1411,7 +1412,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
       background: var(--color-surface);
       border-radius: 50%;
       border: 1px solid var(--color-text-primary);
-      box-shadow: 0 4px 14px rgba(26,23,20,0.08);
+      box-shadow: 0 4px 14px rgba(32,41,67,0.08);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1433,7 +1434,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     }
     .bell-wrapper:hover {
       background: #fff;
-      box-shadow: 0 8px 22px rgba(26,23,20,0.14);
+      box-shadow: 0 8px 22px rgba(32,41,67,0.14);
     }
     .bell-inner {
       width: 62%;
@@ -1482,7 +1483,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
       line-height: 1; padding: 4px; border-radius: 6px;
       transition: color .15s, background .15s;
     }
-    .rec-close:hover { color: var(--color-text-primary); background: rgba(178,58,68,0.08); }
+    .rec-close:hover { color: var(--color-text-primary); background: rgba(239,77,109,0.08); }
     .rec-header { text-align: center; margin-bottom: var(--space-5); }
     .rec-icon-wrap {
       width: 44px; height: 44px; background: var(--yeonji-100);
@@ -1501,7 +1502,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
       display: flex; align-items: center; gap: 18px;
       padding: 16px 16px 14px; border-radius: var(--radius-xl);
       background: var(--yeonji-50);
-      border: 1px solid rgba(178,58,68,0.12);
+      border: 1px solid rgba(239,77,109,0.12);
       margin-bottom: 14px;
     }
     /* 키 이미지 스테이지 — 세로로 긴 키 헤드 위주로 표시 */
@@ -1532,7 +1533,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
       display: inline-flex; align-items: center; gap: 5px;
       margin-top: 10px; padding: 4px 10px;
       background: rgba(255,255,255,0.8); border-radius: 999px;
-      border: 1px solid rgba(178,58,68,0.15);
+      border: 1px solid rgba(239,77,109,0.15);
       font-size: var(--text-xs); color: var(--color-text-secondary);
     }
     .rec-single-weather-loading {

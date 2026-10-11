@@ -1,7 +1,7 @@
 /**
  * 파비콘 생성 스크립트 (한 번 실행해서 결과물을 커밋한다)
  *
- * 브랜드 아이콘: 밤빛 바탕 + 금테 + 연지 喜 (public/assets/brand/hui-app-icon.svg)
+ * 브랜드 아이콘: 오프화이트 바탕 위 囍 로고 (public/assets/brand/hui-app-icon.svg)
  *
  * 출력 (public/):
  *   favicon.ico          16·32·48px PNG를 담은 ICO (브라우저가 기본으로 요청하는 경로)
@@ -15,7 +15,7 @@ import sharp from 'sharp';
 import fs from 'fs';
 
 const W = 1024; // 합성 작업 해상도
-/* 전통 테마: 喜 매듭 글자 아이콘(public/assets/brand/hui-app-icon.svg) 하나로 모든 크기를 만든다 */
+/* 囍 로고 아이콘(public/assets/brand/hui-app-icon.svg) 하나로 모든 크기를 만든다 */
 const bell = await sharp('public/assets/brand/hui-app-icon.svg', { density: 600 }).resize({ width: W }).png().toBuffer();
 
 async function square(size, { pad = 0.04, bg = { r: 0, g: 0, b: 0, alpha: 0 } } = {}) {

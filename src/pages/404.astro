@@ -34,7 +34,7 @@ const first = rooms[0];
 
   <main class="nf" id="main">
     <div class="nf-inner">
-      <div class="hh-mast"><span>喜喜 Travel Journal</span><b>404 · Not Found</b><span>빈 방</span></div>
+      <div class="hh-mast"><span>HUIHUI Travel Journal</span><b>404 · Not Found</b><span>빈 방</span></div>
 
       <div class="nf-grid">
         <div class="nf-copy">
@@ -72,11 +72,11 @@ const first = rooms[0];
               <canvas class="hanji" data-side={side} aria-hidden="true"></canvas>
               <svg class="sal" viewBox="0 0 100 260" preserveAspectRatio="none" aria-hidden="true">
                 <!-- 띠살: 세로살 여섯 + 위·가운데·아래 가로살 묶음 -->
-                <g stroke="#1A1714" stroke-width="2.4" vector-effect="non-scaling-stroke">
+                <g stroke="#202943" stroke-width="2.4" vector-effect="non-scaling-stroke">
                   {[1, 2, 3, 4, 5].map((i) => <line x1={i * 100 / 6} y1="0" x2={i * 100 / 6} y2="260" />)}
                   {[22, 30, 38, 126, 134, 222, 230, 238].map((y) => <line x1="0" y1={y} x2="100" y2={y} />)}
                 </g>
-                <rect x="0" y="0" width="100" height="260" fill="none" stroke="#1A1714" stroke-width="6" vector-effect="non-scaling-stroke" />
+                <rect x="0" y="0" width="100" height="260" fill="none" stroke="#202943" stroke-width="6" vector-effect="non-scaling-stroke" />
               </svg>
               <span class="handle" aria-hidden="true"></span>
             </div>
@@ -270,7 +270,7 @@ const first = rooms[0];
   .door {
     position: relative; width: calc(100% - 22px); aspect-ratio: 3 / 4;
     background: #120F0D; overflow: hidden;
-    box-shadow: 0 0 0 10px #2A221C, 0 0 0 11px var(--color-text-primary), 0 30px 60px -30px rgba(26,23,20,0.5);
+    box-shadow: 0 0 0 10px #2A221C, 0 0 0 11px var(--color-text-primary), 0 30px 60px -30px rgba(32,41,67,0.5);
     margin: 11px;
   }
   .door-frame { position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.6); }
@@ -298,7 +298,7 @@ const first = rooms[0];
   .room {
     position: absolute; inset: 0; z-index: 1;
     display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-    padding-top: 6%; text-decoration: none; color: #F4F1EA;
+    padding-top: 6%; text-decoration: none; color: #F7F0E5;
     background: radial-gradient(ellipse at 50% 30%, #3A2C20 0%, #1A1410 55%, #0E0B09 100%);
   }
   .room-light {

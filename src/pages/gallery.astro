@@ -28,7 +28,7 @@ const galleryDestinations = allTrips.map((t) => ({
 
 
 <div class="page-header">
-  <div class="hh-mast"><span>喜喜 Travel Journal</span><b class="page-eyebrow">Gallery</b><span>{allTrips.length} Keys</span></div>
+  <div class="hh-mast"><span>HUIHUI Travel Journal</span><b class="page-eyebrow">Gallery</b><span>{allTrips.length} Keys</span></div>
   <h1 class="page-title">모든 여행의 장면들</h1>
   <p class="page-desc">처마 아래 걸린 열쇠를 눌러 여행의 기억을 열어보세요</p>
   <div class="search-wrap">
@@ -571,7 +571,7 @@ renderKeyRack();
     .navbar {
       position:sticky; top:0; z-index:50;
       background:rgba(247,241,227,0.82); backdrop-filter:blur(16px);
-      border-bottom:1px solid rgba(178,58,68,0.15);
+      border-bottom:1px solid rgba(239,77,109,0.15);
       height:56px; padding:0 clamp(20px,5vw,48px);
       display:flex; align-items:center; gap:24px;
     }
@@ -659,7 +659,7 @@ renderKeyRack();
       width:100%; height:100%; object-fit:contain; object-position:top center;
       transform-origin:50% 0%;
       transition:transform 0.35s var(--ease-out), filter 0.3s;
-      filter: drop-shadow(0 8px 14px rgba(26,23,20,0.16));
+      filter: drop-shadow(0 8px 14px rgba(32,41,67,0.16));
     }
     .key-item.unvisited .key-img { filter:grayscale(1) contrast(.9) opacity(.55); }
     .key-item.visited:hover .key-img { animation:keySwing 0.9s ease-in-out; }
@@ -899,13 +899,13 @@ renderKeyRack();
     .navbar-search-wrap input {
       font-family:var(--font-heading); font-size:12px; color:var(--color-text-secondary);
       background:rgba(255,255,255,0.7); backdrop-filter:blur(8px);
-      border:1px solid rgba(178,58,68,0.25); border-radius:999px;
+      border:1px solid rgba(239,77,109,0.25); border-radius:999px;
       padding:7px 18px 7px 34px; outline:none;
       width:clamp(130px,28vw,180px);
       transition:border-color 0.2s,background 0.2s;
     }
     .navbar-search-wrap input::placeholder { color:var(--color-text-tertiary); }
-    .navbar-search-wrap input:focus { background:rgba(255,255,255,0.95); border-color:rgba(178,58,68,0.5); }
+    .navbar-search-wrap input:focus { background:rgba(255,255,255,0.95); border-color:rgba(239,77,109,0.5); }
 
     /* ── HAMBURGER & MOBILE MENU ── */
     .hamburger-btn {
@@ -919,7 +919,7 @@ renderKeyRack();
     .mobile-menu {
       position:fixed; top:56px; left:0; right:0; z-index:49;
       background:rgba(247,241,227,0.97); backdrop-filter:blur(20px);
-      border-bottom:1px solid rgba(178,58,68,0.12);
+      border-bottom:1px solid rgba(239,77,109,0.12);
       padding:8px 12px 14px; display:none; flex-direction:column;
       box-shadow:0 8px 32px rgba(70,35,25,0.1);
     }
@@ -932,7 +932,7 @@ renderKeyRack();
       transition:color 0.15s,background 0.15s;
       background:none; border:none; cursor:pointer; width:100%; text-align:left;
     }
-    .mm-item:hover { color:var(--yeonji-600); background:rgba(178,58,68,0.08); }
+    .mm-item:hover { color:var(--yeonji-600); background:rgba(239,77,109,0.08); }
     .mm-item.active { color:var(--yeonji-600); font-weight:600; }
 
     @media (max-width:767px) {

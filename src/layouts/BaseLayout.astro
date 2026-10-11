@@ -33,7 +33,7 @@ const ogImageUrl = ogImage && Astro.site ? new URL(ogImage, Astro.site).href : o
   <!-- PC/모바일 화면 전환: 다른 스크립트보다 먼저 동기 실행 -->
   <script src={asset('/assets/js/view-mode.js')} is:inline></script>
   <title>{title}</title>
-  <!-- 파비콘: 喜 브랜드 아이콘 (scripts/make_favicon.mjs로 생성) -->
+  <!-- 파비콘: 囍 로고 아이콘 (scripts/make_favicon.mjs로 생성) -->
   <link rel="icon" href="/favicon.ico" sizes="48x48" />
   <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32" />
   <link rel="icon" type="image/png" href="/icon-192.png" sizes="192x192" />
@@ -58,9 +58,9 @@ const ogImageUrl = ogImage && Astro.site ? new URL(ogImage, Astro.site).href : o
   {ads && <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3271578034191442" crossorigin="anonymous"></script>}
 
   <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <!-- Pretendard: 모던 산세리프 하나로 제목·본문을 모두 쓴다 (전통 장식과 대비) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
 
   <!-- Design tokens -->
   <link rel="stylesheet" href={asset('/assets/css/tokens.css')} />

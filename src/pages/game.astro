@@ -27,7 +27,7 @@ const tripList = publicTrips()
 
 <!-- ══ START: SCENARIO SELECTION ══ -->
 <div class="screen active" id="screen-start">
-  <div class="hh-mast game-mast"><span>喜喜 Travel Journal</span><b>Packing Game</b><span>{tripList.length} Trips</span></div>
+  <div class="hh-mast game-mast"><span>HUIHUI Travel Journal</span><b>Packing Game</b><span>{tripList.length} Trips</span></div>
   <h1 class="start-title">짐 싸기</h1>
   <p class="start-sub">어떤 여행을 떠나시나요?<br>힌트를 보고 딱 맞는 짐을 골라보세요!</p>
   <div class="scenario-grid" id="scenarioGrid"></div>
@@ -1470,28 +1470,28 @@ function confirmCustomItem(){if(!pendingDataUrl)return;const name=$('itemNameInp
   html { height:100%; }
   body {
     background:var(--color-bg); color:var(--color-text-primary);
-    font-family:'Noto Sans KR','Noto Sans KR',sans-serif;
+    font-family:'Pretendard Variable', Pretendard, -apple-system, sans-serif;
     min-height:100vh; user-select:none; -webkit-user-select:none; overflow-x:hidden;
   }
 
   /* ── NAVBAR ── */
-  .navbar { position:sticky; top:0; z-index:50; background:rgba(247,241,227,0.82); backdrop-filter:blur(16px); border-bottom:1px solid rgba(178,58,68,0.15); height:56px; padding:0 clamp(20px,5vw,48px); display:flex; align-items:center; gap:24px; }
-  .navbar-logo { font-family:'Noto Serif KR',serif; font-size:20px; font-style:italic; font-weight:600; color:var(--yeonji-600); text-decoration:none; }
+  .navbar { position:sticky; top:0; z-index:50; background:rgba(247,241,227,0.82); backdrop-filter:blur(16px); border-bottom:1px solid rgba(239,77,109,0.15); height:56px; padding:0 clamp(20px,5vw,48px); display:flex; align-items:center; gap:24px; }
+  .navbar-logo { font-family:'Pretendard Variable', Pretendard, -apple-system, sans-serif; font-size:20px; font-style:italic; font-weight:600; color:var(--yeonji-600); text-decoration:none; }
   .navbar-links { display:flex; list-style:none; gap:4px; }
   .navbar-links a { font-size:13px; font-weight:500; color:var(--color-text-secondary); text-decoration:none; padding:8px 12px; border-radius:10px; transition:color .15s,background .15s; }
   .navbar-links a:hover,.navbar-links a.active { color:var(--yeonji-600); background:var(--yeonji-50); }
   .navbar-center-search { display:none; flex:1; justify-content:center; align-items:center; }
   .navbar-center-search .cs-inner { position:relative; display:inline-flex; align-items:center; }
   .navbar-center-search .cs-icon { position:absolute; left:13px; pointer-events:none; color:var(--yeonji-600); display:flex; align-items:center; }
-  .navbar-center-search input { font-family:var(--font-heading); font-size:12px; color:var(--color-text-secondary); background:rgba(255,255,255,0.7); backdrop-filter:blur(8px); border:1px solid rgba(178,58,68,0.25); border-radius:999px; padding:7px 18px 7px 34px; outline:none; width:clamp(130px,28vw,180px); transition:border-color .2s,background .2s; }
+  .navbar-center-search input { font-family:var(--font-heading); font-size:12px; color:var(--color-text-secondary); background:rgba(255,255,255,0.7); backdrop-filter:blur(8px); border:1px solid rgba(239,77,109,0.25); border-radius:999px; padding:7px 18px 7px 34px; outline:none; width:clamp(130px,28vw,180px); transition:border-color .2s,background .2s; }
   .navbar-center-search input::placeholder { color:var(--color-text-tertiary); }
-  .navbar-center-search input:focus { background:rgba(255,255,255,.95); border-color:rgba(178,58,68,.5); }
+  .navbar-center-search input:focus { background:rgba(255,255,255,.95); border-color:rgba(239,77,109,.5); }
   .hamburger-btn { display:none; flex-shrink:0; margin-left:auto; background:none; border:none; cursor:pointer; width:36px; height:36px; border-radius:10px; align-items:center; justify-content:center; color:var(--yeonji-600); transition:background .15s; }
   .hamburger-btn:hover { background:var(--yeonji-50); }
-  .mobile-menu { position:fixed; top:56px; left:0; right:0; z-index:49; background:rgba(247,241,227,0.97); backdrop-filter:blur(20px); border-bottom:1px solid rgba(178,58,68,0.12); padding:8px 12px 14px; display:none; flex-direction:column; box-shadow:0 8px 32px rgba(70,35,25,0.1); }
+  .mobile-menu { position:fixed; top:56px; left:0; right:0; z-index:49; background:rgba(247,241,227,0.97); backdrop-filter:blur(20px); border-bottom:1px solid rgba(239,77,109,0.12); padding:8px 12px 14px; display:none; flex-direction:column; box-shadow:0 8px 32px rgba(70,35,25,0.1); }
   .mobile-menu.open { display:flex; }
   .mm-item { font-family:var(--font-heading); font-size:15px; font-weight:500; color:var(--color-text-secondary); text-decoration:none; padding:11px 14px; border-radius:12px; display:flex; align-items:center; gap:10px; transition:color .15s,background .15s; background:none; border:none; cursor:pointer; width:100%; text-align:left; }
-  .mm-item:hover { color:var(--yeonji-600); background:rgba(178,58,68,0.08); }
+  .mm-item:hover { color:var(--yeonji-600); background:rgba(239,77,109,0.08); }
   .mm-item.active { color:var(--yeonji-600); font-weight:600; }
   @media (max-width:767px) { .navbar-links{display:none!important;} .hamburger-btn{display:flex;} .navbar-center-search{display:flex;} }
 
@@ -1501,7 +1501,7 @@ function confirmCustomItem(){if(!pendingDataUrl)return;const name=$('itemNameInp
 
   /* ══ START ══ */
   #screen-start { min-height:calc(100vh - 56px); justify-content:center; gap:22px; padding:36px 20px 60px; }
-  .start-title { font-family:'Noto Serif KR',serif; font-style:italic; font-size:clamp(30px,6vw,50px); text-align:center; }
+  .start-title { font-family:'Pretendard Variable', Pretendard, -apple-system, sans-serif; font-style:italic; font-size:clamp(30px,6vw,50px); text-align:center; }
   .start-sub { font-size:15px; color:var(--color-text-secondary); text-align:center; max-width:340px; line-height:1.6; }
 
   /* SCENARIO GRID */
@@ -1657,7 +1657,7 @@ function confirmCustomItem(){if(!pendingDataUrl)return;const name=$('itemNameInp
   #screen-result { min-height:calc(100vh - 56px); justify-content:center; gap:18px; padding:40px 20px 60px; }
   .res-scenario-tag { display:flex; align-items:center; gap:6px; background:var(--yeonji-100); color:var(--yeonji-700); border-radius:99px; padding:6px 16px; font-size:12px; font-weight:600; }
   .result-emoji { font-size:64px; }
-  .result-title { font-family:'Noto Serif KR',serif; font-style:italic; font-size:32px; text-align:center; }
+  .result-title { font-family:'Pretendard Variable', Pretendard, -apple-system, sans-serif; font-style:italic; font-size:32px; text-align:center; }
 
   .score-breakdown { background:#fff; border-radius:14px; padding:16px 20px; max-width:360px; width:100%; box-shadow:0 2px 12px rgba(0,0,0,0.06); display:flex; flex-direction:column; gap:8px; }
   .score-row { display:flex; justify-content:space-between; align-items:center; font-size:14px; color:var(--color-text-secondary); }
@@ -1709,7 +1709,7 @@ function confirmCustomItem(){if(!pendingDataUrl)return;const name=$('itemNameInp
   .modal-backdrop { position:fixed; inset:0; z-index:200; background:rgba(30,15,5,.55); backdrop-filter:blur(6px); display:none; align-items:center; justify-content:center; padding:20px; }
   .modal-backdrop.open { display:flex; }
   .modal-box { background:#fff; border-radius:24px; padding:28px 24px; max-width:400px; width:100%; box-shadow:0 24px 64px rgba(0,0,0,.25); display:flex; flex-direction:column; gap:20px; max-height:90vh; overflow-y:auto; }
-  .modal-title { font-family:'Noto Serif KR',serif; font-style:italic; font-size:22px; color:var(--color-text-primary); }
+  .modal-title { font-family:'Pretendard Variable', Pretendard, -apple-system, sans-serif; font-style:italic; font-size:22px; color:var(--color-text-primary); }
   .modal-step { display:none; flex-direction:column; gap:16px; }
   .modal-step.active { display:flex; }
   .drop-zone { border:2px dashed var(--color-border); border-radius:16px; padding:32px 20px; text-align:center; cursor:pointer; transition:border-color .15s,background .15s; display:flex; flex-direction:column; align-items:center; gap:10px; }
@@ -1778,7 +1778,7 @@ function confirmCustomItem(){if(!pendingDataUrl)return;const name=$('itemNameInp
   .scenario-card {
     background: var(--color-surface); border: 1px solid var(--color-rule); border-radius: 0;
   }
-  .scenario-card:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(26,23,20,0.08); border-color: var(--color-text-primary); }
+  .scenario-card:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(32,41,67,0.08); border-color: var(--color-text-primary); }
   .sc-key-wrap { background: transparent; border-bottom: 1px solid var(--color-rule); }
   .sc-title { font-family: var(--font-display); font-size: 14px; font-weight: 600; }
   .detail-card, .modal-box { border-radius: 2px !important; border-top: 2px solid var(--color-text-primary); box-shadow: var(--shadow-lg); }

@@ -4,15 +4,15 @@
    각 페이지의 <style is:global> 보다 늦게 적용되도록 html body 로 한 단계 높여 쓴다.
    ============================================================ */
 html body {
-  --purple: #B23A44;
-  --purple-mid: #952F39;
-  --purple-light: rgba(26,23,20,0.14);
+  --purple: #EF4D6D;
+  --purple-mid: #C9304F;
+  --purple-light: rgba(32,41,67,0.14);
   --purple-pale: #F0E6E1;
-  --cream: #FBFAF6;
-  --green: #6E6255;
-  --text: #1A1714;
-  --text-mid: #5A4E44;
-  --text-dim: #6E6255;
+  --cream: #FBF7F0;
+  --green: #646B84;
+  --text: #202943;
+  --text-mid: #4E5672;
+  --text-dim: #646B84;
   background: var(--color-bg);
 }
 
@@ -30,10 +30,10 @@ html body .section-card {
   border: 1px solid var(--color-rule); border-top: 2px solid var(--color-text-primary);
 }
 
-/* 머리: HH 동그라미 → 喜 낙관 */
+/* 머리: HH 동그라미 → 囍 로고 */
 html body .hotel-badge, html body .logo-circle {
-  width: 44px; height: 44px; border-radius: 0; box-shadow: none;
-  background: url('/assets/brand/hui-glyph.svg') center / contain no-repeat;
+  width: 64px; height: 45px; border-radius: 0; box-shadow: none;
+  background: url('/assets/brand/huihui-logo.svg') center / contain no-repeat;
 }
 html body .hotel-badge span, html body .logo-circle span { display: none; }
 html body .receipt-hotel { border-bottom: 1px solid var(--color-rule); }

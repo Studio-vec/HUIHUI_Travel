@@ -92,12 +92,12 @@ import Navbar from '../../components/Navbar.astro';
 <style is:global>
 
     :root {
-      --purple:       #B23A44;
-      --purple-light: #E8A3A3;
+      --purple:       #EF4D6D;
+      --purple-light: #F7A1B2;
       --purple-pale:  #F8E1DF;
-      --cream:        #F7F1E3;
+      --cream:        #F7F0E5;
       --green:        #8F9D68;
-      --text:         #231C17;
+      --text:         #202943;
       --text-mid:     #74272D;
       --text-dim:     #9D8F83;
       --error:        #c04040;
@@ -107,8 +107,8 @@ import Navbar from '../../components/Navbar.astro';
     body {
       min-height: 100vh;
       display: flex; flex-direction: column; align-items: stretch;
-      font-family: 'Noto Sans KR', sans-serif;
-      background: linear-gradient(160deg, var(--cream) 0%, #F8E3E4 50%, #E8A3A3 100%);
+      font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
+      background: linear-gradient(160deg, var(--cream) 0%, #F8E3E4 50%, #F7A1B2 100%);
     }
     .login-stage {
       flex: 1; display: flex; align-items: center; justify-content: center;
@@ -117,7 +117,7 @@ import Navbar from '../../components/Navbar.astro';
     .receipt {
       width: min(320px, 92vw); background: var(--cream);
       position: relative;
-      filter: drop-shadow(0 20px 40px rgba(178,58,68,0.22));
+      filter: drop-shadow(0 20px 40px rgba(239,77,109,0.22));
     }
     .receipt-top { width:100%; height:14px; background:var(--cream); position:relative; }
     .receipt-top::before {
@@ -133,13 +133,13 @@ import Navbar from '../../components/Navbar.astro';
     .logo-wrap { display:flex; flex-direction:column; align-items:center; padding:18px 0 14px; }
     .logo-circle {
       width:52px; height:52px; border-radius:50%;
-      background: radial-gradient(circle at 38% 32%, #E8A3A3, #E89FA4 55%, #B23A44);
+      background: radial-gradient(circle at 38% 32%, #F7A1B2, #E89FA4 55%, #EF4D6D);
       box-shadow: 2px 4px 8px rgba(0,0,0,0.12), inset -2px -4px 8px rgba(116,39,45,0.25);
       display:flex; align-items:center; justify-content:center; margin-bottom:8px;
     }
-    .logo-circle span { font-family:'Noto Serif KR',serif; font-size:0.85rem; font-weight:900; color:white; letter-spacing:0.05em; }
-    .receipt-title { font-family:'Noto Serif KR',serif; font-size:1.2rem; font-weight:900; color:var(--purple); }
-    .receipt-sub { font-family:'Noto Serif KR',serif; font-style:italic; font-size:0.75rem; color:var(--text-dim); letter-spacing:0.15em; margin-top:2px; }
+    .logo-circle span { font-family:'Pretendard Variable', Pretendard, -apple-system, sans-serif; font-size:0.85rem; font-weight:900; color:white; letter-spacing:0.05em; }
+    .receipt-title { font-family:'Pretendard Variable', Pretendard, -apple-system, sans-serif; font-size:1.2rem; font-weight:900; color:var(--purple); }
+    .receipt-sub { font-family:'Pretendard Variable', Pretendard, -apple-system, sans-serif; font-style:italic; font-size:0.75rem; color:var(--text-dim); letter-spacing:0.15em; margin-top:2px; }
     .divider { border:none; border-top:1.5px dashed var(--purple-light); margin:12px 0; }
     .divider-solid { border:none; border-top:1px solid var(--purple-light); margin:10px 0; }
 
@@ -153,7 +153,7 @@ import Navbar from '../../components/Navbar.astro';
       width:100%; height:40px; background:white;
       border:1.5px solid var(--purple-light); border-radius:999px;
       padding:0 14px; font-size:0.82rem;
-      font-family:'Noto Sans KR',sans-serif; color:var(--text); outline:none;
+      font-family:'Pretendard Variable', Pretendard, -apple-system, sans-serif; color:var(--text); outline:none;
       transition: border-color .2s;
     }
     .input-box:focus { border-color:var(--purple); }
@@ -169,7 +169,7 @@ import Navbar from '../../components/Navbar.astro';
     .result-box.error { background:rgba(192,64,64,0.08); border:1px solid rgba(192,64,64,0.25); color:var(--error); }
     .result-box.show  { display:block; }
     .result-id {
-      font-family:'Noto Serif KR',serif; font-size:1.1rem;
+      font-family:'Pretendard Variable', Pretendard, -apple-system, sans-serif; font-size:1.1rem;
       font-weight:700; color:var(--purple); margin-top:4px;
       letter-spacing:0.04em;
     }
@@ -178,11 +178,11 @@ import Navbar from '../../components/Navbar.astro';
       width:100%; height:42px; background:var(--purple);
       border:none; border-radius:999px;
       font-size:0.75rem; font-weight:700; color:white; letter-spacing:0.1em; text-transform:uppercase;
-      cursor:pointer; font-family:'Noto Sans KR',sans-serif;
-      box-shadow:0 4px 14px rgba(178,58,68,0.3);
+      cursor:pointer; font-family:'Pretendard Variable', Pretendard, -apple-system, sans-serif;
+      box-shadow:0 4px 14px rgba(239,77,109,0.3);
       transition:transform .15s, box-shadow .15s; margin-top:4px;
     }
-    .btn-submit:hover { transform:translateY(-2px); box-shadow:0 8px 22px rgba(178,58,68,0.4); }
+    .btn-submit:hover { transform:translateY(-2px); box-shadow:0 8px 22px rgba(239,77,109,0.4); }
     .btn-submit:disabled { opacity:.6; cursor:not-allowed; transform:none !important; }
 
     .receipt-links { display:flex; justify-content:center; gap:14px; margin-top:14px; }

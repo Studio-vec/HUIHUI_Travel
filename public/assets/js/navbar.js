@@ -14,108 +14,108 @@
 .hh-navbar {
   position: sticky; top: 0; z-index: 500;
   background: rgba(244,241,234,0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(26,23,20,0.14);
+  border-bottom: 1px solid rgba(32,41,67,0.14);
   height: 60px; padding: 0 clamp(16px,4vw,48px);
   display: flex; align-items: center; gap: 28px;
 }
 .hh-navbar-logo {
   display: inline-flex; align-items: center; gap: 10px; min-height: 44px;
-  font-family: 'Noto Serif KR', Georgia, serif;
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
   font-size: 16px; font-weight: 700; letter-spacing: 0.14em;
-  color: #1A1714; text-decoration: none; flex-shrink: 0; white-space: nowrap;
+  color: #202943; text-decoration: none; flex-shrink: 0; white-space: nowrap;
 }
-.hh-navbar-logo img { width: 26px; height: 26px; display: block; }
+.hh-navbar-logo img { width: 40px; height: 28px; display: block; }
 .hh-navbar-logo small {
-  font-family: 'Noto Sans KR', sans-serif; font-size: 11px; font-weight: 400; letter-spacing: 0.08em;
-  color: #6E6255; padding-left: 10px; border-left: 1px solid rgba(26,23,20,0.2);
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif; font-size: 11px; font-weight: 400; letter-spacing: 0.08em;
+  color: #646B84; padding-left: 10px; border-left: 1px solid rgba(32,41,67,0.2);
 }
 .hh-navbar-links { display: flex; list-style: none; gap: 22px; margin: 0; padding: 0; }
 .hh-navbar-links a {
   display: inline-flex; align-items: center; min-height: 44px; white-space: nowrap;
-  font-size: 13px; font-weight: 500; letter-spacing: 0.04em; color: #5A4E44;
+  font-size: 13px; font-weight: 500; letter-spacing: 0.04em; color: #4E5672;
   text-decoration: none; position: relative;
   transition: color 150ms;
 }
 .hh-navbar-links a::after {
   content: ''; position: absolute; left: 0; right: 0; bottom: 10px; height: 1px;
-  background: #B23A44; transform: scaleX(0); transform-origin: left; transition: transform 250ms cubic-bezier(0.22,1,0.36,1);
+  background: #EF4D6D; transform: scaleX(0); transform-origin: left; transition: transform 250ms cubic-bezier(0.22,1,0.36,1);
 }
-.hh-navbar-links a:hover { color: #1A1714; }
+.hh-navbar-links a:hover { color: #202943; }
 .hh-navbar-links a:hover::after, .hh-navbar-links a.active::after { transform: scaleX(1); }
-.hh-navbar-links a.active { color: #1A1714; }
+.hh-navbar-links a.active { color: #202943; }
 .hh-navbar-search { flex: 1; display: flex; justify-content: flex-end; align-items: center; }
 .hh-search-inner { position: relative; display: inline-flex; align-items: center; }
-.hh-search-icon { position: absolute; left: 0; pointer-events: none; color: #6E6255; display: flex; align-items: center; }
+.hh-search-icon { position: absolute; left: 0; pointer-events: none; color: #646B84; display: flex; align-items: center; }
 .hh-navbar-search input {
-  font-family: inherit; font-size: 12px; color: #1A1714;
-  background: transparent; border: none; border-bottom: 1px solid rgba(26,23,20,0.25); border-radius: 0;
+  font-family: inherit; font-size: 12px; color: #202943;
+  background: transparent; border: none; border-bottom: 1px solid rgba(32,41,67,0.25); border-radius: 0;
   padding: 7px 4px 7px 20px; outline: none; width: clamp(120px,16vw,180px);
   transition: border-color .2s;
 }
 .hh-navbar-search input::placeholder { color: #8A7D6E; }
-.hh-navbar-search input:focus { border-color: #1A1714; }
+.hh-navbar-search input:focus { border-color: #202943; }
 .hh-user-area { display: flex; align-items: center; flex-shrink: 0; }
 .hh-login-btn {
-  font-size: 12px; font-weight: 500; letter-spacing: 0.06em; color: #F4F1EA;
+  font-size: 12px; font-weight: 500; letter-spacing: 0.06em; color: #F7F0E5;
   text-decoration: none; padding: 8px 16px; white-space: nowrap;
-  background: #1A1714; border-radius: 2px; transition: background .15s;
+  background: #202943; border-radius: 2px; transition: background .15s;
 }
-.hh-login-btn:hover { background: #B23A44; }
+.hh-login-btn:hover { background: #EF4D6D; }
 .hh-user-btn {
   display: flex; align-items: center; gap: 8px;
   text-decoration: none; padding: 4px 4px; max-width: 160px;
 }
-.hh-user-btn:hover .hh-user-nick { color: #1A1714; }
+.hh-user-btn:hover .hh-user-nick { color: #202943; }
 .hh-avatar {
   width: 26px; height: 26px; border-radius: 2px;
-  background: #B23A44; color: #F4F1EA; font-size: 12px; font-weight: 700;
+  background: #EF4D6D; color: #F7F0E5; font-size: 12px; font-weight: 700;
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
-.hh-user-nick { font-size: 12px; font-weight: 500; color: #5A4E44; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hh-user-nick { font-size: 12px; font-weight: 500; color: #4E5672; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .hh-hamburger {
   display: none; flex-shrink: 0; margin-left: 4px;
   background: none; border: none; cursor: pointer;
   width: 44px; height: 44px; border-radius: 2px;
-  align-items: center; justify-content: center; color: #1A1714;
+  align-items: center; justify-content: center; color: #202943;
 }
 .hh-mobile-menu {
   position: fixed; top: 60px; left: 0; right: 0; z-index: 499;
   background: rgba(244,241,234,0.98); backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(26,23,20,0.14);
+  border-bottom: 1px solid rgba(32,41,67,0.14);
   padding: 8px 20px 16px; display: none; flex-direction: column;
 }
 .hh-mobile-menu.open { display: flex; }
 .hh-mm-item {
-  font-family: 'Noto Serif KR', Georgia, serif;
-  font-size: 18px; font-weight: 500; color: #1A1714;
-  text-decoration: none; padding: 12px 0; border-bottom: 1px solid rgba(26,23,20,0.08);
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
+  font-size: 18px; font-weight: 500; color: #202943;
+  text-decoration: none; padding: 12px 0; border-bottom: 1px solid rgba(32,41,67,0.08);
   display: flex; align-items: center; gap: 10px;
   background: none; border-left: none; border-right: none; border-top: none;
   cursor: pointer; width: 100%; text-align: left;
 }
-.hh-mm-item:hover { color: #B23A44; }
-.hh-mm-item.active { color: #B23A44; }
+.hh-mm-item:hover { color: #EF4D6D; }
+.hh-mm-item.active { color: #EF4D6D; }
 .hh-mm-divider { border: none; margin: 6px 0; }
 .hh-mm-logout {
-  font-size: 13px; color: #6E6255; padding: 10px 0;
+  font-size: 13px; color: #646B84; padding: 10px 0;
   background: none; border: none; cursor: pointer; width: 100%; text-align: left;
 }
-.hh-mm-logout:hover { color: #B23A44; }
+.hh-mm-logout:hover { color: #EF4D6D; }
 .hh-view-btn, .hh-lang-btn {
   display: flex; align-items: center; gap: 6px; flex-shrink: 0;
-  font-family: inherit; font-size: 12px; font-weight: 500; letter-spacing: 0.04em; color: #5A4E44;
+  font-family: inherit; font-size: 12px; font-weight: 500; letter-spacing: 0.04em; color: #4E5672;
   background: none; border: none; border-radius: 0; padding: 6px 2px; cursor: pointer; white-space: nowrap;
   transition: color .15s;
 }
-.hh-view-btn:hover, .hh-lang-btn:hover { color: #1A1714; }
+.hh-view-btn:hover, .hh-lang-btn:hover { color: #202943; }
 .hh-view-btn svg, .hh-mm-item svg { flex-shrink: 0; }
 .hh-lang-wrap { position: relative; flex-shrink: 0; }
 .hh-lang-btn svg { flex-shrink: 0; transition: transform .2s; }
 .hh-lang-btn.open svg { transform: rotate(180deg); }
 .hh-lang-dropdown {
   position: absolute; top: calc(100% + 10px); right: 0;
-  background: #FBFAF6; border: 1px solid rgba(26,23,20,0.16); border-radius: 2px;
-  box-shadow: 0 12px 32px rgba(26,23,20,0.10);
+  background: #FBF7F0; border: 1px solid rgba(32,41,67,0.16); border-radius: 2px;
+  box-shadow: 0 12px 32px rgba(32,41,67,0.10);
   min-width: 128px; overflow: hidden;
   opacity: 0; transform: translateY(-6px); pointer-events: none;
   transition: opacity .18s, transform .18s; z-index: 600;
@@ -123,20 +123,20 @@
 .hh-lang-dropdown.open { opacity: 1; transform: translateY(0); pointer-events: auto; }
 .hh-lang-opt {
   display: flex; align-items: center; gap: 8px;
-  font-size: 13px; font-weight: 500; color: #5A4E44;
+  font-size: 13px; font-weight: 500; color: #4E5672;
   padding: 10px 16px; cursor: pointer; font-family: inherit;
   border: none; background: none; width: 100%; text-align: left;
 }
-.hh-lang-opt:hover { color: #1A1714; background: rgba(26,23,20,0.04); }
-.hh-lang-opt.selected { color: #B23A44; font-weight: 700; }
+.hh-lang-opt:hover { color: #202943; background: rgba(32,41,67,0.04); }
+.hh-lang-opt.selected { color: #EF4D6D; font-weight: 700; }
 .hh-mm-lang-row { display: flex; gap: 16px; padding: 12px 0; flex-wrap: wrap; }
 .hh-mm-lang-chip {
-  font-size: 13px; font-weight: 500; color: #6E6255; font-family: inherit;
+  font-size: 13px; font-weight: 500; color: #646B84; font-family: inherit;
   border: none; border-bottom: 1px solid transparent; border-radius: 0;
   padding: 4px 0; cursor: pointer; background: none;
 }
-.hh-mm-lang-chip:hover { color: #1A1714; }
-.hh-mm-lang-chip.selected { color: #1A1714; border-bottom-color: #B23A44; font-weight: 700; }
+.hh-mm-lang-chip:hover { color: #202943; }
+.hh-mm-lang-chip.selected { color: #202943; border-bottom-color: #EF4D6D; font-weight: 700; }
 @media (max-width: 960px) {
   .hh-navbar-search { display: none; }
   .hh-navbar-links { margin-right: auto; }
@@ -173,7 +173,7 @@
   const nav = document.createElement('nav');
   nav.className = 'hh-navbar';
   nav.innerHTML = `
-  <a href="/" class="hh-navbar-logo" aria-label="Travel HUIHUI 홈"><img src="/assets/brand/hui-glyph.svg" alt="" width="26" height="26"/>HUIHUI<small>국내 여행 안내서</small></a>
+  <a href="/" class="hh-navbar-logo" aria-label="Travel HUIHUI 홈"><img src="/assets/brand/huihui-logo.svg" alt="" width="40" height="28"/>HUIHUI<small>국내 여행 안내서</small></a>
   <ul class="hh-navbar-links">
     <li><a href="/"${homeActive}>홈</a></li>
     <li><a href="/gallery"${galleryActive}>갤러리</a></li>

@@ -44,7 +44,7 @@ body { background: var(--color-bg); color: var(--color-text-primary); }
 .hh-divider::before, .hh-divider::after { content: ''; flex: 1; height: 1px; background: currentColor; }
 .hh-divider > i { width: 7px; height: 7px; transform: rotate(45deg); border: 1.2px solid var(--yeonji-500); }
 
-/* 낙관: 연지 사각 도장 (喜 로고 이미지와 함께 쓰거나 한 글자 넣기) */
+/* 낙관: 핑크 사각 도장 (한 글자 넣을 때) */
 .hh-seal {
   display: inline-flex; align-items: center; justify-content: center;
   width: 22px; height: 22px; border-radius: 2px;
