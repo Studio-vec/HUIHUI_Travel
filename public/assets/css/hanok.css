@@ -8,17 +8,6 @@
 html { background: var(--color-bg); color-scheme: light; }
 body { background: var(--color-bg); color: var(--color-text-primary); }
 
-/* 지면 머리: 위 굵은 먹 선 + 아래 가는 선 사이에 작은 라벨 줄 */
-.hh-mast {
-  display: flex; align-items: center; justify-content: space-between; gap: 16px;
-  padding: 10px 0;
-  border-top: 2px solid var(--color-text-primary);
-  border-bottom: 1px solid var(--color-rule);
-  font-family: var(--font-heading); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--color-text-secondary);
-}
-.hh-mast b { font-weight: 500; color: var(--color-text-primary); }
-
 /* 작은 라벨 (번호·카테고리) */
 .hh-label {
   font-family: var(--font-heading); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
@@ -45,7 +34,6 @@ body { background: var(--color-bg); color: var(--color-text-primary); }
   padding: clamp(28px, 5vw, 56px) clamp(20px, 5vw, 48px) clamp(56px, 9vw, 96px);
 }
 .pp-header { margin-bottom: 40px; }
-.pp-header .hh-mast { margin-bottom: clamp(28px, 4vw, 48px); }
 .pp-eyebrow { display: none; }
 .pp-title {
   font-family: var(--font-display); font-weight: 600;

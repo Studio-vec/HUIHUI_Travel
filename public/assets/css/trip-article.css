@@ -171,9 +171,6 @@
   line-height: var(--leading-snug);
 }
 
-.ta-detail-icon {
-  margin-right: var(--space-2);
-}
 
 @media (min-width: 768px) {
   .trip-article {
@@ -198,8 +195,6 @@
 /* ============================================================
    전통 × 에디토리얼 덧칠 — 지면 머리, 큰 명조 제목, 가는 선, 연지 매듭 하나
    ============================================================ */
-.ta-mast { margin-bottom: var(--space-10); }
-.ta-mast b { text-align: center; }
 .ta-title {
   font-weight: 600; letter-spacing: -0.03em; line-height: 1.08;
   font-size: clamp(40px, 6vw, 68px);
@@ -225,7 +220,6 @@
   background: none; box-shadow: none; border-radius: 0;
 }
 .ta-note-text { font-family: var(--font-body); font-size: var(--text-md); line-height: var(--leading-loose); color: var(--color-text-primary); }
-.ta-note-avatar { filter: grayscale(.2); }
 
 /* Day: 굵은 먹 선 아래 번호와 장소 수 */
 .ta-day-title {
@@ -235,24 +229,19 @@
   color: var(--color-text-primary);
 }
 .ta-day-no { font-family: var(--font-display); font-size: clamp(24px, 3vw, 34px); font-weight: 600; letter-spacing: -0.01em; }
-.ta-day-count { font-family: var(--font-heading); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-text-tertiary); }
+.ta-day-count { font-family: var(--font-heading); font-size: 13px; color: var(--color-text-tertiary); }
 
-/* 장소: 번호 + 연지 매듭 */
+/* 장소: 상자·번호 없이 가는 선으로만 나눈다 */
 .ta-place { border-bottom: 1px solid var(--color-rule); }
-.ta-place-no {
-  position: relative; padding-right: 18px;
-  font-family: var(--font-heading); font-size: 12px; letter-spacing: 0.12em; color: var(--color-text-tertiary);
-}
-.ta-place-no::after {
-  content: ''; position: absolute; right: 2px; top: 50%; width: 6px; height: 6px;
-  transform: translateY(-50%) rotate(45deg); border: 1.2px solid var(--yeonji-500);
-}
 .ta-place-time { font-size: 12px; letter-spacing: 0.06em; order: 1; margin-left: auto; }
 .ta-place-name { font-size: clamp(22px, 2.4vw, 28px); letter-spacing: -0.015em; }
-.ta-place-head .place-tag { background: none !important; border: 1px solid currentColor; border-radius: 2px; }
+/* 분류는 뱃지 대신 지명 뒤 흐린 글자 */
+.ta-place-head .place-tag { background: none !important; border: none !important; padding: 0 !important; border-radius: 0; font-size: 13px; font-weight: 500; color: var(--color-text-tertiary) !important; }
+.ta-place-head .place-tag::before { content: '·'; margin-right: 6px; }
 
 /* 정보 표: 배경 없이 가는 선만 */
 .ta-place-details { background: none; border-top: 1px solid var(--color-text-primary); border-radius: 0; }
 .ta-place-details tr th, .ta-place-details tr td { border-bottom: 1px solid var(--color-rule) !important; }
 .ta-place-details th { padding-left: 0; font-weight: 500; font-size: 12px; letter-spacing: 0.04em; }
-.ta-closed { border-radius: 2px; color: var(--yeonji-600); background: none; border-color: var(--yeonji-300); }
+/* 휴무는 상자 없이 진한 핑크 글자로 */
+.ta-closed { border: none !important; border-radius: 0; padding: 0 !important; background: none !important; color: var(--yeonji-600) !important; font-weight: 600; }

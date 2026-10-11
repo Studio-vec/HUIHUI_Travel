@@ -46,7 +46,7 @@ const tripDescription = [
 const infoBannerHtml = tripData.infoBanner
   ? `
         <div class="info-banner">
-            <div class="info-banner-title">${tripData.infoBanner.icon ? tripData.infoBanner.icon + ' ' : ''}${tripData.infoBanner.title}</div>
+            <div class="info-banner-title">${tripData.infoBanner.title}</div>
             <div class="info-banner-text">${tripData.infoBanner.text}</div>
         </div>`
   : '';
@@ -94,17 +94,20 @@ const _body = `
                     <span class="date-static">{{ endDate }}</span>
                 </div>
             </div>
+            <section class="pre-check" aria-label="출발 전 확인">
+            <div class="pre-check-label">출발 전 확인</div>
             <div v-if="closedList.length" class="closed-banner" role="status">
-                <div class="closed-banner-title">⚠ 이 날짜엔 쉬는 곳이 {{ closedList.length }}곳 있어요</div>
+                <div class="closed-banner-title">이 날짜엔 쉬는 곳이 {{ closedList.length }}곳 있어요</div>
                 <ul class="closed-banner-list">
                     <li v-for="c in closedList" :key="c.id">Day {{ c.day }} ({{ c.wd }}) · {{ c.name }}</li>
                 </ul>
                 <div class="closed-banner-hint">출발일을 바꾸면 바로 다시 확인해요.</div>
             </div>
-            <div v-else-if="hasClosedData" class="closed-ok" role="status">✓ 이 날짜엔 정기 휴무인 곳이 없어요{{ closedNotes.length ? ' · 공휴일인지는 아래를 확인하세요' : '' }}</div>
+            <div v-else-if="hasClosedData" class="closed-ok" role="status">이 날짜엔 정기 휴무인 곳이 없어요{{ closedNotes.length ? ' · 공휴일인지는 아래를 확인하세요' : '' }}</div>
             <ul v-if="closedNotes.length" class="closed-notes" role="status">
-                <li v-for="c in closedNotes" :key="c.id">⚠ Day {{ c.day }} · {{ c.name }} · {{ c.note }}에도 쉬어요 — 그날이 해당하는지 달력에서 확인하세요</li>
-            </ul>
+                <li v-for="c in closedNotes" :key="c.id">Day {{ c.day }} · {{ c.name }} · {{ c.note }}에도 쉬어요 — 그날이 해당하는지 달력에서 확인하세요</li>
+            </ul>${infoBannerHtml}
+            </section>
             <div v-if="currentPlace" class="now-card">
                 <div class="now-eyebrow"><span class="now-dot"></span>지금 여기</div>
                 <div>
@@ -130,7 +133,7 @@ const _body = `
                     </div>
                 </div>
             </div>
-        </div>${infoBannerHtml}
+        </div>
         <div v-for="(day, dIdx) in schedule" :key="dIdx" class="day-section">
             <div class="day-label">
                 <span class="day-number">Day {{ dIdx + 1 }}</span>

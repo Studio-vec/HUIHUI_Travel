@@ -482,3 +482,17 @@ body {
 .closed-notes { color:var(--ink-2); }
 .closed-badge { border-radius:2px; background:none; color:#C9304F; border-color:currentColor; }
 .now-card { border-radius:0; }
+
+/* ── 출발 전 확인: 날짜 아래 안내들을 한 묶음으로 ── */
+.pre-check { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--line); display: grid; gap: 12px; }
+.pre-check-label { font-size: 12px; font-weight: 600; color: var(--ink-3); }
+.pre-check .closed-banner, .pre-check .closed-ok { margin: 0; }
+.pre-check .closed-notes { margin: 0; }
+.pre-check .info-banner { margin: 0; }
+
+/* ── 뱃지 대신 글자 ── */
+.place-row .place-tag { background: none !important; border: none !important; padding: 0 !important; border-radius: 0; font-size: 12px; font-weight: 500; color: var(--ink-3) !important; }
+.place-row .place-tag::before { content: '·'; margin-right: 5px; }
+.closed-badge { border: none !important; padding: 0; font-size: 12px; }
+.tip-operator-badge { background: none !important; color: #C9304F !important; padding: 0; font-weight: 600; }
+.tip-avatar { display: none; }

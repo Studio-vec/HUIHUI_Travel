@@ -27,20 +27,19 @@ const tripList = publicTrips()
 
 <!-- ══ START: SCENARIO SELECTION ══ -->
 <div class="screen active" id="screen-start">
-  <div class="hh-mast game-mast"><span>Travel HUIHUI</span><b>Packing Game</b><span>{tripList.length} Trips</span></div>
   <h1 class="start-title">짐 싸기</h1>
   <p class="start-sub">어떤 여행을 떠나시나요?<br>힌트를 보고 딱 맞는 짐을 골라보세요!</p>
   <div class="scenario-grid" id="scenarioGrid"></div>
   <div class="my-items-section">
     <div class="my-items-header">
-      <span class="my-items-title">📷 나만의 여행 아이템</span>
+      <span class="my-items-title">나만의 여행 아이템</span>
       <button class="btn-add-item" onclick="openModal()"><span>+</span> 사진 추가</button>
     </div>
     <div class="my-items-grid" id="myItemsGrid">
       <p class="my-items-empty">여행지에서 찍은 사진을 누끼 따서<br>나만의 짐으로 만들어 보세요!</p>
     </div>
   </div>
-  <div class="best-badge" id="bestBadge" style="display:none">🏆 최고 기록: <span id="bestTxt"></span>점</div>
+  <div class="best-badge" id="bestBadge" style="display:none">최고 기록 <span id="bestTxt"></span>점</div>
 
   <section class="game-about">
     <h2>짐 싸기는 어떤 게임인가요</h2>
@@ -80,7 +79,7 @@ const tripList = publicTrips()
     </div>
     <div class="detail-hints" id="detailHints"></div>
     <div class="detail-notice">
-      💡 힌트를 보고 꼭 필요한 짐을 골라보세요 <span>나중에 어떤 아이템이 추가 점수였는지 공개됩니다 😏</span>
+      힌트를 보고 꼭 필요한 짐을 골라 보세요. <span>어떤 짐이 추가 점수였는지는 끝나고 공개돼요.</span>
     </div>
   </div>
   <div class="detail-btns">
@@ -139,7 +138,7 @@ const tripList = publicTrips()
 
   <div class="game-bottom-row">
     <button class="close-btn" onclick="endGame()">반닫이 닫고 떠나기</button>
-    <button class="rotate-mobile-btn" id="rotateBtnMobile" style="display:none" onclick="rotateItem()">🔄 회전</button>
+    <button class="rotate-mobile-btn" id="rotateBtnMobile" style="display:none" onclick="rotateItem()">돌리기</button>
     <span class="rotate-hint-desk">R키로 회전</span>
   </div>
 </div>
@@ -194,7 +193,7 @@ const tripList = publicTrips()
 <!-- ══ CUSTOM ITEM MODAL ══ -->
 <div class="modal-backdrop" id="modal">
   <div class="modal-box">
-    <div class="modal-title">📷 나만의 아이템 추가</div>
+    <div class="modal-title">나만의 아이템 추가</div>
     <div class="modal-step active" id="step-upload">
       <div class="drop-zone" id="dropZone" onclick="$('fileInput').click()">
         <div class="drop-zone-icon">🖼️</div>
@@ -258,6 +257,8 @@ const tripList = publicTrips()
 //  HELPERS
 // ══════════════════════════════════════
 const $ = id => document.getElementById(id);
+/* 힌트·계절처럼 화면에 글로 보이는 곳은 이모지를 빼고 쓴다 */
+const plainText = s => String(s).replace(/[\p{Extended_Pictographic}\uFE0F\u200D]/gu, '').replace(/\s{2,}/g, ' ').trim();
 
 // rect cells helper (used inline)
 const rc = (w, h) => {
@@ -1062,7 +1063,7 @@ function renderScenarioGrid() {
       <div class="sc-info">
         <div class="sc-title">${s.title}</div>
         <div class="sc-detail">${s.detail}</div>
-        <div class="sc-season">${s.season}</div>
+        <div class="sc-season">${plainText(s.season)}</div>
       </div>
     </div>
   `).join('');
@@ -1073,8 +1074,8 @@ function selectScenario(idx) {
   $('detailEmoji').innerHTML = `<img class="detail-key-img" src="${currentScenario.keyImg}" alt="${currentScenario.title}" onerror="this.outerHTML='<span>${currentScenario.emoji}</span>'">`;
   $('detailTitle').textContent = currentScenario.title;
   $('detailSub').textContent   = currentScenario.detail;
-  $('detailSeason').textContent = currentScenario.season;
-  $('detailHints').innerHTML   = currentScenario.hints.map(h=>`<div class="detail-hint">${h}</div>`).join('');
+  $('detailSeason').textContent = plainText(currentScenario.season);
+  $('detailHints').innerHTML   = currentScenario.hints.map(h=>`<div class="detail-hint">${plainText(h)}</div>`).join('');
   showScreen('screen-detail');
 }
 
@@ -1097,7 +1098,7 @@ function startGame() {
 
   $('ghbEmoji').textContent  = currentScenario.emoji;
   $('ghbTitle').textContent  = currentScenario.title + ' · ' + currentScenario.detail;
-  $('ghbChips').innerHTML    = currentScenario.hints.map(h=>`<span class="ghb-chip">${h}</span>`).join('');
+  $('ghbChips').innerHTML    = currentScenario.hints.map(h=>`<span class="ghb-chip">${plainText(h)}</span>`).join('');
   $('timerVal').textContent  = TOTAL_SEC;
   $('timerVal').classList.remove('urgent');
   $('timerFill').style.width = '100%';
@@ -1202,7 +1203,7 @@ function endGame() {
   else if(total>=70){emoji='及第';title='급제했어요';}
   else if(total>=50){emoji='合格';title='무난히 합격';}
 
-  $('resScenarioTag').innerHTML = `<span>${currentScenario.emoji}</span>&nbsp;${currentScenario.title} · ${currentScenario.detail}`;
+  $('resScenarioTag').textContent = `${currentScenario.title} · ${currentScenario.detail}`;
   $('resEmoji').textContent   = emoji;
   $('resEmoji').dataset.len   = emoji.length;
   $('resEmoji').classList.remove('stamp'); void $('resEmoji').offsetWidth; $('resEmoji').classList.add('stamp');
@@ -1210,7 +1211,7 @@ function endGame() {
   $('resItemCount').textContent = placedCount;
   $('resPct').textContent     = fillPct;
   $('resEff').textContent     = `+${fillScore}점`;
-  $('bonusHeader').textContent = `${currentScenario.emoji} 이 여행이라서 특별 점수!`;
+  $('bonusHeader').textContent = '이 여행이라서 받는 점수';
   $('bonusList').innerHTML    = bonusResults.map((b, i) => `
     <div class="bonus-item ${b.packed?'packed':'missed'}" style="animation-delay:${0.35+i*0.10}s">
       <span class="bi-icon" aria-label="${b.packed?'챙김':'못 챙김'}">${b.packed?'○':'×'}</span>
@@ -1572,7 +1573,7 @@ function confirmCustomItem(){if(!pendingDataUrl)return;const name=$('itemNameInp
   .detail-emoji { display:flex; justify-content:center; padding:4px 0; }
   .detail-title { font-size:22px; font-weight:800; color:var(--color-text-primary); }
   .detail-tags { display:flex; flex-wrap:wrap; gap:6px; }
-  .detail-sub { display:inline-flex; align-items:center; background:var(--yeonji-100); color:var(--yeonji-700); border-radius:99px; padding:4px 12px; font-size:12px; font-weight:600; }
+  .detail-sub { font-size:13px; font-weight:600; color:var(--color-text-primary); }
   .detail-season-tag { display:inline-flex; align-items:center; background:var(--yeonji-50); color:var(--yeonji-700); border:1px solid var(--yeonji-200); border-radius:99px; padding:4px 12px; font-size:12px; font-weight:600; }
   .detail-hints { display:flex; flex-direction:column; gap:8px; }
   .detail-hint { background:var(--hanji-50,#FAF8F4); border:1px solid var(--hanji-200,#E8E0D4); border-radius:14px; padding:12px 16px; font-size:13.5px; color:var(--color-text-secondary); width:100%; box-sizing:border-box; }
@@ -1803,7 +1804,6 @@ function confirmCustomItem(){if(!pendingDataUrl)return;const name=$('itemNameInp
   /* ══════════════════════════════════════════
      전통 × 에디토리얼 덧칠 — 게임 그림(가방·아이템)은 그대로, 지면과 버튼만 먹·한지로
   ══════════════════════════════════════════ */
-  .game-mast { width: 100%; max-width: 720px; }
   .start-title { font-style: normal; font-weight: 600; letter-spacing: -0.035em; font-size: clamp(44px, 8vw, 88px); line-height: 1.04; }
   .start-sub { font-family: var(--font-body); max-width: 420px; word-break: keep-all; }
   .scenario-card {
@@ -1833,6 +1833,23 @@ function confirmCustomItem(){if(!pendingDataUrl)return;const name=$('itemNameInp
   .tray-item, .placed-item { box-shadow: 0 0 0 1px rgba(32,41,67,.55), 0 3px 8px rgba(32,41,67,.14); border-radius: 3px; }
   .tray-item:hover { box-shadow: 0 0 0 1px var(--color-text-primary), 0 8px 18px rgba(32,41,67,.18); }
   .tray-item > :first-child, .placed-item > :first-child { filter: saturate(.72) contrast(.96); }
+
+  /* 상자 대신 선: 고르는 대상(시나리오 카드)·팝업만 상자로 둔다 */
+  .ghb-emoji { display:none; }
+  .game-hint-bar { background:none; border:none; border-top:2px solid var(--color-text-primary); border-bottom:1px solid var(--color-rule); border-radius:0; padding:10px 0; }
+  .ghb-chips { gap:0; }
+  .ghb-chip { background:none !important; border:none !important; border-radius:0 !important; padding:0 !important; font-size:13px; color:var(--color-text-secondary) !important; }
+  .ghb-chip + .ghb-chip::before { content:'·'; margin:0 8px; color:var(--color-text-tertiary); }
+  .detail-card { background:none !important; box-shadow:none !important; border:none; border-top:2px solid var(--color-text-primary); border-radius:0 !important; padding:20px 0; }
+  .detail-hint { background:none !important; border:none !important; border-radius:0 !important; padding:6px 0 !important; border-bottom:1px solid var(--color-rule) !important; }
+  .bonus-reveal { border:none; border-top:2px solid var(--color-text-primary); padding:16px 0; background:none; }
+  .bonus-item { background:none !important; border-radius:0 !important; border-bottom:1px solid var(--color-rule); padding:10px 0; }
+  .res-scenario-tag { border:none !important; padding:0 !important; font-size:13px; color:var(--color-text-secondary); }
+  .best-badge { border:none !important; padding:0; font-size:13px; color:var(--color-text-secondary); }
+  .my-item-chip { background:none; border:none; border-bottom:1px solid var(--color-rule); border-radius:0 !important; }
+  .detail-season-tag { background:none !important; border:none !important; padding:0 !important; font-size:13px; font-weight:400 !important; color:var(--color-text-secondary) !important; }
+  .detail-sub + .detail-season-tag::before { content:'·'; margin:0 8px; color:var(--color-text-tertiary); }
+  .detail-tags { display:flex; align-items:baseline; flex-wrap:wrap; }
 </style>
 
   </main>

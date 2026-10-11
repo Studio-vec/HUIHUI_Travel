@@ -166,9 +166,6 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
     </svg>
   </div>
   <div class="he-petals" aria-hidden="true"></div>
-  <div class="he-bar">
-    <button type="button" class="he-sound-btn" aria-pressed="false"><svg class="he-spk" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h3l4-3v10L5 10H2z"/><path class="he-spk-on" d="M11.5 5.5a3.5 3.5 0 0 1 0 5M13.5 3.5a6.5 6.5 0 0 1 0 9"/><path class="he-spk-off" d="M11 6l4 4M15 6l-4 4"/></svg>풍경 소리 <span>끔</span></button>
-  </div>
 </div>
 
 <script is:inline>
@@ -179,7 +176,8 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
     var svg = root.querySelector('.he-svg');
     var petalsBox = root.querySelector('.he-petals');
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var soundBtn = root.querySelector('.he-sound-btn');
+    /* 풍경 소리 버튼은 히어로 글줄(추천 버튼 옆)에 있다 */
+    var soundBtn = document.querySelector('.he-sound-btn');
 
     function toSvg(cx, cy) {
       var m = svg.getScreenCTM(); if (!m) return null;
@@ -197,7 +195,7 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
     /* 오음계(솔·라·도·레·미 …): 처마 왼쪽 풍경은 낮게, 오른쪽으로 갈수록 높게 */
     var NOTES = [587, 659, 784, 880, 1047, 1175, 1319, 1568];
     function noteAt(x) { return NOTES[Math.max(0, Math.min(NOTES.length - 1, Math.round(x / 1440 * (NOTES.length - 1))))]; }
-    soundBtn.addEventListener('click', function () {
+    if (soundBtn) soundBtn.addEventListener('click', function () {
       soundOn = !soundOn;
       soundBtn.setAttribute('aria-pressed', String(soundOn));
       soundBtn.querySelector('span').textContent = soundOn ? '켬' : '끔';
@@ -313,7 +311,7 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
 
     /* 누르기: 가까운 꽃이 돌며 꽃잎을 날리고, 아니면 그 자리에 작은 돌풍 */
     root.addEventListener('pointerdown', function (e) {
-      if (reduce || e.target.closest('.he-bar')) return;
+      if (reduce) return;
       var p = toSvg(e.clientX, e.clientY); if (!p) return;
       var hit = flowerAt(p);
       if (hit) {
@@ -407,27 +405,6 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
   .he-petals { position: absolute; inset: 0; pointer-events: none; overflow: visible; z-index: 3; }
   .he-petals :global(svg) { position: absolute; will-change: transform, opacity; }
 
-  .he-bar {
-    position: absolute; right: clamp(20px, 5vw, 48px); bottom: 2px; z-index: 4;
-    display: flex; align-items: center; gap: 16px;
-    opacity: 0; animation: heFade .8s ease-out 3.2s forwards;
-  }
-  /* 풍경 소리 켜기: 손가락으로 누르기 좋게 44px, 스피커 그림으로 버튼임을 알린다 */
-  .he-sound-btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    min-height: 44px; padding: 0 12px; background: var(--color-bg);
-    border: 1px solid var(--color-rule-strong); border-radius: 999px;
-    font-family: var(--font-heading); font-size: 12px; font-weight: 500; letter-spacing: 0.02em; color: var(--color-text-primary); cursor: pointer;
-    transition: border-color .15s, color .15s;
-  }
-  .he-sound-btn:hover { border-color: var(--yeonji-500); }
-  .he-sound-btn span { color: var(--color-text-tertiary); }
-  .he-spk-on { display: none; }
-  .he-sound-btn[aria-pressed="true"] { border-color: var(--yeonji-500); }
-  .he-sound-btn[aria-pressed="true"] span { color: var(--yeonji-600); }
-  .he-sound-btn[aria-pressed="true"] .he-spk-on { display: inline; }
-  .he-sound-btn[aria-pressed="true"] .he-spk-off { display: none; }
-
   /* 풍경이 울릴 때 소리 자국 */
   .he-svg :global(.he-sound) { opacity: 0; }
   .he-svg :global(.he-sound.on) { animation: heRing .7s ease-out; }
@@ -446,6 +423,5 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
   @media (prefers-reduced-motion: reduce) {
     .he-svg :global(.he-draw path) { animation: none; stroke-dashoffset: 0; }
     .he-svg :global(.he-fade) { animation: none; opacity: 1; }
-    .he-bar { animation: none; opacity: 1; }
   }
 </style>

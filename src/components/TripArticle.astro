@@ -7,6 +7,8 @@ export interface Props {
 
 const { data } = Astro.props;
 const dayCount = Math.max(...data.places.map((p) => p.day));
+/* 태그 앞 이모지는 화면 장치에서 빼고 글만 쓴다 */
+const plain = (s: string) => s.replace(/^[\p{Extended_Pictographic}\uFE0F\u200D\s]+/u, '');
 const days = Array.from({ length: dayCount }, (_, i) => i + 1).map((day) => ({
   day,
   places: data.places.filter((p) => p.day === day),
@@ -15,21 +17,15 @@ const days = Array.from({ length: dayCount }, (_, i) => i + 1).map((day) => ({
 
 <article class="trip-article">
   <header class="ta-hero">
-    <div class="hh-mast ta-mast">
-      <span>Travel HUIHUI</span>
-      <b>{data.headerEyebrow}</b>
-      <span>{dayCount} Days · {data.places.length} Places</span>
-    </div>
     <h1 class="ta-title" set:html={data.headerTitleHtml} />
     <div class="ta-chips">
-      {data.tags.map((t) => <span class="ta-chip">{t}</span>)}
-      {data.meta.map((m) => <span class="ta-chip ta-chip-meta">{m}</span>)}
+      {data.tags.map((t) => <span class="ta-chip">{plain(t)}</span>)}
+      {data.meta.map((m) => <span class="ta-chip ta-chip-meta">{plain(m)}</span>)}
     </div>
   </header>
 
   {data.operatorNote && (
     <blockquote class="ta-note">
-      <span class="ta-note-avatar">{data.operatorNote.avatar}</span>
       <div>
         <p class="ta-note-text">{data.operatorNote.text}</p>
         <p class="ta-note-name">— {data.operatorNote.name}</p>
@@ -39,11 +35,10 @@ const days = Array.from({ length: dayCount }, (_, i) => i + 1).map((day) => ({
 
   {days.map(({ day, places }) => (
     <section class="ta-day">
-      <h2 class="ta-day-title"><span class="ta-day-no">Day {String(day).padStart(2, '0')}</span><span class="ta-day-count">{places.length} Places</span></h2>
-      {places.map((p, n) => (
+      <h2 class="ta-day-title"><span class="ta-day-no">Day {day}</span><span class="ta-day-count">장소 {places.length}곳</span></h2>
+      {places.map((p) => (
         <div class="ta-place">
           <div class="ta-place-head">
-            <span class="ta-place-no">{String(n + 1).padStart(2, '0')}</span>
             <span class="ta-place-time">{p.time}</span>
             <h3 class="ta-place-name">{p.name}</h3>
             <span class={`place-tag tag-${p.theme_id}`}>{p.theme}</span>
@@ -62,7 +57,6 @@ const days = Array.from({ length: dayCount }, (_, i) => i + 1).map((day) => ({
                 {p.details.map((d) => (
                   <tr>
                     <th>
-                      <span class="ta-detail-icon">{d.icon}</span>
                       {d.label}
                     </th>
                     <td>{d.value}</td>

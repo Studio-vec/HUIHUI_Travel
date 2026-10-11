@@ -16,7 +16,7 @@
   background: rgba(244,241,234,0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(32,41,67,0.14);
   height: 60px; padding: 0 clamp(16px,4vw,48px);
-  display: flex; align-items: center; gap: 28px;
+  display: flex; align-items: center; gap: 24px;
 }
 .hh-navbar-logo {
   display: inline-flex; align-items: center; gap: 10px; min-height: 44px;
@@ -47,20 +47,21 @@
 .hh-search-inner { position: relative; display: inline-flex; align-items: center; }
 .hh-search-icon { position: absolute; left: 0; pointer-events: none; color: #646B84; display: flex; align-items: center; }
 .hh-navbar-search input {
-  font-family: inherit; font-size: 12px; color: #202943;
+  font-family: inherit; font-size: 13px; color: #202943;
   background: transparent; border: none; border-bottom: 1px solid rgba(32,41,67,0.25); border-radius: 0;
   padding: 7px 4px 7px 20px; outline: none; width: clamp(120px,16vw,180px);
   transition: border-color .2s;
 }
 .hh-navbar-search input::placeholder { color: #8A7D6E; }
 .hh-navbar-search input:focus { border-color: #202943; }
-.hh-user-area { display: flex; align-items: center; flex-shrink: 0; }
+.hh-user-area { display: flex; align-items: center; flex-shrink: 0; margin-left: 4px; }
 .hh-login-btn {
-  font-size: 12px; font-weight: 500; letter-spacing: 0.06em; color: #F7F0E5;
-  text-decoration: none; padding: 8px 16px; white-space: nowrap;
-  background: #202943; border-radius: 2px; transition: background .15s;
+  display: inline-flex; align-items: center; min-height: 44px;
+  font-size: 13px; font-weight: 500; color: #202943; white-space: nowrap;
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px;
+  transition: color .15s;
 }
-.hh-login-btn:hover { background: #EF4D6D; }
+.hh-login-btn:hover { color: #C9304F; }
 .hh-user-btn {
   display: flex; align-items: center; gap: 8px;
   text-decoration: none; padding: 4px 4px; max-width: 160px;
@@ -102,9 +103,9 @@
 }
 .hh-mm-logout:hover { color: #C9304F; }
 .hh-view-btn, .hh-lang-btn {
-  display: flex; align-items: center; gap: 6px; flex-shrink: 0;
-  font-family: inherit; font-size: 12px; font-weight: 500; letter-spacing: 0.04em; color: #4E5672;
-  background: none; border: none; border-radius: 0; padding: 6px 2px; cursor: pointer; white-space: nowrap;
+  display: flex; align-items: center; gap: 6px; flex-shrink: 0; min-height: 44px;
+  font-family: inherit; font-size: 13px; font-weight: 500; letter-spacing: 0; color: #4E5672;
+  background: none; border: none; border-radius: 0; padding: 0 2px; cursor: pointer; white-space: nowrap;
   transition: color .15s;
 }
 .hh-view-btn:hover, .hh-lang-btn:hover { color: #202943; }
