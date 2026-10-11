@@ -1121,6 +1121,15 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
       .card-name.long { font-size: 13px; }
       .card-meta { font-size: 12px; letter-spacing: -0.02em; }
     }
+    /* 모바일: 열쇠는 높이로 맞춰지는 가는 그림이라 칸을 세로로 길게 주고 좌우 여백을 없애
+       열쇠 머리가 잘 보이게 한다. 매듭 SVG는 위에 붙이고 열쇠는 폭 기준(17%)으로 매듭 아래에 건다 */
+    @media (max-width: 599px) {
+      .key-grid { row-gap: var(--space-6); }
+      .key-card .card-3d { padding-bottom: 185%; }
+      .key-card .card-slot-img { height: auto; bottom: auto; }
+      .key-card .card-key-img { top: 0; left: 0; right: 0; padding-top: 16%; }
+      .card-cap { margin-top: var(--space-1); gap: 0; }
+    }
     @media (min-width: 600px) {
       .key-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     }
