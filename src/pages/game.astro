@@ -3,11 +3,8 @@ import { asset } from '../lib/asset';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
-const _tripModules = import.meta.glob('/trips/data/*.json', { eager: true }) as Record<string, { default: any }>;
-const tripList = Object.values(_tripModules)
-  .map((m) => m.default)
-  .filter((t) => !t.secretHash)
-  .sort((a, b) => (a.no ?? 0) - (b.no ?? 0))
+import { publicTrips } from '../lib/tripData';
+const tripList = publicTrips()
   .map((t) => ({
     id: t.id,
     no: t.no ?? 99,

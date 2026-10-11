@@ -1,19 +1,14 @@
 import type { APIRoute } from 'astro';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { homeCardOf, tripSlug } from '../../../lib/tripData';
+import { homeCardOf, loadTrips, tripSlug } from '../../../lib/tripData';
 import type { TripData } from '../../../lib/tripData';
 
 /* 비밀 여행지의 홈 카드 정보. 코드를 한 번 연 브라우저의 홈이 매번 이 파일을 다시 읽어
    최신 정보로 카드를 그리고, 404면(코드 변경·삭제·공개 전환) 저장된 목록에서 지운다.
    주소가 해시라서 코드를 아는 사람만 찾을 수 있다. */
 export function getStaticPaths() {
-  const modules = import.meta.glob('/trips/data/*.json', { eager: true }) as Record<
-    string,
-    { default: TripData }
-  >;
-  return Object.values(modules)
-    .map((m) => m.default)
+  return loadTrips()
     .filter((t) => t.secretHash)
     .map((trip) => ({ params: { id: tripSlug(trip) }, props: { trip } }));
 }

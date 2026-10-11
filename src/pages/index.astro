@@ -4,17 +4,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import TripIndex from '../components/TripIndex.astro';
-import type { TripData } from '../lib/tripData';
-import { homeCardOf } from '../lib/tripData';
+import { homeCardOf, publicTrips } from '../lib/tripData';
 
-const tripModules = import.meta.glob('/trips/data/*.json', { eager: true }) as Record<
-  string,
-  { default: TripData }
->;
-const allTrips = Object.values(tripModules)
-  .map((mod) => mod.default)
-  .filter((t) => !t.secretHash)
-  .sort((a, b) => (a.no ?? 0) - (b.no ?? 0));
+const allTrips = publicTrips();
 
 /* 비밀코드 여행지는 홈에 아무 정보도 싣지 않는다. 입력한 코드의 해시로 주소(/trips/<해시 앞 24자>)를 만들어
    그 페이지가 있는지만 확인한다. 해시 규칙은 scripts/secret_hash.mjs 와 같아야 한다.
@@ -567,15 +559,15 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
       }
 
       const imgTag = trip.key
-        ? `<img class="rec-single-key" src="${trip.key}" alt="${trip.nameKo}" loading="lazy"/>`
-        : `<div class="rec-single-key-placeholder">${trip.nameKo[0]}</div>`;
+        ? `<img class="rec-single-key" src="${trip.key}" alt="${_esc(trip.nameKo)}" loading="lazy"/>`
+        : `<div class="rec-single-key-placeholder">${_esc(trip.nameKo[0])}</div>`;
 
       document.getElementById('recContent').innerHTML = `
         <div class="rec-single-hero">
           <div class="rec-key-stage">${imgTag}</div>
           <div class="rec-single-info">
             <div class="rec-single-no">No.${noStr}</div>
-            <div class="rec-single-name">${trip.nameKo}</div>
+            <div class="rec-single-name">${_esc(trip.nameKo)}</div>
             ${weatherHTML}
           </div>
         </div>
@@ -711,9 +703,14 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
 
     function _onKeyImgError(img) { img.outerHTML = _placeholderKey; }
 
+    /* 여행지 정보를 innerHTML 템플릿에 넣기 전에 escape */
+    function _esc(v) {
+      return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+    }
+
     function _keyImgHTML(trip, i) {
       const lazy = i >= 10 ? 'loading="lazy" ' : '';
-      if (trip.key) return `<img src="${trip.key}" ${lazy}width="416" height="1077" style="margin-top:35px" alt="${trip.nameKo} 열쇠" onerror="_onKeyImgError(this)" />`;
+      if (trip.key) return `<img src="${trip.key}" ${lazy}width="416" height="1077" style="margin-top:35px" alt="${_esc(trip.nameKo)} 열쇠" onerror="_onKeyImgError(this)" />`;
       return _placeholderKey;
     }
 
@@ -748,7 +745,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
       if      (s === 'open')        keyHTML = `<div class="card-key-img">${_keyImgHTML(trip, i)}</div>`;
       else if (s === 'reserved')    keyHTML = `<div class="card-key-img">${_reservedSVG(trip.no)}</div>`;
       else if (s === 'coming-soon') keyHTML = `<div class="card-key-img">${_comingSoonSVG(trip.no)}</div>`;
-      return `<div class="${cl}" data-trip-idx="${i}"><div class="card-3d">${_cardBgSVG(i)}<div class="${nameCls}">${_nameTagSVG(i)}<span>${label}</span></div>${keyHTML}</div><div class="card-meta">${metaTxt}</div></div>`;
+      return `<div class="${cl}" data-trip-idx="${i}"><div class="card-3d">${_cardBgSVG(i)}<div class="${nameCls}">${_nameTagSVG(i)}<span>${_esc(label)}</span></div>${keyHTML}</div><div class="card-meta">${_esc(metaTxt)}</div></div>`;
     }
 
     function _attachCardClicks() {
@@ -804,7 +801,6 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     /* 이 브라우저에서 한 번 연 비밀 여행지. 저장된 건 주소뿐이고, 카드 정보는 매번 <주소>/card.json 에서 읽는다.
        404(코드 변경·삭제·공개 전환)면 목록에서 지우고, 네트워크 오류면 이번에만 빼 둔다. */
     const UNLOCKED_KEY = 'huihui_unlocked';
-    const _clean = v => String(v ?? '').replace(/[<>"'&`]/g, ''); // innerHTML 에 들어가므로 태그·속성 깨는 문자를 뺀다
 
     async function _unlockedTrips(publicUrls) {
       let saved = [];
@@ -822,7 +818,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
           if (!res.ok) return { url };
           const c = await res.json();
           if (!c || !c.nameKo) return { url, gone: true };
-          const card = Object.fromEntries(Object.entries(c).map(([k, v]) => [k, _clean(v)]));
+          const card = Object.fromEntries(Object.entries(c).map(([k, v]) => [k, String(v ?? '')]));
           const key = /^\/assets\/keys\/[\w-]+\.webp$/.test(c.key) ? c.key : '/assets/keys/secret.webp';
           return { url, trip: _toTrip(card, { url, key, no: Number(c.no) || 999 }) };
         } catch (_) { return { url }; }
@@ -889,7 +885,7 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
         <div class="filter-row" data-group="${key}">
           <span class="filter-label">${label}</span>
           <button type="button" class="fchip" data-v="" aria-pressed="${FILTER[key] === ''}">전체</button>
-          ${values.map(v => `<button type="button" class="fchip" data-v="${v}" aria-pressed="${FILTER[key] === v}">${v}</button>`).join('')}
+          ${values.map(v => `<button type="button" class="fchip" data-v="${_esc(v)}" aria-pressed="${FILTER[key] === v}">${_esc(v)}</button>`).join('')}
         </div>`;
       bar.innerHTML =
         group('nights', '기간', uniq(TRIPS.map(t => t.nights)).sort()) +

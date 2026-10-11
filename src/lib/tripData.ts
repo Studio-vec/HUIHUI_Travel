@@ -87,6 +87,19 @@ export interface TripData {
 }
 
 /** 여행지 페이지 경로의 마지막 조각. 비밀코드 여행지는 id를 드러내지 않도록 해시에서 만든다 */
+/** trips/data/*.json 의 여행지 전체 (비밀코드 여행지 포함, no 순) */
+export function loadTrips(): TripData[] {
+  const modules = import.meta.glob<{ default: TripData }>('/trips/data/*.json', { eager: true });
+  return Object.values(modules)
+    .map((m) => m.default)
+    .sort((a, b) => (a.no ?? 0) - (b.no ?? 0));
+}
+
+/** 목록·검색에 공개하는 여행지 (비밀코드 여행지 제외) */
+export function publicTrips(): TripData[] {
+  return loadTrips().filter((t) => !t.secretHash);
+}
+
 export function tripSlug(data: TripData): string {
   return data.secretHash ? data.secretHash.slice(0, 24) : data.id;
 }

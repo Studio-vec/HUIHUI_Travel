@@ -4,17 +4,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import TripIndex from '../components/TripIndex.astro';
-import type { TripData } from '../lib/tripData';
-import { dayCountOf } from '../lib/tripData';
+import { dayCountOf, publicTrips } from '../lib/tripData';
 
-const tripModules = import.meta.glob('/trips/data/*.json', { eager: true }) as Record<
-  string,
-  { default: TripData }
->;
-const allTrips = Object.values(tripModules)
-  .map((mod) => mod.default)
-  .filter((t) => !t.secretHash)
-  .sort((a, b) => (a.no ?? 0) - (b.no ?? 0));
+const allTrips = publicTrips();
 
 const totalPlaces = allTrips.reduce((sum, t) => sum + t.places.length, 0);
 const totalDays = allTrips.reduce((sum, t) => sum + dayCountOf(t), 0);

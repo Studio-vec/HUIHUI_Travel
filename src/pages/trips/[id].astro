@@ -5,17 +5,11 @@ import Navbar from '../../components/Navbar.astro';
 import TripArticle from '../../components/TripArticle.astro';
 import TripIndex from '../../components/TripIndex.astro';
 import Footer from '../../components/Footer.astro';
-import { toMobileSchedule, toMobileTips, dayCountOf, tripSlug, nameEnOf } from '../../lib/tripData';
+import { toMobileSchedule, toMobileTips, dayCountOf, tripSlug, nameEnOf, loadTrips } from '../../lib/tripData';
 import type { TripData } from '../../lib/tripData';
 
 export async function getStaticPaths() {
-  const modules = import.meta.glob('/trips/data/*.json', { eager: true }) as Record<
-    string,
-    { default: TripData }
-  >;
-  const all = Object.values(modules)
-    .map((m) => m.default)
-    .sort((a, b) => (a.no ?? 0) - (b.no ?? 0));
+  const all = loadTrips();
 
   return all.map((trip) => ({
     params: { id: tripSlug(trip) },

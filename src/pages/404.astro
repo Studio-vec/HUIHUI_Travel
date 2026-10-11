@@ -2,16 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
-import type { TripData } from '../lib/tripData';
+import { publicTrips } from '../lib/tripData';
 
-const tripModules = import.meta.glob('/trips/data/*.json', { eager: true }) as Record<
-  string,
-  { default: TripData }
->;
-const trips = Object.values(tripModules)
-  .map((mod) => mod.default)
-  .filter((t) => !t.secretHash)
-  .sort((a, b) => (a.no ?? 0) - (b.no ?? 0))
+const trips = publicTrips()
   .map((t) => ({
     id: t.id,
     no: String(t.no ?? 0).padStart(2, '0'),

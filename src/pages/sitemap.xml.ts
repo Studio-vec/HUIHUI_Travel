@@ -1,10 +1,6 @@
 import type { APIRoute } from 'astro';
-import type { TripData } from '../lib/tripData';
+import { publicTrips } from '../lib/tripData';
 
-const tripModules = import.meta.glob('/trips/data/*.json', { eager: true }) as Record<
-  string,
-  { default: TripData }
->;
 
 /** 색인 대상 페이지. 로그인 등 기능성 페이지(noindex)는 제외한다. */
 const staticPaths: { path: string; priority: string; changefreq: string }[] = [
@@ -22,11 +18,7 @@ export const GET: APIRoute = ({ site }) => {
 
   const today = new Date().toISOString().slice(0, 10);
 
-  const tripPaths = Object.values(tripModules)
-    .map((mod) => mod.default)
-  .filter((t) => !t.secretHash)
-    .sort((a, b) => (a.no ?? 0) - (b.no ?? 0))
-    .map((t) => ({ path: `/trips/${t.id}`, priority: '0.9', changefreq: 'monthly' }));
+  const tripPaths = publicTrips().map((t) => ({ path: `/trips/${t.id}`, priority: '0.9', changefreq: 'monthly' }));
 
   const urls = [...staticPaths, ...tripPaths]
     .map(({ path, priority, changefreq }) => {
