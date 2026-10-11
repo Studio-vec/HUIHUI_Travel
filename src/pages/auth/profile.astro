@@ -55,9 +55,9 @@ import Navbar from '../../components/Navbar.astro';
       <a href="/" class="btn-back">← 메인으로</a>
       <div class="section-card" style="text-align:center;padding:40px 24px;">
         <div style="font-size:2rem;margin-bottom:12px;">🔑</div>
-        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#7A57CD;margin-bottom:8px;">로그인이 필요해요</div>
-        <p style="font-size:0.78rem;color:#746A91;margin-bottom:20px;line-height:1.6;">마이페이지를 이용하려면<br>먼저 로그인해주세요.</p>
-        <a href="/auth/login" style="display:block;background:#7A57CD;color:white;border-radius:999px;padding:12px 24px;text-decoration:none;font-size:0.78rem;font-weight:700;letter-spacing:0.08em;">로그인하기</a>
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#B23A44;margin-bottom:8px;">로그인이 필요해요</div>
+        <p style="font-size:0.78rem;color:#6E6255;margin-bottom:20px;line-height:1.6;">마이페이지를 이용하려면<br>먼저 로그인해주세요.</p>
+        <a href="/auth/login" style="display:block;background:#B23A44;color:white;border-radius:999px;padding:12px 24px;text-decoration:none;font-size:0.78rem;font-weight:700;letter-spacing:0.08em;">로그인하기</a>
         <a href="/auth/register" style="display:block;margin-top:10px;font-size:0.75rem;color:#8F9D68;text-align:center;">아직 계정이 없으신가요? 회원가입 →</a>
       </div>`;
   }
@@ -80,7 +80,7 @@ import Navbar from '../../components/Navbar.astro';
             <div class="user-avatar-lg" id="avatarLg">${esc(initial)}</div>
             <div class="user-info-wrap">
               <div class="user-nick" id="dispNick">${esc(profile.nickname)}</div>
-              <div class="user-id">@${esc(profile.username)} <span style="color:#C8B1FF">· 아이디 변경불가</span></div>
+              <div class="user-id">@${esc(profile.username)} <span style="color:#E8A3A3">· 아이디 변경불가</span></div>
               <div class="user-since">MEMBER SINCE ${dateStr}</div>
             </div>
           </div>
@@ -325,15 +325,15 @@ import Navbar from '../../components/Navbar.astro';
 <style is:global>
 
     :root {
-      --purple:       #7A57CD;
-      --purple-mid:   #946EEE;
-      --purple-light: #C8B1FF;
-      --purple-pale:  #EDE5FF;
-      --cream:        #FFF8EB;
+      --purple:       #B23A44;
+      --purple-mid:   #CB636C;
+      --purple-light: #E8A3A3;
+      --purple-pale:  #F8E1DF;
+      --cream:        #F7F1E3;
       --green:        #8F9D68;
-      --text:         #2a1a4a;
-      --text-mid:     #5a3e8a;
-      --text-dim:     #746A91;
+      --text:         #231C17;
+      --text-mid:     #74272D;
+      --text-dim:     #6E6255;
       --error:        #c04040;
       --ok:           #4a9a6a;
     }
@@ -341,7 +341,7 @@ import Navbar from '../../components/Navbar.astro';
     body {
       min-height: 100vh;
       font-family: 'Noto Sans KR', sans-serif;
-      background: linear-gradient(160deg, var(--cream) 0%, #e8dcff 50%, #c8b1ff 100%);
+      background: linear-gradient(160deg, var(--cream) 0%, #F8E3E4 50%, #E8A3A3 100%);
       padding: 0 0 60px;
     }
 
@@ -351,7 +351,7 @@ import Navbar from '../../components/Navbar.astro';
     /* 헤더 카드 (영수증) */
     .receipt {
       width: min(400px, 94vw); background: var(--cream);
-      filter: drop-shadow(0 12px 32px rgba(122,87,205,0.18));
+      filter: drop-shadow(0 12px 32px rgba(178,58,68,0.18));
     }
     .receipt-top { width:100%; height:14px; background:var(--cream); position:relative; }
     .receipt-top::before {
@@ -369,7 +369,7 @@ import Navbar from '../../components/Navbar.astro';
     .user-header { display:flex; align-items:center; gap:16px; padding: 8px 0 16px; }
     .user-avatar-lg {
       width: 64px; height: 64px; border-radius: 50%;
-      background: linear-gradient(135deg, #C0A8FF, #7B5CC4);
+      background: linear-gradient(135deg, #E8A3A3, #B23A44);
       display: flex; align-items: center; justify-content: center;
       font-family: 'Playfair Display', serif; font-size: 1.6rem; color: white; font-weight: 700;
       flex-shrink: 0;
@@ -377,16 +377,16 @@ import Navbar from '../../components/Navbar.astro';
     .user-info-wrap { flex: 1; min-width: 0; }
     .user-nick { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--purple); }
     .user-id { font-size: 0.75rem; color: var(--text-dim); margin-top: 3px; letter-spacing: 0.04em; }
-    .user-since { font-size: 0.75rem; color: var(--text-dim); font-family: 'Cormorant Garamond', serif; font-style: italic; }
+    .user-since { font-size: 0.75rem; color: var(--text-dim); font-family: 'Gowun Batang', serif; font-style: italic; }
 
     .divider { border:none; border-top:1.5px dashed var(--purple-light); margin:12px 0; }
-    .divider-solid { border:none; border-top:1px solid rgba(139,111,208,0.2); margin:12px 0; }
+    .divider-solid { border:none; border-top:1px solid rgba(178,58,68,0.2); margin:12px 0; }
 
     /* 섹션 */
     .section-card {
       width: min(400px, 94vw); background: var(--cream);
       border-radius: 20px;
-      box-shadow: 0 4px 20px rgba(122,87,205,0.1);
+      box-shadow: 0 4px 20px rgba(178,58,68,0.1);
       padding: 20px 24px;
     }
     .section-title {
@@ -397,7 +397,7 @@ import Navbar from '../../components/Navbar.astro';
     .field { margin-bottom: 14px; }
     .field:last-child { margin-bottom: 0; }
     .field-label { font-size: 0.75rem; font-weight: 600; color: var(--text-dim); letter-spacing: 0.1em; margin-bottom: 5px; display: block; }
-    .field-label span { font-weight: 400; color: rgba(154,138,176,0.7); font-size: 0.75rem; margin-left: 4px; }
+    .field-label span { font-weight: 400; color: rgba(157,143,131,0.7); font-size: 0.75rem; margin-left: 4px; }
     .input-box {
       width: 100%; height: 40px; background: white;
       border: 1.5px solid var(--purple-light); border-radius: 999px;
@@ -407,7 +407,7 @@ import Navbar from '../../components/Navbar.astro';
     }
     .input-box:focus { border-color: var(--purple); }
     .input-box::placeholder { color: var(--text-dim); font-size: 0.75rem; }
-    .input-box:disabled { background: rgba(245,240,255,0.5); color: var(--text-dim); cursor: not-allowed; }
+    .input-box:disabled { background: rgba(252,243,243,0.5); color: var(--text-dim); cursor: not-allowed; }
     .hint { font-size: 0.75rem; margin-top: 3px; min-height: 14px; padding-left: 4px; color: var(--text-dim); }
     .hint.ok    { color: var(--ok); }
     .hint.error { color: var(--error); }
@@ -428,7 +428,7 @@ import Navbar from '../../components/Navbar.astro';
     .toggle-switch input { opacity: 0; width: 0; height: 0; }
     .toggle-slider {
       position: absolute; inset: 0; border-radius: 999px;
-      background: rgba(180,170,200,0.35); cursor: pointer;
+      background: rgba(183,172,162,0.35); cursor: pointer;
       transition: background 0.2s;
     }
     .toggle-slider::after {
@@ -447,10 +447,10 @@ import Navbar from '../../components/Navbar.astro';
       border: none; border-radius: 999px;
       font-size: 0.75rem; font-weight: 700; color: white; letter-spacing: 0.08em;
       cursor: pointer; font-family: 'Noto Sans KR', sans-serif;
-      box-shadow: 0 4px 14px rgba(122,87,205,0.3);
+      box-shadow: 0 4px 14px rgba(178,58,68,0.3);
       transition: transform 0.15s, box-shadow 0.15s;
     }
-    .btn-save:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(122,87,205,0.4); }
+    .btn-save:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(178,58,68,0.4); }
     .btn-save:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
 
     .btn-logout {
@@ -476,7 +476,7 @@ import Navbar from '../../components/Navbar.astro';
       background: var(--purple); color: white;
       border-radius: 999px; padding: 10px 24px;
       font-size: 0.82rem; font-weight: 500;
-      box-shadow: 0 8px 24px rgba(122,87,205,0.3);
+      box-shadow: 0 8px 24px rgba(178,58,68,0.3);
       transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
       white-space: nowrap; z-index: 999;
     }

@@ -31,13 +31,13 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
                 if (existing) return;
                 const overlay = document.createElement('div');
                 overlay.id = '_photo-alert-overlay';
-                overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(42,31,72,0.45);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px';
+                overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(35,28,23,0.45);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px';
                 overlay.innerHTML = `
-                  <div style="background:#fff;border-radius:20px;padding:32px 28px 24px;max-width:300px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(107,79,180,0.18);animation:_paSlide 0.22s ease">
-                    <div style="width:48px;height:48px;background:#EDE5FF;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.4rem">📷</div>
-                    <div style="font-family:'DM Serif Display',serif;font-style:italic;font-size:1.2rem;color:#2a1f48;margin-bottom:8px">${title}</div>
-                    <p style="font-size:13px;color:#7a6a9a;line-height:1.6;margin-bottom:20px;word-break:keep-all">${body}</p>
-                    <button id="_photo-alert-btn" style="width:100%;padding:12px;background:#C0A8FF;color:#4E3490;border:none;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:0.04em">확인</button>
+                  <div style="background:#fff;border-radius:20px;padding:32px 28px 24px;max-width:300px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(120,45,50,0.18);animation:_paSlide 0.22s ease">
+                    <div style="width:48px;height:48px;background:#F8E1DF;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.4rem">📷</div>
+                    <div style="font-family:'Gowun Batang',serif;font-style:italic;font-size:1.2rem;color:#231C17;margin-bottom:8px">${title}</div>
+                    <p style="font-size:13px;color:#837468;line-height:1.6;margin-bottom:20px;word-break:keep-all">${body}</p>
+                    <button id="_photo-alert-btn" style="width:100%;padding:12px;background:#E8A3A3;color:#6B1F28;border:none;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:0.04em">확인</button>
                   </div>`;
                 const style = document.createElement('style');
                 style.textContent = '@keyframes _paSlide{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}';

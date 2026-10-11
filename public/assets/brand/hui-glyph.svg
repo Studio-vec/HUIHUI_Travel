@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title>喜</title>
+  <!-- 기쁠 희(喜)를 매듭 끈 한 가닥으로 그린 글자. 굵은 끈 위에 가는 금실을 한 번 더 그어 꼰 끈처럼 보이게 한다 -->
+  <path id="hui" stroke="#B23A44" stroke-width="8" d="M22 13H78M50 5V26M33 26H67M35 33H65A4 4 0 0 1 69 37V42A4 4 0 0 1 65 46H35A4 4 0 0 1 31 42V37A4 4 0 0 1 35 33ZM39 52L43.5 57M61 52L56.5 57M15 63H85M33 70H67A4 4 0 0 1 71 74V90A4 4 0 0 1 67 94H33A4 4 0 0 1 29 90V74A4 4 0 0 1 33 70Z"/>
+  <path stroke="#E3C77A" stroke-width="1.8" d="M22 13H78M50 5V26M33 26H67M35 33H65A4 4 0 0 1 69 37V42A4 4 0 0 1 65 46H35A4 4 0 0 1 31 42V37A4 4 0 0 1 35 33ZM39 52L43.5 57M61 52L56.5 57M15 63H85M33 70H67A4 4 0 0 1 71 74V90A4 4 0 0 1 67 94H33A4 4 0 0 1 29 90V74A4 4 0 0 1 33 70Z"/>
+</svg>

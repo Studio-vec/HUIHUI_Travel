@@ -1,66 +1,91 @@
 /* ============================================================
-   Travel HUIHUI — Design Tokens
-   Primary palette: lavender · lime · sand
+   Travel HUIHUI — Design Tokens (전통 테마)
+   Primary palette: 연지 yeonji · 비취 bichwi · 한지 hanji · 금 geum · 먹 meok
    ============================================================ */
 
 :root {
-  /* ── LAVENDER (연보라) ── */
-  --lavender-50:  #F5F0FF;
-  --lavender-100: #EDE5FF;
-  --lavender-200: #D8C8FF;
-  --lavender-300: #C0A8FF;   /* main brand */
-  --lavender-400: #A68EE8;
-  --lavender-500: #7B5CC4;   /* 텍스트·버튼 대비 4.5:1 확보를 위해 살짝 진하게 */
-  --lavender-600: #6B4FB4;
-  --lavender-700: #4E3490;
+  /* ── 연지 YEONJI (연지·홍 — 브랜드) ── 노리개 술과 매듭의 붉은빛 */
+  --yeonji-50:  #FCF2F1;
+  --yeonji-100: #F8E1DF;
+  --yeonji-200: #F2C7C5;
+  --yeonji-300: #E8A3A3;   /* 밝은 강조·버튼 바탕 */
+  --yeonji-400: #D06A6E;
+  --yeonji-500: #B23A44;   /* main brand — 한지 바탕 대비 5.5:1 */
+  --yeonji-600: #952F39;
+  --yeonji-700: #6B1F28;
 
-  /* ── LIME (연두) ── */
-  --lime-50:  #F4FBE8;
-  --lime-100: #E4F5C4;
-  --lime-200: #CEED98;
-  --lime-300: #B4E068;   /* main accent */
-  --lime-400: #96CC44;
-  --lime-500: #78B020;
-  --lime-600: #5A8C10;
+  /* ── 비취 BICHWI (옥·청록 — 포인트) ── 단청 뇌록과 옥 장식 */
+  --bichwi-50:  #EEF6F3;
+  --bichwi-100: #D5EBE4;
+  --bichwi-200: #AFD8CB;
+  --bichwi-300: #7FBFAC;   /* main accent */
+  --bichwi-400: #4F9F8A;
+  --bichwi-500: #2F7F6C;
+  --bichwi-600: #20614F;
 
-  /* ── SAND (베이지) ── */
-  --sand-50:  #FFFDF8;
-  --sand-100: #FFF8EB;   /* page background */
-  --sand-200: #F5EDD8;
-  --sand-300: #E8D9BF;
-  --sand-400: #D0BC98;
-  --sand-500: #B09878;
-  --sand-600: #8C7458;
+  /* ── 한지 HANJI (바탕) ── */
+  --hanji-50:  #FDFAF3;
+  --hanji-100: #F7F1E3;   /* page background */
+  --hanji-200: #EFE6D2;
+  --hanji-300: #E2D5BA;
+  --hanji-400: #CDBB98;
+  --hanji-500: #A8946F;
+  --hanji-600: #7D6B4D;
+
+  /* ── 금 GEUM (금박·장석 — 디테일) ── */
+  --geum-200: #F1E2B4;
+  --geum-300: #E3C77A;
+  --geum-400: #CFA94E;
+  --geum-500: #B08A34;
+  --geum-600: #8A6A22;
+
+  /* ── 먹 MEOK (먹·옻칠 — 글자와 현판) ── */
+  --meok-900: #1A1512;
+  --meok-800: #231C17;
+  --meok-700: #3A2F27;
+  --meok-500: #5A4E44;
+  --meok-400: #6E6255;
+  --hyeonpan:  #1F3A33;  /* 현판 테두리 (단청 석간주 위 짙은 녹) */
+
+  /* ── 밤 NIGHT (먹·쪽빛 — 기와집 프런트, 네브바, 푸터) ── */
+  --night-900: #0F141B;
+  --night-800: #151C25;
+  --night-700: #202A36;
+  --night-600: #313E4D;
+  --night-line: #E6E0D2;   /* 밤 배경 위 선화(흰 선) */
+
+  /* 포인트 컬러는 세 가지만: 연지(--yeonji-500) · 비취(--bichwi-400) · 금(--geum-400) */
 
   /* ── SEMANTIC ── */
-  --color-bg:           var(--sand-100);
-  --color-bg-subtle:    var(--sand-200);
-  --color-surface:      #FFFFFF;
-  --color-surface-tint: var(--lavender-50);
+  --color-bg:           var(--hanji-100);
+  --color-bg-subtle:    var(--hanji-200);
+  --color-surface:      #FFFDF8;
+  --color-surface-tint: var(--yeonji-50);
 
-  --color-brand:        var(--lavender-300);
-  --color-brand-dark:   var(--lavender-500);
-  --color-brand-light:  var(--lavender-100);
+  --color-brand:        var(--yeonji-300);
+  --color-brand-dark:   var(--yeonji-500);
+  --color-brand-light:  var(--yeonji-100);
 
-  --color-accent:       var(--lime-300);
-  --color-accent-dark:  var(--lime-500);
-  --color-accent-light: var(--lime-100);
+  --color-accent:       var(--bichwi-300);
+  --color-accent-dark:  var(--bichwi-500);
+  --color-accent-light: var(--bichwi-100);
 
-  --color-border:       var(--sand-300);
-  --color-border-brand: var(--lavender-200);
+  --color-gold:         var(--geum-400);
+  --color-border:       var(--hanji-300);
+  --color-border-brand: var(--yeonji-200);
 
-  --color-text-primary:   #2A1F48;
-  --color-text-secondary: #6B5E8A;
-  --color-text-tertiary:  #746A91;
-  --color-text-inverse:   #FFFFFF;
+  --color-text-primary:   var(--meok-800);
+  --color-text-secondary: var(--meok-500);
+  --color-text-tertiary:  var(--meok-400);
+  --color-text-inverse:   #FFFDF8;
 
-  --color-success: #7AC97A;
-  --color-warning: #F0C060;
-  --color-error:   #E87878;
+  --color-success: #4F9F6A;
+  --color-warning: #D2A23A;
+  --color-error:   #C0443E;
 
   /* ── TYPOGRAPHY ── */
-  --font-display:  'Cormorant Garamond', 'Noto Serif KR', Georgia, serif;
-  --font-heading:  'DM Sans', 'Noto Sans KR', sans-serif;
+  --font-display:  'Gowun Batang', 'Noto Serif KR', Georgia, serif;
+  --font-heading:  'Noto Sans KR', sans-serif;
   --font-body:     'Noto Sans KR', sans-serif;
 
   --text-xs:   12px;
@@ -100,20 +125,20 @@
   --space-24: 96px;
 
   /* ── RADIUS ── */
-  --radius-sm:   6px;
-  --radius-md:   10px;
-  --radius-lg:   16px;
-  --radius-xl:   24px;
-  --radius-2xl:  32px;
+  --radius-sm:   3px;
+  --radius-md:   4px;
+  --radius-lg:   6px;
+  --radius-xl:   8px;
+  --radius-2xl:  10px;
   --radius-full: 9999px;
 
   /* ── SHADOW ── */
-  --shadow-sm:  0 1px 3px rgba(42, 31, 72, 0.08);
-  --shadow-md:  0 4px 12px rgba(42, 31, 72, 0.10);
-  --shadow-lg:  0 8px 28px rgba(42, 31, 72, 0.12);
-  --shadow-xl:  0 16px 48px rgba(42, 31, 72, 0.14);
-  --shadow-brand: 0 4px 20px rgba(192, 168, 255, 0.35);
-  --shadow-lime:  0 4px 20px rgba(180, 224, 104, 0.40);
+  --shadow-sm:  0 1px 3px rgba(35, 28, 23, 0.08);
+  --shadow-md:  0 4px 12px rgba(35, 28, 23, 0.10);
+  --shadow-lg:  0 8px 28px rgba(35, 28, 23, 0.12);
+  --shadow-xl:  0 16px 48px rgba(35, 28, 23, 0.16);
+  --shadow-brand: 0 4px 20px rgba(178, 58, 68, 0.22);
+  --shadow-jade:  0 4px 20px rgba(47, 127, 108, 0.25);
 
   /* ── MOTION ── */
   --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
@@ -141,16 +166,16 @@
 html { font-synthesis-style: none; }
 
 /* 키보드 포커스는 항상 보이게 */
-:focus-visible { outline: 3px solid var(--lavender-500); outline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--yeonji-500); outline-offset: 3px; }
 a:focus-visible, button:focus-visible, [role="button"]:focus-visible, summary:focus-visible {
-  outline: 3px solid var(--lavender-500) !important; outline-offset: 3px;
+  outline: 3px solid var(--yeonji-500) !important; outline-offset: 3px;
 }
 
 /* 본문 바로가기 */
 .skip-link {
   position: fixed; left: 16px; top: -64px; z-index: 1000;
   padding: 10px 16px; border-radius: var(--radius-full);
-  background: var(--lavender-600); color: #fff; font: 600 14px/1.2 var(--font-heading);
+  background: var(--yeonji-600); color: #fff; font: 600 14px/1.2 var(--font-heading);
   text-decoration: none; transition: top .15s var(--ease-out);
 }
 .skip-link:focus { top: 12px; }

@@ -1,8 +1,7 @@
 /**
  * 파비콘 생성 스크립트 (한 번 실행해서 결과물을 커밋한다)
  *
- * 홈 화면 오른쪽 아래 종 버튼과 같은 모양: bell-up.svg(종 윗부분)를 bell-down.svg(받침) 위에 겹쳐 올린다.
- * 버튼 CSS의 `.bell-img-down { margin-top: -6% }`와 같은 비율로 겹친다.
+ * 브랜드 아이콘: 밤빛 바탕 + 금테 + 연지 喜 (public/assets/brand/hui-app-icon.svg)
  *
  * 출력 (public/):
  *   favicon.ico          16·32·48px PNG를 담은 ICO (브라우저가 기본으로 요청하는 경로)
@@ -16,24 +15,8 @@ import sharp from 'sharp';
 import fs from 'fs';
 
 const W = 1024; // 합성 작업 해상도
-const up = await sharp('public/assets/bell-up.svg', { density: 300 }).resize({ width: W }).png().toBuffer();
-const down = await sharp('public/assets/bell-down.svg', { density: 300 }).resize({ width: W }).png().toBuffer();
-const upH = (await sharp(up).metadata()).height;
-const downH = (await sharp(down).metadata()).height;
-const overlap = Math.round(W * 0.06);
-
-const stacked = await sharp({
-  create: { width: W, height: upH + downH - overlap, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
-})
-  .composite([
-    { input: down, top: upH - overlap, left: 0 },
-    { input: up, top: 0, left: 0 },
-  ])
-  .png()
-  .toBuffer();
-
-/* 투명 여백을 잘라낸 뒤 정사각형 캔버스 가운데에 놓는다 */
-const bell = await sharp(stacked).trim().png().toBuffer();
+/* 전통 테마: 喜 매듭 글자 아이콘(public/assets/brand/hui-app-icon.svg) 하나로 모든 크기를 만든다 */
+const bell = await sharp('public/assets/brand/hui-app-icon.svg', { density: 600 }).resize({ width: W }).png().toBuffer();
 
 async function square(size, { pad = 0.04, bg = { r: 0, g: 0, b: 0, alpha: 0 } } = {}) {
   const inner = Math.round(size * (1 - pad * 2));

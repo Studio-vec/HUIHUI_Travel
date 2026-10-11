@@ -561,15 +561,15 @@ renderKeyRack();
     body {
       font-family:var(--font-body); min-height:100vh; overflow-x:hidden;
       display:flex; flex-direction:column;
-      /* 크림 → 딥 퍼플 그라데이션 */
+      /* 한지 → 밤(먹·쪽빛) 그라데이션: 해 질 녘 기와집 마당 */
       background: linear-gradient(
         to bottom,
-        #FFF8EB 0%,
-        #FFF8EB 28%,
-        #e8d4ff 48%,
-        #9b5de5 68%,
-        #5b1fa8 85%,
-        #3b0e80 100%
+        #F7F1E3 0%,
+        #F7F1E3 30%,
+        #E9DCC6 46%,
+        #4A4A4C 68%,
+        #1B2633 84%,
+        #0F141B 100%
       );
       background-attachment: fixed;
     }
@@ -581,15 +581,15 @@ renderKeyRack();
     /* NAVBAR */
     .navbar {
       position:sticky; top:0; z-index:50;
-      background:rgba(255,248,235,0.82); backdrop-filter:blur(16px);
-      border-bottom:1px solid rgba(139,111,208,0.15);
+      background:rgba(247,241,227,0.82); backdrop-filter:blur(16px);
+      border-bottom:1px solid rgba(178,58,68,0.15);
       height:56px; padding:0 clamp(20px,5vw,48px);
       display:flex; align-items:center; gap:24px;
     }
-    .navbar-logo { font-family:var(--font-display); font-size:20px; font-style:italic; font-weight:600; color:var(--lavender-600); text-decoration:none; flex-shrink:0; }
+    .navbar-logo { font-family:var(--font-display); font-size:20px; font-style:italic; font-weight:600; color:var(--yeonji-600); text-decoration:none; flex-shrink:0; }
     .navbar-links { display:flex; list-style:none; gap:4px; }
     .navbar-links a { font-family:var(--font-heading); font-size:13px; font-weight:500; color:var(--color-text-secondary); text-decoration:none; padding:8px 12px; border-radius:10px; transition:color 150ms,background 150ms; }
-    .navbar-links a:hover, .navbar-links a.active { color:var(--lavender-600); background:var(--lavender-50); }
+    .navbar-links a:hover, .navbar-links a.active { color:var(--yeonji-600); background:var(--yeonji-50); }
     @media(max-width:600px){.navbar-links{display:none;}}
 
     /* PAGE HEADER */
@@ -601,7 +601,7 @@ renderKeyRack();
     .page-eyebrow {
       font-family:var(--font-heading); font-size: 12px; font-weight:600;
       letter-spacing:0.16em; text-transform:uppercase;
-      color:var(--lavender-500); margin-bottom:12px;
+      color:var(--yeonji-500); margin-bottom:12px;
     }
     .page-title {
       font-family:var(--font-display); font-style:italic;
@@ -644,15 +644,15 @@ renderKeyRack();
     /* 이름 태그 — 열쇠 위에 표시 */
     .key-nametag {
       background:rgba(255,255,255,0.82); backdrop-filter:blur(10px);
-      border:1px solid rgba(139,111,208,0.25); border-radius:999px;
+      border:1px solid rgba(178,58,68,0.25); border-radius:999px;
       padding:5px 16px; order:-1;
       font-family:var(--font-heading); font-size:12px; font-weight:600;
       color:var(--color-text-primary); white-space:nowrap;
-      box-shadow:0 2px 12px rgba(80,30,160,0.12);
+      box-shadow:0 2px 12px rgba(108,36,42,0.12);
       display:flex; align-items:center; gap:6px;
     }
     .key-nametag::before, .key-nametag::after {
-      content:'·'; color:var(--lavender-400); font-size: 12px;
+      content:'·'; color:var(--yeonji-400); font-size: 12px;
     }
     .key-item.unvisited .key-nametag { color:var(--color-text-tertiary); }
 
@@ -666,7 +666,7 @@ renderKeyRack();
     .key-hook {
       position:absolute; top:0; left:50%; transform:translateX(-50%);
       width:2px; height:16px;
-      background:linear-gradient(to bottom, rgba(180,150,255,0.6), rgba(180,150,255,0.15));
+      background:linear-gradient(to bottom, rgba(235,170,174,0.6), rgba(235,170,174,0.15));
       border-radius:2px;
     }
     .key-img {
@@ -674,7 +674,7 @@ renderKeyRack();
       margin-top:4px;
       transform-origin:50% 0%;
       transition:transform 0.35s var(--ease-out), filter 0.3s;
-      drop-shadow: 0 8px 24px rgba(60,20,120,0.3);
+      drop-shadow: 0 8px 24px rgba(86,61,47,0.3);
     }
     .key-item.unvisited .key-img { filter:grayscale(0.9) brightness(0.6); }
     .key-item.visited:hover .key-img { animation:keySwing 0.7s ease-in-out; }
@@ -688,7 +688,7 @@ renderKeyRack();
     .key-status-dot {
       width:7px; height:7px; border-radius:50%;
       background:rgba(255,255,255,0.9);
-      box-shadow:0 0 8px rgba(255,255,255,0.8), 0 0 16px rgba(200,160,255,0.6);
+      box-shadow:0 0 8px rgba(255,255,255,0.8), 0 0 16px rgba(237,178,182,0.6);
     }
     .key-item.unvisited .key-status-dot {
       background:rgba(255,255,255,0.25); box-shadow:none;
@@ -717,7 +717,7 @@ renderKeyRack();
     /* Circle — keyhole head, centered on holder */
     #khCircleEl {
       position:absolute; border-radius:50%;
-      background:rgb(6,3,18);
+      background:rgb(13,9,7);
       transform:translate(-50%,-50%);
       width:0; height:0; overflow:hidden;
       box-shadow: none;
@@ -729,15 +729,15 @@ renderKeyRack();
     /* 글로우 단계: 어두운 원에서 보라빛 글로우 */
     #khCircleEl.glowing {
       box-shadow:
-        0 0 50px rgba(180,80,255,0.9),
-        0 0 110px rgba(140,40,255,0.55),
-        inset 0 0 35px rgba(160,60,255,0.35);
+        0 0 50px rgba(200,89,99,0.9),
+        0 0 110px rgba(187,62,73,0.55),
+        inset 0 0 35px rgba(195,74,84,0.35);
     }
     /* 수정구슬 단계: 글로우 + 흰빛 */
     #khCircleEl.sphere {
       box-shadow:
-        0 0 80px rgba(200,160,255,0.6),
-        0 0 200px rgba(180,130,255,0.35),
+        0 0 80px rgba(237,178,182,0.6),
+        0 0 200px rgba(231,154,159,0.35),
         inset 0 0 50px rgba(255,255,255,0.25);
       border: 1px solid rgba(255,255,255,0.5);
     }
@@ -747,11 +747,11 @@ renderKeyRack();
       background: radial-gradient(circle at 33% 28%,
         #ffffff 0%,
         rgba(255,255,255,0.96) 10%,
-        rgba(248,244,255,0.80) 26%,
-        rgba(235,224,255,0.58) 44%,
-        rgba(218,204,255,0.38) 62%,
-        rgba(200,182,255,0.22) 78%,
-        rgba(180,158,255,0.12) 100%
+        rgba(253,246,247,0.80) 26%,
+        rgba(249,230,231,0.58) 44%,
+        rgba(245,214,216,0.38) 62%,
+        rgba(241,196,199,0.22) 78%,
+        rgba(237,176,180,0.12) 100%
       );
       opacity:0;
       transition: opacity 1.1s ease;
@@ -770,7 +770,7 @@ renderKeyRack();
 
     /* Shaft — keyhole body below circle */
     #khShaftEl {
-      position:absolute; background:rgb(6,3,18);
+      position:absolute; background:rgb(13,9,7);
       left:0; top:0; width:0; height:0;
       transform:translateX(-50%);
       clip-path:polygon(10% 0%,90% 0%,98% 100%,2% 100%);
@@ -800,7 +800,7 @@ renderKeyRack();
     .kh-empty {
       position:absolute; inset:0;
       display:flex; flex-direction:column; align-items:center; justify-content:center;
-      gap:12px; color:rgba(80,40,140,0.5);
+      gap:12px; color:rgba(101,34,39,0.5);
     }
     .kh-empty span:first-child { font-size:48px; }
     .kh-empty span { font-size:14px; font-family:var(--font-display); font-style:italic; }
@@ -810,7 +810,7 @@ renderKeyRack();
       position:absolute; inset:0; border-radius:50%;
       background:
         radial-gradient(circle at 30% 24%, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.18) 28%, transparent 48%),
-        radial-gradient(circle at 68% 70%, rgba(200,185,255,0.18) 0%, transparent 35%);
+        radial-gradient(circle at 68% 70%, rgba(242,198,201,0.18) 0%, transparent 35%);
       pointer-events:none; z-index:10;
     }
 
@@ -850,27 +850,27 @@ renderKeyRack();
       position:absolute; top:clamp(18px,3.5vh,32px); left:50%; transform:translateX(-50%);
       font-family:var(--font-display); font-style:italic;
       font-size:clamp(22px,3.5vw,34px);
-      color:rgba(60,20,110,0.88);
+      color:rgba(80,57,43,0.88);
       text-shadow: 0 1px 10px rgba(255,255,255,0.8), 0 2px 20px rgba(255,255,255,0.5);
       white-space:nowrap; pointer-events:none;
     }
     #khTripLnk {
       position:absolute; bottom:clamp(18px,4vh,36px); left:50%; transform:translateX(-50%);
       font-family:var(--font-heading); font-size:12px; font-weight:600;
-      letter-spacing:0.08em; background:rgba(107,79,180,0.82); color:#fff;
+      letter-spacing:0.08em; background:rgba(120,45,50,0.82); color:#fff;
       border-radius:20px; padding:9px 24px; text-decoration:none;
       backdrop-filter:blur(12px); transition:background 0.2s; pointer-events:auto;
-      box-shadow: 0 2px 16px rgba(80,40,160,0.25);
+      box-shadow: 0 2px 16px rgba(70,35,25,0.25);
     }
-    #khTripLnk:hover { background:rgba(107,79,180,1); }
+    #khTripLnk:hover { background:rgba(120,45,50,1); }
     #khCloseBtn {
       position:absolute; top:clamp(14px,2.5vh,24px); right:clamp(14px,3vw,28px);
       background:rgba(255,255,255,0.35); border:1px solid rgba(255,255,255,0.5);
-      color:rgba(60,20,110,0.8);
+      color:rgba(80,57,43,0.8);
       width:40px; height:40px; border-radius:50%; font-size:17px;
       cursor:pointer; display:flex; align-items:center; justify-content:center;
       backdrop-filter:blur(10px); transition:background 0.2s; pointer-events:auto;
-      box-shadow: 0 2px 12px rgba(180,150,255,0.2);
+      box-shadow: 0 2px 12px rgba(235,170,174,0.2);
     }
     #khCloseBtn:hover { background:rgba(255,255,255,0.55); }
 
@@ -892,17 +892,17 @@ renderKeyRack();
     }
     .search-wrap .search-icon {
       position:absolute; left:13px; pointer-events:none;
-      color:var(--lavender-600); display:flex; align-items:center;
+      color:var(--yeonji-600); display:flex; align-items:center;
     }
     .search-wrap input {
       font-family:var(--font-heading); font-size:13px; color:var(--color-text-secondary);
       background:rgba(255,255,255,0.7); backdrop-filter:blur(8px);
-      border:1px solid rgba(139,111,208,0.25); border-radius:999px;
+      border:1px solid rgba(178,58,68,0.25); border-radius:999px;
       padding:8px 20px 8px 36px; outline:none; width:230px;
       transition:border-color 0.2s,background 0.2s,width 0.3s;
     }
     .search-wrap input::placeholder { color:var(--color-text-tertiary); }
-    .search-wrap input:focus { width:260px; background:rgba(255,255,255,0.92); border-color:rgba(139,111,208,0.5); }
+    .search-wrap input:focus { width:260px; background:rgba(255,255,255,0.92); border-color:rgba(178,58,68,0.5); }
 
     /* 모바일 네비바 검색 래퍼 */
     .navbar-search-wrap {
@@ -914,18 +914,18 @@ renderKeyRack();
     }
     .navbar-search-wrap .search-icon {
       position:absolute; left:13px; pointer-events:none;
-      color:var(--lavender-600); display:flex; align-items:center;
+      color:var(--yeonji-600); display:flex; align-items:center;
     }
     .navbar-search-wrap input {
       font-family:var(--font-heading); font-size:12px; color:var(--color-text-secondary);
       background:rgba(255,255,255,0.7); backdrop-filter:blur(8px);
-      border:1px solid rgba(139,111,208,0.25); border-radius:999px;
+      border:1px solid rgba(178,58,68,0.25); border-radius:999px;
       padding:7px 18px 7px 34px; outline:none;
       width:clamp(130px,28vw,180px);
       transition:border-color 0.2s,background 0.2s;
     }
     .navbar-search-wrap input::placeholder { color:var(--color-text-tertiary); }
-    .navbar-search-wrap input:focus { background:rgba(255,255,255,0.95); border-color:rgba(139,111,208,0.5); }
+    .navbar-search-wrap input:focus { background:rgba(255,255,255,0.95); border-color:rgba(178,58,68,0.5); }
 
     /* ── HAMBURGER & MOBILE MENU ── */
     .hamburger-btn {
@@ -933,15 +933,15 @@ renderKeyRack();
       background:none; border:none; cursor:pointer;
       width:36px; height:36px; border-radius:10px;
       align-items:center; justify-content:center;
-      color:var(--lavender-600); transition:background 0.15s;
+      color:var(--yeonji-600); transition:background 0.15s;
     }
-    .hamburger-btn:hover { background:var(--lavender-50); }
+    .hamburger-btn:hover { background:var(--yeonji-50); }
     .mobile-menu {
       position:fixed; top:56px; left:0; right:0; z-index:49;
-      background:rgba(255,248,235,0.97); backdrop-filter:blur(20px);
-      border-bottom:1px solid rgba(139,111,208,0.12);
+      background:rgba(247,241,227,0.97); backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(178,58,68,0.12);
       padding:8px 12px 14px; display:none; flex-direction:column;
-      box-shadow:0 8px 32px rgba(80,40,160,0.1);
+      box-shadow:0 8px 32px rgba(70,35,25,0.1);
     }
     .mobile-menu.open { display:flex; }
     .mm-item {
@@ -952,8 +952,8 @@ renderKeyRack();
       transition:color 0.15s,background 0.15s;
       background:none; border:none; cursor:pointer; width:100%; text-align:left;
     }
-    .mm-item:hover { color:var(--lavender-600); background:rgba(139,111,208,0.08); }
-    .mm-item.active { color:var(--lavender-600); font-weight:600; }
+    .mm-item:hover { color:var(--yeonji-600); background:rgba(178,58,68,0.08); }
+    .mm-item.active { color:var(--yeonji-600); font-weight:600; }
 
     @media (max-width:767px) {
       .navbar-links { display:none !important; }
@@ -972,14 +972,14 @@ renderKeyRack();
     .gallery-trip-index {
       flex: 0 0 auto;
       width: 100%;
-      background: #FFF8EB;
-      border-top: 1px solid rgba(139,111,208,0.15);
+      background: #F7F1E3;
+      border-top: 1px solid rgba(178,58,68,0.15);
     }
 
     /* ── UNVISITED POPUP ── */
     .unv-overlay {
       position:fixed; inset:0; z-index:300;
-      background:rgba(20,10,40,0.7); backdrop-filter:blur(10px);
+      background:rgba(31,22,17,0.7); backdrop-filter:blur(10px);
       display:flex; align-items:center; justify-content:center;
       opacity:0; pointer-events:none; transition:opacity 0.3s;
     }
@@ -1002,18 +1002,18 @@ renderKeyRack();
     .unv-go {
       flex:1; display:inline-flex; align-items:center; justify-content:center;
       font-family:var(--font-heading); font-size:var(--text-sm); font-weight:600; letter-spacing:0.05em;
-      background:var(--lavender-400); color:#fff;
+      background:var(--yeonji-400); color:#fff;
       border-radius:var(--radius-full); padding:var(--space-3) var(--space-4);
       text-decoration:none; transition:background 0.15s;
     }
-    .unv-go:hover { background:var(--lavender-500); }
+    .unv-go:hover { background:var(--yeonji-500); }
     .unv-cancel {
       flex:1; font-family:var(--font-heading); font-size:var(--text-sm); font-weight:500;
-      background:var(--sand-200); color:var(--color-text-secondary);
+      background:var(--hanji-200); color:var(--color-text-secondary);
       border:none; border-radius:var(--radius-full); padding:var(--space-3) var(--space-4);
       cursor:pointer; transition:background 0.15s;
     }
-    .unv-cancel:hover { background:var(--sand-300, #e5d5b0); }
+    .unv-cancel:hover { background:var(--hanji-300, #e5d5b0); }
 
 </style>
 

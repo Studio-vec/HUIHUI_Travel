@@ -42,7 +42,7 @@ const trips = publicTrips()
                 <div class="cloud c1"></div>
                 <div class="cloud c2"></div>
                 <svg class="plane" viewBox="0 0 48 24" aria-hidden="true">
-                  <path d="M2 14 L20 12 L34 2 L38 3 L30 12 L44 11 C47 11 47 14 44 14 L30 14 L38 22 L34 23 L20 14 Z" fill="#7B5CC4"/>
+                  <path d="M2 14 L20 12 L34 2 L38 3 L30 12 L44 11 C47 11 47 14 44 14 L30 14 L38 22 L34 23 L20 14 Z" fill="#B23A44"/>
                 </svg>
               </div>
               <div class="suitcase"><i></i><b></b></div>
@@ -184,7 +184,7 @@ const trips = publicTrips()
     aspect-ratio: 4 / 5;
     border-radius: var(--radius-2xl);
     box-shadow: var(--shadow-xl);
-    background: var(--lavender-50);
+    background: var(--yeonji-50);
     user-select: none; -webkit-user-select: none;
     /* 모바일(세로) 구도 */
     --floor-t: 83%; --wains-h: 22%;
@@ -223,29 +223,29 @@ const trips = publicTrips()
   .wall {
     position: absolute; inset: -4%;
     background:
-      radial-gradient(circle at 20px 20px, rgba(192,168,255,.20) 2px, transparent 3px) 0 0 / 40px 40px,
-      linear-gradient(180deg, var(--lavender-50), #F9F3FF);
+      radial-gradient(circle at 20px 20px, rgba(232,163,163,.20) 2px, transparent 3px) 0 0 / 40px 40px,
+      linear-gradient(180deg, var(--yeonji-50), #FDF5F6);
   }
   .wainscot {
     position: absolute; left: -4%; right: -4%;
     top: calc(var(--floor-t) - var(--wains-h)); height: var(--wains-h);
-    background: linear-gradient(180deg, var(--lavender-100), var(--lavender-200));
-    border-top: 3px solid var(--lavender-200);
+    background: linear-gradient(180deg, var(--yeonji-100), var(--yeonji-200));
+    border-top: 3px solid var(--yeonji-200);
   }
   .floor {
     position: absolute; left: -4%; right: -4%; top: var(--floor-t); bottom: -4%;
-    background: linear-gradient(180deg, var(--lavender-300), var(--lavender-400));
+    background: linear-gradient(180deg, var(--yeonji-300), var(--yeonji-400));
   }
   .runner {
     position: absolute; left: calc(var(--door-l) + 4%); width: calc(var(--door-w) - 8%); top: 0; bottom: 0;
-    background: repeating-linear-gradient(90deg, rgba(255,255,255,.25) 0 6px, transparent 6px 18px), var(--lavender-200);
-    border-left: 4px solid var(--lime-300); border-right: 4px solid var(--lime-300);
+    background: repeating-linear-gradient(90deg, rgba(255,255,255,.25) 0 6px, transparent 6px 18px), var(--yeonji-200);
+    border-left: 4px solid var(--bichwi-300); border-right: 4px solid var(--bichwi-300);
   }
 
   /* 벽등 */
   .sconce {
     position: absolute; width: 5%; aspect-ratio: 1 / 1.5;
-    background: linear-gradient(180deg, var(--sand-200), var(--sand-300));
+    background: linear-gradient(180deg, var(--hanji-200), var(--hanji-300));
     clip-path: polygon(22% 0, 78% 0, 100% 100%, 0 100%);
     transform: translate(-50%, 0);
   }
@@ -267,17 +267,17 @@ const trips = publicTrips()
   .plate {
     position: absolute; left: 50%; bottom: 100%; margin-bottom: 1.2cqw; transform: translateX(-50%);
     padding: .15em .7em; border-radius: 8px;
-    background: var(--sand-100); border: 2px solid var(--sand-400);
-    box-shadow: 0 2px 0 var(--sand-500), 0 6px 14px rgba(42,31,72,.14);
+    background: var(--hanji-100); border: 2px solid var(--hanji-400);
+    box-shadow: 0 2px 0 var(--hanji-500), 0 6px 14px rgba(35,28,23,.14);
   }
   .plate span {
     font-family: var(--font-display); font-style: italic; font-weight: 600;
-    font-size: var(--fs-plate); line-height: 1.1; color: var(--lavender-700); letter-spacing: .04em;
+    font-size: var(--fs-plate); line-height: 1.1; color: var(--yeonji-700); letter-spacing: .04em;
   }
   .frame {
     position: absolute; inset: 0; perspective: 1400px;
-    border: max(3px, .8cqw) solid var(--sand-400); border-bottom: 0;
-    border-radius: 6px 6px 0 0; background: #2A1F48;
+    border: max(3px, .8cqw) solid var(--hanji-400); border-bottom: 0;
+    border-radius: 6px 6px 0 0; background: #231C17;
   }
   .room {
     position: absolute; inset: 0; overflow: hidden;
@@ -285,8 +285,8 @@ const trips = publicTrips()
   }
   .window {
     position: absolute; left: 14%; right: 14%; top: 12%; height: 38%; overflow: hidden;
-    border: max(2px, .5cqw) solid var(--sand-400); border-radius: 4px;
-    background: linear-gradient(180deg, #CFE3FF, var(--lime-50));
+    border: max(2px, .5cqw) solid var(--hanji-400); border-radius: 4px;
+    background: linear-gradient(180deg, #CFE3FF, var(--bichwi-50));
   }
   .cloud {
     position: absolute; height: 22%; width: 30%; border-radius: 99px; background: #fff; opacity: .9;
@@ -304,39 +304,39 @@ const trips = publicTrips()
   }
   .suitcase {
     position: absolute; left: 12%; bottom: 8%; width: 40%; height: 22%;
-    background: var(--lavender-500); border-radius: 6px; box-shadow: inset 0 -4px 0 rgba(42,31,72,.2);
+    background: var(--yeonji-500); border-radius: 6px; box-shadow: inset 0 -4px 0 rgba(35,28,23,.2);
   }
-  .suitcase::before { content: ''; position: absolute; left: 30%; right: 30%; top: -24%; height: 28%; border: 3px solid var(--lavender-700); border-bottom: 0; border-radius: 6px 6px 0 0; }
-  .suitcase i { position: absolute; left: 14%; top: 22%; width: 22%; aspect-ratio: 1; border-radius: 50%; background: var(--lime-300); }
-  .suitcase b { position: absolute; right: 14%; bottom: 18%; width: 26%; height: 18%; border-radius: 3px; background: var(--sand-100); transform: rotate(-8deg); }
-  .room-floor { position: absolute; left: 0; right: 0; bottom: 0; height: 9%; background: var(--sand-300); }
+  .suitcase::before { content: ''; position: absolute; left: 30%; right: 30%; top: -24%; height: 28%; border: 3px solid var(--yeonji-700); border-bottom: 0; border-radius: 6px 6px 0 0; }
+  .suitcase i { position: absolute; left: 14%; top: 22%; width: 22%; aspect-ratio: 1; border-radius: 50%; background: var(--bichwi-300); }
+  .suitcase b { position: absolute; right: 14%; bottom: 18%; width: 26%; height: 18%; border-radius: 3px; background: var(--hanji-100); transform: rotate(-8deg); }
+  .room-floor { position: absolute; left: 0; right: 0; bottom: 0; height: 9%; background: var(--hanji-300); }
 
   .leaf {
     position: absolute; inset: 0; transform-origin: left center; backface-visibility: hidden;
-    background: linear-gradient(135deg, var(--lavender-400), var(--lavender-500));
+    background: linear-gradient(135deg, var(--yeonji-400), var(--yeonji-500));
     border-radius: 3px 3px 0 0;
     box-shadow: inset 0 0 0 max(2px, .4cqw) rgba(255,255,255,.18);
     transition: transform .95s var(--ease-in-out), filter .95s var(--ease-in-out);
   }
-  .panel { position: absolute; left: 13%; right: 13%; border-radius: 3px; border: 1.5px solid rgba(255,255,255,.3); box-shadow: inset 0 0 0 3px rgba(78,52,144,.16); }
+  .panel { position: absolute; left: 13%; right: 13%; border-radius: 3px; border: 1.5px solid rgba(255,255,255,.3); box-shadow: inset 0 0 0 3px rgba(113,38,44,.16); }
   .p1 { top: 7%; height: 36%; }
   .p2 { top: 52%; height: 38%; }
   .peep {
     position: absolute; left: 50%; top: 46%; width: 5%; aspect-ratio: 1; transform: translate(-50%, -50%);
-    border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff, var(--sand-300) 40%, var(--sand-500));
-    box-shadow: 0 0 0 max(1.5px, .3cqw) var(--sand-400);
+    border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff, var(--hanji-300) 40%, var(--hanji-500));
+    box-shadow: 0 0 0 max(1.5px, .3cqw) var(--hanji-400);
   }
   .handle {
     position: absolute; right: 9%; top: 49%; width: 15%; height: 2.6%; border-radius: 99px;
-    background: var(--lime-300); box-shadow: 0 2px 0 var(--lime-500);
+    background: var(--bichwi-300); box-shadow: 0 2px 0 var(--bichwi-500);
   }
   .dnd {
     position: absolute; right: 8%; top: 52.5%; width: 17%; aspect-ratio: 1 / 1.7; transform-origin: 50% 0;
     display: flex; align-items: flex-end; justify-content: center; padding-bottom: 12%;
-    background: var(--lime-200); border-radius: 3px 3px 6px 6px; font-size: 2.6cqw; line-height: 1;
-    box-shadow: 0 3px 8px rgba(42,31,72,.2); animation: sway 3.4s ease-in-out infinite;
+    background: var(--bichwi-200); border-radius: 3px 3px 6px 6px; font-size: 2.6cqw; line-height: 1;
+    box-shadow: 0 3px 8px rgba(35,28,23,.2); animation: sway 3.4s ease-in-out infinite;
   }
-  .dnd i { position: absolute; left: 50%; top: -2%; width: 30%; aspect-ratio: 1; border: 2px solid var(--lime-500); border-radius: 50%; transform: translateX(-50%); }
+  .dnd i { position: absolute; left: 50%; top: -2%; width: 30%; aspect-ratio: 1; border: 2px solid var(--bichwi-500); border-radius: 50%; transform: translateX(-50%); }
   @keyframes sway { 0%,100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
 
   .stage.is-open .leaf { transform: rotateY(-74deg); filter: brightness(.82); }
@@ -356,14 +356,14 @@ const trips = publicTrips()
     position: absolute; left: var(--rd-l); top: var(--rd-t); width: var(--rd-w); height: var(--rd-h);
     display: flex; flex-direction: column; align-items: center; justify-content: space-between;
     padding: 9% 8% 7%; border-radius: 10px;
-    background: linear-gradient(180deg, #3B2C63, var(--lavender-700));
-    box-shadow: 0 6px 16px rgba(42,31,72,.28), inset 0 0 0 2px rgba(255,255,255,.08);
+    background: linear-gradient(180deg, #544033, var(--yeonji-700));
+    box-shadow: 0 6px 16px rgba(35,28,23,.28), inset 0 0 0 2px rgba(255,255,255,.08);
   }
   .led { width: 13%; aspect-ratio: 1; border-radius: 50%; background: var(--color-error); box-shadow: 0 0 10px var(--color-error); animation: blink 1.6s steps(2, end) infinite; }
   .reader.is-near .led { background: var(--color-warning); box-shadow: 0 0 12px var(--color-warning); animation: none; }
-  .reader.ok .led { background: var(--lime-300); box-shadow: 0 0 14px 3px var(--lime-300); animation: none; }
+  .reader.ok .led { background: var(--bichwi-300); box-shadow: 0 0 14px 3px var(--bichwi-300); animation: none; }
   @keyframes blink { 50% { opacity: .25; } }
-  .slot { width: 78%; height: 32%; border-radius: 6px; background: #1c1436; box-shadow: inset 0 2px 5px rgba(0,0,0,.6); transition: box-shadow .2s; }
+  .slot { width: 78%; height: 32%; border-radius: 6px; background: #2D2119; box-shadow: inset 0 2px 5px rgba(0,0,0,.6); transition: box-shadow .2s; }
   .reader.is-near .slot { box-shadow: inset 0 2px 5px rgba(0,0,0,.6), 0 0 0 2px var(--color-warning); }
   .reader em { font-family: var(--font-heading); font-style: normal; font-weight: 600; font-size: var(--fs-rd); letter-spacing: .2em; color: rgba(255,255,255,.55); }
 
@@ -371,11 +371,11 @@ const trips = publicTrips()
   .table {
     position: absolute; top: var(--tb-t); height: var(--tb-h);
     background:
-      linear-gradient(var(--sand-500), var(--sand-500)) 0 0 / 100% 22% no-repeat,
-      linear-gradient(var(--sand-600), var(--sand-600)) 10% 100% / 6% 78% no-repeat,
-      linear-gradient(var(--sand-600), var(--sand-600)) 90% 100% / 6% 78% no-repeat;
+      linear-gradient(var(--hanji-500), var(--hanji-500)) 0 0 / 100% 22% no-repeat,
+      linear-gradient(var(--hanji-600), var(--hanji-600)) 10% 100% / 6% 78% no-repeat,
+      linear-gradient(var(--hanji-600), var(--hanji-600)) 90% 100% / 6% 78% no-repeat;
     border-radius: 4px 4px 0 0;
-    filter: drop-shadow(0 4px 4px rgba(42,31,72,.18));
+    filter: drop-shadow(0 4px 4px rgba(35,28,23,.18));
   }
   .tb-l { left: var(--tl-l); width: var(--tl-w); }
   .tb-r { left: var(--tr-l); width: var(--tr-w); }
@@ -386,7 +386,7 @@ const trips = publicTrips()
   }
   .bell svg { width: 100%; height: 100%; display: block; overflow: visible; }
   .bell:focus-visible, .card:focus-visible, .tag:focus-visible, .btn:focus-visible {
-    outline: 3px solid var(--lavender-500); outline-offset: 3px;
+    outline: 3px solid var(--yeonji-500); outline-offset: 3px;
   }
   .bell.ring { animation: ring .7s ease-in-out; }
   @keyframes ring {
@@ -405,25 +405,25 @@ const trips = publicTrips()
   .stage.is-open .card { cursor: default; --rot: 0deg; --sc: .84; pointer-events: none; }
   .card-body {
     position: relative; display: block; width: 100%; height: 100%; border-radius: 8px; overflow: hidden;
-    background: linear-gradient(135deg, var(--lavender-300), var(--lime-300));
-    box-shadow: 0 8px 18px rgba(42,31,72,.28), inset 0 0 0 1.5px rgba(255,255,255,.5);
+    background: linear-gradient(135deg, var(--yeonji-300), var(--bichwi-300));
+    box-shadow: 0 8px 18px rgba(35,28,23,.28), inset 0 0 0 1.5px rgba(255,255,255,.5);
     animation: bob 3.2s ease-in-out infinite;
   }
   .card.grab .card-body, .stage.is-open .card-body { animation: none; }
   @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5%); } }
   .card-chip { position: absolute; left: 9%; top: 26%; width: 17%; height: 20%; border-radius: 3px; background: linear-gradient(135deg, #F0D890, #C9A24A); }
-  .card-name { position: absolute; left: 9%; bottom: 30%; font-family: 'DM Serif Display', var(--font-display); font-style: italic; font-size: var(--fs-card); color: #fff; text-shadow: 0 1px 2px rgba(42,31,72,.4); white-space: nowrap; }
-  .card-sub { position: absolute; left: 9%; bottom: 14%; font-family: var(--font-heading); font-weight: 600; font-size: calc(var(--fs-card) * .7); letter-spacing: .08em; color: rgba(42,31,72,.7); white-space: nowrap; }
-  .card-stripe { position: absolute; left: 0; right: 0; top: 8%; height: 12%; background: rgba(42,31,72,.55); }
+  .card-name { position: absolute; left: 9%; bottom: 30%; font-family: 'Gowun Batang', var(--font-display); font-style: italic; font-size: var(--fs-card); color: #fff; text-shadow: 0 1px 2px rgba(35,28,23,.4); white-space: nowrap; }
+  .card-sub { position: absolute; left: 9%; bottom: 14%; font-family: var(--font-heading); font-weight: 600; font-size: calc(var(--fs-card) * .7); letter-spacing: .08em; color: rgba(35,28,23,.7); white-space: nowrap; }
+  .card-stripe { position: absolute; left: 0; right: 0; top: 8%; height: 12%; background: rgba(35,28,23,.55); }
 
   .hint {
     position: absolute; right: calc(100% - var(--card-l) + 1.5%); top: calc(var(--card-t) + 2%);
     padding: .5em .9em; border-radius: 99px; white-space: nowrap;
     background: #fff; box-shadow: var(--shadow-md);
-    font-family: var(--font-heading); font-weight: 600; font-size: max(12px, calc(var(--fs-card) * .95)); color: var(--lavender-600);
+    font-family: var(--font-heading); font-weight: 600; font-size: max(12px, calc(var(--fs-card) * .95)); color: var(--yeonji-600);
     animation: nudge 1.8s ease-in-out infinite; transition: opacity .25s;
   }
-  .hint span { color: var(--lavender-500); }
+  .hint span { color: var(--yeonji-500); }
   .hint::after { content: ''; position: absolute; right: -5px; top: 50%; width: 10px; height: 10px; background: #fff; transform: translateY(-50%) rotate(45deg); }
   .hint.gone { opacity: 0; pointer-events: none; }
   @keyframes nudge { 0%,100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
@@ -432,13 +432,13 @@ const trips = publicTrips()
   .info { min-width: 0; }
   .eyebrow {
     font-family: var(--font-heading); font-size: var(--text-xs); font-weight: 600;
-    letter-spacing: var(--tracking-widest); text-transform: uppercase; color: var(--lavender-500); margin-bottom: 12px;
+    letter-spacing: var(--tracking-widest); text-transform: uppercase; color: var(--yeonji-500); margin-bottom: 12px;
   }
   .info h1 {
     font-family: var(--font-heading); font-weight: 600; letter-spacing: -0.03em; line-height: 1.16;
     font-size: clamp(30px, 5.4vw, 52px); color: var(--color-text-primary);
   }
-  .info h1 em { font-style: normal; color: var(--lavender-500); background: linear-gradient(transparent 62%, var(--lime-200) 62%); }
+  .info h1 em { font-style: normal; color: var(--yeonji-500); background: linear-gradient(transparent 62%, var(--bichwi-200) 62%); }
   .lead { margin-top: 16px; max-width: 34em; font-size: var(--text-base); line-height: var(--leading-loose); color: var(--color-text-secondary); }
 
   .folio {
@@ -448,19 +448,19 @@ const trips = publicTrips()
   }
   .folio-h {
     display: flex; justify-content: space-between; padding: 10px 16px;
-    background: var(--lavender-100); color: var(--lavender-600);
+    background: var(--yeonji-100); color: var(--yeonji-600);
     font-family: var(--font-heading); font-weight: 600; font-size: var(--text-xs); letter-spacing: var(--tracking-widest);
   }
   .folio dl { padding: 8px 16px 4px; }
-  .folio dl > div { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; border-bottom: 1px dashed var(--sand-300); font-size: var(--text-sm); }
+  .folio dl > div { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; border-bottom: 1px dashed var(--hanji-300); font-size: var(--text-sm); }
   .folio dl > div:last-child { border-bottom: 0; }
   .folio dt { color: var(--color-text-tertiary); flex-shrink: 0; }
   .folio dd { text-align: right; color: var(--color-text-primary); font-weight: 500; min-width: 0; }
-  .folio .path { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 12px; word-break: break-all; color: var(--lavender-600); }
+  .folio .path { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 12px; word-break: break-all; color: var(--yeonji-600); }
   .barcode { height: 22px; margin: 4px 16px 14px; background: repeating-linear-gradient(90deg, var(--color-text-primary) 0 2px, transparent 2px 4px, var(--color-text-primary) 4px 5px, transparent 5px 9px); opacity: .55; }
 
   .say {
-    min-height: 1.6em; margin-top: 14px; font-size: var(--text-sm); color: var(--lavender-600); font-weight: 500;
+    min-height: 1.6em; margin-top: 14px; font-size: var(--text-sm); color: var(--yeonji-600); font-weight: 500;
   }
   .say.pop { animation: pop .35s var(--ease-spring); }
   @keyframes pop { from { transform: translateY(6px); opacity: 0; } to { transform: none; opacity: 1; } }
@@ -475,13 +475,13 @@ const trips = publicTrips()
     color: var(--color-text-primary); box-shadow: var(--shadow-sm); transform-origin: 50% 0;
     transition: box-shadow .2s, background .2s, filter .4s, opacity .4s;
   }
-  .tag::before { content: ''; position: absolute; left: 50%; top: -10px; width: 2px; height: 14px; background: var(--sand-500); transform: translateX(-50%); }
-  .hole { position: absolute; left: 50%; top: 6px; width: 9px; height: 9px; border-radius: 50%; background: var(--sand-100); border: 2px solid var(--lavender-300); transform: translateX(-50%); }
-  .tno { display: block; font-family: var(--font-heading); font-size: 12px; font-weight: 600; letter-spacing: .12em; color: var(--lavender-500); }
+  .tag::before { content: ''; position: absolute; left: 50%; top: -10px; width: 2px; height: 14px; background: var(--hanji-500); transform: translateX(-50%); }
+  .hole { position: absolute; left: 50%; top: 6px; width: 9px; height: 9px; border-radius: 50%; background: var(--hanji-100); border: 2px solid var(--yeonji-300); transform: translateX(-50%); }
+  .tno { display: block; font-family: var(--font-heading); font-size: 12px; font-weight: 600; letter-spacing: .12em; color: var(--yeonji-500); }
   .tname { display: block; margin-top: 3px; font-size: var(--text-md); font-weight: 500; }
   .tmeta { display: block; margin-top: 4px; font-size: 12px; color: var(--color-text-tertiary); }
   .rack:not(.is-open) .tag { filter: grayscale(1); opacity: .45; }
-  .rack.is-open .tag:hover { background: var(--lime-50); box-shadow: var(--shadow-lime); }
+  .rack.is-open .tag:hover { background: var(--bichwi-50); box-shadow: var(--shadow-jade); }
   .rack.is-open .tag {
     animation:
       drop .75s var(--ease-spring) both calc(var(--i) * 70ms),
@@ -498,12 +498,12 @@ const trips = publicTrips()
     transition: transform .15s var(--ease-out), box-shadow .2s, background .2s, color .2s;
   }
   .btn:active { transform: scale(.97); }
-  .btn.primary { background: var(--lavender-500); color: #fff; box-shadow: var(--shadow-brand); }
-  .btn.primary:hover { background: var(--lavender-600); }
-  .btn.ghost { border: 1.5px solid var(--lavender-300); color: var(--lavender-600); background: rgba(255,255,255,.6); }
-  .btn.ghost:hover { background: var(--lavender-50); }
+  .btn.primary { background: var(--yeonji-500); color: #fff; box-shadow: var(--shadow-brand); }
+  .btn.primary:hover { background: var(--yeonji-600); }
+  .btn.ghost { border: 1.5px solid var(--yeonji-300); color: var(--yeonji-600); background: rgba(255,255,255,.6); }
+  .btn.ghost:hover { background: var(--yeonji-50); }
   .btn.text { color: var(--color-text-tertiary); padding: 0 10px; }
-  .btn.text:hover { color: var(--lavender-600); }
+  .btn.text:hover { color: var(--yeonji-600); }
 
   @media (max-width: 899px) {
     .info { text-align: left; }

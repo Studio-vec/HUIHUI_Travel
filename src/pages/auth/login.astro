@@ -249,15 +249,15 @@ import Navbar from '../../components/Navbar.astro';
 <style is:global>
 
     :root {
-      --purple:       #7A57CD;
-      --purple-mid:   #946EEE;
-      --purple-light: #C8B1FF;
-      --purple-pale:  #EDE5FF;
-      --cream:        #FFF8EB;
+      --purple:       #B23A44;
+      --purple-mid:   #CB636C;
+      --purple-light: #E8A3A3;
+      --purple-pale:  #F8E1DF;
+      --cream:        #F7F1E3;
       --green:        #8F9D68;
-      --text:         #2a1a4a;
-      --text-mid:     #5a3e8a;
-      --text-dim:     #9a8ab0;
+      --text:         #231C17;
+      --text-mid:     #74272D;
+      --text-dim:     #9D8F83;
     }
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
@@ -266,7 +266,7 @@ import Navbar from '../../components/Navbar.astro';
       flex-direction: column;
       align-items: stretch;
       font-family: 'Noto Sans KR', sans-serif;
-      background: linear-gradient(160deg, #f5eeff 0%, #e8dcff 55%, #c8b1ff 100%);
+      background: linear-gradient(160deg, #FCF1F2 0%, #F8E3E4 55%, #E8A3A3 100%);
     }
     /* 네브바 아래 영역을 채워서 receipt를 중앙 정렬 */
     .login-stage {
@@ -282,7 +282,7 @@ import Navbar from '../../components/Navbar.astro';
       width: min(316px, 94vw);
       background: var(--cream);
       position: relative;
-      filter: drop-shadow(0 24px 48px rgba(90,50,180,0.28));
+      filter: drop-shadow(0 24px 48px rgba(138,46,54,0.28));
     }
 
     /* 위 톱니 */
@@ -306,22 +306,22 @@ import Navbar from '../../components/Navbar.astro';
     .receipt-hotel {
       text-align: center;
       padding: 18px 0 12px;
-      border-bottom: 1px solid rgba(122,87,205,0.15);
+      border-bottom: 1px solid rgba(178,58,68,0.15);
       margin-bottom: 12px;
     }
     .hotel-badge {
       display: inline-flex; align-items: center; justify-content: center;
       width: 52px; height: 52px; border-radius: 50%;
-      background: linear-gradient(135deg, #b094f0 0%, #7A57CD 100%);
-      box-shadow: 0 4px 16px rgba(122,87,205,0.4), inset 0 -2px 6px rgba(40,0,120,0.2);
+      background: linear-gradient(135deg, #DFA5A9 0%, #B23A44 100%);
+      box-shadow: 0 4px 16px rgba(178,58,68,0.4), inset 0 -2px 6px rgba(74,52,40,0.2);
       margin-bottom: 8px;
     }
     .hotel-badge span {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Gowun Batang', serif;
       font-size: 1.1rem; font-weight: 700; color: white; letter-spacing: 0.06em;
     }
     .hotel-name {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Gowun Batang', serif;
       font-size: 1.45rem; font-weight: 600;
       color: var(--purple); letter-spacing: 0.18em; line-height: 1;
     }
@@ -335,11 +335,11 @@ import Navbar from '../../components/Navbar.astro';
     .meta-table { width: 100%; margin-bottom: 4px; }
     .meta-table td { padding: 2px 0; vertical-align: baseline; }
     .meta-label { font-size: 0.75rem; font-weight: 700; color: var(--green); letter-spacing: 0.14em; white-space: nowrap; }
-    .meta-value { font-size: 0.75rem; color: var(--text-dim); font-family: 'Cormorant Garamond', serif; text-align: right; }
-    .meta-value.mono { font-family: 'DM Sans', sans-serif; font-size: 0.75rem; letter-spacing: 0.04em; }
+    .meta-value { font-size: 0.75rem; color: var(--text-dim); font-family: 'Gowun Batang', serif; text-align: right; }
+    .meta-value.mono { font-family: 'Noto Sans KR', sans-serif; font-size: 0.75rem; letter-spacing: 0.04em; }
 
-    .divider       { border:none; border-top: 1.5px dashed rgba(122,87,205,0.25); margin: 11px 0; }
-    .divider-solid { border:none; border-top: 1px solid rgba(122,87,205,0.15);    margin: 10px 0; }
+    .divider       { border:none; border-top: 1.5px dashed rgba(178,58,68,0.25); margin: 11px 0; }
+    .divider-solid { border:none; border-top: 1px solid rgba(178,58,68,0.15);    margin: 10px 0; }
 
     /* 폼 */
     .field { margin-bottom: 10px; }
@@ -349,13 +349,13 @@ import Navbar from '../../components/Navbar.astro';
     }
     .input-box {
       width: 100%; height: 40px; background: white;
-      border: 1.5px solid rgba(122,87,205,0.22); border-radius: 8px;
+      border: 1.5px solid rgba(178,58,68,0.22); border-radius: 8px;
       padding: 0 40px 0 14px; font-size: 0.84rem;
       font-family: 'Noto Sans KR', sans-serif; color: var(--text); outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .input-box:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(122,87,205,0.1); }
-    .input-box::placeholder { color: #c4b8d8; font-size: 0.76rem; }
+    .input-box:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(178,58,68,0.1); }
+    .input-box::placeholder { color: #C7BAAF; font-size: 0.76rem; }
     .pw-wrap { position: relative; }
     .pw-toggle {
       position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
@@ -373,16 +373,16 @@ import Navbar from '../../components/Navbar.astro';
     .btn-checkin {
       width: 100%; height: 44px; background: var(--purple); border: none; border-radius: 8px;
       display: flex; align-items: center; padding: 0 18px; cursor: pointer;
-      box-shadow: 0 4px 16px rgba(122,87,205,0.4);
+      box-shadow: 0 4px 16px rgba(178,58,68,0.4);
       transition: transform 0.15s, box-shadow 0.15s; margin-top: 2px;
     }
     .btn-checkin:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
-    .btn-checkin:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(122,87,205,0.5); }
+    .btn-checkin:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(178,58,68,0.5); }
     .btn-checkin:active { transform: translateY(0); }
     .btn-checkin-label {
       font-size: 0.75rem; font-weight: 700; color: rgba(255,255,255,0.8);
       letter-spacing: 0.16em; flex: 1;
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Noto Sans KR', sans-serif;
     }
     .btn-checkin-arrow { font-size: 1rem; color: white; }
 
@@ -398,19 +398,19 @@ import Navbar from '../../components/Navbar.astro';
       color: var(--text-dim); font-size: 0.75rem; letter-spacing: 0.1em;
     }
     .divider-or::before, .divider-or::after {
-      content: ''; flex: 1; height: 1px; background: rgba(122,87,205,0.18);
+      content: ''; flex: 1; height: 1px; background: rgba(178,58,68,0.18);
     }
 
     /* 구글 버튼 */
     .btn-google {
       width: 100%; height: 40px; background: white;
-      border: 1.5px solid rgba(122,87,205,0.22); border-radius: 8px;
+      border: 1.5px solid rgba(178,58,68,0.22); border-radius: 8px;
       display: flex; align-items: center; justify-content: center; gap: 8px;
       cursor: pointer; font-size: 0.76rem; font-weight: 500;
       font-family: 'Noto Sans KR', sans-serif; color: var(--text);
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .btn-google:hover:not(:disabled) { border-color: var(--purple); box-shadow: 0 2px 10px rgba(122,87,205,0.15); }
+    .btn-google:hover:not(:disabled) { border-color: var(--purple); box-shadow: 0 2px 10px rgba(178,58,68,0.15); }
     .btn-google:disabled { opacity: 0.6; cursor: not-allowed; }
 
     /* 바코드 */
@@ -425,7 +425,7 @@ import Navbar from '../../components/Navbar.astro';
       opacity: 0.35;
     }
     .barcode-num {
-      font-family: 'DM Sans', monospace; font-size: 0.75rem;
+      font-family: 'Noto Sans KR', monospace; font-size: 0.75rem;
       color: var(--text-dim); letter-spacing: 0.18em;
     }
 
@@ -445,7 +445,7 @@ import Navbar from '../../components/Navbar.astro';
       position: fixed; top: 24px; left: 50%;
       transform: translateX(-50%) translateY(-80px);
       background: var(--purple); color: white; border-radius: 999px; padding: 10px 24px;
-      font-size: 0.82rem; font-weight: 500; box-shadow: 0 8px 24px rgba(122,87,205,0.3);
+      font-size: 0.82rem; font-weight: 500; box-shadow: 0 8px 24px rgba(178,58,68,0.3);
       transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1); white-space: nowrap; z-index: 999;
     }
     .toast.show { transform: translateX(-50%) translateY(0); }

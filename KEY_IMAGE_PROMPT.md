@@ -52,3 +52,20 @@ node scripts/shrink_key_images.mjs
 ```bash
 node scripts/optimize_keys.mjs
 ```
+
+## 전통 테마용 열쇠 프롬프트 (theme/hanok)
+
+전통 테마에서는 카드가 **창호 틀 + 현판 + 매듭·술**을 그려 주므로, 열쇠 자체는 조선 자물쇠 열쇠(놋쇠·백동)처럼 만든다.
+매듭과 술은 카드 SVG가 그리니 **이미지에는 넣지 않는다**(겹쳐 보인다). 머리 위쪽 끝이 이미지 맨 위에 닿게 둔다.
+
+```text
+A high-resolution, photorealistic 3D render of an ornate traditional Korean Joseon-dynasty key, positioned perfectly vertical with the decorative head at the top and the bit at the bottom. Flat lay on a pure white background, vertical portrait aspect ratio.
+
+The key is made of aged brass (nutsoe) with soft gold highlights and subtle dark patina, inlaid with thin white-bronze (baekdong) lines. The shaft is long, straight and slender, ending in a simple flat Korean padlock-style bit.
+
+The head is a flat, pierced openwork medallion framed by a cloud-scroll (unmun) border, deeply engraved with an intricate theme: [원하는 주제 입력]. Small lotus and cloud motifs fill the gaps, in the style of Joseon metal ornaments (jangseok).
+
+No cord, no tassel, no knot. Clean, directional lighting highlights every engraved detail.
+```
+
+포인트 컬러를 셋(연지·비취·금)으로 묶어 두었으니, 칠보(에나멜)를 넣고 싶다면 `with small red and jade-green cloisonné accents` 정도만 덧붙인다.
