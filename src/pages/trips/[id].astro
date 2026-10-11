@@ -5,7 +5,9 @@ import Navbar from '../../components/Navbar.astro';
 import TripArticle from '../../components/TripArticle.astro';
 import TripIndex from '../../components/TripIndex.astro';
 import Footer from '../../components/Footer.astro';
-import { toMobileSchedule, toMobileTips, dayCountOf, tripSlug } from '../../lib/tripData';
+import { toMobileSchedule, toMobileTips, dayCountOf, tripSlug, homeCardOf } from '../../lib/tripData';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import type { TripData } from '../../lib/tripData';
 
 export async function getStaticPaths() {
@@ -38,6 +40,18 @@ const dayCount = dayCountOf(tripData);
 const storageKey = `trip_${tripData.id}`;
 const tipsKey = `trip_${tripData.id}_tips_v1`;
 const tripUrl = `/trips/${tripSlug(tripData)}`;
+/* 비밀 여행지: 이 페이지를 연 브라우저의 홈 목록에 카드로 나오도록 카드 정보를 남긴다 (index.astro 의 _buildTrips 와 같은 모양).
+   전용 열쇠 이미지가 없으면 홈이 '준비 중'으로 바꾸므로 비밀코드 열쇠 이미지를 쓴다 */
+const unlockCard = tripData.secretHash
+  ? {
+      ...homeCardOf(tripData, 999),
+      nameEn: tripData.id.charAt(0).toUpperCase() + tripData.id.slice(1),
+      url: tripUrl,
+      key: existsSync(join(process.cwd(), 'public', 'assets', 'keys', `${tripData.id}.webp`))
+        ? `/assets/keys/${tripData.id}.webp`
+        : '/assets/keys/secret.webp',
+    }
+  : null;
 const momentLabel = tripData.id.charAt(0).toUpperCase() + tripData.id.slice(1);
 
 const tripDescription = [
@@ -278,4 +292,13 @@ createTripApp({
   />
   </main>
   <Footer />
+  {unlockCard && (
+    <script is:inline define:vars={{ unlockCard }}>
+      try {
+        const KEY = 'huihui_unlocked';
+        const list = JSON.parse(localStorage.getItem(KEY) || '[]').filter((c) => c && c.url !== unlockCard.url);
+        localStorage.setItem(KEY, JSON.stringify([...list, unlockCard]));
+      } catch (_) {}
+    </script>
+  )}
 </BaseLayout>

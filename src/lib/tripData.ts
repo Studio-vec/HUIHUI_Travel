@@ -91,6 +91,30 @@ export function tripSlug(data: TripData): string {
   return data.secretHash ? data.secretHash.slice(0, 24) : data.id;
 }
 
+/* 도·시 단위 태그가 제각각이라 필터용 큰 권역으로 묶는다 */
+function regionOf(tag: string): string {
+  if (/강원/.test(tag)) return '강원';
+  if (/서울|경기|인천/.test(tag)) return '수도권';
+  if (/대전|세종|충/.test(tag)) return '충청';
+  if (/전라|광주|전북|전남/.test(tag)) return '전라';
+  if (/경상|부산|대구|울산|경북|경남/.test(tag)) return '경상';
+  if (/제주/.test(tag)) return '제주';
+  return tag;
+}
+
+/** 홈 열쇠 카드에 쓰는 정보. 홈(공개 여행지)과 비밀 여행지 페이지(코드를 연 사람의 홈에 추가)가 함께 쓴다 */
+export function homeCardOf(t: TripData, fallbackNo: number) {
+  return {
+    no: t.no ?? fallbackNo,
+    nameKo: t.shortNameKo || t.title,
+    tagline: t.tagline || '',
+    region: regionOf(t.tags[0] || ''),
+    nights: t.tags[t.tags.length - 1] || '',
+    theme: String(t.tags[1] || '').replace(/^\P{L}+/u, ''),
+    loc: t.locationLabel || '',
+  };
+}
+
 export function dayCountOf(data: TripData): number {
   return Math.max(...data.places.map((p) => p.day));
 }

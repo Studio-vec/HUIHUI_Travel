@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import TripIndex from '../components/TripIndex.astro';
 import type { TripData } from '../lib/tripData';
+import { homeCardOf } from '../lib/tripData';
 
 const tripModules = import.meta.glob('/trips/data/*.json', { eager: true }) as Record<
   string,
@@ -15,34 +16,11 @@ const allTrips = Object.values(tripModules)
   .filter((t) => !t.secretHash)
   .sort((a, b) => (a.no ?? 0) - (b.no ?? 0));
 
-/* 도·시 단위 태그가 제각각이라 필터용 큰 권역으로 묶는다 */
-function regionOf(tag: string): string {
-  if (/강원/.test(tag)) return '강원';
-  if (/서울|경기|인천/.test(tag)) return '수도권';
-  if (/대전|세종|충/.test(tag)) return '충청';
-  if (/전라|광주|전북|전남/.test(tag)) return '전라';
-  if (/경상|부산|대구|울산|경북|경남/.test(tag)) return '경상';
-  if (/제주/.test(tag)) return '제주';
-  return tag;
-}
-
 /* 비밀코드 여행지는 홈에 아무 정보도 싣지 않는다. 입력한 코드의 해시로 주소(/trips/<해시 앞 24자>)를 만들어
-   그 페이지가 있는지만 확인한다. 해시 규칙은 scripts/secret_hash.mjs 와 같아야 한다. */
+   그 페이지가 있는지만 확인한다. 해시 규칙은 scripts/secret_hash.mjs 와 같아야 한다.
+   한 번 연 비밀 여행지는 그 페이지가 localStorage(huihui_unlocked)에 카드 정보를 남겨, 이 브라우저의 홈 목록에 함께 나온다. */
 
-const tripConfig = Object.fromEntries(
-  allTrips.map((t, idx) => [
-    t.id,
-    {
-      no: t.no ?? idx + 1,
-      nameKo: t.shortNameKo || t.title,
-      tagline: t.tagline || '',
-      region: regionOf(t.tags[0] || ''),
-      nights: t.tags[t.tags.length - 1] || '',
-      theme: String(t.tags[1] || '').replace(/^\P{L}+/u, ''),
-      loc: t.locationLabel || '',
-    },
-  ])
-);
+const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf(t, idx + 1)]));
 ---
 <BaseLayout title="Travel HUIHUI — 국내 여행 안내서">
   <Fragment slot="head">
@@ -822,6 +800,17 @@ const tripConfig = Object.fromEntries(
     }
 
     /* ── BUILD TRIPS FROM CONFIG ── */
+    /* 이 브라우저에서 한 번 연 비밀 여행지 (비밀 여행지 페이지가 남긴 카드 정보) */
+    function _unlockedTrips() {
+      try {
+        const list = JSON.parse(localStorage.getItem('huihui_unlocked') || '[]');
+        return Array.isArray(list)
+          ? list.filter(c => c && typeof c.url === 'string' && /^\/trips\/[\w-]+$/.test(c.url) && c.nameKo)
+                .map(c => ({ ...c, status: 'open' }))
+          : [];
+      } catch (_) { return []; }
+    }
+
     function _buildTrips() {
       return Object.entries(TRIP_CONFIG).map(([slug, cfg], idx) => ({
         nameEn:  slug.charAt(0).toUpperCase() + slug.slice(1),
@@ -835,7 +824,7 @@ const tripConfig = Object.fromEntries(
         nights:  cfg.nights  || '',
         theme:   cfg.theme   || '',
         loc:     cfg.loc     || '',
-      }));
+      })).concat(_unlockedTrips());
     }
 
     /* ── FILTER (기간 · 지역 · 검색어) ── */
