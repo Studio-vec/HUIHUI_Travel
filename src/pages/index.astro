@@ -1107,19 +1107,25 @@ const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf
     /* 열쇠패: 칸 사이 가로 간격 없이, 줄마다 위쪽 두 줄 창방 선이 이어진다 */
     .key-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       column-gap: 0; row-gap: clamp(var(--space-8), 4vw, var(--space-12));
       max-width: 1148px;
       margin: 0 auto;
     }
-    @media (min-width: 480px) {
-      .key-grid { grid-template-columns: repeat(3, 1fr); }
+    @media (min-width: 340px) {
+      .key-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 479px) {
+      .key-card { padding: 0 2px; }
+      .card-name { font-size: 15px; }
+      .card-name.long { font-size: 13px; }
+      .card-meta { font-size: 12px; letter-spacing: -0.02em; }
     }
     @media (min-width: 600px) {
-      .key-grid { grid-template-columns: repeat(4, 1fr); }
+      .key-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     }
     @media (min-width: 860px) {
-      .key-grid { grid-template-columns: repeat(5, 1fr); }
+      .key-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
     }
 
     /* ── Filter ── */

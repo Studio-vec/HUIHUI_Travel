@@ -307,10 +307,10 @@
 
   /* ── 언어 드롭다운 ─────────────────────────────────────── */
   const LANGS = [
-    { label: '한국어', code: 'ko', flag: '🇰🇷' },
-    { label: 'English', code: 'en', flag: '🇺🇸' },
-    { label: '日本語',  code: 'ja', flag: '🇯🇵' },
-    { label: '中文',   code: 'zh', flag: '🇨🇳' },
+    { label: '한국어', code: 'ko' },
+    { label: 'English', code: 'en' },
+    { label: '日本語',  code: 'ja' },
+    { label: '中文',   code: 'zh' },
   ];
 
   window.hhLang = window.hhLang || 'ko';
@@ -323,12 +323,12 @@
   function _renderLangOptions() {
     langDropdown.innerHTML = LANGS.map(l => `
       <button class="hh-lang-opt${window.hhLang === l.code ? ' selected' : ''}" data-code="${l.code}">
-        <span>${l.flag}</span><span>${l.label}</span>
+        <span>${l.label}</span>
       </button>`).join('');
 
     mobileLangRow.innerHTML = LANGS.map(l => `
       <button class="hh-mm-lang-chip${window.hhLang === l.code ? ' selected' : ''}" data-code="${l.code}">
-        ${l.flag} ${l.label}
+        ${l.label}
       </button>`).join('');
 
     const cur = LANGS.find(l => l.code === window.hhLang);

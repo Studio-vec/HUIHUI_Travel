@@ -5,7 +5,6 @@
  * 발견할 수 없다. 이 섹션이 정적 HTML 안의 실제 <a href> 진입점 역할을 한다.
  */
 import type { TripData } from '../lib/tripData';
-import { dayCountOf } from '../lib/tripData';
 
 export interface Props {
   trips: TripData[];
@@ -28,7 +27,6 @@ const entries = trips.map((t) => ({
   href: `/trips/${t.id}`,
   title: t.title,
   eyebrow: t.locationLabel,
-  days: dayCountOf(t),
   placeCount: t.places.length,
   tags: t.tags.slice(0, 3).map(plain),
   note: t.operatorNote?.text ?? '',
@@ -49,7 +47,7 @@ const entries = trips.map((t) => ({
           <h3 class="ti-item-title">{e.title}</h3>
         </a>
         <p class="ti-item-meta">
-          {e.days}일 코스 · 장소 {e.placeCount}곳
+          장소 {e.placeCount}곳
           {e.tags.length > 0 && <> · {e.tags.join(' · ')}</>}
         </p>
         {!compact && e.note && <p class="ti-item-note">{e.note}</p>}

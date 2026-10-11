@@ -496,3 +496,6 @@ body {
 .closed-badge { border: none !important; padding: 0; font-size: 12px; }
 .tip-operator-badge { background: none !important; color: #C9304F !important; padding: 0; font-weight: 600; }
 .tip-avatar { display: none; }
+
+/* 머리 위 'TRAVEL LOG · …' 라벨은 쓰지 않는다 (제목만) */
+.header-eyebrow { display: none; }

@@ -1850,6 +1850,12 @@ function confirmCustomItem(){if(!pendingDataUrl)return;const name=$('itemNameInp
   .detail-season-tag { background:none !important; border:none !important; padding:0 !important; font-size:13px; font-weight:400 !important; color:var(--color-text-secondary) !important; }
   .detail-sub + .detail-season-tag::before { content:'·'; margin:0 8px; color:var(--color-text-tertiary); }
   .detail-tags { display:flex; align-items:baseline; flex-wrap:wrap; }
+  .sc-season, .sc-title { word-break: keep-all; }
+  @media (max-width: 480px) {
+    .item-lbl { font-size: 11px; letter-spacing: -0.04em; white-space: nowrap; overflow: hidden; text-overflow: clip; padding: 2px 1px; }
+  }
+  /* 키보드 안내는 터치 화면에선 감춘다 (회전은 '돌리기' 버튼으로) */
+  @media (pointer: coarse) { .rotate-hint-desk { display: none; } }
 </style>
 
   </main>

@@ -7,6 +7,9 @@
 /* 모든 페이지의 바탕은 한지 한 장 (다크 모드 브라우저에서도 같은 지면) */
 html { background: var(--color-bg); color-scheme: light; }
 body { background: var(--color-bg); color: var(--color-text-primary); }
+/* 한 단어만 다음 줄로 떨어지지 않게 */
+h1, h2, h3 { text-wrap: balance; }
+p, li { text-wrap: pretty; }
 
 /* 작은 라벨 (번호·카테고리) */
 .hh-label {
