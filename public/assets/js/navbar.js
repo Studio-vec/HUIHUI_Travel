@@ -21,7 +21,7 @@
 .hh-navbar-logo {
   display: inline-flex; align-items: center; gap: 10px; min-height: 44px;
   font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
-  font-size: 16px; font-weight: 700; letter-spacing: 0.14em;
+  font-size: 16px; font-weight: 700; letter-spacing: 0.04em;
   color: #202943; text-decoration: none; flex-shrink: 0; white-space: nowrap;
 }
 .hh-navbar-logo img { width: 40px; height: 28px; display: block; }
@@ -173,7 +173,7 @@
   const nav = document.createElement('nav');
   nav.className = 'hh-navbar';
   nav.innerHTML = `
-  <a href="/" class="hh-navbar-logo" aria-label="Travel HUIHUI 홈"><img src="/assets/brand/huihui-logo.svg" alt="" width="40" height="28"/>HUIHUI<small>국내 여행 안내서</small></a>
+  <a href="/" class="hh-navbar-logo" aria-label="Travel HUIHUI 홈"><img src="/assets/brand/huihui-logo.svg" alt="" width="40" height="28"/>Travel HUIHUI<small>국내 여행 안내서</small></a>
   <ul class="hh-navbar-links">
     <li><a href="/"${homeActive}>홈</a></li>
     <li><a href="/gallery"${galleryActive}>갤러리</a></li>
