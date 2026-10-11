@@ -28,9 +28,9 @@ const galleryDestinations = allTrips.map((t) => ({
 
 
 <div class="page-header">
-  <p class="page-eyebrow">Gallery</p>
+  <div class="hh-mast"><span>喜喜 Travel Journal</span><b class="page-eyebrow">Gallery</b><span>{allTrips.length} Keys</span></div>
   <h1 class="page-title">모든 여행의 장면들</h1>
-  <p class="page-desc">열쇠를 눌러 여행의 기억을 열어보세요</p>
+  <p class="page-desc">처마 아래 걸린 열쇠를 눌러 여행의 기억을 열어보세요</p>
   <div class="search-wrap">
     <span class="search-icon">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -40,6 +40,7 @@ const galleryDestinations = allTrips.map((t) => ({
 </div>
 
 <section class="key-rack-section">
+  <div class="hh-beam rack-beam" aria-hidden="true"></div>
   <button class="mobile-nav-btn mobile-nav-prev" id="mobileNavPrev">
     <svg width="10" height="18" viewBox="0 0 10 18" fill="none"><path d="M9 1L1 9l8 8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
@@ -77,7 +78,7 @@ const galleryDestinations = allTrips.map((t) => ({
 <!-- Unvisited popup -->
 <div class="unv-overlay" id="unvOverlay" onclick="if(event.target===this)closeUnvisited()">
   <div class="unv-card">
-    <span class="unv-icon">🔒</span>
+    <span class="unv-icon" aria-hidden="true"><i class="hh-knot"></i></span>
     <p class="unv-msg" id="unvMsg"></p>
     <div class="unv-btns">
       <a href="#" class="unv-go" id="unvGo">여행하러 가기</a>
@@ -240,22 +241,20 @@ async function renderKeyRack() {
   function makeKeyHtml(dest, i) {
     if (!probeResults[i]) {
       return `<div class="key-item coming-soon" data-dest-id="${dest.id}">
-        <div class="key-nametag">${dest.nameKo}</div>
         <div class="key-img-wrap"><div class="key-hook"></div>
           <div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;opacity:0.2;font-size:48px;">🔑</div>
         </div>
-        <div class="key-status-dot"></div>
+        <div class="key-nametag">${dest.nameKo}</div>
       </div>`;
     }
     const isVisited = visited.has(dest.url);
     const cls = isVisited ? 'visited' : 'unvisited';
     return `<div class="key-item ${cls}" data-dest-id="${dest.id}" onclick="handleKeyClick('${dest.id}')">
-      <div class="key-nametag">${dest.nameKo}</div>
       <div class="key-img-wrap">
         <div class="key-hook"></div>
         <img class="key-img" src="/assets/keys/${dest.id}.webp" loading="lazy" alt="${dest.nameKo}">
       </div>
-      <div class="key-status-dot"></div>
+      <div class="key-nametag"><span class="key-status-dot"></span>${dest.nameKo}</div>
     </div>`;
   }
 
@@ -561,17 +560,7 @@ renderKeyRack();
     body {
       font-family:var(--font-body); min-height:100vh; overflow-x:hidden;
       display:flex; flex-direction:column;
-      /* 한지 → 밤(먹·쪽빛) 그라데이션: 해 질 녘 기와집 마당 */
-      background: linear-gradient(
-        to bottom,
-        #F7F1E3 0%,
-        #F7F1E3 30%,
-        #E9DCC6 46%,
-        #4A4A4C 68%,
-        #1B2633 84%,
-        #0F141B 100%
-      );
-      background-attachment: fixed;
+      background: var(--color-bg);
     }
     /* 열쇠구멍/미방문 팝업이 열려 있는 동안에는 뒤쪽 목록이 스크롤되지 않게 잠근다.
        (예전에는 body 가 항상 overflow:hidden 이라 따로 필요 없었다) */
@@ -592,37 +581,36 @@ renderKeyRack();
     .navbar-links a:hover, .navbar-links a.active { color:var(--yeonji-600); background:var(--yeonji-50); }
     @media(max-width:600px){.navbar-links{display:none;}}
 
-    /* PAGE HEADER */
+    /* PAGE HEADER — 에디토리얼 지면 머리 */
     .page-header {
-      max-width:800px; margin:0 auto;
-      padding:clamp(16px,3vh,40px) clamp(20px,5vw,48px) clamp(10px,2vh,24px);
-      text-align:center;
+      width:100%; max-width:1148px; margin:0 auto;
+      padding:clamp(20px,3vh,40px) clamp(20px,5vw,48px) clamp(12px,2vh,24px);
     }
-    .page-eyebrow {
-      font-family:var(--font-heading); font-size: 12px; font-weight:600;
-      letter-spacing:0.16em; text-transform:uppercase;
-      color:var(--yeonji-500); margin-bottom:12px;
-    }
+    .page-eyebrow { color:var(--color-text-primary); }
     .page-title {
-      font-family:var(--font-display); font-style:italic;
-      font-size:clamp(30px,5vw,48px); color:var(--color-text-primary); line-height:1.1;
+      font-family:var(--font-display); font-weight:600;
+      font-size:clamp(34px,5.6vw,72px); letter-spacing:-0.03em; line-height:1.05;
+      color:var(--color-text-primary); margin-top:clamp(16px,2.5vh,28px);
     }
     .page-desc {
-      font-size:13px; color:var(--color-text-tertiary); margin-top:8px;
+      font-family:var(--font-display);
+      font-size:15px; color:var(--color-text-secondary); margin-top:10px;
     }
 
-    /* KEY RACK */
+    /* KEY RACK — 창방(두 줄 먹 선)에 연지 끈으로 매단 열쇠, 이름은 아래 캡션 */
     .key-rack-section {
       /* flex:1 로 두면 아래 콘텐츠에 밀려 높이가 0이 된다. 첫 화면 높이를 직접 잡는다.
          .key-item 이 height:100% 라서 min-height 가 아닌 확정 height 여야 한다. */
       flex: 0 0 auto;
-      height: calc(100vh - 250px);
-      min-height: 320px;
+      position: relative;
+      height: calc(100vh - 280px);
+      min-height: 340px;
       display: flex; align-items: stretch;
     }
+    .rack-beam { position:absolute; top:0; left:0; right:0; z-index:1; }
     .key-rack {
       display:flex; gap:0;
-      padding:20px 0 12px;
+      padding:13px 0 12px;
       overflow-x:auto; scroll-snap-type:x mandatory;
       scrollbar-width:none; -webkit-overflow-scrolling:touch;
       justify-content:flex-start; flex-wrap:nowrap;
@@ -633,67 +621,60 @@ renderKeyRack();
 
     .key-item {
       flex-shrink:0; scroll-snap-align:center;
-      display:flex; flex-direction:column; align-items:center; gap:8px;
+      display:flex; flex-direction:column; align-items:center; gap:12px;
       cursor:pointer; user-select:none;
       height:100%;
-      transition:transform 0.25s var(--ease-out);
+      transition:transform 0.35s var(--ease-out);
     }
-    .key-item:hover { transform:translateY(-8px); }
-    .key-item.coming-soon { cursor:default; opacity:0.35; pointer-events:none; }
+    .key-item:hover { transform:translateY(6px); }
+    .key-item.coming-soon { cursor:default; opacity:0.3; pointer-events:none; }
 
-    /* 이름 태그 — 열쇠 위에 표시 */
+    /* 이름 캡션 */
     .key-nametag {
-      background:rgba(255,255,255,0.82); backdrop-filter:blur(10px);
-      border:1px solid rgba(178,58,68,0.25); border-radius:999px;
-      padding:5px 16px; order:-1;
-      font-family:var(--font-heading); font-size:12px; font-weight:600;
+      display:flex; align-items:center; gap:8px;
+      font-family:var(--font-display); font-size:15px; font-weight:600;
       color:var(--color-text-primary); white-space:nowrap;
-      box-shadow:0 2px 12px rgba(108,36,42,0.12);
-      display:flex; align-items:center; gap:6px;
     }
-    .key-nametag::before, .key-nametag::after {
-      content:'·'; color:var(--yeonji-400); font-size: 12px;
-    }
-    .key-item.unvisited .key-nametag { color:var(--color-text-tertiary); }
+    .key-item.unvisited .key-nametag { color:var(--color-text-tertiary); font-weight:400; }
 
     /* 열쇠 이미지 */
     .key-img-wrap {
       position:relative;
-      width:clamp(180px, 19vw, 360px);
+      width:clamp(150px, 15vw, 260px);
       flex:1; min-height:0;
       display:flex; align-items:flex-start; justify-content:center;
+      padding-top:44px;
     }
+    /* 창방에서 내려온 연지 끈 + 매듭 */
     .key-hook {
       position:absolute; top:0; left:50%; transform:translateX(-50%);
-      width:2px; height:16px;
-      background:linear-gradient(to bottom, rgba(235,170,174,0.6), rgba(235,170,174,0.15));
-      border-radius:2px;
+      width:1px; height:44px; background:var(--yeonji-500);
+    }
+    .key-hook::after {
+      content:''; position:absolute; left:50%; top:18px; width:8px; height:8px;
+      transform:translateX(-50%) rotate(45deg);
+      border:1.2px solid var(--yeonji-500); background:var(--color-bg);
     }
     .key-img {
-      width:100%; height:100%; object-fit:contain;
-      margin-top:4px;
+      width:100%; height:100%; object-fit:contain; object-position:top center;
       transform-origin:50% 0%;
       transition:transform 0.35s var(--ease-out), filter 0.3s;
-      drop-shadow: 0 8px 24px rgba(86,61,47,0.3);
+      filter: drop-shadow(0 8px 14px rgba(26,23,20,0.16));
     }
-    .key-item.unvisited .key-img { filter:grayscale(0.9) brightness(0.6); }
-    .key-item.visited:hover .key-img { animation:keySwing 0.7s ease-in-out; }
+    .key-item.unvisited .key-img { filter:grayscale(1) contrast(.9) opacity(.55); }
+    .key-item.visited:hover .key-img { animation:keySwing 0.9s ease-in-out; }
     @keyframes keySwing {
       0%,100%{transform:rotate(0deg);}
-      25%{transform:rotate(-10deg);}
-      75%{transform:rotate(10deg);}
+      25%{transform:rotate(-6deg);}
+      75%{transform:rotate(6deg);}
     }
 
-    /* 상태 표시 점 */
+    /* 방문 표시: 연지 마름모(방문) / 빈 마름모(미방문) */
     .key-status-dot {
-      width:7px; height:7px; border-radius:50%;
-      background:rgba(255,255,255,0.9);
-      box-shadow:0 0 8px rgba(255,255,255,0.8), 0 0 16px rgba(237,178,182,0.6);
+      width:7px; height:7px; transform:rotate(45deg);
+      background:var(--yeonji-500); border:1.2px solid var(--yeonji-500);
     }
-    .key-item.unvisited .key-status-dot {
-      background:rgba(255,255,255,0.25); box-shadow:none;
-    }
-    .key-item.coming-soon .key-status-dot { display:none; }
+    .key-item.unvisited .key-status-dot { background:transparent; border-color:var(--color-text-tertiary); }
 
     /* ══════════════════════════════
        NEW KEYHOLE SYSTEM
@@ -848,41 +829,41 @@ renderKeyRack();
     #khUiLayer.show { opacity:1; pointer-events:auto; }
     #khDestLbl {
       position:absolute; top:clamp(18px,3.5vh,32px); left:50%; transform:translateX(-50%);
-      font-family:var(--font-display); font-style:italic;
-      font-size:clamp(22px,3.5vw,34px);
-      color:rgba(80,57,43,0.88);
+      font-family:var(--font-display); font-weight:600; letter-spacing:-0.02em;
+      font-size:clamp(24px,3.6vw,38px);
+      color:var(--color-text-primary);
       text-shadow: 0 1px 10px rgba(255,255,255,0.8), 0 2px 20px rgba(255,255,255,0.5);
       white-space:nowrap; pointer-events:none;
     }
     #khTripLnk {
       position:absolute; bottom:clamp(18px,4vh,36px); left:50%; transform:translateX(-50%);
       font-family:var(--font-heading); font-size:12px; font-weight:600;
-      letter-spacing:0.08em; background:rgba(120,45,50,0.82); color:#fff;
-      border-radius:20px; padding:9px 24px; text-decoration:none;
-      backdrop-filter:blur(12px); transition:background 0.2s; pointer-events:auto;
-      box-shadow: 0 2px 16px rgba(70,35,25,0.25);
+      letter-spacing:0.08em; background:var(--color-text-primary); color:var(--color-bg);
+      border-radius:2px; padding:11px 26px; text-decoration:none;
+      transition:background 0.2s; pointer-events:auto;
     }
-    #khTripLnk:hover { background:rgba(120,45,50,1); }
+    #khTripLnk:hover { background:var(--yeonji-500); }
     #khCloseBtn {
       position:absolute; top:clamp(14px,2.5vh,24px); right:clamp(14px,3vw,28px);
-      background:rgba(255,255,255,0.35); border:1px solid rgba(255,255,255,0.5);
-      color:rgba(80,57,43,0.8);
+      background:var(--color-surface); border:1px solid var(--color-text-primary);
+      color:var(--color-text-primary);
       width:40px; height:40px; border-radius:50%; font-size:17px;
       cursor:pointer; display:flex; align-items:center; justify-content:center;
       backdrop-filter:blur(10px); transition:background 0.2s; pointer-events:auto;
       box-shadow: 0 2px 12px rgba(235,170,174,0.2);
     }
-    #khCloseBtn:hover { background:rgba(255,255,255,0.55); }
+    #khCloseBtn:hover { background:#fff; }
 
     /* ── MOBILE: 열쇠 하나씩 보기 ── */
     .mobile-nav-btn {
       display:none; position:absolute; top:50%; transform:translateY(-50%); z-index:20;
       width:44px; height:44px; border-radius:50%;
-      background:rgba(255,255,255,0.10); border:1.5px solid rgba(255,255,255,0.28);
+      background:var(--color-surface); border:1px solid var(--color-text-primary);
       cursor:pointer; align-items:center; justify-content:center;
-      backdrop-filter:blur(6px); transition:background 0.2s;
+      transition:background 0.2s;
     }
-    .mobile-nav-btn:hover { background:rgba(255,255,255,0.22); }
+    .mobile-nav-btn path { stroke:var(--color-text-primary); }
+    .mobile-nav-btn:hover { background:#fff; }
     .mobile-nav-prev { left:12px; }
     .mobile-nav-next { right:12px; }
 
@@ -891,18 +872,17 @@ renderKeyRack();
       position:relative; display:inline-flex; align-items:center; margin-top:16px;
     }
     .search-wrap .search-icon {
-      position:absolute; left:13px; pointer-events:none;
-      color:var(--yeonji-600); display:flex; align-items:center;
+      position:absolute; left:2px; pointer-events:none;
+      color:var(--color-text-secondary); display:flex; align-items:center;
     }
     .search-wrap input {
       font-family:var(--font-heading); font-size:13px; color:var(--color-text-secondary);
-      background:rgba(255,255,255,0.7); backdrop-filter:blur(8px);
-      border:1px solid rgba(178,58,68,0.25); border-radius:999px;
-      padding:8px 20px 8px 36px; outline:none; width:230px;
+      background:transparent; border:none; border-bottom:1px solid var(--color-rule-strong); border-radius:0;
+      padding:8px 4px 8px 24px; outline:none; width:230px;
       transition:border-color 0.2s,background 0.2s,width 0.3s;
     }
     .search-wrap input::placeholder { color:var(--color-text-tertiary); }
-    .search-wrap input:focus { width:260px; background:rgba(255,255,255,0.92); border-color:rgba(178,58,68,0.5); }
+    .search-wrap input:focus { width:260px; border-color:var(--yeonji-500); }
 
     /* 모바일 네비바 검색 래퍼 */
     .navbar-search-wrap {
@@ -972,8 +952,8 @@ renderKeyRack();
     .gallery-trip-index {
       flex: 0 0 auto;
       width: 100%;
-      background: #F7F1E3;
-      border-top: 1px solid rgba(178,58,68,0.15);
+      background: var(--color-bg);
+      border-top: 1px solid var(--color-rule);
     }
 
     /* ── UNVISITED POPUP ── */
@@ -992,9 +972,9 @@ renderKeyRack();
       animation:slideUp 0.25s var(--ease-out);
     }
     @keyframes slideUp { from{transform:translateY(16px);opacity:0;} to{transform:translateY(0);opacity:1;} }
-    .unv-icon { font-size:36px; margin-bottom:var(--space-4); display:block; }
+    .unv-icon { display:block; margin-bottom:var(--space-5); }
     .unv-msg {
-      font-family:var(--font-display); font-style:italic;
+      font-family:var(--font-display); font-weight:500;
       font-size:18px; color:var(--color-text-primary);
       line-height:1.5; margin-bottom:var(--space-6);
     }
@@ -1002,22 +982,22 @@ renderKeyRack();
     .unv-go {
       flex:1; display:inline-flex; align-items:center; justify-content:center;
       font-family:var(--font-heading); font-size:var(--text-sm); font-weight:600; letter-spacing:0.05em;
-      background:var(--yeonji-400); color:#fff;
-      border-radius:var(--radius-full); padding:var(--space-3) var(--space-4);
+      background:var(--color-text-primary); color:var(--color-bg);
+      border-radius:2px; padding:var(--space-3) var(--space-4);
       text-decoration:none; transition:background 0.15s;
     }
     .unv-go:hover { background:var(--yeonji-500); }
     .unv-cancel {
       flex:1; font-family:var(--font-heading); font-size:var(--text-sm); font-weight:500;
-      background:var(--hanji-200); color:var(--color-text-secondary);
-      border:none; border-radius:var(--radius-full); padding:var(--space-3) var(--space-4);
+      background:none; color:var(--color-text-secondary);
+      border:1px solid var(--color-rule-strong); border-radius:2px; padding:var(--space-3) var(--space-4);
       cursor:pointer; transition:background 0.15s;
     }
-    .unv-cancel:hover { background:var(--hanji-300, #e5d5b0); }
+    .unv-cancel:hover { color:var(--color-text-primary); }
 
 </style>
 
-  <!-- 페이지 배경이 아래로 갈수록 딥퍼플이라, 목록은 자체 배경 위에 올린다 -->
+  <!-- 열쇠 랙 아래 코스 목록 -->
   <div class="gallery-trip-index">
     <TripIndex
       trips={allTrips}

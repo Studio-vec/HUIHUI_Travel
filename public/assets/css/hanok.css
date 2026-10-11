@@ -1,0 +1,49 @@
+/* ============================================================
+   Travel HUIHUI — 전통 × 에디토리얼 공용 조각
+   먹 선과 여백이 주인공이고, 전통 요소(창방·매듭·낙관)는 문장부호처럼 아껴 쓴다.
+   색은 한지·먹, 포인트는 연지 하나.
+   ============================================================ */
+
+/* 지면 머리: 위 굵은 먹 선 + 아래 가는 선 사이에 작은 라벨 줄 */
+.hh-mast {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 10px 0;
+  border-top: 2px solid var(--color-text-primary);
+  border-bottom: 1px solid var(--color-rule);
+  font-family: var(--font-heading); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+.hh-mast b { font-weight: 500; color: var(--color-text-primary); }
+
+/* 작은 라벨 (번호·카테고리) */
+.hh-label {
+  font-family: var(--font-heading); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+/* 창방: 두 줄 가는 먹 선, 일정 간격마다 마름모 마디 */
+.hh-beam {
+  position: relative; height: 12px;
+  border-top: 1px solid var(--color-text-primary);
+  border-bottom: 1px solid var(--color-text-primary);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='12'%3E%3Cpath d='M80 2L84 6L80 10L76 6Z' fill='none' stroke='%231A1714' stroke-opacity='.6'/%3E%3C/svg%3E") repeat-x center / 160px 12px;
+}
+
+/* 매듭 마름모: 목록 머리표·구분점 */
+.hh-knot {
+  display: inline-block; width: 7px; height: 7px; flex: none;
+  transform: rotate(45deg); border: 1.2px solid var(--yeonji-500);
+}
+
+/* 가운데 매듭이 있는 구분선 */
+.hh-divider { display: flex; align-items: center; gap: 12px; color: var(--color-rule); }
+.hh-divider::before, .hh-divider::after { content: ''; flex: 1; height: 1px; background: currentColor; }
+.hh-divider > i { width: 7px; height: 7px; transform: rotate(45deg); border: 1.2px solid var(--yeonji-500); }
+
+/* 낙관: 연지 사각 도장 (喜 로고 이미지와 함께 쓰거나 한 글자 넣기) */
+.hh-seal {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 2px;
+  background: var(--yeonji-500); color: var(--color-bg);
+  font-family: var(--font-display); font-size: 12px; font-weight: 700;
+}

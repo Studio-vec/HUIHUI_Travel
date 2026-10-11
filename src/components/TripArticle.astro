@@ -15,7 +15,11 @@ const days = Array.from({ length: dayCount }, (_, i) => i + 1).map((day) => ({
 
 <article class="trip-article">
   <header class="ta-hero">
-    <p class="ta-eyebrow">{data.headerEyebrow}</p>
+    <div class="hh-mast ta-mast">
+      <span>喜喜 Travel Journal</span>
+      <b>{data.headerEyebrow}</b>
+      <span>{dayCount} Days · {data.places.length} Places</span>
+    </div>
     <h1 class="ta-title" set:html={data.headerTitleHtml} />
     <div class="ta-chips">
       {data.tags.map((t) => <span class="ta-chip">{t}</span>)}
@@ -35,10 +39,11 @@ const days = Array.from({ length: dayCount }, (_, i) => i + 1).map((day) => ({
 
   {days.map(({ day, places }) => (
     <section class="ta-day">
-      <h2 class="ta-day-title">Day {day}</h2>
-      {places.map((p) => (
+      <h2 class="ta-day-title"><span class="ta-day-no">Day {String(day).padStart(2, '0')}</span><span class="ta-day-count">{places.length} Places</span></h2>
+      {places.map((p, n) => (
         <div class="ta-place">
           <div class="ta-place-head">
+            <span class="ta-place-no">{String(n + 1).padStart(2, '0')}</span>
             <span class="ta-place-time">{p.time}</span>
             <h3 class="ta-place-name">{p.name}</h3>
             <span class={`place-tag tag-${p.theme_id}`}>{p.theme}</span>

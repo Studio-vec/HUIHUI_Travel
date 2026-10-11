@@ -1,13 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 70" fill="none">
-  <!-- 놋쇠 종 윗부분(손잡이 + 돔). 전통 테마: 금빛 놋 -->
-  <defs>
-    <linearGradient id="bu" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#F1E2B4"/><stop offset=".45" stop-color="#CFA94E"/><stop offset="1" stop-color="#8A6A22"/>
-    </linearGradient>
-  </defs>
-  <rect x="56" y="2" width="8" height="10" rx="2" fill="#8A6A22"/>
-  <circle cx="60" cy="5" r="5" fill="url(#bu)"/>
-  <path d="M14 66C14 34 34 14 60 14C86 14 106 34 106 66Z" fill="url(#bu)"/>
-  <path d="M30 52C32 36 42 26 54 23" stroke="#FFF6DC" stroke-width="3.5" stroke-linecap="round" opacity=".7"/>
-  <path d="M16 60H104" stroke="#B23A44" stroke-width="3"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 70" fill="none" stroke="#1A1714" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- 호출 종 윗부분: 먹 선 한 가닥 + 연지 점 -->
+  <circle cx="60" cy="7" r="4.5"/>
+  <path d="M60 11.5V15"/>
+  <path d="M16 64C16 34 36 15 60 15C84 15 104 34 104 64Z" fill="#FBFAF6"/>
+  <path d="M34 50C36 38 44 30 54 27" stroke-opacity=".35"/>
+  <circle cx="60" cy="64" r="3.4" fill="#B23A44" stroke="none"/>
 </svg>

@@ -35,7 +35,7 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
                 overlay.innerHTML = `
                   <div style="background:#fff;border-radius:20px;padding:32px 28px 24px;max-width:300px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(120,45,50,0.18);animation:_paSlide 0.22s ease">
                     <div style="width:48px;height:48px;background:#F8E1DF;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.4rem">📷</div>
-                    <div style="font-family:'Gowun Batang',serif;font-style:italic;font-size:1.2rem;color:#231C17;margin-bottom:8px">${title}</div>
+                    <div style="font-family:'Noto Serif KR',serif;font-style:italic;font-size:1.2rem;color:#231C17;margin-bottom:8px">${title}</div>
                     <p style="font-size:13px;color:#837468;line-height:1.6;margin-bottom:20px;word-break:keep-all">${body}</p>
                     <button id="_photo-alert-btn" style="width:100%;padding:12px;background:#E8A3A3;color:#6B1F28;border:none;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:0.04em">확인</button>
                   </div>`;
