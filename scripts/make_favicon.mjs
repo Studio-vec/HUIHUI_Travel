@@ -6,8 +6,8 @@
  *
  * 출력 (public/):
  *   favicon.svg          탭 파비콘 (크롬·엣지·파이어폭스). 정사각 viewBox, 다크 모드에서는 남색 획을 밝은 색으로
- *   favicon.ico          16·32·48px PNG를 담은 ICO (SVG 미지원 브라우저용, 브라우저가 기본으로 요청하는 경로)
- *   favicon-32.png       <link rel="icon">, SVG 미지원 브라우저용
+ *   favicon.ico          16·32·48px PNG를 담은 ICO (SVG 미지원 브라우저용, 브라우저가 기본으로 요청하는 경로). 오프화이트 테두리
+ *   favicon-32.png       <link rel="icon">, SVG 미지원 브라우저용. 오프화이트 테두리
  *   icon-192.png         안드로이드 홈 화면 아이콘 (site.webmanifest에서만 참조, 탭에는 쓰지 않음)
  *   apple-touch-icon.png 180px, iOS는 투명 영역을 검게 칠하므로 흰 배경 + 여백
  *
@@ -29,6 +29,19 @@ async function square(size, { icon = appIcon, pad = 0.04, bg = { r: 0, g: 0, b: 
     .composite([{ input: fitted, gravity: 'center' }])
     .png()
     .toBuffer();
+}
+
+/* 로고 둘레에 오프화이트 테두리를 두른다 (사파리는 SVG 파비콘을 안 써서, 어두운 탭에서도 남색 획이 보이도록)
+   r: 테두리 두께(px, 작업 해상도 기준). 알파를 흐린 뒤 낮은 값에서 끊어 바깥으로 r만큼 넓힌다 */
+async function outlined(buf, r) {
+  const ext = await sharp(buf).extend({ top: r, bottom: r, left: r, right: r, background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer();
+  const { width, height } = await sharp(ext).metadata();
+  /* 한 파이프라인에 blur·threshold를 이으면 sharp가 threshold를 먼저 적용하므로 단계를 나눈다 */
+  const alpha = await sharp(ext).extractChannel('alpha').png().toBuffer();
+  const blurred = await sharp(alpha).blur(r / 2).png().toBuffer();
+  const mask = await sharp(blurred).threshold(5).extractChannel(0).png().toBuffer();
+  const halo = await sharp({ create: { width, height, channels: 3, background: { r: 247, g: 240, b: 229 } } }).joinChannel(mask).png().toBuffer();
+  return sharp(halo).composite([{ input: ext }]).png().toBuffer();
 }
 
 /* PNG 데이터를 그대로 담는 ICO (Windows Vista+ / 모든 최신 브라우저 지원) */
@@ -62,9 +75,12 @@ const faviconSvg = logoSvg
 fs.writeFileSync('public/favicon.svg', faviconSvg);
 
 const icoImages = [];
-for (const size of [16, 32, 48]) icoImages.push({ size, data: await square(size, { icon: logo, pad: 0 }) });
+/* 테두리 32px(작업 해상도) = 결과물 16px에서 0.5px, 32px에서 1px, 48px에서 1.5px.
+   16px은 획 사이 틈이 1px 남짓이라 더 두꺼우면 테두리가 틈을 메워 로고가 뿌옇게 바랜다 */
+const outlinedLogo = await outlined(logo, 32);
+for (const size of [16, 32, 48]) icoImages.push({ size, data: await square(size, { icon: outlinedLogo, pad: 0 }) });
 fs.writeFileSync('public/favicon.ico', ico(icoImages));
-fs.writeFileSync('public/favicon-32.png', await square(32, { icon: logo, pad: 0 }));
+fs.writeFileSync('public/favicon-32.png', icoImages.find((i) => i.size === 32).data);
 fs.writeFileSync('public/icon-192.png', await square(192));
 fs.writeFileSync('public/apple-touch-icon.png', await square(180, { pad: 0.14, bg: { r: 255, g: 255, b: 255, alpha: 1 } }));
 
