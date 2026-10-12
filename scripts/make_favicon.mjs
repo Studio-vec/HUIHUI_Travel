@@ -5,9 +5,10 @@
  * 탭 파비콘(16·32·48px)은 바탕 없이 로고 원본만 투명 배경으로 (public/assets/brand/huihui-logo.svg)
  *
  * 출력 (public/):
- *   favicon.ico          16·32·48px PNG를 담은 ICO (브라우저가 기본으로 요청하는 경로)
- *   favicon-32.png       <link rel="icon">
- *   icon-192.png         안드로이드 홈 화면 등 큰 아이콘
+ *   favicon.svg          탭 파비콘 (크롬·엣지·파이어폭스). 정사각 viewBox, 다크 모드에서는 남색 획을 밝은 색으로
+ *   favicon.ico          16·32·48px PNG를 담은 ICO (SVG 미지원 브라우저용, 브라우저가 기본으로 요청하는 경로)
+ *   favicon-32.png       <link rel="icon">, SVG 미지원 브라우저용
+ *   icon-192.png         안드로이드 홈 화면 아이콘 (site.webmanifest에서만 참조, 탭에는 쓰지 않음)
  *   apple-touch-icon.png 180px, iOS는 투명 영역을 검게 칠하므로 흰 배경 + 여백
  *
  * 실행: node scripts/make_favicon.mjs
@@ -51,6 +52,15 @@ function ico(images) {
   return Buffer.concat([header, ...entries, ...images.map((i) => i.data)]);
 }
 
+/* SVG 파비콘: 로고 원본을 정사각 viewBox 가운데에 두고, 다크 모드 탭에서도 보이도록 남색 획만 밝게 바꾼다 */
+const logoSvg = fs.readFileSync('public/assets/brand/huihui-logo.svg', 'utf8');
+const [, , vw, vh] = logoSvg.match(/viewBox="([^"]+)"/)[1].trim().split(/\s+/).map(Number);
+const side = Math.max(vw, vh);
+const faviconSvg = logoSvg
+  .replace(/viewBox="[^"]+"/, `viewBox="${+((vw - side) / 2).toFixed(3)} ${+((vh - side) / 2).toFixed(3)} ${side} ${side}"`)
+  .replace('</style>', '  @media (prefers-color-scheme: dark) { .cls-1 { fill: #F7F0E5; } }\n    </style>');
+fs.writeFileSync('public/favicon.svg', faviconSvg);
+
 const icoImages = [];
 for (const size of [16, 32, 48]) icoImages.push({ size, data: await square(size, { icon: logo, pad: 0 }) });
 fs.writeFileSync('public/favicon.ico', ico(icoImages));
@@ -58,4 +68,4 @@ fs.writeFileSync('public/favicon-32.png', await square(32, { icon: logo, pad: 0 
 fs.writeFileSync('public/icon-192.png', await square(192));
 fs.writeFileSync('public/apple-touch-icon.png', await square(180, { pad: 0.14, bg: { r: 255, g: 255, b: 255, alpha: 1 } }));
 
-console.log('favicon: favicon.ico, favicon-32.png, icon-192.png, apple-touch-icon.png');
+console.log('favicon: favicon.svg, favicon.ico, favicon-32.png, icon-192.png, apple-touch-icon.png');
