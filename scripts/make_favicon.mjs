@@ -34,7 +34,9 @@ async function square(size, { icon = appIcon, pad = 0.04, bg = { r: 0, g: 0, b: 
 /* 로고 둘레에 오프화이트 테두리를 두른다 (사파리는 SVG 파비콘을 안 써서, 어두운 탭에서도 남색 획이 보이도록)
    r: 테두리 두께(px, 작업 해상도 기준). 알파를 흐린 뒤 낮은 값에서 끊어 바깥으로 r만큼 넓힌다 */
 async function outlined(buf, r) {
-  const ext = await sharp(buf).extend({ top: r, bottom: r, left: r, right: r, background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer();
+  /* 흐린 알파가 5/255 위로 남는 거리는 약 2.06σ(= r 남짓)라 r만 덧대면 가장자리 획의 테두리가 잘린다. 넉넉히 덧댄다 */
+  const pad = Math.ceil(r * 1.25);
+  const ext = await sharp(buf).extend({ top: pad, bottom: pad, left: pad, right: pad, background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer();
   const { width, height } = await sharp(ext).metadata();
   /* 한 파이프라인에 blur·threshold를 이으면 sharp가 threshold를 먼저 적용하므로 단계를 나눈다 */
   const alpha = await sharp(ext).extractChannel('alpha').png().toBuffer();
