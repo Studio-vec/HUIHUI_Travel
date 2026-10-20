@@ -48,6 +48,8 @@ export interface TripPlace {
   closedDays?: number[];
   /** 매월 마지막 주에만 쉬는 요일 (예: 매월 마지막 주 월요일 → [1]). 출발일 경고에 함께 쓴다 */
   closedLastWeekdays?: number[];
+  /** 이 요일에만 여는 곳 (예: 토요일에만 → [6]). 나머지 요일은 쉬는 날로 보고 출발일 경고에 함께 쓴다 */
+  openDays?: number[];
   /** 날짜로 계산할 수 없는 휴무(공휴일 등). 출발일 확인 결과 아래에 늘 함께 보여 준다 */
   closedNote?: string;
 }
@@ -203,6 +205,7 @@ export interface MobilePlace {
   transitTo?: TripTransit;
   closedDays?: number[];
   closedLastWeekdays?: number[];
+  openDays?: number[];
   closedNote?: string;
 }
 
@@ -227,6 +230,7 @@ export function toMobileSchedule(data: TripData): { places: MobilePlace[] }[] {
           ...(p.transitTo ? { transitTo: p.transitTo } : {}),
           ...(p.closedDays && p.closedDays.length ? { closedDays: p.closedDays } : {}),
           ...(p.closedLastWeekdays && p.closedLastWeekdays.length ? { closedLastWeekdays: p.closedLastWeekdays } : {}),
+          ...(p.openDays && p.openDays.length ? { openDays: p.openDays } : {}),
           ...(p.closedNote ? { closedNote: p.closedNote } : {}),
         })),
     });

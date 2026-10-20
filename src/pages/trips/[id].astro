@@ -204,7 +204,7 @@ const _body = `
                         <div class="transit-vline"></div>
                     </div>
                     <div class="transit-info">
-                        <span class="transit-icon" :data-k="({'🚶':'walk','🚗':'car','🚕':'taxi','🚌':'bus','⛵':'boat'})[p.transitTo.icon] || 'car'" aria-hidden="true"></span>
+                        <span class="transit-icon" :data-k="({'🚶':'walk','🚗':'car','🚕':'taxi','🚌':'bus','🚇':'subway','⛵':'boat'})[p.transitTo.icon] || 'car'" aria-hidden="true"></span>
                         <span class="transit-desc">{{ p.transitTo.desc }}</span>
                     </div>
                 </div>

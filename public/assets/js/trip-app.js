@@ -72,16 +72,17 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
             const isClosed = (p, dIdx) => {
                 const wd = weekdayOf(dIdx);
                 if (p.closedDays && p.closedDays.includes(wd)) return true;
+                if (p.openDays && p.openDays.length && !p.openDays.includes(wd)) return true;
                 return !!(p.closedLastWeekdays && p.closedLastWeekdays.includes(wd) && isLastWeekOfMonth(dIdx));
             };
             const closedList = computed(() => schedule.value.flatMap((d, i) =>
                 d.places.filter(p => isClosed(p, i)).map(p => ({
                     id: p.id, name: p.name, day: i + 1,
-                    wd: DAY_LABELS[weekdayOf(i)] + (p.closedDays && p.closedDays.includes(weekdayOf(i)) ? '' : ', 마지막 주')
+                    wd: DAY_LABELS[weekdayOf(i)] + (p.closedLastWeekdays && p.closedLastWeekdays.includes(weekdayOf(i)) && !(p.closedDays && p.closedDays.includes(weekdayOf(i))) ? ', 마지막 주' : '')
                 }))
             ));
             const hasClosedData = computed(() => schedule.value.some(d => d.places.some(p =>
-                (p.closedDays && p.closedDays.length) || (p.closedLastWeekdays && p.closedLastWeekdays.length) || p.closedNote)));
+                (p.closedDays && p.closedDays.length) || (p.closedLastWeekdays && p.closedLastWeekdays.length) || (p.openDays && p.openDays.length) || p.closedNote)));
             /* 날짜로 계산할 수 없는 휴무(공휴일 등) — 날짜와 상관없이 함께 안내한다 */
             const closedNotes = computed(() => schedule.value.flatMap((d, i) =>
                 d.places.filter(p => p.closedNote).map(p => ({ id: p.id, name: p.name, day: i + 1, note: p.closedNote }))
