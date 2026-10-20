@@ -176,8 +176,8 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
     var svg = root.querySelector('.he-svg');
     var petalsBox = root.querySelector('.he-petals');
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    /* 풍경 소리 버튼은 히어로 글줄(추천 버튼 옆)에 있다 */
-    var soundBtn = document.querySelector('.he-sound-btn');
+    /* 풍경 소리 버튼은 히어로 글줄(추천 버튼 옆)에 있다.
+       이 스크립트가 버튼보다 앞에서 실행되므로 클릭 위임으로 받는다 */
 
     function toSvg(cx, cy) {
       var m = svg.getScreenCTM(); if (!m) return null;
@@ -195,7 +195,9 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
     /* 오음계(솔·라·도·레·미 …): 처마 왼쪽 풍경은 낮게, 오른쪽으로 갈수록 높게 */
     var NOTES = [587, 659, 784, 880, 1047, 1175, 1319, 1568];
     function noteAt(x) { return NOTES[Math.max(0, Math.min(NOTES.length - 1, Math.round(x / 1440 * (NOTES.length - 1))))]; }
-    if (soundBtn) soundBtn.addEventListener('click', function () {
+    document.addEventListener('click', function (e) {
+      var soundBtn = e.target.closest && e.target.closest('.he-sound-btn');
+      if (!soundBtn) return;
       soundOn = !soundOn;
       soundBtn.setAttribute('aria-pressed', String(soundOn));
       soundBtn.querySelector('span').textContent = soundOn ? '켬' : '끔';
