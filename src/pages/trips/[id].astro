@@ -7,7 +7,7 @@ import Navbar from '../../components/Navbar.astro';
 import TripArticle from '../../components/TripArticle.astro';
 import TripIndex from '../../components/TripIndex.astro';
 import Footer from '../../components/Footer.astro';
-import { toMobileSchedule, toMobileTips, dayCountOf, tripSlug, nameEnOf, loadTrips } from '../../lib/tripData';
+import { toMobileSchedule, toMobileTips, dayCountOf, tripSlug, nameEnOf, loadTrips, variantsOf } from '../../lib/tripData';
 import type { TripData } from '../../lib/tripData';
 
 export async function getStaticPaths() {
@@ -15,16 +15,31 @@ export async function getStaticPaths() {
 
   return all.map((trip) => ({
     params: { id: tripSlug(trip) },
-    props: { tripData: trip, otherTrips: all.filter((t) => t.id !== trip.id && !t.secretHash) },
+    props: {
+      tripData: trip,
+      otherTrips: all.filter((t) => t.id !== trip.id && !t.secretHash),
+      variants: variantsOf(trip, all),
+    },
   }));
 }
 
 interface Props {
   tripData: TripData;
   otherTrips: TripData[];
+  variants: TripData[];
 }
 
-const { tripData, otherTrips } = Astro.props;
+const { tripData, otherTrips, variants } = Astro.props;
+
+/* 같은 여행지의 다른 버전(커플·가족 등)으로 넘어가는 탭. 버전이 하나뿐이면 그리지 않는다 */
+const variantSwitchHtml = variants.length > 1
+  ? `
+            <nav class="variant-switch" aria-label="여행 버전">${variants
+                .map((v) => v.id === tripData.id
+                  ? `<span class="variant-tab is-current" aria-current="page">${v.variantLabel}</span>`
+                  : `<a class="variant-tab" href="/trips/${tripSlug(v)}">${v.variantLabel}</a>`)
+                .join('')}</nav>`
+  : '';
 
 const scheduleJson = JSON.stringify(toMobileSchedule(tripData));
 const tipsJson = JSON.stringify(toMobileTips(tripData));
@@ -88,7 +103,7 @@ const _body = `
     <div class="container">
         <div class="header">
             <div class="header-eyebrow">${tripData.headerEyebrow}</div>
-            <h1 class="header-title">${tripData.headerTitleHtml}</h1>
+            <h1 class="header-title">${tripData.headerTitleHtml}</h1>${variantSwitchHtml}
             <div class="header-dates">
                 <div class="date-item">
                     <span class="date-label">출발</span>
@@ -290,7 +305,7 @@ createTripApp({
     <span class="trip-key-knot"></span>
     <img src={asset(keyFile)} width="416" height="1077" alt="" />
   </div>
-  <TripArticle data={tripData} />
+  <TripArticle data={tripData} variantSwitchHtml={variantSwitchHtml} />
   <Fragment set:html={_body} />
 
   <TripIndex

@@ -84,6 +84,13 @@ export interface TripData {
   shortNameKo?: string;
   /** Optional short tagline shown on the homepage key card */
   tagline?: string;
+  /**
+   * 같은 여행지를 여러 버전(커플·가족 등)으로 나눌 때 묶는 이름. 홈·갤러리에는 묶음에서 no가 가장 작은
+   * 여행지 카드 하나만 보이고, 여행지 페이지 제목 아래에 버전을 오가는 탭이 생긴다.
+   */
+  variantGroup?: string;
+  /** 버전 탭에 쓰는 짧은 이름 (예: 커플, 가족). shortNameKo에서 이 말을 빼면 홈 카드 이름이 된다 */
+  variantLabel?: string;
 }
 
 /** trips/data/*.json 의 여행지 전체 (비밀코드 여행지 포함, no 순) */
@@ -97,6 +104,23 @@ export function loadTrips(): TripData[] {
 /** 목록·검색에 공개하는 여행지 (비밀코드 여행지 제외) */
 export function publicTrips(): TripData[] {
   return loadTrips().filter((t) => !t.secretHash);
+}
+
+/** 같은 variantGroup으로 묶인 여행지들 (no 순, 자신 포함). 묶음이 없으면 빈 배열 */
+export function variantsOf(t: TripData, all: TripData[]): TripData[] {
+  if (!t.variantGroup) return [];
+  return all.filter((o) => o.variantGroup === t.variantGroup && !o.secretHash);
+}
+
+/** 홈·갤러리 목록에 카드로 싣는 여행지: 공개 여행지 중 버전 묶음은 대표(no가 가장 작은 것) 하나만 */
+export function listedTrips(): TripData[] {
+  const seen = new Set<string>();
+  return publicTrips().filter((t) => {
+    if (!t.variantGroup) return true;
+    if (seen.has(t.variantGroup)) return false;
+    seen.add(t.variantGroup);
+    return true;
+  });
 }
 
 /** 여행지 페이지 경로의 마지막 조각. 비밀코드 여행지는 id를 드러내지 않도록 해시에서 만든다 */
@@ -121,16 +145,26 @@ export function nameEnOf(t: TripData): string {
   return t.id.charAt(0).toUpperCase() + t.id.slice(1);
 }
 
-export function homeCardOf(t: TripData, fallbackNo: number) {
+/** 버전 묶음 카드의 한국어 이름: shortNameKo에서 버전 이름(커플·가족 등)을 뺀다 */
+export function groupNameKoOf(t: TripData): string {
+  const name = t.shortNameKo || t.title;
+  return t.variantLabel ? name.replace(t.variantLabel, '').trim() || name : name;
+}
+
+/** variants: 같은 묶음의 여행지들. 둘 이상이면 카드 이름은 묶음 이름, 테마는 버전 이름들(커플·가족)이 된다 */
+export function homeCardOf(t: TripData, fallbackNo: number, variants: TripData[] = []) {
+  const grouped = variants.length > 1;
   return {
     no: t.no ?? fallbackNo,
-    nameEn: nameEnOf(t),
+    nameEn: nameEnOf(grouped ? { ...t, id: t.variantGroup! } : t),
     url: `/trips/${tripSlug(t)}`,
-    nameKo: t.shortNameKo || t.title,
+    nameKo: grouped ? groupNameKoOf(t) : t.shortNameKo || t.title,
     tagline: t.tagline || '',
     region: regionOf(t.tags[0] || ''),
     nights: t.tags[t.tags.length - 1] || '',
-    theme: String(t.tags[1] || '').replace(/^\P{L}+/u, ''),
+    theme: grouped
+      ? variants.map((v) => v.variantLabel).filter(Boolean).join('·')
+      : String(t.tags[1] || '').replace(/^\P{L}+/u, ''),
     loc: t.locationLabel || '',
   };
 }

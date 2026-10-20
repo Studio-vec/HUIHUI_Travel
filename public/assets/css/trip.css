@@ -500,3 +500,19 @@ body {
 
 /* 머리 위 'TRAVEL LOG · …' 라벨은 쓰지 않는다 (제목만) */
 .header-eyebrow { display: none; }
+
+/* 같은 여행지의 버전 탭 (원주 커플·가족 등). 모바일 헤더와 데스크톱 본문이 함께 쓴다 */
+.variant-switch {
+    display: inline-flex; gap: 0; margin: -6px 0 22px;
+    border: 1px solid var(--line-strong); border-radius: 999px; padding: 3px;
+}
+.variant-tab {
+    min-height: 36px; min-width: 72px; padding: 0 18px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 999px; font-size: 14px; font-weight: 500;
+    color: var(--ink-3); text-decoration: none; transition: background 0.15s, color 0.15s;
+}
+.variant-tab:hover { color: var(--ink); }
+.variant-tab:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.variant-tab.is-current { background: var(--ink); color: #fff; font-weight: 600; }
+.trip-article .variant-switch { margin: 0 0 var(--space-5); }

@@ -5,16 +5,18 @@ import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import TripIndex from '../components/TripIndex.astro';
 import HanokEave from '../components/HanokEave.astro';
-import { homeCardOf, publicTrips } from '../lib/tripData';
+import { homeCardOf, listedTrips, publicTrips, variantsOf } from '../lib/tripData';
 import { KNOT_PATH } from '../lib/hanok';
 
-const allTrips = publicTrips();
+/* 버전 묶음(원주 커플·가족 등)은 대표 카드 하나만 싣고, 버전은 여행지 페이지의 탭에서 고른다 */
+const allTrips = listedTrips();
+const everyTrip = publicTrips();
 
 /* 비밀코드 여행지는 홈에 아무 정보도 싣지 않는다. 입력한 코드의 해시로 주소(/trips/<해시 앞 24자>)를 만들어
    그 페이지가 있는지만 확인한다. 해시 규칙은 scripts/secret_hash.mjs 와 같아야 한다.
    한 번 연 비밀 여행지는 그 페이지가 localStorage(huihui_unlocked)에 주소를 남기고, 홈이 <주소>/card.json 으로 카드를 그린다. */
 
-const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf(t, idx + 1)]));
+const tripConfig = Object.fromEntries(allTrips.map((t, idx) => [t.id, homeCardOf(t, idx + 1, variantsOf(t, everyTrip))]));
 ---
 <BaseLayout title="Travel HUIHUI — 국내 여행 안내서">
   <Fragment slot="head">
