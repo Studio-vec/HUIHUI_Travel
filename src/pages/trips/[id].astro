@@ -2,6 +2,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { asset } from '../../lib/asset';
+import { FLOWER_PATH } from '../../lib/hanok';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Navbar from '../../components/Navbar.astro';
 import TripArticle from '../../components/TripArticle.astro';
@@ -304,10 +305,16 @@ createTripApp({
   </Fragment>
   <Navbar />
   <main id="main" class="trip-main">
-  <div class="trip-key" aria-hidden="true">
-    <span class="trip-key-rope"></span>
-    <span class="trip-key-knot"></span>
-    <img src={asset(keyFile)} width="416" height="1077" alt="" />
+  <div class="trip-key">
+    <span class="trip-key-rope" aria-hidden="true"></span>
+    <!-- 즐겨찾기: 매듭(마름모)을 누르면 매화로 바뀌고, 홈에서 이 여행지가 맨 앞으로 온다 -->
+    <button type="button" class="trip-fav" aria-pressed="false" aria-label="즐겨찾기에 추가" title="즐겨찾기">
+      <svg viewBox="-12 -12 24 24" aria-hidden="true">
+        <path class="trip-fav-knot" d="M0 -6.4L6.4 0L0 6.4L-6.4 0Z"/>
+        <path class="trip-fav-flower" d={FLOWER_PATH}/>
+      </svg>
+    </button>
+    <img src={asset(keyFile)} width="416" height="1077" alt="" aria-hidden="true" />
   </div>
   <TripArticle data={tripData} variantSwitchHtml={variantSwitchHtml} />
   <Fragment set:html={_body} />
@@ -320,6 +327,32 @@ createTripApp({
   />
   </main>
   <Footer />
+  <script is:inline define:vars={{ tripUrl }}>
+    /* 즐겨찾기는 이 브라우저에 여행지 주소로 남긴다 (홈이 같은 키를 읽어 카드를 앞으로 올린다) */
+    (function () {
+      var KEY = 'huihui_favorites';
+      var btn = document.querySelector('.trip-fav');
+      if (!btn) return;
+      function load() {
+        try { var v = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(v) ? v : []; }
+        catch (_) { return []; }
+      }
+      function paint(on) {
+        btn.setAttribute('aria-pressed', String(on));
+        btn.setAttribute('aria-label', on ? '즐겨찾기에서 빼기' : '즐겨찾기에 추가');
+      }
+      paint(load().indexOf(tripUrl) >= 0);
+      btn.addEventListener('click', function () {
+        var favs = load().filter(function (u) { return u !== tripUrl; });
+        var on = btn.getAttribute('aria-pressed') !== 'true';
+        if (on) favs.push(tripUrl);
+        try { localStorage.setItem(KEY, JSON.stringify(favs)); } catch (_) {}
+        paint(on);
+        btn.classList.remove('bloom'); void btn.offsetWidth; if (on) btn.classList.add('bloom');
+      });
+      window.addEventListener('pageshow', function (e) { if (e.persisted) paint(load().indexOf(tripUrl) >= 0); });
+    })();
+  </script>
   {tripData.secretHash && (
     <script is:inline define:vars={{ tripUrl }}>
       /* 비밀 여행지: 이 페이지를 연 브라우저의 홈 목록에 나오도록 주소만 남긴다.
@@ -346,12 +379,31 @@ createTripApp({
     transform-origin: 50% 0; animation: tripKeySway 5.2s ease-in-out infinite;
   }
   .trip-key-rope { width: 1px; height: clamp(20px, 3vw, 40px); background: var(--color-text-primary, #202943); }
-  .trip-key-knot { width: 9px; height: 9px; margin: -1px 0 3px; transform: rotate(45deg); border: 1.5px solid var(--color-text-primary, #202943); }
+  /* 매듭 = 즐겨찾기 버튼. 열쇠 전체는 클릭을 통과시키고 매듭만 누를 수 있다 (손가락 크기 44px) */
+  .trip-fav {
+    pointer-events: auto; position: relative; z-index: 1;
+    width: 44px; height: 44px; margin: -15px 0 -11px; padding: 0;
+    display: grid; place-items: center;
+    background: none; border: none; border-radius: 50%; cursor: pointer;
+    color: var(--color-text-primary, #202943);
+  }
+  .trip-fav svg { width: 22px; height: 22px; overflow: visible; transition: transform .25s ease; }
+  .trip-fav path { fill: var(--color-bg, #FBF7F0); stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round; }
+  .trip-fav-knot { transform: scale(.7); }
+  .trip-fav-flower { display: none; }
+  .trip-fav:hover svg { transform: scale(1.15); }
+  .trip-fav:focus-visible { outline: 2px solid var(--yeonji-500, #EF4D6D); outline-offset: -4px; }
+  .trip-fav[aria-pressed="true"] { color: var(--yeonji-600, #D63C5C); }
+  .trip-fav[aria-pressed="true"] .trip-fav-knot { display: none; }
+  .trip-fav[aria-pressed="true"] .trip-fav-flower { display: inline; fill: var(--yeonji-100, #FBE3E7); stroke-width: 1.1; }
+  .trip-fav.bloom svg { animation: tripFavBloom .45s ease-out; }
+  @keyframes tripFavBloom { 0% { transform: scale(.4) rotate(-40deg); } 70% { transform: scale(1.2) rotate(6deg); } 100% { transform: none; } }
   .trip-key img { width: 100%; height: auto; display: block; filter: drop-shadow(0 6px 10px rgba(32,41,67,0.18)); }
   @keyframes tripKeySway { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg); } }
   @media (max-width: 767px) {
     .trip-key { top: 18px; right: 28px; width: 44px; }
     .trip-key-rope { height: 12px; }
+    .trip-fav { margin: -14px 0 -12px; }
   }
-  @media (prefers-reduced-motion: reduce) { .trip-key { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .trip-key, .trip-fav.bloom svg { animation: none; } }
 </style>

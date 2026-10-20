@@ -6,7 +6,7 @@ import Footer from '../components/Footer.astro';
 import TripIndex from '../components/TripIndex.astro';
 import HanokEave from '../components/HanokEave.astro';
 import { homeCardOf, listedTrips, publicTrips } from '../lib/tripData';
-import { KNOT_PATH } from '../lib/hanok';
+import { KNOT_PATH, FLOWER_PATH } from '../lib/hanok';
 
 /* 버전 묶음(원주 커플·가족 등)은 대표 카드 하나만 싣고, 버전은 여행지 페이지의 탭에서 고른다 */
 const keyTrips = listedTrips();
@@ -341,11 +341,12 @@ const tripConfig = Object.fromEntries(keyTrips.map(({ trip, variants }, idx) => 
   <!-- ── TOAST CONTAINER ── -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <script define:vars={{ tripConfig, KNOT_PATH }}>
+  <script define:vars={{ tripConfig, KNOT_PATH, FLOWER_PATH }}>
     /* trips/data/*.json에서 빌드타임에 생성된 트립 목록.
        새 여행지는 이 파일을 건드릴 필요 없이 JSON 추가만으로 반영됨. */
     window.__TRIP_CONFIG__ = tripConfig;
     window.__KNOT_PATH__ = KNOT_PATH;
+    window.__FLOWER_PATH__ = FLOWER_PATH;
   </script>
   <script is:inline>
     /* ════════════════════════════════════════════
@@ -625,10 +626,16 @@ const tripConfig = Object.fromEntries(keyTrips.map(({ trip, variants }, idx) => 
     ════════════════════════════════════════════ */
     /* 카드 그림: 머리글 아래 가는 선에서 내려온 연지 끈 + 선으로 그린 생쪽매듭. 틀과 글자는 HTML/CSS가 맡는다 */
     /* 열쇠 그림 뒤: 줄 맨 위 창방 선에서 내려온 네이비 끈 + 매듭 */
-    const _CARD_BG = `<svg class="card-slot-img" viewBox="0 0 200 240" fill="none" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    /* 즐겨찾기한 여행지는 매듭 대신 연지색 매화를 단다 */
+    const _CARD_KNOT   = `<g transform="translate(100 16)"><path d="${window.__KNOT_PATH__}" stroke="#202943" stroke-opacity=".8" stroke-width="1"/></g>`;
+    const _CARD_FLOWER = `<g transform="translate(100 16) scale(1.1)"><path d="${window.__FLOWER_PATH__}" fill="#FBE3E7" stroke="#EF4D6D" stroke-width=".9"/></g>`;
+    function _cardBg(fav) {
+      return `<svg class="card-slot-img" viewBox="0 0 200 240" fill="none" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 <path d="M100 0V34" stroke="#202943" stroke-opacity=".7" stroke-width="1.1"/>
-<g transform="translate(100 16)"><path d="${window.__KNOT_PATH__}" stroke="#202943" stroke-opacity=".8" stroke-width="1"/></g>
+${fav ? _CARD_FLOWER : _CARD_KNOT}
 </svg>`;
+    }
+    const _CARD_BG = _cardBg(false);
 
     /* 준비 중: 아직 걸리지 않은 열쇠 자리 — 점선으로 그린 열쇠 윤곽 */
     function _comingSoonSVG() {
@@ -686,6 +693,16 @@ const tripConfig = Object.fromEntries(keyTrips.map(({ trip, variants }, idx) => 
 
     let reservedSet = new Set(); // _init 에서 TRIPS 를 만든 뒤 읽는다
 
+    /* 즐겨찾기: 여행지 상세페이지 우상단 매듭을 누르면 그 주소가 남는다.
+       버전 묶음 카드는 묶음 안 어느 버전을 즐겨찾아도 즐겨찾기로 본다 */
+    const FAV_KEY = 'huihui_favorites';
+    let favSet = new Set();
+    function _isFav(trip) {
+      if (favSet.has(trip.url)) return true;
+      const cfg = Object.values(TRIP_CONFIG).find(c => c.url === trip.url);
+      return !!(cfg && (cfg.aliases || []).some(a => favSet.has(a)));
+    }
+
     /* 첫 페이지에서는 '여행 완료(방문)' 여부와 무관하게 키 이미지가 있으면 항상 걸려 있는 키로 보여준다.
        방문 상태는 갤러리에서만 사용. */
     function _effectiveStatus(trip) {
@@ -696,7 +713,8 @@ const tripConfig = Object.fromEntries(keyTrips.map(({ trip, variants }, idx) => 
     /* ── RENDER CARD ── */
     function _renderCard(trip, i) {
       const s       = _effectiveStatus(trip);
-      const cl      = 'key-card' + (s !== 'open' ? ' ' + s : '');
+      const fav     = _isFav(trip);
+      const cl      = 'key-card' + (s !== 'open' ? ' ' + s : '') + (fav ? ' fav' : '');
       const isKo    = _currentLang() === 'ko';
       const label   = isKo ? trip.nameKo : trip.nameEn;
       const nameCls = s === 'coming-soon' ? 'card-name coming-soon' : 'card-name' + (label.length > 5 ? ' long' : '');
@@ -706,7 +724,7 @@ const tripConfig = Object.fromEntries(keyTrips.map(({ trip, variants }, idx) => 
       if      (s === 'open')        keyHTML = `<div class="card-key-img">${_keyImgHTML(trip, i)}</div>`;
       else if (s === 'reserved')    keyHTML = `<div class="card-key-img">${_reservedSVG()}</div>`;
       else if (s === 'coming-soon') keyHTML = `<div class="card-key-img">${_comingSoonSVG()}</div>`;
-      return `<div class="${cl}" data-trip-idx="${i}"><div class="card-3d">${_CARD_BG}${keyHTML}</div><div class="card-cap"><span class="${nameCls}">${_esc(label)}</span><span class="card-meta">${_esc(metaTxt)}</span></div></div>`;
+      return `<div class="${cl}" data-trip-idx="${i}"><div class="card-3d">${_cardBg(fav)}${keyHTML}</div><div class="card-cap"><span class="${nameCls}">${_esc(label)}</span><span class="card-meta">${_esc(metaTxt)}</span></div></div>`;
     }
 
     function _attachCardClicks() {
@@ -881,7 +899,9 @@ const tripConfig = Object.fromEntries(keyTrips.map(({ trip, variants }, idx) => 
     }
 
     function _renderGrid() {
-      const rows = TRIPS.map((t, i) => ({ t, i })).filter(({ t }) => _matches(t));
+      /* 즐겨찾기한 카드를 앞으로 (그 안에서는 원래 순서 유지) */
+      const rows = TRIPS.map((t, i) => ({ t, i, fav: _isFav(t) })).filter(({ t }) => _matches(t))
+        .sort((a, b) => (b.fav - a.fav) || (a.i - b.i));
       document.getElementById('keyGrid').innerHTML = (rows.length
         ? rows.map(({ t, i }) => _renderCard(t, i)).join('')
         : `<div class="filter-empty"><p>조건에 맞는 코스가 아직 없어요.</p><button type="button" class="fchip" onclick="resetFilters()">필터 초기화</button></div>`)
@@ -967,6 +987,7 @@ const tripConfig = Object.fromEntries(keyTrips.map(({ trip, variants }, idx) => 
       ]);
       TRIPS = pub.concat(unlocked);
       reservedSet = _loadReserved();
+      favSet = _getSet(FAV_KEY);
       _renderFilters();
       _renderGrid();
       _attachLongPress();
@@ -1002,6 +1023,7 @@ const tripConfig = Object.fromEntries(keyTrips.map(({ trip, variants }, idx) => 
     window.addEventListener('pageshow', e => {
       if (!e.persisted) return;
       reservedSet = _loadReserved();
+      favSet = _getSet(FAV_KEY);
       _renderGrid();
     });
 
