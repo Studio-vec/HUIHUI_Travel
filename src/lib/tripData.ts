@@ -96,9 +96,15 @@ export interface TripData {
 /** trips/data/*.json 의 여행지 전체 (비밀코드 여행지 포함, no 순) */
 export function loadTrips(): TripData[] {
   const modules = import.meta.glob<{ default: TripData }>('/trips/data/*.json', { eager: true });
-  return Object.values(modules)
+  const trips = Object.values(modules)
     .map((m) => m.default)
     .sort((a, b) => (a.no ?? 0) - (b.no ?? 0));
+  /* 버전 묶음에 버전 이름이 빠진 여행지가 섞이면 홈에 카드가 둘로 갈라지므로 빌드에서 막는다 */
+  const unlabeled = trips.filter((t) => t.variantGroup && !t.variantLabel);
+  if (unlabeled.length) {
+    throw new Error(`variantGroup이 있는데 variantLabel이 없는 여행지: ${unlabeled.map((t) => t.id).join(', ')}`);
+  }
+  return trips;
 }
 
 /** 목록·검색에 공개하는 여행지 (비밀코드 여행지 제외) */
@@ -106,24 +112,27 @@ export function publicTrips(): TripData[] {
   return loadTrips().filter((t) => !t.secretHash);
 }
 
-/** 같은 variantGroup으로 묶인 여행지들 (no 순, 자신 포함). 묶음이 없으면 빈 배열 */
+/**
+ * 같은 variantGroup으로 묶인 공개 여행지들 (no 순, 자신 포함). 버전 이름(variantLabel)이 있는 것만 치고
+ * 둘 이상일 때만 묶음으로 본다. 묶음이 아니거나 비밀코드 여행지면 빈 배열
+ */
 export function variantsOf(t: TripData, all: TripData[]): TripData[] {
-  if (!t.variantGroup) return [];
-  return all.filter((o) => o.variantGroup === t.variantGroup && !o.secretHash);
+  if (!t.variantGroup || !t.variantLabel || t.secretHash) return [];
+  const vs = all.filter((o) => o.variantGroup === t.variantGroup && o.variantLabel && !o.secretHash);
+  return vs.length > 1 ? vs : [];
 }
 
-/** 홈·갤러리 목록에 카드로 싣는 여행지: 공개 여행지 중 버전 묶음은 대표(no가 가장 작은 것) 하나만 */
-export function listedTrips(): TripData[] {
-  const seen = new Set<string>();
-  return publicTrips().filter((t) => {
-    if (!t.variantGroup) return true;
-    if (seen.has(t.variantGroup)) return false;
-    seen.add(t.variantGroup);
-    return true;
-  });
+/**
+ * 홈·갤러리 열쇠 카드로 싣는 여행지: 공개 여행지 중 버전 묶음은 대표(no가 가장 작은 것) 하나만.
+ * variants는 그 여행지의 variantsOf 결과라 호출하는 쪽이 다시 구하지 않아도 된다
+ */
+export function listedTrips(): { trip: TripData; variants: TripData[] }[] {
+  const all = publicTrips();
+  return all
+    .map((trip) => ({ trip, variants: variantsOf(trip, all) }))
+    .filter(({ trip, variants }) => !variants.length || variants[0].id === trip.id);
 }
 
-/** 여행지 페이지 경로의 마지막 조각. 비밀코드 여행지는 id를 드러내지 않도록 해시에서 만든다 */
 export function tripSlug(data: TripData): string {
   return data.secretHash ? data.secretHash.slice(0, 24) : data.id;
 }
@@ -145,20 +154,26 @@ export function nameEnOf(t: TripData): string {
   return t.id.charAt(0).toUpperCase() + t.id.slice(1);
 }
 
-/** 버전 묶음 카드의 한국어 이름: shortNameKo에서 버전 이름(커플·가족 등)을 뺀다 */
-export function groupNameKoOf(t: TripData): string {
+/** 카드에 쓰는 한국어 이름. 버전 묶음이면 shortNameKo에서 버전 이름(커플·가족 등) 낱말을 뺀다 */
+export function groupNameKoOf(t: TripData, variants: TripData[]): string {
   const name = t.shortNameKo || t.title;
-  return t.variantLabel ? name.replace(t.variantLabel, '').trim() || name : name;
+  const label = t.variantLabel;
+  if (!variants.length || !label) return name;
+  /* 낱말 단위로 뺀다 ('가족'이 '가족여행' 같은 다른 낱말 속에 있으면 남긴다) */
+  return name.split(/\s+/).filter((w) => w !== label).join(' ') || name;
 }
 
-/** variants: 같은 묶음의 여행지들. 둘 이상이면 카드 이름은 묶음 이름, 테마는 버전 이름들(커플·가족)이 된다 */
+/**
+ * variants: variantsOf 결과. 묶음이면 카드 이름은 묶음 이름, 테마는 버전 이름들(커플·가족)이 되고
+ * aliases에 다른 버전의 주소를 담는다 (그 주소로 저장된 홈 예약 표시를 이 카드로 옮길 때 쓴다)
+ */
 export function homeCardOf(t: TripData, fallbackNo: number, variants: TripData[] = []) {
-  const grouped = variants.length > 1;
+  const grouped = variants.length > 0;
   return {
     no: t.no ?? fallbackNo,
     nameEn: nameEnOf(grouped ? { ...t, id: t.variantGroup! } : t),
     url: `/trips/${tripSlug(t)}`,
-    nameKo: grouped ? groupNameKoOf(t) : t.shortNameKo || t.title,
+    nameKo: groupNameKoOf(t, variants),
     tagline: t.tagline || '',
     region: regionOf(t.tags[0] || ''),
     nights: t.tags[t.tags.length - 1] || '',
@@ -166,6 +181,7 @@ export function homeCardOf(t: TripData, fallbackNo: number, variants: TripData[]
       ? variants.map((v) => v.variantLabel).filter(Boolean).join('·')
       : String(t.tags[1] || '').replace(/^\P{L}+/u, ''),
     loc: t.locationLabel || '',
+    aliases: variants.filter((v) => v.id !== t.id).map((v) => `/trips/${tripSlug(v)}`),
   };
 }
 
@@ -220,4 +236,9 @@ export function toMobileSchedule(data: TripData): { places: MobilePlace[] }[] {
 
 export function toMobileTips(data: TripData): TripTip[] {
   return data.seedTips ?? [];
+}
+
+/** 서버에서 만드는 HTML 문자열에 넣는 값의 이스케이프 */
+export function escHtml(v: unknown): string {
+  return String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 }

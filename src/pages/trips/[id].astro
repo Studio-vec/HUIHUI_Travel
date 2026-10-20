@@ -7,20 +7,24 @@ import Navbar from '../../components/Navbar.astro';
 import TripArticle from '../../components/TripArticle.astro';
 import TripIndex from '../../components/TripIndex.astro';
 import Footer from '../../components/Footer.astro';
-import { toMobileSchedule, toMobileTips, dayCountOf, tripSlug, nameEnOf, loadTrips, variantsOf } from '../../lib/tripData';
+import { toMobileSchedule, toMobileTips, dayCountOf, tripSlug, nameEnOf, loadTrips, variantsOf, escHtml } from '../../lib/tripData';
 import type { TripData } from '../../lib/tripData';
 
 export async function getStaticPaths() {
   const all = loadTrips();
 
-  return all.map((trip) => ({
-    params: { id: tripSlug(trip) },
-    props: {
-      tripData: trip,
-      otherTrips: all.filter((t) => t.id !== trip.id && !t.secretHash),
-      variants: variantsOf(trip, all),
-    },
-  }));
+  return all.map((trip) => {
+    const variants = variantsOf(trip, all);
+    return {
+      params: { id: tripSlug(trip) },
+      props: {
+        tripData: trip,
+        /* 같은 여행지의 다른 버전은 제목 아래 탭으로 오가므로 '다른 여행 코스'에서 뺀다 */
+        otherTrips: all.filter((t) => t.id !== trip.id && !t.secretHash && !variants.includes(t)),
+        variants,
+      },
+    };
+  });
 }
 
 interface Props {
@@ -31,13 +35,13 @@ interface Props {
 
 const { tripData, otherTrips, variants } = Astro.props;
 
-/* 같은 여행지의 다른 버전(커플·가족 등)으로 넘어가는 탭. 버전이 하나뿐이면 그리지 않는다 */
-const variantSwitchHtml = variants.length > 1
+/* 같은 여행지의 다른 버전(커플·가족 등)으로 넘어가는 탭. 묶음이 아니면(variantsOf가 빈 배열) 그리지 않는다 */
+const variantSwitchHtml = variants.length
   ? `
             <nav class="variant-switch" aria-label="여행 버전">${variants
                 .map((v) => v.id === tripData.id
-                  ? `<span class="variant-tab is-current" aria-current="page">${v.variantLabel}</span>`
-                  : `<a class="variant-tab" href="/trips/${tripSlug(v)}">${v.variantLabel}</a>`)
+                  ? `<span class="variant-tab is-current" aria-current="page">${escHtml(v.variantLabel)}</span>`
+                  : `<a class="variant-tab" href="/trips/${tripSlug(v)}">${escHtml(v.variantLabel)}</a>`)
                 .join('')}</nav>`
   : '';
 

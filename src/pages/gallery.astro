@@ -4,17 +4,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import TripIndex from '../components/TripIndex.astro';
-import { groupNameKoOf, listedTrips } from '../lib/tripData';
+import { groupNameKoOf, listedTrips, publicTrips, tripSlug } from '../lib/tripData';
 
-const allTrips = listedTrips();
+/* 글 목차(TripIndex)는 크롤러 진입점이라 버전까지 모든 공개 여행지를 싣는다 */
+const allTrips = publicTrips();
 
-const galleryDestinations = allTrips.map((t) => ({
-  id: t.id,
-  nameKo: groupNameKoOf(t),
-  tagline: t.tagline || '',
-  storageKey: `trip_${t.id}`,
-  url: `/trips/${t.id}`,
-}));
+/* 버전 묶음은 열쇠 하나로 걸고, 방문 표시·사진은 버전들 것을 모두 모은다 */
+const galleryDestinations = listedTrips().map(({ trip: t, variants: vs }) => {
+  const members = vs.length ? vs : [t];
+  return {
+    id: t.id,
+    nameKo: groupNameKoOf(t, vs),
+    tagline: t.tagline || '',
+    storageKeys: members.map((v) => `trip_${v.id}`),
+    /* 첫 주소가 대표(t) 주소다 */
+    urls: members.map((v) => `/trips/${tripSlug(v)}`),
+  };
+});
 ---
 <BaseLayout
   title="여행 코스 갤러리 — Travel HUIHUI"
@@ -40,7 +46,7 @@ const galleryDestinations = allTrips.map((t) => ({
 
 <section class="key-rack-section">
   <!-- 모바일 전용 안내 줄: 지금 보는 열쇠 번호와 사용법 (모바일에선 페이지 머리가 숨겨진다) -->
-  <div class="rack-status" aria-live="polite"><b>Gallery</b> <span id="rackPos">1/{allTrips.length}</span><span class="rack-hint">열쇠를 눌러 기억을 열어 보세요</span></div>
+  <div class="rack-status" aria-live="polite"><b>Gallery</b> <span id="rackPos">1/{galleryDestinations.length}</span><span class="rack-hint">열쇠를 눌러 기억을 열어 보세요</span></div>
   <div class="hh-beam rack-beam" aria-hidden="true"></div>
   <button class="mobile-nav-btn mobile-nav-prev" id="mobileNavPrev">
     <svg width="10" height="18" viewBox="0 0 10 18" fill="none"><path d="M9 1L1 9l8 8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -111,6 +117,10 @@ const DESTINATIONS = (window.__GALLERY_DESTINATIONS__ || []).map(d => ({
 function getVisitedSet() {
   try { return new Set(JSON.parse(localStorage.getItem('huihui_visited')||'[]')); }
   catch(e) { return new Set(); }
+}
+/* 버전 묶음 열쇠는 버전 중 하나라도 다녀왔으면 연다. 다녀온 버전의 주소를 돌려준다 */
+function visitedUrlOf(dest, visited = getVisitedSet()) {
+  return dest.urls.find(u => visited.has(u));
 }
 function getUserPhotos(storageKey) {
   try {
@@ -248,7 +258,7 @@ async function renderKeyRack() {
         <div class="key-nametag">${dest.nameKo}</div>
       </div>`;
     }
-    const isVisited = visited.has(dest.url);
+    const isVisited = !!visitedUrlOf(dest, visited);
     const cls = isVisited ? 'visited' : 'unvisited';
     return `<div class="key-item ${cls}" data-dest-id="${dest.id}" onclick="handleKeyClick('${dest.id}')">
       <div class="key-img-wrap">
@@ -299,8 +309,7 @@ function handleKeyClick(id) {
   if (_wasDrag()) return; // 드래그였으면 클릭 무시
   const dest = DESTINATIONS.find(d=>d.id===id);
   if (!dest) return;
-  const visited = getVisitedSet();
-  if (visited.has(dest.url)) openKeyhole(dest);
+  if (visitedUrlOf(dest)) openKeyhole(dest);
   else showUnvisited(dest);
 }
 
@@ -326,7 +335,10 @@ async function openKeyhole(dest) {
   if (khOpen) return;
   khOpen = true;
 
-  const photos = getUserPhotos(dest.storageKey);
+  /* 버전별 사진. 사진이 있는 첫 버전 주소로 '코스 보기' 링크를 건다 */
+  const photosByKey = dest.storageKeys.map(k => getUserPhotos(k));
+  const photos = photosByKey.flat();
+  const photoIdx = photosByKey.findIndex(p => p.length);
   currentPhotos = photos; currentPhotoIdx = 0;
 
   const rack    = document.getElementById('keyRack');
@@ -401,7 +413,7 @@ async function openKeyhole(dest) {
   setKeyholeSize(diam);
   loadSphereContent(photos);
   document.getElementById('khDestLbl').textContent = dest.nameKo;
-  document.getElementById('khTripLnk').href = dest.url;
+  document.getElementById('khTripLnk').href = (photoIdx >= 0 && dest.urls[photoIdx]) || visitedUrlOf(dest) || dest.urls[0];
 
   /* 확대 도중 보라 글로우 시작 */
   await delay(320);
@@ -533,7 +545,7 @@ document.addEventListener('keydown', e=>{
 function showUnvisited(dest) {
   const particle = dest.particle || '을(를)';
   document.getElementById('unvMsg').innerHTML = `아직 <em>${dest.nameKo}</em>${particle} 여행하지 않았어요!`;
-  document.getElementById('unvGo').href = dest.url;
+  document.getElementById('unvGo').href = dest.urls[0];
   document.getElementById('unvOverlay').classList.add('show');
 }
 function closeUnvisited() {
