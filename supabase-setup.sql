@@ -76,6 +76,29 @@ as $$
   select exists(select 1 from public.profiles where username = p_username);
 $$;
 
+-- 7. 일시정지 방지 — 무료 플랜은 7일간 활동이 없으면 프로젝트를 멈춘다.
+--    빈 결과만 돌아오는 읽기 요청은 활동으로 치지 않아(2026-10 실제로 멈춤) 한 줄을 실제로 고쳐 쓴다.
+--    .github/workflows/supabase-keepalive.yml 이 매일 rpc/keepalive 를 부른다.
+--    이미 만든 프로젝트에는 이 7번 블록만 따로 SQL Editor에서 실행한다 (1번부터 다시 돌리면 profiles에서 멈춘다).
+create table if not exists public.keepalive (
+  id        int primary key default 1 check (id = 1),   -- 늘 한 줄만
+  pinged_at timestamptz not null default now()
+);
+alter table public.keepalive enable row level security;  -- 정책 없음: 표를 직접 읽고 쓸 수 없다
+
+create or replace function public.keepalive()
+returns timestamptz
+language sql security definer set search_path = public
+as $$
+  insert into public.keepalive (id, pinged_at) values (1, now())
+  on conflict (id) do update set pinged_at = excluded.pinged_at
+    where keepalive.pinged_at < now() - interval '1 hour'   -- 공개 키로 연타해도 시간당 한 번만 쓴다
+  returning pinged_at;   -- 건너뛰면 null
+$$;
+
+revoke all on function public.keepalive() from public;
+grant execute on function public.keepalive() to anon, authenticated;
+
 -- ══════════════════════════════════════════════════════════════
 -- Supabase 대시보드 설정 체크리스트 (SQL 실행 후 확인)
 -- 1. Authentication > Providers > Email > "Confirm email" 옵션 활성화
