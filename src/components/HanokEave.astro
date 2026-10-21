@@ -17,6 +17,8 @@ const W = 1440;
 const TOP = 45;   // 위쪽 지붕골 일부는 잘라 보여준다 (처마 끝은 남는다)
 const H = 365;   // 보이는 높이: TOP ~ TOP+H
 const MID = W / 2;
+/* 1440 보다 넓은 화면에서는 키우지 않고 양옆을 더 보여 주도록 좌우로 넉넉히 그려 둔다 (창방 두 칸씩) */
+const EXT = 840;
 const INK = '#202943';
 const RED = '#EF4D6D';
 const MINT = '#00A58C';
@@ -33,7 +35,7 @@ const eaveY = (x) => {
 const f = (n) => +n.toFixed(1);
 const STEP = 80;
 const xs = [];
-for (let x = (MID % STEP) - STEP; x <= W + STEP; x += STEP) xs.push(x);
+for (let x = (MID % STEP) - STEP - Math.ceil(EXT / STEP) * STEP; x <= W + EXT + STEP; x += STEP) xs.push(x);
 const top = (x) => MID + (x - MID) * 0.8;
 const BEAM = 202; // 창방 윗선
 const BH = 74;    // 창방 높이
@@ -42,7 +44,7 @@ const HANG = BEAM + BH + 6; // 매다는 자리
 
 const eavePts = (off = 0) => {
   const p = [];
-  for (let x = -60; x <= W + 60; x += 8) p.push(`${x},${f(eaveY(x) + off)}`);
+  for (let x = -EXT - 60; x <= W + EXT + 60; x += 8) p.push(`${x},${f(eaveY(x) + off)}`);
   return p;
 };
 
@@ -140,7 +142,7 @@ const hangs = [];
 const LENS = [22, 38, 14, 30, 42, 18, 34, 26, 20, 40, 16, 32];
 // 간격을 일부러 고르지 않게(±25) 두고 수도 줄여, 손으로 하나씩 건 것처럼 보이게 한다
 const GAPS = [150, 128, 172, 141, 166, 124, 158, 147];
-for (let i = 0, x = 88; x < W - 40; x += GAPS[i % GAPS.length], i++) {
+for (let i = 0, x = 88 - EXT; x < W + EXT - 40; x += GAPS[i % GAPS.length], i++) {
   hangs.push(i % 3 === 1 ? pung(x, LENS[i % LENS.length] - 10, i) : tassel(x, LENS[i % LENS.length]));
 }
 
@@ -154,14 +156,15 @@ xs.forEach((x) => {
 });
 art += `</g>`;
 art += `<g class="he-fade" style="--d:.8s">` + xs.map((x) => maksae(x, eaveY(x))).join('') + `</g>`;
-art += `<g class="he-fade" style="--d:1.1s"><path d="M-60 ${BEAM - 4}H${W + 60}M-60 ${BEAM}H${W + 60}M-60 ${BEAM + BH}H${W + 60}M-60 ${BEAM + BH + 4}H${W + 60}" ${LS(0.9, 0.9)}/>`;
-for (let x0 = 0; x0 < W; x0 += SEG) art += beamSeg(x0);
+const L0 = -EXT - 60, R0 = W + EXT + 60;
+art += `<g class="he-fade" style="--d:1.1s"><path d="M${L0} ${BEAM - 4}H${R0}M${L0} ${BEAM}H${R0}M${L0} ${BEAM + BH}H${R0}M${L0} ${BEAM + BH + 4}H${R0}" ${LS(0.9, 0.9)}/>`;
+for (let x0 = -EXT; x0 < W + EXT; x0 += SEG) art += beamSeg(x0);
 art += `</g>`;
 art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
 ---
 <div class="hanok-eave" data-eave>
   <div class="he-stack">
-    <svg class="he-svg" viewBox={`0 ${TOP} ${W} ${H}`} preserveAspectRatio="xMidYMin slice" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+    <svg class="he-svg" viewBox={`${-EXT} ${TOP} ${W + EXT * 2} ${H}`} preserveAspectRatio="xMidYMin slice" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
       <Fragment set:html={art} />
     </svg>
   </div>
@@ -364,7 +367,7 @@ art += `<g class="he-fade he-hangs" style="--d:1.4s">${hangs.join('')}</g>`;
         var t0 = performance.now();
         (function gust(now) {
           var t = Math.min(1, (now - t0) / 1600);
-          wind({ x: -100 + t * (1440 + 200), y: 300 }, 22);
+          wind({ x: -940 + t * (3120 + 200), y: 300 }, 22);
           kick();
           if (t < 1 && !root.classList.contains('is-touched')) requestAnimationFrame(gust);
           else if (t >= 1) demoOnce();
