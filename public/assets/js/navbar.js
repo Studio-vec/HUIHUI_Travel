@@ -102,42 +102,14 @@
   background: none; border: none; cursor: pointer; width: 100%; text-align: left;
 }
 .hh-mm-logout:hover { color: #C9304F; }
-.hh-view-btn, .hh-lang-btn {
+.hh-view-btn {
   display: flex; align-items: center; gap: 6px; flex-shrink: 0; min-height: 44px;
   font-family: inherit; font-size: 13px; font-weight: 500; letter-spacing: 0; color: #4E5672;
   background: none; border: none; border-radius: 0; padding: 0 2px; cursor: pointer; white-space: nowrap;
   transition: color .15s;
 }
-.hh-view-btn:hover, .hh-lang-btn:hover { color: #202943; }
+.hh-view-btn:hover { color: #202943; }
 .hh-view-btn svg, .hh-mm-item svg { flex-shrink: 0; }
-.hh-lang-wrap { position: relative; flex-shrink: 0; }
-.hh-lang-btn svg { flex-shrink: 0; transition: transform .2s; }
-.hh-lang-btn.open svg { transform: rotate(180deg); }
-.hh-lang-dropdown {
-  position: absolute; top: calc(100% + 10px); right: 0;
-  background: #FBF7F0; border: 1px solid rgba(32,41,67,0.16); border-radius: 2px;
-  box-shadow: 0 12px 32px rgba(32,41,67,0.10);
-  min-width: 128px; overflow: hidden;
-  opacity: 0; transform: translateY(-6px); pointer-events: none;
-  transition: opacity .18s, transform .18s; z-index: 600;
-}
-.hh-lang-dropdown.open { opacity: 1; transform: translateY(0); pointer-events: auto; }
-.hh-lang-opt {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 13px; font-weight: 500; color: #4E5672;
-  padding: 10px 16px; cursor: pointer; font-family: inherit;
-  border: none; background: none; width: 100%; text-align: left;
-}
-.hh-lang-opt:hover { color: #202943; background: rgba(32,41,67,0.04); }
-.hh-lang-opt.selected { color: #C9304F; font-weight: 700; }
-.hh-mm-lang-row { display: flex; gap: 16px; padding: 12px 0; flex-wrap: wrap; }
-.hh-mm-lang-chip {
-  font-size: 13px; font-weight: 500; color: #646B84; font-family: inherit;
-  border: none; border-bottom: 1px solid transparent; border-radius: 0;
-  padding: 4px 0; cursor: pointer; background: none;
-}
-.hh-mm-lang-chip:hover { color: #202943; }
-.hh-mm-lang-chip.selected { color: #202943; border-bottom-color: #EF4D6D; font-weight: 700; }
 @media (max-width: 960px) {
   .hh-navbar-search { display: none; }
   .hh-navbar-links { margin-right: auto; }
@@ -150,7 +122,6 @@
   .hh-navbar-links  { display: none !important; }
   .hh-hamburger     { display: flex !important; margin-left: auto; }
   .hh-user-area     { display: none; }
-  .hh-lang-wrap     { display: none; }
   .hh-view-btn      { display: none; }
 }
 @media (min-width: 768px) {
@@ -193,13 +164,6 @@
     </div>
   </div>
   ${showView ? '<button class="hh-view-btn" id="hhViewBtn" type="button"></button>' : ''}
-  <div class="hh-lang-wrap" id="hhLangWrap">
-    <button class="hh-lang-btn" id="hhLangBtn" aria-haspopup="listbox" aria-expanded="false">
-      <span id="hhLangLabel">한국어</span>
-      <svg width="11" height="7" viewBox="0 0 11 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l4.5 5L10 1"/></svg>
-    </button>
-    <div class="hh-lang-dropdown" id="hhLangDropdown" role="listbox"></div>
-  </div>
   <div class="hh-user-area" id="hhUserArea">
     <a href="/auth/login" class="hh-login-btn">로그인</a>
   </div>
@@ -221,8 +185,6 @@
   <a class="hh-mm-item${page === 'game'    ? ' active' : ''}" href="/game">짐싸기</a>
   <a class="hh-mm-item${page === 'about'   ? ' active' : ''}" href="/about">소개</a>
   <a class="hh-mm-item" href="${BLOG}" target="_blank" rel="noopener">블로그</a>
-  <hr class="hh-mm-divider"/>
-  <div class="hh-mm-lang-row" id="hhMobileLangRow"></div>
   <hr class="hh-mm-divider"/>
   ${showView ? '<button class="hh-mm-item" id="hhMobileView" type="button"></button><hr class="hh-mm-divider"/>' : ''}
   <div id="hhMobileUser">
@@ -304,78 +266,6 @@
       window.location.href = '/gallery?q=' + encodeURIComponent(si.value.trim());
     }
   });
-
-  /* ── 언어 드롭다운 ─────────────────────────────────────── */
-  const LANGS = [
-    { label: '한국어', code: 'ko' },
-    { label: 'English', code: 'en' },
-    { label: '日本語',  code: 'ja' },
-    { label: '中文',   code: 'zh' },
-  ];
-
-  window.hhLang = window.hhLang || 'ko';
-
-  const langBtn      = nav.querySelector('#hhLangBtn');
-  const langLabel    = nav.querySelector('#hhLangLabel');
-  const langDropdown = nav.querySelector('#hhLangDropdown');
-  const mobileLangRow = menu.querySelector('#hhMobileLangRow');
-
-  function _renderLangOptions() {
-    langDropdown.innerHTML = LANGS.map(l => `
-      <button class="hh-lang-opt${window.hhLang === l.code ? ' selected' : ''}" data-code="${l.code}">
-        <span>${l.label}</span>
-      </button>`).join('');
-
-    mobileLangRow.innerHTML = LANGS.map(l => `
-      <button class="hh-mm-lang-chip${window.hhLang === l.code ? ' selected' : ''}" data-code="${l.code}">
-        ${l.label}
-      </button>`).join('');
-
-    const cur = LANGS.find(l => l.code === window.hhLang);
-    if (cur) langLabel.textContent = cur.label;
-  }
-
-  function _selectLang(code) {
-    if (window.hhLang === code) return;
-    window.hhLang = code;
-    _renderLangOptions();
-    _closeLangDropdown();
-    document.dispatchEvent(new CustomEvent('hh:langchange', { detail: { code } }));
-  }
-
-  function _closeLangDropdown() {
-    langDropdown.classList.remove('open');
-    langBtn.classList.remove('open');
-    langBtn.setAttribute('aria-expanded', 'false');
-  }
-
-  langBtn.addEventListener('click', function (e) {
-    e.stopPropagation();
-    const isOpen = langDropdown.classList.contains('open');
-    if (isOpen) {
-      _closeLangDropdown();
-    } else {
-      langDropdown.classList.add('open');
-      langBtn.classList.add('open');
-      langBtn.setAttribute('aria-expanded', 'true');
-    }
-  });
-
-  langDropdown.addEventListener('click', function (e) {
-    const btn = e.target.closest('[data-code]');
-    if (btn) _selectLang(btn.dataset.code);
-  });
-
-  mobileLangRow.addEventListener('click', function (e) {
-    const btn = e.target.closest('[data-code]');
-    if (btn) _selectLang(btn.dataset.code);
-  });
-
-  document.addEventListener('click', function (e) {
-    if (!nav.querySelector('#hhLangWrap').contains(e.target)) _closeLangDropdown();
-  });
-
-  _renderLangOptions();
 
   /* ── Supabase 인증 상태 반영 ─────────────────────────────── */
   /* 닉네임 등 사용자 입력값을 innerHTML에 넣기 전에 escape */

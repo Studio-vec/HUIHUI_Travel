@@ -358,44 +358,6 @@ const tripConfig = Object.fromEntries(keyTrips.map(({ trip, variants }, idx) => 
 
     let TRIPS = [];
 
-    /* ── LANGUAGE ── */
-    const HERO_TEXTS = {
-      ko: {
-        title:   '<span class="hero-kicker">기쁜 걸음만 골라 담은</span><em>국내 여행 안내서</em>',
-        desc:    '직접 걸어 본 길을 하루 단위 코스로 엮었어요.<br>동선과 시간, 현장에서 알게 된 작은 팁까지 함께 적어 둡니다.',
-        section: '여행 코스',
-      },
-      en: {
-        title:   '<span class="hero-kicker">Joyful steps, gathered into</span><em>a Korea travel guide</em>',
-        desc:    'Day-by-day courses from roads I actually walked.<br>Routes, timing, and the small tips you only learn on site.',
-        section: 'Travel Courses',
-      },
-      ja: {
-        title:   '<span class="hero-kicker">うれしい足どりを集めた</span><em>国内旅行ガイド</em>',
-        desc:    '実際に歩いた道を一日単位のコースにまとめました。<br>動線と時間、現地で知った小さなヒントまで。',
-        section: '旅行コース',
-      },
-      zh: {
-        title:   '<span class="hero-kicker">收集欢喜脚步的</span><em>国内旅行指南</em>',
-        desc:    '把亲自走过的路整理成按天安排的路线。<br>动线、时间，还有现场才知道的小贴士。',
-        section: '旅游路线',
-      },
-    };
-    function _currentLang() { return window.hhLang || 'ko'; }
-
-    function _updateHeroText(code = 'ko') {
-      const t = HERO_TEXTS[code];
-      document.getElementById('heroTitle').innerHTML     = t.title;
-      document.getElementById('heroDesc').innerHTML      = t.desc;
-      document.getElementById('sectionLabel').textContent = t.section;
-    }
-
-    document.addEventListener('hh:langchange', function (e) {
-      const code = e.detail.code;
-      _updateHeroText(code);
-      _renderGrid();
-      _attachLongPress();
-    });
     function goTo(url) { window.location.href = url; }
 
     /* ── TIPS 더보기 ── */
@@ -675,8 +637,8 @@ ${fav ? _CARD_FLOWER : _CARD_KNOT}
       return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
     }
 
-    function _keyImgHTML(trip, i) {
-      const lazy = i >= 10 ? 'loading="lazy" ' : '';
+    function _keyImgHTML(trip, pos) {
+      const lazy = pos >= 10 ? 'loading="lazy" ' : '';
       if (trip.key) return `<img src="${trip.key}" ${lazy}width="416" height="1077" alt="${_esc(trip.nameKo)} 열쇠" onerror="_onKeyImgError(this)" />`;
       return _placeholderKey;
     }
@@ -711,17 +673,16 @@ ${fav ? _CARD_FLOWER : _CARD_KNOT}
     }
 
     /* ── RENDER CARD ── */
-    function _renderCard(trip, i) {
+    function _renderCard(trip, i, pos) {
       const s       = _effectiveStatus(trip);
       const fav     = _isFav(trip);
       const cl      = 'key-card' + (s !== 'open' ? ' ' + s : '') + (fav ? ' fav' : '');
-      const isKo    = _currentLang() === 'ko';
-      const label   = isKo ? trip.nameKo : trip.nameEn;
+      const label   = trip.nameKo;
       const nameCls = s === 'coming-soon' ? 'card-name coming-soon' : 'card-name' + (label.length > 5 ? ' long' : '');
       /* 고를 때 먼저 보는 기간은 카드 머리에, 장소·지역은 카드 아래에 */
       const metaTxt = s === 'coming-soon' ? '준비 중' : [trip.nights, trip.loc].filter(Boolean).join(' · ');
       let keyHTML   = '';
-      if      (s === 'open')        keyHTML = `<div class="card-key-img">${_keyImgHTML(trip, i)}</div>`;
+      if      (s === 'open')        keyHTML = `<div class="card-key-img">${_keyImgHTML(trip, pos)}</div>`;
       else if (s === 'reserved')    keyHTML = `<div class="card-key-img">${_reservedSVG()}</div>`;
       else if (s === 'coming-soon') keyHTML = `<div class="card-key-img">${_comingSoonSVG()}</div>`;
       return `<div class="${cl}" data-trip-idx="${i}"><div class="card-3d">${_cardBg(fav)}${keyHTML}</div><div class="card-cap"><span class="${nameCls}">${_esc(label)}</span><span class="card-meta">${_esc(metaTxt)}</span></div></div>`;
@@ -899,14 +860,11 @@ ${fav ? _CARD_FLOWER : _CARD_KNOT}
     }
 
     function _renderGrid() {
-      /* 순서: 즐겨찾기 → 열쇠 이미지가 있는 카드 → 카드에 보이는 이름순 (한국어는 가나다, 그 밖은 영문 ABC) */
-      const isKo = _currentLang() === 'ko';
-      const nameOf = t => isKo ? t.nameKo : t.nameEn;
+      /* 순서: 즐겨찾기 → 열쇠 이미지가 있는 카드 → 가나다 */
       const rows = TRIPS.map((t, i) => ({ t, i, fav: _isFav(t), hasKey: !!t.key })).filter(({ t }) => _matches(t))
-        .sort((a, b) => (b.fav - a.fav) || (b.hasKey - a.hasKey)
-          || nameOf(a.t).localeCompare(nameOf(b.t), isKo ? 'ko' : 'en') || (a.i - b.i));
+        .sort((a, b) => (b.fav - a.fav) || (b.hasKey - a.hasKey) || a.t.nameKo.localeCompare(b.t.nameKo, 'ko') || (a.i - b.i));
       document.getElementById('keyGrid').innerHTML = (rows.length
-        ? rows.map(({ t, i }) => _renderCard(t, i)).join('')
+        ? rows.map(({ t, i }, pos) => _renderCard(t, i, pos)).join('')
         : `<div class="filter-empty"><p>조건에 맞는 코스가 아직 없어요.</p><button type="button" class="fchip" onclick="resetFilters()">필터 초기화</button></div>`)
         + _renderSecretCard();
       const cnt = document.getElementById('filterCount');
