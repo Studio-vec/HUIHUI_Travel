@@ -899,9 +899,12 @@ ${fav ? _CARD_FLOWER : _CARD_KNOT}
     }
 
     function _renderGrid() {
-      /* 즐겨찾기한 카드를 앞으로 (그 안에서는 원래 순서 유지) */
-      const rows = TRIPS.map((t, i) => ({ t, i, fav: _isFav(t) })).filter(({ t }) => _matches(t))
-        .sort((a, b) => (b.fav - a.fav) || (a.i - b.i));
+      /* 순서: 즐겨찾기 → 열쇠 이미지가 있는 카드 → 카드에 보이는 이름순 (한국어는 가나다, 그 밖은 영문 ABC) */
+      const isKo = _currentLang() === 'ko';
+      const nameOf = t => isKo ? t.nameKo : t.nameEn;
+      const rows = TRIPS.map((t, i) => ({ t, i, fav: _isFav(t), hasKey: !!t.key })).filter(({ t }) => _matches(t))
+        .sort((a, b) => (b.fav - a.fav) || (b.hasKey - a.hasKey)
+          || nameOf(a.t).localeCompare(nameOf(b.t), isKo ? 'ko' : 'en') || (a.i - b.i));
       document.getElementById('keyGrid').innerHTML = (rows.length
         ? rows.map(({ t, i }) => _renderCard(t, i)).join('')
         : `<div class="filter-empty"><p>조건에 맞는 코스가 아직 없어요.</p><button type="button" class="fchip" onclick="resetFilters()">필터 초기화</button></div>`)
