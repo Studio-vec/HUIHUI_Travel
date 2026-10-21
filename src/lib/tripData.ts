@@ -80,7 +80,7 @@ export interface TripData {
    * 페이지는 /trips/<id>가 아니라 /trips/<해시 앞 24자>에 만들어져, 코드를 아는 사람만 주소를 알 수 있다.
    */
   secretHash?: string;
-  /** Homepage key-card display order (defaults to array order if omitted) */
+  /** 여행지 순서 (loadTrips 정렬, 버전 묶음 대표 고르기, 게임 등). 홈 열쇠 카드는 즐겨찾기 → 열쇠 이미지 → 이름순이고 이 순서는 마지막 기준으로만 쓴다 */
   no?: number;
   /** Short Korean place name shown on the homepage key card */
   shortNameKo?: string;
