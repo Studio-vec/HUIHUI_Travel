@@ -24,7 +24,10 @@ const hasKeyImage = (id) => fs.existsSync(`public/assets/keys/${id}.webp`);
 const tripConfig = Object.fromEntries(keyTrips.map(({ trip, variants }, idx) =>
   [trip.id, { ...homeCardOf(trip, idx + 1, variants), hasKey: hasKeyImage(trip.id) }]));
 ---
-<BaseLayout title="Travel HUIHUI — 국내 여행 안내서">
+<BaseLayout
+  title="Travel HUIHUI — 커플 여행·근교 데이트 국내 여행 코스"
+  description="첫 커플 여행부터 서울 근교 1박 2일까지, 직접 다녀온 국내 여행 코스를 일자별 동선과 장소별 운영시간·비용·팁으로 정리했어요. 여자친구가 좋아할 카페·야경·소품샵 데이트 코스를 찾을 때 참고하세요."
+>
   <Fragment slot="head">
   <link rel="stylesheet" href={asset('/assets/css/tokens.css')}/>
   </Fragment>
