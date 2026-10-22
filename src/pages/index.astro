@@ -7,6 +7,7 @@ import TripIndex from '../components/TripIndex.astro';
 import HanokEave from '../components/HanokEave.astro';
 import { homeCardOf, listedTrips, publicTrips } from '../lib/tripData';
 import { KNOT_PATH, FLOWER_PATH } from '../lib/hanok';
+import fs from 'node:fs';
 
 /* 버전 묶음(원주 커플·가족 등)은 대표 카드 하나만 싣고, 버전은 여행지 페이지의 탭에서 고른다 */
 const keyTrips = listedTrips();
@@ -17,7 +18,11 @@ const allTrips = publicTrips();
    그 페이지가 있는지만 확인한다. 해시 규칙은 scripts/secret_hash.mjs 와 같아야 한다.
    한 번 연 비밀 여행지는 그 페이지가 localStorage(huihui_unlocked)에 주소를 남기고, 홈이 <주소>/card.json 으로 카드를 그린다. */
 
-const tripConfig = Object.fromEntries(keyTrips.map(({ trip, variants }, idx) => [trip.id, homeCardOf(trip, idx + 1, variants)]));
+/* 열쇠 이미지가 있는지는 빌드할 때 확인한다 (브라우저에서 확인하면 그리드를 그리기 전에 열쇠를 전부 받아야 한다).
+   .webp 는 predev/prebuild 의 scripts/optimize_keys.mjs 가 <id>.png 에서 만든다 */
+const hasKeyImage = (id) => fs.existsSync(`public/assets/keys/${id}.webp`);
+const tripConfig = Object.fromEntries(keyTrips.map(({ trip, variants }, idx) =>
+  [trip.id, { ...homeCardOf(trip, idx + 1, variants), hasKey: hasKeyImage(trip.id) }]));
 ---
 <BaseLayout title="Travel HUIHUI — 국내 여행 안내서">
   <Fragment slot="head">
@@ -637,10 +642,24 @@ ${fav ? _CARD_FLOWER : _CARD_KNOT}
       return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
     }
 
+    /* 열쇠 그리드는 첫 화면 아래에서 시작한다. 첫 줄(넓은 화면 5장)만 바로 받고,
+       나머지는 화면에 가까워질 때 받는다 — loading="lazy" 는 화면 1~2.5천px 앞까지 미리 받아 거의 다 받아 버린다 */
+    const EAGER_KEYS = 5;
     function _keyImgHTML(trip, pos) {
-      const lazy = pos >= 10 ? 'loading="lazy" ' : '';
-      if (trip.key) return `<img src="${trip.key}" ${lazy}width="416" height="1077" alt="${_esc(trip.nameKo)} 열쇠" onerror="_onKeyImgError(this)" />`;
+      const src = pos < EAGER_KEYS ? `src="${trip.key}"` : `data-src="${trip.key}"`;
+      if (trip.key) return `<img ${src} width="416" height="1077" alt="${_esc(trip.nameKo)} 열쇠" onerror="_onKeyImgError(this)" />`;
       return _placeholderKey;
+    }
+    let _keyObserver = null;
+    function _observeKeyImgs(grid) {
+      const imgs = grid.querySelectorAll('img[data-src]');
+      if (_keyObserver) _keyObserver.disconnect();
+      const show = (img) => { img.src = img.dataset.src; img.removeAttribute('data-src'); };
+      if (!('IntersectionObserver' in window)) { imgs.forEach(show); return; }
+      _keyObserver = new IntersectionObserver((entries, obs) => {
+        entries.forEach(e => { if (e.isIntersecting) { show(e.target); obs.unobserve(e.target); } });
+      }, { rootMargin: '400px 0px' });
+      imgs.forEach(img => _keyObserver.observe(img));
     }
 
     /* ── STATE (localStorage) ── */
@@ -787,9 +806,13 @@ ${fav ? _CARD_FLOWER : _CARD_KNOT}
       };
     }
 
+    /* 공개 여행지의 열쇠 이미지 유무는 빌드 때 정해져 온다(cfg.hasKey) — 없으면 준비 중 */
     function _buildTrips() {
-      return Object.entries(TRIP_CONFIG).map(([slug, cfg], idx) =>
-        _toTrip(cfg, { url: cfg.url, key: `/assets/keys/${slug}.webp`, no: cfg.no || (idx + 1) }));
+      return Object.entries(TRIP_CONFIG).map(([slug, cfg], idx) => {
+        const trip = _toTrip(cfg, { url: cfg.url, key: cfg.hasKey ? `/assets/keys/${slug}.webp` : null, no: cfg.no || (idx + 1) });
+        if (!cfg.hasKey) trip.status = 'coming-soon';
+        return trip;
+      });
     }
 
     /* 예약 표시는 여행지 주소로 저장한다. 예전 형식(카드 순서 번호)은 지금 순서대로 주소로 바꿔 둔다.
@@ -863,10 +886,12 @@ ${fav ? _CARD_FLOWER : _CARD_KNOT}
       /* 순서: 즐겨찾기 → 열쇠 이미지가 있는 카드 → 가나다 */
       const rows = TRIPS.map((t, i) => ({ t, i, fav: _isFav(t), hasKey: !!t.key })).filter(({ t }) => _matches(t))
         .sort((a, b) => (b.fav - a.fav) || (b.hasKey - a.hasKey) || a.t.nameKo.localeCompare(b.t.nameKo, 'ko') || (a.i - b.i));
-      document.getElementById('keyGrid').innerHTML = (rows.length
+      const grid = document.getElementById('keyGrid');
+      grid.innerHTML = (rows.length
         ? rows.map(({ t, i }, pos) => _renderCard(t, i, pos)).join('')
         : `<div class="filter-empty"><p>조건에 맞는 코스가 아직 없어요.</p><button type="button" class="fchip" onclick="resetFilters()">필터 초기화</button></div>`)
         + _renderSecretCard();
+      _observeKeyImgs(grid);
       const cnt = document.getElementById('filterCount');
       if (cnt) cnt.textContent = rows.length === TRIPS.length ? `전체 ${rows.length}개 코스` : `${TRIPS.length}개 중 ${rows.length}개 코스`;
       _attachCardClicks();
@@ -941,11 +966,8 @@ ${fav ? _CARD_FLOWER : _CARD_KNOT}
 
     async function _init() {
       const pub = _buildTrips();
-      /* 공개 여행지 키 확인과 비밀 여행지 card.json 읽기를 동시에 진행한다 */
-      const [, unlocked] = await Promise.all([
-        _probeKeys(pub),
-        _unlockedTrips(new Set(pub.map(t => t.url))).then(_probeKeys),
-      ]);
+      /* 비밀 여행지는 card.json 이 가리키는 열쇠를 미리 알 수 없어 받아서 확인한다 (보통 몇 장뿐) */
+      const unlocked = await _unlockedTrips(new Set(pub.map(t => t.url))).then(_probeKeys);
       TRIPS = pub.concat(unlocked);
       reservedSet = _loadReserved();
       favSet = _getSet(FAV_KEY);
@@ -1277,6 +1299,8 @@ ${fav ? _CARD_FLOWER : _CARD_KNOT}
       display: flex; align-items: flex-start; justify-content: center;
       z-index: 2;
     }
+    /* 아직 받지 않은 열쇠: 빈 이미지 대신 대체 글자가 비치지 않게 */
+    .card-key-img img[data-src] { visibility: hidden; }
     .key-card .card-key-img img {
       height: 100%; width: auto; max-width: 100%; object-fit: contain;
       filter: drop-shadow(0 6px 8px rgba(32,41,67,0.16));
