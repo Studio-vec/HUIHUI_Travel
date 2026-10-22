@@ -52,8 +52,8 @@ const tripConfig = Object.fromEntries(keyTrips.map(({ trip, variants }, idx) =>
       </h1>
       <div class="hero-foot fade-up">
         <p class="hero-desc" id="heroDesc">
-          서울을 벗어나 대한민국 곳곳의 소도시로 떠나는 여행 코스를 소개해요.<br>
-          이름난 명소는 물론, 시장 간식과 바닷가 카페, 골목 산책처럼 한국에서 누릴 수 있는 작은 즐거움을 기록했어요.
+          서울을 벗어나 대한민국 곳곳의 소도시로 떠나는 <span class="nw">여행 코스를 소개해요.</span><br>
+          이름난 명소는 물론, 시장 간식과 <span class="nw">바닷가 카페,</span> <span class="nw">골목 산책처럼</span> 한국에서 <span class="nw">누릴 수 있는</span> <span class="nw">작은 즐거움을 기록했어요.</span>
         </p>
         <div class="hero-actions">
           <button class="hero-cta" type="button" onclick="ringBell()">
@@ -1063,7 +1063,7 @@ ${fav ? _CARD_FLOWER : _CARD_KNOT}
     .hero-kicker {
       display: block;
       font-family: var(--font-heading);
-      font-size: clamp(17px, 2.2vw, 28px); font-weight: 600; letter-spacing: -0.02em;
+      font-size: clamp(16px, 2vw, 25px); font-weight: 600; letter-spacing: -0.02em;
       color: var(--color-text-primary);
       margin-bottom: clamp(8px, 1vw, 12px);
     }
@@ -1071,7 +1071,7 @@ ${fav ? _CARD_FLOWER : _CARD_KNOT}
     .hero-title em {
       display: block; font-style: normal;
       font-family: var(--font-accent);
-      font-size: clamp(46px, 7.4vw, 96px); font-weight: 800;
+      font-size: clamp(42px, 6.7vw, 86px); font-weight: 800;
       line-height: 1.02; letter-spacing: -0.05em;
       color: var(--yeonji-500);   /* 큰 글씨라 팝 핑크 그대로 (대비 3:1 이상) */
     }
@@ -1082,12 +1082,18 @@ ${fav ? _CARD_FLOWER : _CARD_KNOT}
     }
     .hero-desc {
       font-family: var(--font-body);
-      font-size: clamp(var(--text-base), 1.6vw, var(--text-lg));
+      font-size: clamp(var(--text-base), 1.4vw, 18px);
       color: var(--color-text-secondary);
       line-height: var(--leading-normal);
-      max-width: 460px;
+      /* 넓은 화면에서 두 문장이 한 줄씩 들어가는 폭. 좁아지면 줄 끝이 한 낱말만 남지 않게 나눈다 */
+      max-width: 800px;
       word-break: keep-all;
+      text-wrap: pretty;
+      /* 자폭 95%: Pretendard 에는 폭(wdth) 축이 없어 font-stretch 가 듣지 않으므로 가로로만 줄인다 */
+      transform: scaleX(0.95); transform-origin: 0 0;
     }
+    /* 문장 끝 구절은 떼지 않는다 ('여행 / 코스를 소개해요'처럼 끊기지 않게) */
+    .hero-desc .nw { white-space: nowrap; }
     /* ══════════════════════════════
        SECTION LABEL
     ══════════════════════════════ */
@@ -1205,7 +1211,7 @@ ${fav ? _CARD_FLOWER : _CARD_KNOT}
     .hero-key {
       position: absolute; z-index: 2;
       right: clamp(var(--space-5), 5vw, var(--space-12)); top: 0;
-      width: clamp(52px, 6vw, 76px);
+      width: clamp(60px, 7.4vw, 96px);
       display: flex; flex-direction: column; align-items: center;
       background: none; border: 0; padding: 0; cursor: pointer;
       transform-origin: 50% 0; animation: heroSway 5.2s ease-in-out infinite;
