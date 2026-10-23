@@ -3,7 +3,6 @@
   "redirects": [
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "huihui-travel.vercel.app" }],
       "destination": "https://travel-huihui.com/:path*",
       "permanent": true
     }
