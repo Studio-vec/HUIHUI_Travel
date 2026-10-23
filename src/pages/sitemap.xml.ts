@@ -1,6 +1,13 @@
 import type { APIRoute } from 'astro';
-import { publicTrips } from '../lib/tripData';
-import { gitDates, tripDataFile } from '../lib/gitDate';
+import { publicTrips, tripSourceFile } from '../lib/tripData';
+import { lastChanged, todayKst } from '../lib/gitDate';
+
+/** 모든 코스 페이지가 함께 쓰는 틀. 이 파일들이 바뀌어도 코스 페이지의 lastmod를 올린다 */
+const tripPageFiles = [
+  'src/pages/trips/[id].astro',
+  'src/components/TripArticle.astro',
+  'src/components/TripIndex.astro',
+];
 
 
 /** 색인 대상 페이지. 로그인 등 기능성 페이지(noindex)는 제외한다.
@@ -20,9 +27,13 @@ export const GET: APIRoute = ({ site }) => {
     throw new Error('sitemap.xml을 만들려면 astro.config.mjs의 `site`에 실제 도메인을 설정해야 합니다.');
   }
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayKst();
+  const templateChanged = lastChanged(...tripPageFiles);
 
-  const tripPaths = publicTrips().map((t) => ({ path: `/trips/${t.id}/`, priority: '0.9', changefreq: 'monthly', lastmod: gitDates(tripDataFile(t.id)).modified }));
+  const tripPaths = publicTrips().map((t) => ({
+    path: `/trips/${t.id}/`, priority: '0.9', changefreq: 'monthly',
+    lastmod: [templateChanged, lastChanged(tripSourceFile(t), `public/assets/keys/${t.id}.webp`)].sort().at(-1),
+  }));
 
   const urls = [...staticPaths, ...tripPaths]
     .map(({ path, priority, changefreq, lastmod = today }) => {

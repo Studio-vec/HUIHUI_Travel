@@ -7,6 +7,7 @@ import TripIndex from '../components/TripIndex.astro';
 import HanokEave from '../components/HanokEave.astro';
 import { homeCardOf, listedTrips, publicTrips } from '../lib/tripData';
 import { KNOT_PATH, FLOWER_PATH } from '../lib/hanok';
+import { publisherOf, jsonLdString, SITE_NAME } from '../lib/structuredData';
 import fs from 'node:fs';
 
 /* 버전 묶음(원주 커플·가족 등)은 대표 카드 하나만 싣고, 버전은 여행지 페이지의 탭에서 고른다 */
@@ -25,25 +26,12 @@ const tripConfig = Object.fromEntries(keyTrips.map(({ trip, variants }, idx) =>
   [trip.id, { ...homeCardOf(trip, idx + 1, variants), hasKey: hasKeyImage(trip.id) }]));
 
 /* 구조화 데이터: 사이트(WebSite)와 운영 주체(Organization) */
-const site = Astro.site ?? new URL('https://travel-huihui.com');
-const jsonLd = JSON.stringify([
-  {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: 'Travel HUIHUI',
-    url: site.href,
-    inLanguage: 'ko',
-    publisher: { '@type': 'Organization', name: 'Studio.Vec' },
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: 'Studio.Vec',
-    url: site.href,
-    logo: new URL('/icon-192.png', site).href,
-    sameAs: ['https://studiovec.framer.website/'],
-  },
-]).replace(/</g, '\\u003c');
+const site = Astro.site!;
+const publisher = publisherOf(site);
+const jsonLd = jsonLdString([
+  { '@type': 'WebSite', name: SITE_NAME, url: site.href, inLanguage: 'ko', publisher },
+  publisher,
+]);
 ---
 <BaseLayout
   title="Travel HUIHUI — 커플 여행·근교 데이트 국내 여행 코스"

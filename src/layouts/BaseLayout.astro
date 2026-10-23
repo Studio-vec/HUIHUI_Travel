@@ -1,5 +1,6 @@
 ---
 import { asset } from '../lib/asset';
+import { canonicalOf, SITE_NAME } from '../lib/structuredData';
 export interface Props {
   title: string;
   description?: string;
@@ -8,7 +9,7 @@ export interface Props {
   ogImage?: string;
   /** 광고 스크립트 로드 여부. 콘텐츠가 없는 페이지(404·로그인 등)는 false */
   ads?: boolean;
-  /** Vue·dayjs·html2canvas 로드 여부. 코스 상세 페이지 전용 */
+  /** Vue·dayjs 로드 여부. 코스 상세 페이지 전용 (html2canvas는 저장할 때 trip-app.js가 불러온다) */
   app?: boolean;
 }
 const {
@@ -20,9 +21,7 @@ const {
   app = false,
 } = Astro.props;
 
-const canonical = Astro.site
-  ? new URL(Astro.url.pathname.replace(/\/index\.html$/, ''), Astro.site).href
-  : undefined;
+const canonical = Astro.site ? canonicalOf(Astro.url.pathname, Astro.site) : undefined;
 const ogImageUrl = ogImage && Astro.site ? new URL(ogImage, Astro.site).href : ogImage;
 
 /* Cloudflare Web Analytics 사이트 토큰 (대시보드 > Web Analytics > travel-huihui.com). 쿠키를 쓰지 않는다.
@@ -55,7 +54,7 @@ const analytics = import.meta.env.PROD && CF_ANALYTICS_TOKEN;
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Travel HUIHUI" />
+  <meta property="og:site_name" content={SITE_NAME} />
   <meta property="og:locale" content="ko_KR" />
   <meta property="og:title" content={title} />
   {description && <meta property="og:description" content={description} />}

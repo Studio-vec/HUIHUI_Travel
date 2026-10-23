@@ -95,9 +95,17 @@ export interface TripData {
   variantLabel?: string;
 }
 
+/** 여행지의 원본 JSON 경로(저장소 루트 기준). 파일 이름은 id와 같다 (loadTrips가 확인한다) */
+export const tripSourceFile = (t: TripData) => `trips/data/${t.id}.json`;
+
 /** trips/data/*.json 의 여행지 전체 (비밀코드 여행지 포함, no 순) */
 export function loadTrips(): TripData[] {
   const modules = import.meta.glob<{ default: TripData }>('/trips/data/*.json', { eager: true });
+  /* 수정일을 파일 이름으로 git 기록에서 찾으므로, 파일 이름과 id가 다르면 빌드에서 막는다 */
+  const misnamed = Object.entries(modules).filter(([path, m]) => `/${tripSourceFile(m.default)}` !== path);
+  if (misnamed.length) {
+    throw new Error(`파일 이름과 id가 다른 여행지: ${misnamed.map(([path]) => path).join(', ')}`);
+  }
   const trips = Object.values(modules)
     .map((m) => m.default)
     .sort((a, b) => (a.no ?? 0) - (b.no ?? 0));

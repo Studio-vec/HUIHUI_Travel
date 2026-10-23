@@ -8,9 +8,10 @@ import Navbar from '../../components/Navbar.astro';
 import TripArticle from '../../components/TripArticle.astro';
 import TripIndex from '../../components/TripIndex.astro';
 import Footer from '../../components/Footer.astro';
-import { toMobileSchedule, toMobileTips, dayCountOf, tripSlug, nameEnOf, loadTrips, variantsOf, escHtml } from '../../lib/tripData';
+import { toMobileSchedule, toMobileTips, dayCountOf, tripSlug, nameEnOf, loadTrips, variantsOf, escHtml, tripSourceFile } from '../../lib/tripData';
 import type { TripData } from '../../lib/tripData';
-import { gitDates, tripDataFile } from '../../lib/gitDate';
+import { gitDates } from '../../lib/gitDate';
+import { publisherOf, jsonLdString, canonicalOf, PUBLISHER_NAME } from '../../lib/structuredData';
 
 export async function getStaticPaths() {
   const all = loadTrips();
@@ -48,9 +49,9 @@ const variantSwitchHtml = variants.length
   : '';
 
 /* 글쓴이와 최종 수정일(코스 JSON의 마지막 커밋). 모바일 머리글과 데스크톱 본문에 같은 줄을 넣는다 */
-const { created: datePublished, modified: dateModified } = gitDates(tripDataFile(tripData.id));
-const authorName = tripData.operatorNote?.name || '태희';
-const bylineHtml = `<p class="trip-byline">글·정리 <a href="/about/">${escHtml(authorName)}</a> · Studio.Vec · 최종 업데이트 <time datetime="${dateModified}">${dateModified.replaceAll('-', '.')}</time></p>`;
+const { created: datePublished, modified: dateModified } = gitDates(tripSourceFile(tripData));
+const authorName = tripData.operatorNote.name;
+const bylineHtml = `<p class="trip-byline">글·정리 <a href="/about/">${escHtml(authorName)}</a> · ${PUBLISHER_NAME} · 최종 업데이트 <time datetime="${dateModified}">${dateModified.replaceAll('-', '.')}</time></p>`;
 
 const scheduleJson = JSON.stringify(toMobileSchedule(tripData));
 const tipsJson = JSON.stringify(toMobileTips(tripData));
@@ -79,29 +80,23 @@ const tripDescription = [
 ].filter(Boolean).join(' ').slice(0, 300);
 
 /* 구조화 데이터: 글(Article) + 이동 경로(BreadcrumbList). 비밀 여행지는 색인하지 않으므로 넣지 않는다 */
-const site = Astro.site ?? new URL('https://travel-huihui.com');
-const pageUrl = new URL(`${tripUrl}/`, site).href;
-const jsonLd = tripData.secretHash ? null : JSON.stringify([
+const site = Astro.site!;
+const pageUrl = canonicalOf(Astro.url.pathname, site);
+const jsonLd = tripData.secretHash ? null : jsonLdString([
   {
-    '@context': 'https://schema.org',
     '@type': 'Article',
     headline: tripData.title,
     description: tripDescription,
     inLanguage: 'ko',
     mainEntityOfPage: pageUrl,
-    image: new URL(keyFile, site).href,
+    /* 코스별 사진이 없어 사이트 대표 이미지(1184×1185)를 쓴다. 열쇠 그림은 세로로 긴 장식이라 맞지 않는다 */
+    image: new URL('/travel-HUIHUI-keyvisual.jpg', site).href,
     datePublished,
     dateModified,
     author: { '@type': 'Person', name: authorName, url: new URL('/about/', site).href },
-    publisher: {
-      '@type': 'Organization',
-      name: 'Studio.Vec',
-      url: site.href,
-      logo: { '@type': 'ImageObject', url: new URL('/icon-192.png', site).href },
-    },
+    publisher: publisherOf(site),
   },
   {
-    '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: '홈', item: site.href },
@@ -109,7 +104,7 @@ const jsonLd = tripData.secretHash ? null : JSON.stringify([
       { '@type': 'ListItem', position: 3, name: tripData.title, item: pageUrl },
     ],
   },
-]).replace(/</g, '\\u003c');
+]);
 
 const infoBannerHtml = tripData.infoBanner
   ? `
@@ -335,8 +330,10 @@ const _body = `
         });
     }, { passive: true });
 })();
-/* Vue·dayjs·trip-app.js는 defer로 받으므로, 모두 실행된 뒤(DOMContentLoaded)에 앱을 붙인다 */
+/* Vue·dayjs·trip-app.js는 defer로 받으므로, 모두 실행된 뒤(DOMContentLoaded)에 앱을 붙인다.
+   CDN이 막히거나 앱이 그리다 실패해도 v-cloak을 걷어 서버가 그린 내용이라도 보이게 한다 (잘 붙었으면 Vue가 이미 걷었다) */
 document.addEventListener('DOMContentLoaded', function () {
+try {
 createTripApp({
     tripUrl: '${tripUrl}',
     storageKey: '${storageKey}',
@@ -345,6 +342,9 @@ createTripApp({
     tips: ${tipsJson},
     schedule: ${scheduleJson}
 });
+} finally {
+    document.getElementById('app')?.removeAttribute('v-cloak');
+}
 });
 </script>
 `;
@@ -354,6 +354,7 @@ createTripApp({
   <link rel="stylesheet" href={asset('/assets/css/trip.css')}>
   <link rel="stylesheet" href={asset('/assets/css/trip-article.css')}>
   {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
+  <noscript><style>[v-cloak] { display: block; }</style></noscript>
   </Fragment>
   <Navbar />
   <main id="main" class="trip-main">
