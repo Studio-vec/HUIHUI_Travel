@@ -76,6 +76,11 @@ const tripConfig = Object.fromEntries(keyTrips.map(({ trip, variants }, idx) =>
 
   <!-- ── KEY GRID ── -->
   <section class="grid-section">
+    <div class="key-hint" id="keyHint" role="status" hidden>
+      <p class="key-hint-title">마음에 드는 열쇠를 골라 보세요</p>
+      <p class="key-hint-body">열쇠를 누르면 그 여행 코스가 열려요. 길게 누르면 ‘예약’ 꼬리표를 걸어 둘 수 있어요.</p>
+      <button type="button" class="key-hint-ok" id="keyHintOk">알겠어요</button>
+    </div>
     <div class="key-grid" id="keyGrid"></div>
   </section>
 
@@ -901,6 +906,47 @@ ${fav ? _CARD_FLOWER : _CARD_KNOT}
       const sc = document.getElementById('secretCard');
       sc.addEventListener('click', showSecretPopup);
       sc.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showSecretPopup(); } });
+      _placeKeyHint();
+    }
+
+    /* ── 첫 방문 안내: 열쇠 목록이 처음 보이면 첫 열쇠 옆에 말풍선을 한 번 띄운다 ── */
+    const HINT_KEY = 'huihui_key_hint_seen';
+    let _hintCard = null;
+    function _placeKeyHint() {
+      const hint = document.getElementById('keyHint');
+      if (!hint || hint.hidden) return;
+      _hintCard = document.querySelector('#keyGrid .key-card:not(.coming-soon):not(.reserved):not(.secret)');
+      if (!_hintCard) { hint.hidden = true; return; }
+      const box  = hint.parentElement.getBoundingClientRect();
+      const card = _hintCard.getBoundingClientRect();
+      hint.style.left = (card.right - box.left - 6) + 'px';
+      hint.style.top  = (card.top - box.top + card.height * 0.18) + 'px';
+    }
+    function _dismissKeyHint() {
+      const hint = document.getElementById('keyHint');
+      if (!hint || hint.hidden) return;
+      hint.hidden = true;
+      try { localStorage.setItem(HINT_KEY, '1'); } catch (_) {}
+    }
+    function _initKeyHint() {
+      try { if (localStorage.getItem(HINT_KEY)) return; } catch (_) {}
+      const hint = document.getElementById('keyHint');
+      const grid = document.getElementById('keyGrid');
+      if (!hint || !('IntersectionObserver' in window)) return;
+      new IntersectionObserver((entries, obs) => {
+        if (!entries[0].isIntersecting) return;
+        obs.disconnect();
+        hint.hidden = false;
+        _placeKeyHint();
+        if (_hintCard) {
+          _hintCard.classList.add('spot');
+          setTimeout(() => _hintCard && _hintCard.classList.remove('spot'), 3300);
+        }
+      }, { rootMargin: '0px 0px -35% 0px' }).observe(grid);  /* 그리드가 화면보다 길어 비율 대신 위치로 본다 */
+      document.getElementById('keyHintOk').addEventListener('click', _dismissKeyHint);
+      grid.addEventListener('pointerdown', _dismissKeyHint);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') _dismissKeyHint(); });
+      window.addEventListener('resize', _placeKeyHint);
     }
 
     /* ── 비밀코드 입력 ── */
@@ -978,6 +1024,7 @@ ${fav ? _CARD_FLOWER : _CARD_KNOT}
       _renderGrid();
       _attachLongPress();
       _initHeroKey();
+      _initKeyHint();
     }
 
     /* 히어로에 걸린 '오늘의 키': 프런트 데스크 추천과 같은 규칙(하루 종일 같은 여행지)으로 고른다 */
@@ -1121,9 +1168,36 @@ ${fav ? _CARD_FLOWER : _CARD_KNOT}
        KEY GRID
     ══════════════════════════════ */
     .grid-section {
+      position: relative;
       padding: 0 clamp(var(--space-5), 5vw, var(--space-12))
                clamp(var(--space-16), 14vw, var(--space-24));
     }
+
+    /* 첫 방문 안내 말풍선: 첫 열쇠 오른쪽에 붙고 꼬리가 열쇠를 가리킨다 */
+    .key-hint {
+      position: absolute; z-index: var(--z-raised);
+      width: min(260px, 58vw);
+      padding: var(--space-3) var(--space-4);
+      background: var(--color-text-primary); color: var(--color-text-inverse);
+      border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
+      word-break: keep-all;
+      animation: hintIn 0.35s ease-out both;
+    }
+    .key-hint[hidden] { display: none; }
+    .key-hint::before {
+      content: ''; position: absolute; left: -5px; top: 18px;
+      width: 10px; height: 10px; background: inherit; transform: rotate(45deg);
+    }
+    .key-hint-title { margin: 0 0 var(--space-1); font-size: var(--text-sm); font-weight: 700; }
+    .key-hint-body { margin: 0; font-size: var(--text-xs); line-height: 1.55; opacity: 0.85; }
+    .key-hint-ok {
+      margin-top: var(--space-2); padding: 4px 12px;
+      background: none; color: inherit; font: inherit; font-size: var(--text-xs); font-weight: 700;
+      border: 1px solid currentColor; border-radius: var(--radius-full); cursor: pointer;
+    }
+    .key-hint-ok:hover { background: var(--yeonji-500); border-color: var(--yeonji-500); }
+    @keyframes hintIn { from { opacity: 0; transform: translateX(6px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .key-hint { animation: none; } }
     /* 열쇠패: 칸 사이 가로 간격 없이, 줄마다 위쪽 두 줄 창방 선이 이어진다 */
     .key-grid {
       display: grid;
