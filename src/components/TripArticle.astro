@@ -5,9 +5,11 @@ export interface Props {
   data: TripData;
   /** 같은 여행지의 다른 버전으로 가는 탭 (여행지 페이지가 만들어 넘긴다) */
   variantSwitchHtml?: string;
+  /** 글쓴이·최종 수정일 줄 (여행지 페이지가 만들어 넘긴다) */
+  bylineHtml?: string;
 }
 
-const { data, variantSwitchHtml = '' } = Astro.props;
+const { data, variantSwitchHtml = '', bylineHtml = '' } = Astro.props;
 const dayCount = Math.max(...data.places.map((p) => p.day));
 /* 태그 앞 이모지는 화면 장치에서 빼고 글만 쓴다 */
 const plain = (s: string) => s.replace(/^[\p{Extended_Pictographic}\uFE0F\u200D\s]+/u, '');
@@ -21,6 +23,7 @@ const days = Array.from({ length: dayCount }, (_, i) => i + 1).map((day) => ({
   <header class="ta-hero">
     <h1 class="ta-title" set:html={data.headerTitleHtml} />
     {variantSwitchHtml && <Fragment set:html={variantSwitchHtml} />}
+    {bylineHtml && <Fragment set:html={bylineHtml} />}
     <div class="ta-chips">
       {data.tags.map((t) => <span class="ta-chip">{plain(t)}</span>)}
       {data.meta.map((m) => <span class="ta-chip ta-chip-meta">{plain(m)}</span>)}

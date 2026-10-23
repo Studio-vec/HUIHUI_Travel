@@ -1,10 +1,11 @@
 import type { APIRoute } from 'astro';
 import { publicTrips } from '../lib/tripData';
+import { gitDates, tripDataFile } from '../lib/gitDate';
 
 
 /** 색인 대상 페이지. 로그인 등 기능성 페이지(noindex)는 제외한다.
  *  GitHub Pages는 /about을 /about/로 301 보내고 canonical도 끝 슬래시를 쓰므로, 여기서도 끝 슬래시로 적는다 */
-const staticPaths: { path: string; priority: string; changefreq: string }[] = [
+const staticPaths: { path: string; priority: string; changefreq: string; lastmod?: string }[] = [
   { path: '/', priority: '1.0', changefreq: 'weekly' },
   { path: '/gallery/', priority: '0.8', changefreq: 'weekly' },
   { path: '/about/', priority: '0.6', changefreq: 'monthly' },
@@ -21,14 +22,14 @@ export const GET: APIRoute = ({ site }) => {
 
   const today = new Date().toISOString().slice(0, 10);
 
-  const tripPaths = publicTrips().map((t) => ({ path: `/trips/${t.id}/`, priority: '0.9', changefreq: 'monthly' }));
+  const tripPaths = publicTrips().map((t) => ({ path: `/trips/${t.id}/`, priority: '0.9', changefreq: 'monthly', lastmod: gitDates(tripDataFile(t.id)).modified }));
 
   const urls = [...staticPaths, ...tripPaths]
-    .map(({ path, priority, changefreq }) => {
+    .map(({ path, priority, changefreq, lastmod = today }) => {
       const loc = new URL(path, site).href;
       return `  <url>
     <loc>${loc}</loc>
-    <lastmod>${today}</lastmod>
+    <lastmod>${lastmod}</lastmod>
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
   </url>`;

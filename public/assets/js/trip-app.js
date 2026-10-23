@@ -205,9 +205,22 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
                 });
             };
 
+            /* html2canvas(약 200KB)는 저장할 때만 필요하므로 그때 한 번 받는다 */
+            let html2canvasLoading = null;
+            const loadHtml2canvas = () => html2canvasLoading || (html2canvasLoading = new Promise((resolve, reject) => {
+                if (window.html2canvas) return resolve(window.html2canvas);
+                const s = document.createElement('script');
+                s.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+                s.integrity = 'sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H';
+                s.crossOrigin = 'anonymous';
+                s.onload = () => resolve(window.html2canvas);
+                s.onerror = () => { html2canvasLoading = null; reject(new Error('html2canvas load failed')); };
+                document.head.appendChild(s);
+            }));
+
             const saveImage = () => {
                 if (!downloadName) return;
-                html2canvas(document.getElementById('report-content')).then(canvas => {
+                loadHtml2canvas().then(h2c => h2c(document.getElementById('report-content'))).then(canvas => {
                     const link = document.createElement('a');
                     link.download = downloadName;
                     link.href = canvas.toDataURL();

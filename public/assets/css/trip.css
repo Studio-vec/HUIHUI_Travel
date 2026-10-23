@@ -536,3 +536,14 @@ body {
 .variant-tab:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 .variant-tab.is-current { background: var(--ink); color: #fff; font-weight: 600; }
 .trip-article .variant-switch { margin: 0 0 var(--space-5); }
+
+/* 글쓴이·최종 수정일. 모바일 헤더와 데스크톱 본문이 함께 쓴다 */
+.trip-byline {
+    margin: -8px 0 20px; font-size: 13px; line-height: 1.6; color: var(--ink-3);
+}
+.trip-byline a { color: var(--ink); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong); }
+.trip-byline a:hover { text-decoration-color: currentColor; }
+.trip-article .trip-byline { margin: 0 0 var(--space-5); }
+
+/* Vue가 붙기 전 {{ }} 원문이 보이지 않게 숨긴다 (스크립트를 defer로 받는다) */
+[v-cloak] { display: none; }

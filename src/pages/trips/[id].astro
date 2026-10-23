@@ -10,6 +10,7 @@ import TripIndex from '../../components/TripIndex.astro';
 import Footer from '../../components/Footer.astro';
 import { toMobileSchedule, toMobileTips, dayCountOf, tripSlug, nameEnOf, loadTrips, variantsOf, escHtml } from '../../lib/tripData';
 import type { TripData } from '../../lib/tripData';
+import { gitDates, tripDataFile } from '../../lib/gitDate';
 
 export async function getStaticPaths() {
   const all = loadTrips();
@@ -46,6 +47,11 @@ const variantSwitchHtml = variants.length
                 .join('')}</nav>`
   : '';
 
+/* 글쓴이와 최종 수정일(코스 JSON의 마지막 커밋). 모바일 머리글과 데스크톱 본문에 같은 줄을 넣는다 */
+const { created: datePublished, modified: dateModified } = gitDates(tripDataFile(tripData.id));
+const authorName = tripData.operatorNote?.name || '태희';
+const bylineHtml = `<p class="trip-byline">글·정리 <a href="/about/">${escHtml(authorName)}</a> · Studio.Vec · 최종 업데이트 <time datetime="${dateModified}">${dateModified.replaceAll('-', '.')}</time></p>`;
+
 const scheduleJson = JSON.stringify(toMobileSchedule(tripData));
 const tipsJson = JSON.stringify(toMobileTips(tripData));
 const dayCount = dayCountOf(tripData);
@@ -71,6 +77,39 @@ const tripDescription = [
     .map((p) => p.name)
     .join(', ') + ' 등 방문 순서, 운영시간, 이동 방법과 현장 팁을 담았습니다.',
 ].filter(Boolean).join(' ').slice(0, 300);
+
+/* 구조화 데이터: 글(Article) + 이동 경로(BreadcrumbList). 비밀 여행지는 색인하지 않으므로 넣지 않는다 */
+const site = Astro.site ?? new URL('https://travel-huihui.com');
+const pageUrl = new URL(`${tripUrl}/`, site).href;
+const jsonLd = tripData.secretHash ? null : JSON.stringify([
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: tripData.title,
+    description: tripDescription,
+    inLanguage: 'ko',
+    mainEntityOfPage: pageUrl,
+    image: new URL(keyFile, site).href,
+    datePublished,
+    dateModified,
+    author: { '@type': 'Person', name: authorName, url: new URL('/about/', site).href },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Studio.Vec',
+      url: site.href,
+      logo: { '@type': 'ImageObject', url: new URL('/icon-192.png', site).href },
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: '홈', item: site.href },
+      { '@type': 'ListItem', position: 2, name: '여행 코스', item: new URL('/gallery/', site).href },
+      { '@type': 'ListItem', position: 3, name: tripData.title, item: pageUrl },
+    ],
+  },
+]).replace(/</g, '\\u003c');
 
 const infoBannerHtml = tripData.infoBanner
   ? `
@@ -107,11 +146,12 @@ const reportModalHtml = tripData.downloadName
   : '';
 
 const _body = `
-<div id="app">
+<div id="app" v-cloak>
     <div class="container">
         <div class="header">
             <div class="header-eyebrow">${tripData.headerEyebrow}</div>
-            <h1 class="header-title">${tripData.headerTitleHtml}</h1>${variantSwitchHtml}
+            <p class="header-title">${tripData.headerTitleHtml}</p>${variantSwitchHtml}
+            ${bylineHtml}
             <div class="header-dates">
                 <div class="date-item">
                     <span class="date-label">출발</span>
@@ -278,7 +318,7 @@ const _body = `
             </div>
         </div>
     </div></div>
-<script src="${asset('/assets/js/trip-app.js')}"></script>
+<script src="${asset('/assets/js/trip-app.js')}" defer></script>
 <script>
 /* 아래 버튼 줄: 내려 읽는 동안은 숨기고, 위로 올리거나 맨 끝에 닿으면 다시 보인다 */
 (function () {
@@ -295,6 +335,8 @@ const _body = `
         });
     }, { passive: true });
 })();
+/* Vue·dayjs·trip-app.js는 defer로 받으므로, 모두 실행된 뒤(DOMContentLoaded)에 앱을 붙인다 */
+document.addEventListener('DOMContentLoaded', function () {
 createTripApp({
     tripUrl: '${tripUrl}',
     storageKey: '${storageKey}',
@@ -303,6 +345,7 @@ createTripApp({
     tips: ${tipsJson},
     schedule: ${scheduleJson}
 });
+});
 </script>
 `;
 ---
@@ -310,6 +353,7 @@ createTripApp({
   <Fragment slot="head">
   <link rel="stylesheet" href={asset('/assets/css/trip.css')}>
   <link rel="stylesheet" href={asset('/assets/css/trip-article.css')}>
+  {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
   </Fragment>
   <Navbar />
   <main id="main" class="trip-main">
@@ -324,7 +368,7 @@ createTripApp({
     </button>
     <img src={asset(keyFile)} width="416" height="1077" alt="" aria-hidden="true" />
   </div>
-  <TripArticle data={tripData} variantSwitchHtml={variantSwitchHtml} />
+  <TripArticle data={tripData} variantSwitchHtml={variantSwitchHtml} bylineHtml={bylineHtml} />
   <Fragment set:html={_body} />
 
   <TripIndex

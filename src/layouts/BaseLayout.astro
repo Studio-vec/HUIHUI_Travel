@@ -73,7 +73,8 @@ const analytics = import.meta.env.PROD && CF_ANALYTICS_TOKEN;
   <!-- Hahmlet: 제목·지명에 쓰는 개성 있는 한글 디스플레이 세리프 (본문은 Pretendard) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@600;700;800&display=swap" />
+  <!-- 가변 폰트 범위(600..800)로 받으면 굵기별 파일 3벌 대신 한 벌만 받는다 -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@600..800&display=swap" />
 
   <!-- Design tokens -->
   <link rel="stylesheet" href={asset('/assets/css/tokens.css')} />
@@ -81,14 +82,15 @@ const analytics = import.meta.env.PROD && CF_ANALYTICS_TOKEN;
 
   <!-- Vue 3 + utilities (코스 상세 페이지에서만)
        CDN 라이브러리는 정확한 버전으로 고정하고 integrity(SRI)로 내용을 검사한다.
-       버전을 올릴 때는 해시도 새로 받아야 한다: curl -sL <url> | openssl dgst -sha384 -binary | openssl base64 -A -->
-  {app && <script src="https://cdn.jsdelivr.net/npm/vue@3.5.44/dist/vue.global.prod.js" integrity="sha384-tORx0bXmMnTC28EYQe1coaGZKSQupXQEYDBNex8xkzJ9iqUoNy9Y+VFBhVxi4kUr" crossorigin="anonymous" is:inline></script>}
-  {app && <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.23/dayjs.min.js" integrity="sha384-1Ft4/JTNbt7S/44V0himpcjx+YfQ1a6W6SYBJMr94ba6jwZhWoWoLaZsMmtJILgq" crossorigin="anonymous" is:inline></script>}
-  {app && <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" integrity="sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H" crossorigin="anonymous" is:inline></script>}
+       버전을 올릴 때는 해시도 새로 받아야 한다: curl -sL <url> | openssl dgst -sha384 -binary | openssl base64 -A
+       defer로 받아 화면 그리기를 막지 않는다. 코스 페이지는 DOMContentLoaded에서 앱을 붙인다.
+       html2canvas는 '저장'을 누를 때 trip-app.js가 불러온다 -->
+  {app && <script src="https://cdn.jsdelivr.net/npm/vue@3.5.44/dist/vue.global.prod.js" integrity="sha384-tORx0bXmMnTC28EYQe1coaGZKSQupXQEYDBNex8xkzJ9iqUoNy9Y+VFBhVxi4kUr" crossorigin="anonymous" defer is:inline></script>}
+  {app && <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.23/dayjs.min.js" integrity="sha384-1Ft4/JTNbt7S/44V0himpcjx+YfQ1a6W6SYBJMr94ba6jwZhWoWoLaZsMmtJILgq" crossorigin="anonymous" defer is:inline></script>}
 
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.min.js" integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp" crossorigin="anonymous" is:inline></script>
-  <script src={asset('/assets/js/supabase-client.js')} is:inline></script>
+  <!-- Supabase: defer끼리는 문서 순서대로 실행되므로 client가 라이브러리 뒤에 돈다 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.min.js" integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp" crossorigin="anonymous" defer is:inline></script>
+  <script src={asset('/assets/js/supabase-client.js')} defer is:inline></script>
 
   <!-- 방문 통계 (Cloudflare Web Analytics) -->
   {analytics && <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: CF_ANALYTICS_TOKEN })} is:inline></script>}

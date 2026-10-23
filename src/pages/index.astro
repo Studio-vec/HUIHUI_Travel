@@ -23,6 +23,27 @@ const allTrips = publicTrips();
 const hasKeyImage = (id) => fs.existsSync(`public/assets/keys/${id}.webp`);
 const tripConfig = Object.fromEntries(keyTrips.map(({ trip, variants }, idx) =>
   [trip.id, { ...homeCardOf(trip, idx + 1, variants), hasKey: hasKeyImage(trip.id) }]));
+
+/* 구조화 데이터: 사이트(WebSite)와 운영 주체(Organization) */
+const site = Astro.site ?? new URL('https://travel-huihui.com');
+const jsonLd = JSON.stringify([
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Travel HUIHUI',
+    url: site.href,
+    inLanguage: 'ko',
+    publisher: { '@type': 'Organization', name: 'Studio.Vec' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Studio.Vec',
+    url: site.href,
+    logo: new URL('/icon-192.png', site).href,
+    sameAs: ['https://studiovec.framer.website/'],
+  },
+]).replace(/</g, '\\u003c');
 ---
 <BaseLayout
   title="Travel HUIHUI — 커플 여행·근교 데이트 국내 여행 코스"
@@ -30,6 +51,7 @@ const tripConfig = Object.fromEntries(keyTrips.map(({ trip, variants }, idx) =>
 >
   <Fragment slot="head">
   <link rel="stylesheet" href={asset('/assets/css/tokens.css')}/>
+  <script type="application/ld+json" set:html={jsonLd} />
   </Fragment>
   <Navbar />
   <main id="main">
@@ -48,7 +70,7 @@ const tripConfig = Object.fromEntries(keyTrips.map(({ trip, variants }, idx) =>
         <span class="hero-key-cap"></span>
       </button>
       <h1 class="hero-title fade-up" id="heroTitle">
-        <span class="hero-kicker">기쁜 걸음만 골라 담은</span><em>국내 여행 안내서</em>
+        <span class="hero-kicker">커플·근교 여행 코스만 골라 담은</span><em>국내 여행 안내서</em>
       </h1>
       <div class="hero-foot fade-up">
         <p class="hero-desc" id="heroDesc">
