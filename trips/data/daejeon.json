@@ -30,17 +30,7 @@
       "isOperator": true,
       "date": "2025.01",
       "body": "성심당은 본점이 제일 좋아요. 튀김소보로는 오전에 가야 갓 나온 걸 먹을 수 있고, 부부빵은 오후에도 종종 재고가 있어요!",
-      "upvotes": 22,
-      "upvoted": false
-    },
-    {
-      "id": "t2",
-      "author": "대전토박이",
-      "avatar": "🥐",
-      "isOperator": false,
-      "date": "2024.11",
-      "body": "소제동 카페거리는 평일 오후가 제일 여유로워요. 주말 저녁엔 웨이팅이 길어서 방문 순서 조율 추천!",
-      "upvotes": 9,
+      "upvotes": 0,
       "upvoted": false
     }
   ],

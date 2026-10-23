@@ -1,0 +1,130 @@
+---
+import { asset } from '../lib/asset';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+<BaseLayout
+  title="이용약관 — Travel HUIHUI"
+  description="Travel HUIHUI 이용약관입니다. 서비스 내용, 회원 가입과 탈퇴, 이용자 의무, 여행 정보의 정확성과 면책, 게시물과 저작권에 관한 기준을 안내합니다."
+>
+  <Fragment slot="head">
+  <link rel="stylesheet" href={asset('/assets/css/tokens.css')}/>
+  </Fragment>
+  <Navbar />
+  <main id="main">
+
+  <div class="pp-page">
+    <div class="pp-header">
+      <h1 class="pp-title">이용약관</h1>
+      <p class="pp-updated">시행일자: 2026년 10월 23일</p>
+    </div>
+
+    <div class="pp-body">
+      <p class="pp-lead">
+        이 약관은 Studio.Vec(이하 '운영자')이 운영하는 Travel HUIHUI(이하 '사이트')를 이용하는 데 필요한
+        조건과 절차, 운영자와 이용자의 권리·의무를 정합니다. 사이트를 이용하면 이 약관에 동의한 것으로 봅니다.
+      </p>
+
+      <section class="pp-section">
+        <h2>1. 제공하는 서비스</h2>
+        <ul>
+          <li>운영자가 정리한 국내 여행 코스(일자별 동선, 장소별 운영시간·비용·이동 정보·팁) 열람</li>
+          <li>출발일 선택에 따른 휴무일 확인, 일정 공유 링크 만들기</li>
+          <li>장소별 사진 붙이기, 여행자 팁 남기기, 방문 완료 표시, 짐 싸기 게임 등 부가 기능</li>
+          <li>회원 가입과 로그인, 회원 정보 관리</li>
+        </ul>
+        <p>
+          사진, 팁, 방문 표시, 즐겨찾기는 이용자의 브라우저(로컬 저장소)에만 저장되며 운영자 서버로
+          전송되거나 다른 이용자에게 공개되지 않습니다. 브라우저 데이터를 지우면 함께 사라집니다.
+        </p>
+        <p>대부분의 서비스는 회원 가입 없이 무료로 이용할 수 있습니다.</p>
+      </section>
+
+      <section class="pp-section">
+        <h2>2. 회원 가입과 탈퇴</h2>
+        <ul>
+          <li>회원 가입은 이용자가 약관과 <a href="/privacy/">개인정보처리방침</a>에 동의하고 가입 양식을 제출하거나 구글 계정으로 로그인하면 이루어집니다.</li>
+          <li>만 14세 미만은 회원으로 가입할 수 없습니다.</li>
+          <li>타인의 정보를 도용하거나 허위 정보로 가입한 경우 운영자는 가입을 거절하거나 회원 자격을 정지할 수 있습니다.</li>
+          <li>회원은 언제든지 <a href="/contact/">문의 채널</a>로 탈퇴를 요청할 수 있으며, 운영자는 확인 후 지체 없이 처리합니다.</li>
+        </ul>
+      </section>
+
+      <section class="pp-section">
+        <h2>3. 이용자의 의무</h2>
+        <p>이용자는 다음 행위를 해서는 안 됩니다.</p>
+        <ul>
+          <li>사이트의 글·사진·코스 구성을 허락 없이 복제, 재배포, 상업적으로 이용하는 행위</li>
+          <li>자동화 프로그램으로 콘텐츠를 대량 수집하거나 인공지능 학습용 데이터로 쓰는 행위</li>
+          <li>사이트 운영을 방해하거나 보안 취약점을 악용하는 행위</li>
+          <li>광고를 반복해서 누르는 등 광고 노출·클릭을 인위적으로 늘리거나, 남에게 그렇게 하도록 권하는 행위</li>
+          <li>타인의 계정을 쓰거나 운영자·다른 사람을 사칭하는 행위</li>
+        </ul>
+      </section>
+
+      <section class="pp-section">
+        <h2>4. 여행 정보의 정확성과 책임의 한계</h2>
+        <ul>
+          <li>코스의 운영시간, 휴무일, 가격, 이동 시간은 방문 또는 확인 당시를 기준으로 적은 참고 정보이며, 각 코스에 기준 시점을 함께 표시합니다.</li>
+          <li>영업 정보는 예고 없이 바뀔 수 있으므로 방문 전 해당 업체나 공식 채널에서 한 번 더 확인해 주세요.</li>
+          <li>운영자는 정보가 바뀌어 생긴 일정 차질, 예약 문제 등 이용자가 사이트 정보를 바탕으로 내린 결정에 대해 고의나 중대한 과실이 없는 한 책임을 지지 않습니다.</li>
+          <li>사이트에 소개된 업체와의 거래(예약, 결제 등)는 이용자와 해당 업체 사이에서 이루어지며, 운영자는 그 거래의 당사자가 아닙니다.</li>
+          <li>잘못된 정보를 알려 주시면 확인 후 바로 고칩니다.</li>
+        </ul>
+      </section>
+
+      <section class="pp-section">
+        <h2>5. 저작권</h2>
+        <ul>
+          <li>사이트의 글, 사진, 이미지, 코스 구성에 대한 저작권은 별도 표기가 없는 한 운영자에게 있습니다.</li>
+          <li>출처(사이트 이름과 해당 페이지 주소)를 밝힌 짧은 인용과 링크 공유는 자유롭게 하실 수 있습니다.</li>
+          <li>이용자가 사이트에서 붙인 사진과 작성한 팁의 권리는 이용자에게 있으며, 운영자는 이를 수집하거나 이용하지 않습니다.</li>
+        </ul>
+      </section>
+
+      <section class="pp-section">
+        <h2>6. 광고</h2>
+        <p>
+          사이트는 운영비를 충당하기 위해 Google AdSense 광고를 게재합니다. 광고에 나오는 상품·서비스는
+          광고주가 제공하며, 운영자는 그 내용과 거래를 보증하지 않습니다. 광고 쿠키에 관한 내용은
+          <a href="/privacy/">개인정보처리방침</a>을 참고해 주세요.
+        </p>
+      </section>
+
+      <section class="pp-section">
+        <h2>7. 서비스의 변경과 중단</h2>
+        <p>
+          운영자는 코스와 기능을 추가·수정·삭제할 수 있고, 시스템 점검이나 불가피한 사정이 있으면 서비스를
+          일시 중단할 수 있습니다. 무료로 제공되는 서비스의 변경·중단에 대해서는 별도로 보상하지 않습니다.
+        </p>
+      </section>
+
+      <section class="pp-section">
+        <h2>8. 약관의 변경</h2>
+        <p>
+          약관을 바꾸는 경우 시행일과 변경 내용을 시행 7일 전부터 이 페이지에 공지합니다. 이용자에게
+          불리한 변경은 30일 전부터 공지합니다. 변경된 약관에 동의하지 않으면 이용을 중단하고 탈퇴할 수 있습니다.
+        </p>
+      </section>
+
+      <section class="pp-section">
+        <h2>9. 분쟁 해결과 준거법</h2>
+        <p>
+          서비스 이용과 관련한 문의나 불만은 <a href="/contact/">문의 채널</a>로 먼저 알려 주시면 성실히 답변합니다.
+          분쟁이 생기면 대한민국 법을 적용하며, 관할 법원은 민사소송법에 따릅니다.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style is:global>
+  /* 문서 지면 스타일은 public/assets/css/hanok.css 의 .pp-* 를 함께 쓴다 */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font-body); min-height: 100vh; }
+</style>

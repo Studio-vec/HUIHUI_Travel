@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import TripIndex from '../components/TripIndex.astro';
 import { dayCountOf, publicTrips } from '../lib/tripData';
+import { CONTACT_EMAIL, KAKAO_CHANNEL_URL } from '../lib/contact';
 
 const allTrips = publicTrips();
 
@@ -118,9 +119,9 @@ const regions = [...new Set(allTrips.map((t) => t.locationLabel))];
       <section class="pp-section">
         <h2>7. 문의</h2>
         <ul>
-          <li>정보 수정 요청, 제휴 문의 — <a href="http://pf.kakao.com/_xipUhX/chat" target="_blank" rel="noopener">카카오톡 채널</a></li>
+          <li>정보 수정 요청, 제휴 문의 — <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> 또는 <a href={KAKAO_CHANNEL_URL} target="_blank" rel="noopener">카카오톡 채널</a> (<a href="/contact/">문의하기</a>)</li>
           <li>운영 스튜디오 — <a href="https://studiovec.framer.website/" target="_blank" rel="noopener">Studio.Vec</a></li>
-          <li>개인정보 관련 문의 — <a href="/privacy">개인정보처리방침</a> 참고</li>
+          <li>개인정보 관련 문의 — <a href="/privacy/">개인정보처리방침</a> 참고</li>
         </ul>
       </section>
     </div>
