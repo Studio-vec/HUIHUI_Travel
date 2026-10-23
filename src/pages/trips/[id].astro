@@ -123,6 +123,11 @@ const _body = `
                     <span class="date-static">{{ endDate }}</span>
                 </div>
             </div>
+            <button v-if="dateChosen" type="button" class="date-share" @click="shareTrip">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 3v12"/><path d="M7.5 7.5 12 3l4.5 4.5"/></svg>
+                <span>이 날짜로 일정 공유</span>
+            </button>
+            <div class="date-share-msg" role="status" aria-live="polite">{{ shareMsg }}</div>
             <section class="pre-check" aria-label="출발 전 확인"${tripData.infoBanner ? '' : ' v-if="closedList.length || hasClosedData || closedNotes.length"'}>
             <div class="pre-check-label">출발 전 확인</div>
             <div v-if="closedList.length" class="closed-banner" role="status">

@@ -235,10 +235,63 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
 
             const dateKey = storageKey + '_date';
             const GLOBAL_DATE_KEY = 'huihui_start_date';
+            /* 공유 버튼이 만드는 링크에 출발일을 ?date=YYYY-MM-DD 로 담아, 받는 사람도 같은 날짜로 본다 */
+            const DATE_PARAM = 'date';
+            /* 기본값(오늘)이 아니라 날짜를 직접 고른 적이 있을 때만 공유 버튼을 보인다.
+               저장된 날짜·링크 날짜도 결국 누군가 고른 날짜라, startDate가 한 번이라도 바뀌면 고른 것으로 본다 */
+            const dateChosen = ref(false);
+            const _validDate = (v) => /^\d{4}-\d{2}-\d{2}$/.test(v || '') && dayjs(v).isValid() && dayjs(v).format('YYYY-MM-DD') === v;
+            const _urlWithDate = (val) => {
+                const u = new URL(location.href);
+                if (_validDate(val)) u.searchParams.set(DATE_PARAM, val); else u.searchParams.delete(DATE_PARAM);
+                return u;
+            };
             watch(startDate, val => {
                 localStorage.setItem(dateKey, val);
                 localStorage.setItem(GLOBAL_DATE_KEY, val);
+                dateChosen.value = _validDate(val);
             });
+
+            const shareMsg = ref('');
+            let _shareMsgTimer = null;
+            const _flashShareMsg = (text, ms = 2200) => {
+                shareMsg.value = text;
+                clearTimeout(_shareMsgTimer);
+                _shareMsgTimer = setTimeout(() => { shareMsg.value = ''; }, ms);
+            };
+            const _copyText = async (text) => {
+                try { await navigator.clipboard.writeText(text); return true; }
+                catch (e) {
+                    const ta = document.createElement('textarea');
+                    ta.value = text; ta.setAttribute('readonly', '');
+                    ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+                    document.body.appendChild(ta); ta.select();
+                    let ok = false;
+                    try { ok = document.execCommand('copy'); } catch (e2) {}
+                    ta.remove();
+                    return ok;
+                }
+            };
+            /* 휴대폰은 카톡 등 공유 창을 띄우고, 컴퓨터는 링크를 복사한다 */
+            const shareTrip = async () => {
+                const u = _urlWithDate(startDate.value);
+                u.hash = '';
+                const url = u.toString();
+                const d = dayjs(startDate.value);
+                const text = (document.querySelector('.header-title')?.innerText || document.title).replace(/\s+/g, ' ').trim()
+                    + ` · ${d.format('MM.DD')} (${DAY_LABELS[d.day()]}) 출발`;
+                const touch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+                if (touch && navigator.share) {
+                    try { await navigator.share({ title: document.title, text, url }); return; }
+                    catch (e) { if (e && e.name === 'AbortError') return; }
+                }
+                if (await _copyText(url)) _flashShareMsg('출발일이 담긴 링크를 복사했어요');
+                else {
+                    /* 인앱 브라우저 등은 복사도 prompt도 막을 수 있어, 그때는 링크를 그대로 보여 준다 */
+                    try { window.prompt('이 링크를 복사해 보내세요', url); }
+                    catch (e) { _flashShareMsg(url, 8000); }
+                }
+            };
 
             /* 예전에는 일정이 바뀔 때마다 trip_<id>_v2처럼 키를 새로 만들었다. 그 키들에 남은 사진과 날짜를 가져온다 */
             const _legacyKeys = () => {
@@ -282,13 +335,15 @@ function createTripApp({ tripUrl, storageKey, schedule: initialSchedule, downloa
                     const savedTips = localStorage.getItem(tipsKey);
                     if (savedTips) tips.value = JSON.parse(savedTips);
                 }
-                // 이 여행에 저장된 날짜가 있으면 우선 사용, 없으면 다른 여행에서 마지막으로 입력한 날짜를 기본값으로 사용
-                const savedDate = localStorage.getItem(dateKey) || localStorage.getItem(GLOBAL_DATE_KEY);
+                // 공유받은 링크의 날짜가 가장 우선, 그다음 이 여행에 저장된 날짜, 없으면 다른 여행에서 마지막으로 입력한 날짜
+                const urlDate = new URLSearchParams(location.search).get(DATE_PARAM);
+                const savedDate = _validDate(urlDate) ? urlDate
+                    : localStorage.getItem(dateKey) || localStorage.getItem(GLOBAL_DATE_KEY);
                 if (savedDate) startDate.value = savedDate;
             });
 
             return {
-                startDate, endDate, schedule, getFormattedDate,
+                startDate, endDate, schedule, getFormattedDate, shareTrip, shareMsg, dateChosen,
                 isClosed, closedList, hasClosedData, closedNotes,
                 currentPlace, allPhotos, clickUpload, uploadPhoto,
                 isArtPlaying, playArt, showReport, saveImage, collagePieces,

@@ -59,6 +59,25 @@ body {
     padding-bottom: 4px; border-bottom: 1px solid var(--line);
     white-space: nowrap;
 }
+.date-share {
+    margin: -6px 0 20px;
+    display: inline-flex; align-items: center; gap: 5px;
+    min-height: 36px; padding: 0 12px;
+    font: inherit; font-size: 13px; color: var(--ink-2);
+    background: transparent; border: 1px solid var(--line-strong); border-radius: 999px;
+    cursor: pointer;
+}
+.date-share:hover { color: var(--ink); border-color: var(--ink-3); }
+.date-share:focus-visible { outline: 2px solid var(--ink-3); outline-offset: 2px; }
+.date-share-msg {
+    position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom));
+    transform: translateX(-50%); z-index: 9000;
+    width: max-content; max-width: calc(100vw - 32px); padding: 10px 16px; border-radius: 18px;
+    background: var(--ink); color: #fff; font-size: 13px; line-height: 1.5;
+    text-align: center; overflow-wrap: anywhere; user-select: all;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+}
+.date-share-msg:empty { display: none; }
 
 .now-card {
     background: var(--yeonji-dark); border-radius: 6px;
