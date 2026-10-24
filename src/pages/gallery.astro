@@ -4,7 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import TripIndex from '../components/TripIndex.astro';
-import { groupNameKoOf, listedTrips, publicTrips, tripSlug } from '../lib/tripData';
+import { groupNameKoOf, listedTrips, publicTrips, storageKeyOf, tripSlug } from '../lib/tripData';
 
 /* 글 목차(TripIndex)는 크롤러 진입점이라 버전까지 모든 공개 여행지를 싣는다 */
 const allTrips = publicTrips();
@@ -16,7 +16,7 @@ const galleryDestinations = listedTrips().map(({ trip: t, variants: vs }) => {
     id: t.id,
     nameKo: groupNameKoOf(t, vs),
     tagline: t.tagline || '',
-    storageKeys: members.map((v) => `trip_${v.id}`),
+    storageKeys: members.map(storageKeyOf),
     /* 첫 주소가 대표(t) 주소다 */
     urls: members.map((v) => `/trips/${tripSlug(v)}`),
   };

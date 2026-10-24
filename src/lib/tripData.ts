@@ -93,6 +93,13 @@ export interface TripData {
   variantGroup?: string;
   /** 버전 탭에 쓰는 짧은 이름 (예: 커플, 가족). shortNameKo에서 이 말을 빼면 홈 카드 이름이 된다 */
   variantLabel?: string;
+  /**
+   * 주소를 옮긴 여행지의 예전 id들 (오래된 것부터). /trips/<예전 id>에는 새 주소로 넘기는 페이지가 생기고,
+   * 이 브라우저에 남기는 사진·팁·날짜 키는 첫 id로 계속 쓴다. 그래서 지운 여행지의 id를 새로 받아도
+   * 그 여행지의 저장본이 섞이지 않고, 옮기기 전에 남긴 저장본도 그대로 이어진다 (storageKeyOf).
+   * 홈은 예전 주소로 남은 즐겨찾기·예약 표시를 이 카드로 옮긴다 (homeCardOf aliases)
+   */
+  formerIds?: string[];
 }
 
 /** 여행지의 원본 JSON 경로(저장소 루트 기준). 파일 이름은 id와 같다 (loadTrips가 확인한다) */
@@ -114,8 +121,24 @@ export function loadTrips(): TripData[] {
   if (unlabeled.length) {
     throw new Error(`variantGroup이 있는데 variantLabel이 없는 여행지: ${unlabeled.map((t) => t.id).join(', ')}`);
   }
+  /* 예전 id가 다른 주소와 겹치면 넘기는 페이지가 그 여행지 페이지를 덮고, 저장 키가 겹치면 두 여행지의
+     사진·팁이 섞이므로 빌드에서 막는다 (Set.add로 크기가 안 늘면 이미 있던 값) */
+  const firstTaken = (values: string[]) => {
+    const seen = new Set<string>();
+    return values.filter((v) => seen.size === seen.add(v).size);
+  };
+  const clashing = [
+    ...firstTaken([...trips.map(tripSlug), ...trips.flatMap((t) => t.formerIds ?? [])]),
+    ...firstTaken(trips.map(storageKeyOf)),
+  ];
+  if (clashing.length) {
+    throw new Error(`다른 여행지와 겹치는 주소·저장 키: ${clashing.join(', ')}`);
+  }
   return trips;
 }
+
+/** 이 브라우저에 사진·날짜를 남기는 키 (팁은 뒤에 _tips_v1). 주소를 옮겼으면 처음 id로 계속 쓴다 */
+export const storageKeyOf = (t: TripData) => `trip_${t.formerIds?.[0] ?? t.id}`;
 
 /** 목록·검색에 공개하는 여행지 (비밀코드 여행지 제외) */
 export function publicTrips(): TripData[] {
@@ -191,7 +214,10 @@ export function homeCardOf(t: TripData, fallbackNo: number, variants: TripData[]
       ? variants.map((v) => v.variantLabel).filter(Boolean).join('·')
       : String(t.tags[1] || '').replace(/^\P{L}+/u, ''),
     loc: t.locationLabel || '',
-    aliases: variants.filter((v) => v.id !== t.id).map((v) => `/trips/${tripSlug(v)}`),
+    aliases: [
+      ...variants.filter((v) => v.id !== t.id).map((v) => `/trips/${tripSlug(v)}`),
+      ...[t, ...variants].flatMap((v) => v.formerIds ?? []).map((id) => `/trips/${id}`),
+    ],
   };
 }
 

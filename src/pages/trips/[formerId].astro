@@ -1,0 +1,37 @@
+---
+import { loadTrips, tripSlug } from '../../lib/tripData';
+import { canonicalOf } from '../../lib/structuredData';
+
+/* 주소를 옮긴 여행지(formerIds)의 예전 주소. GitHub Pages는 서버 리다이렉트가 없어 새 주소로 넘기는 페이지를 둔다 */
+export async function getStaticPaths() {
+  return loadTrips().flatMap((trip) =>
+    (trip.formerIds ?? []).map((formerId) => ({
+      params: { formerId },
+      props: { to: `/trips/${tripSlug(trip)}/` },
+    })),
+  );
+}
+
+interface Props {
+  to: string;
+}
+
+const { to } = Astro.props;
+const canonical = canonicalOf(to, Astro.site!);
+---
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>주소가 바뀌었어요 — Travel HUIHUI</title>
+  <link rel="canonical" href={canonical}>
+  <noscript><meta http-equiv="refresh" content={`0;url=${to}`}></noscript>
+  <!-- 공유 링크의 출발일(?date=)이 이어지도록 쿼리와 해시를 붙여 넘긴다 -->
+  <script is:inline define:vars={{ to }}>location.replace(to + location.search + location.hash);</script>
+</head>
+<body>
+  <p>이 코스는 <a href={to}>새 주소</a>로 옮겼어요.</p>
+</body>
+</html>
