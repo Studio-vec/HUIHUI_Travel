@@ -34,7 +34,7 @@ import Footer from '../components/Footer.astro';
           <li><strong>회원가입 시(필수)</strong> — 이메일 주소, 아이디, 닉네임, 비밀번호(암호화 저장)</li>
           <li><strong>회원가입 시(선택)</strong> — 전화번호, 이메일·SMS 광고 수신 동의 여부</li>
           <li><strong>구글 계정으로 로그인 시</strong> — 구글 계정의 이메일, 프로필 이름 등 이용자가 구글에서 제공에 동의한 범위의 정보</li>
-          <li><strong>서비스 이용 과정에서 자동으로 생성·수집되는 정보</strong> — 접속 IP, 브라우저 종류, 방문 일시, 기기 정보, 광고 쿠키(5절)</li>
+          <li><strong>서비스 이용 과정에서 자동으로 생성·수집되는 정보</strong> — 접속 IP, 브라우저 종류, 방문 일시, 기기 정보, 광고·분석 쿠키(6절)</li>
         </ul>
         <p>
           장소별 사진, 여행자 팁, 방문 완료 표시, 즐겨찾기, 출발일은 이용자의 브라우저(로컬 저장소)에만 저장되며
@@ -80,7 +80,7 @@ import Footer from '../components/Footer.astro';
         </p>
         <ul>
           <li><strong>Supabase, Inc.(미국)</strong> — 회원 인증과 회원 정보 저장 · 이전 항목: 1절의 회원 정보 · 가입 시점부터 회원 서버에 저장 · 보유: 회원 탈퇴 시까지</li>
-          <li><strong>Google LLC(미국)</strong> — 구글 계정 로그인, 광고 게재(Google AdSense) · 이전 항목: 로그인 정보, 광고 쿠키·기기 정보 · 이용 시점마다 전송 · 보유: Google 정책에 따름</li>
+          <li><strong>Google LLC(미국)</strong> — 구글 계정 로그인, 광고 게재(Google AdSense), 방문 통계(Google Analytics) · 이전 항목: 로그인 정보, 광고·분석 쿠키, 방문 페이지·기기 정보 · 이용 시점마다 전송 · 보유: Google 정책에 따름</li>
           <li><strong>Cloudflare, Inc.(미국)</strong> — 방문 통계(Web Analytics), 도메인·트래픽 처리 · 이전 항목: 방문 페이지, 유입 경로, 브라우저, 국가 등 집계 정보(쿠키를 쓰지 않고 개인을 식별하지 않음) · 접속 시점마다 전송</li>
           <li><strong>GitHub, Inc.(미국)</strong> — 웹사이트 호스팅 · 이전 항목: 접속 IP 등 서버 접속 기록 · 접속 시점마다 전송</li>
         </ul>
@@ -90,7 +90,7 @@ import Footer from '../components/Footer.astro';
       </section>
 
       <section class="pp-section">
-        <h2>6. 광고 서비스와 쿠키 (Google AdSense)</h2>
+        <h2>6. 광고·분석 서비스와 쿠키 (Google AdSense, Google Analytics)</h2>
         <p>
           사이트는 Google AdSense 광고를 게재합니다. Google을 포함한 제3자 광고 제공업체는 쿠키를 사용해 이용자가
           이 사이트와 다른 사이트를 방문한 기록을 바탕으로 맞춤형 광고를 보여 줄 수 있습니다.
@@ -98,6 +98,7 @@ import Footer from '../components/Footer.astro';
         <ul>
           <li>Google이 광고 쿠키를 쓰는 방식은 <a href="https://policies.google.com/technologies/ads?hl=ko" target="_blank" rel="noopener">Google 광고 정책</a>에서 확인할 수 있습니다.</li>
           <li><a href="https://adssettings.google.com/authenticated" target="_blank" rel="noopener">Google 광고 설정</a>에서 맞춤 광고를 끌 수 있습니다. <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener">aboutads.info</a>에서 다른 제3자 업체의 맞춤 광고 쿠키도 거부할 수 있습니다.</li>
+          <li>방문 통계를 위해 Google Analytics를 씁니다. 분석 쿠키로 방문 페이지, 체류 시간, 유입 경로, 기기 정보를 모으며 이름·연락처 등 이용자를 직접 식별하는 정보는 모으지 않습니다. <a href="https://tools.google.com/dlpage/gaoptout?hl=ko" target="_blank" rel="noopener">Google 애널리틱스 차단 부가기능</a>으로 수집을 거부할 수 있습니다.</li>
           <li>브라우저 설정에서 쿠키 저장을 거부할 수 있습니다. 예: Chrome은 설정 › 개인정보 및 보안 › 서드 파티 쿠키, Safari는 설정 › 개인정보 보호. 쿠키를 거부해도 코스 열람에는 지장이 없습니다.</li>
         </ul>
       </section>
