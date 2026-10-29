@@ -103,6 +103,6 @@ grant execute on function public.keepalive() to anon, authenticated;
 -- Supabase 대시보드 설정 체크리스트 (SQL 실행 후 확인)
 -- 1. Authentication > Providers > Email > "Confirm email" 옵션 활성화
 --    (끄면 남의 이메일로도 가입할 수 있다)
--- 2. Authentication > URL Configuration > Site URL = https://travel-huihui.com
--- 3. Authentication > URL Configuration > Redirect URLs 에 https://travel-huihui.com/auth/** 추가
+-- 2. Authentication > URL Configuration > Site URL = https://travel.studiovec.com
+-- 3. Authentication > URL Configuration > Redirect URLs 에 https://travel.studiovec.com/auth/** 추가
 -- ══════════════════════════════════════════════════════════════

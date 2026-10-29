@@ -24,11 +24,11 @@ const {
 const canonical = Astro.site ? canonicalOf(Astro.url.pathname, Astro.site) : undefined;
 const ogImageUrl = ogImage && Astro.site ? new URL(ogImage, Astro.site).href : ogImage;
 
-/* Cloudflare Web Analytics 사이트 토큰 (대시보드 > Web Analytics > travel-huihui.com). 쿠키를 쓰지 않는다.
+/* Cloudflare Web Analytics 사이트 토큰 (대시보드 > Web Analytics > travel.studiovec.com). 쿠키를 쓰지 않는다.
    비어 있거나 개발 서버(npm run dev)면 넣지 않아 로컬 방문이 집계되지 않는다 */
 const CF_ANALYTICS_TOKEN = '53f2ea5a237d4f8f915784e58e921541';
 const analytics = import.meta.env.PROD && CF_ANALYTICS_TOKEN;
-/* Google Analytics 4 측정 ID (GA 관리 > 데이터 스트림 > travel-huihui.com). 분석 쿠키를 쓴다.
+/* Google Analytics 4 측정 ID (GA 관리 > 데이터 스트림 > travel.studiovec.com). 분석 쿠키를 쓴다.
    Cloudflare와 같이 개발 서버에서는 넣지 않는다 */
 const GA_MEASUREMENT_ID = 'G-T4JE9XM47R';
 const ga = import.meta.env.PROD && GA_MEASUREMENT_ID;

@@ -55,4 +55,4 @@ $$;
 
 -- 5. 대시보드에서 직접 바꿀 설정
 --    - Authentication > Providers > Email > "Confirm email" 켜기
---    - Authentication > URL Configuration > Site URL = https://travel-huihui.com
+--    - Authentication > URL Configuration > Site URL = https://travel.studiovec.com

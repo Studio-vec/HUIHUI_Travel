@@ -3,7 +3,7 @@
   "redirects": [
     {
       "source": "/:path*",
-      "destination": "https://travel-huihui.com/:path*",
+      "destination": "https://travel.studiovec.com/:path*",
       "permanent": true
     }
   ]

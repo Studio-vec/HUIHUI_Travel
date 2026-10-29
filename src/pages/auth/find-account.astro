@@ -64,7 +64,7 @@ import Navbar from '../../components/Navbar.astro';
 
     try {
       const { error } = await window._sb.auth.resetPasswordForEmail(email, {
-        redirectTo: 'https://travel-huihui.com/auth/reset-password'
+        redirectTo: location.origin + '/auth/reset-password'
       });
       if (error) throw error;
       /* 가입 여부와 관계없이 같은 문구를 보여 계정 존재 여부를 드러내지 않는다 */
