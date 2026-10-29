@@ -105,4 +105,7 @@ grant execute on function public.keepalive() to anon, authenticated;
 --    (끄면 남의 이메일로도 가입할 수 있다)
 -- 2. Authentication > URL Configuration > Site URL = https://travel.studiovec.com
 -- 3. Authentication > URL Configuration > Redirect URLs 에 https://travel.studiovec.com/auth/** 추가
+--    (가입·재설정 링크가 location.origin 기준이라 이 항목이 없으면 Site URL로 떨어진다. 사이트 코드보다 먼저 넣는다)
+--    도메인 이전 직전에 보낸 인증 메일이 아직 옛 주소를 가리키므로
+--    https://travel-huihui.com/auth/** 는 바로 지우지 말고 한동안 같이 둔다
 -- ══════════════════════════════════════════════════════════════
